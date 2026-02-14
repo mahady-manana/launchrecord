@@ -25,6 +25,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useUser } from "@/hooks/use-user";
+import { toast } from "sonner";
 import { Clock, DollarSign, MapPin } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -47,6 +48,9 @@ export function PlacementAdvertiseButton() {
   const [loading, setLoading] = useState(true);
   const [selectedDurations, setSelectedDurations] = useState<
     Record<string, number>
+  >({});
+  const [slotLoadingStates, setSlotLoadingStates] = useState<
+    Record<string, boolean>
   >({});
 
   useEffect(() => {
@@ -87,10 +91,18 @@ export function PlacementAdvertiseButton() {
     const slot = slots.find((s) => s.id === slotId);
     if (!slot) return;
 
+    // Set loading state for this specific slot
+    setSlotLoadingStates(prev => ({ ...prev, [slotId]: true }));
+
     // Get selected duration for this specific slot (default to 30 days)
     const selectedDuration = selectedDurations[slotId] || 30;
 
     try {
+      // Show notification that we're redirecting to Stripe
+      toast.info("Redirecting to secure payment page...", {
+        duration: 2000,
+      });
+
       // Call the API to create a Stripe checkout session
       const response = await fetch("/api/placements/create-checkout-session", {
         method: "POST",
@@ -109,10 +121,17 @@ export function PlacementAdvertiseButton() {
         // Redirect to Stripe checkout
         window.location.href = data.url;
       } else {
+        // Show error notification
+        toast.error(data.message || "Failed to create checkout session");
         console.error("Failed to create checkout session:", data.message);
       }
     } catch (error) {
+      // Show error notification
+      toast.error("An error occurred while processing your payment request");
       console.error("Error creating checkout session:", error);
+    } finally {
+      // Reset loading state for this specific slot
+      setSlotLoadingStates(prev => ({ ...prev, [slotId]: false }));
     }
   };
 
@@ -204,10 +223,36 @@ export function PlacementAdvertiseButton() {
                   <CardFooter>
                     <Button
                       className="w-full"
-                      disabled={!slot.isAvailable}
+                      disabled={!slot.isAvailable || slotLoadingStates[slot.id]}
                       onClick={() => handleSlotClick(slot.id)}
                     >
-                      {slot.isAvailable ? "Purchase" : "Not Available"}
+                      {slotLoadingStates[slot.id] ? (
+                        <>
+                          <svg
+                            className="animate-spin -ml-1 mr-2 h-4 w-4 text-current"
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                          >
+                            <circle
+                              className="opacity-25"
+                              cx="12"
+                              cy="12"
+                              r="10"
+                              stroke="currentColor"
+                              strokeWidth="4"
+                            ></circle>
+                            <path
+                              className="opacity-75"
+                              fill="currentColor"
+                              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                            ></path>
+                          </svg>
+                          Processing...
+                        </>
+                      ) : (
+                        slot.isAvailable ? "Purchase" : "Not Available"
+                      )}
                     </Button>
                   </CardFooter>
                 </Card>

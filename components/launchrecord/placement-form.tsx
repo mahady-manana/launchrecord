@@ -15,7 +15,6 @@ import { useState } from "react";
 
 import { toast } from "sonner";
 import LogoUpload from "../LogoUpload";
-
 interface PlacementFormProps {
   placement: {
     _id: string;
@@ -31,12 +30,14 @@ interface PlacementFormProps {
   };
   onSubmit: (data: any) => void;
   onCancel: () => void;
+  onChange?: (data: Partial<any>) => void; // Optional callback to notify parent of changes for preview
 }
 
 export function PlacementForm({
   placement,
   onSubmit,
   onCancel,
+  onChange,
 }: PlacementFormProps) {
   const [formData, setFormData] = useState({
     title: placement.title || "",
@@ -52,14 +53,29 @@ export function PlacementForm({
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+    
+    // Notify parent component of changes for preview
+    if (onChange) {
+      onChange({ [name]: value });
+    }
   };
 
-  const handleLogoUpload = (url: string) => {
-    setFormData((prev) => ({ ...prev, logoUrl: url }));
+  const handleLogoUpload = (url?: string) => {
+    setFormData((prev) => ({ ...prev, logoUrl: url || "" }));
+    
+    // Notify parent component of changes for preview
+    if (onChange) {
+      onChange({ logoUrl: url || "" });
+    }
   };
 
-  const handleBackgroundUpload = (url: string) => {
-    setFormData((prev) => ({ ...prev, backgroundImage: url }));
+  const handleBackgroundUpload = (url?: string) => {
+    setFormData((prev) => ({ ...prev, backgroundImage: url || "" }));
+    
+    // Notify parent component of changes for preview
+    if (onChange) {
+      onChange({ backgroundImage: url || "" });
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -138,11 +154,7 @@ export function PlacementForm({
                 </div>
               )}
               <div className="flex-1">
-                <LogoUpload
-                  onChange={(s) => {
-                    // toast.error(`Upload failed: ${error.message}`);
-                  }}
-                />
+                <LogoUpload onChange={handleLogoUpload} />
                 {formData.logoUrl && (
                   <p className="text-xs text-muted-foreground mt-1">
                     Current: {formData.logoUrl.split("/").pop()}
@@ -165,18 +177,7 @@ export function PlacementForm({
                 </div>
               )}
               <div className="flex-1">
-                <UploadDropzone
-                  endpoint="imageUploader"
-                  onClientUploadComplete={(res) => {
-                    if (res && res[0]) {
-                      handleBackgroundUpload(res[0].url);
-                      toast.success("Background image uploaded successfully!");
-                    }
-                  }}
-                  onUploadError={(error: Error) => {
-                    toast.error(`Upload failed: ${error.message}`);
-                  }}
-                />
+                <LogoUpload onChange={handleBackgroundUpload} />
                 {formData.backgroundImage && (
                   <p className="text-xs text-muted-foreground mt-1">
                     Current: {formData.backgroundImage.split("/").pop()}

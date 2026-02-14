@@ -98,7 +98,7 @@ export default function LogoUpload({
                 Uploading
               </>
             ) : (
-              "Upload logo"
+              "Upload image"
             )}
           </Button>
 

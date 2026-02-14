@@ -59,7 +59,8 @@ interface LaunchStore {
   setLaunchesLoading: (loading: boolean) => void;
   setPlacementsLoading: (loading: boolean) => void;
   setError: (error: string | null) => void;
-  
+  refreshPlacements: () => Promise<void>;
+
   // Filters
   setQuery: (query: string) => void;
   setCategory: (category: LaunchFilters["category"]) => void;
@@ -175,6 +176,88 @@ export const useLaunchStore = create<LaunchStore>((set, get) => ({
   setPlacementsLoading: (loading) => set({ placementsLoading: loading }),
   setError: (error) => set({ error, launchesLoading: false, placementsLoading: false }),
   
+  // Refresh placements from API
+  refreshPlacements: async () => {
+    set({ placementsLoading: true, error: null });
+    
+    try {
+      // Check if we should use mock data
+      const useMockData =
+        process.env.NODE_ENV === "development" &&
+        typeof window !== "undefined" &&
+        localStorage.getItem("useMockData") === "true";
+
+      if (useMockData) {
+        // Use mock data for development
+        const mockLeftPlacements = mockPlacements.filter(
+          (p) => p.position === "left",
+        );
+        const mockRightPlacements = mockPlacements.filter(
+          (p) => p.position === "right",
+        );
+        const mockHeroPlacements = mockPlacements.filter(
+          (p) => p.placementType === "featured",
+        );
+
+        set({
+          heroPlacements: [...mockHeroPlacements],
+          leftPlacements: mockLeftPlacements,
+          rightPlacements: mockRightPlacements,
+          placementsPagination: {
+            page: 1,
+            limit: 10,
+            total: mockPlacements.length,
+            totalPages: Math.ceil(mockPlacements.length / 10),
+            hasNextPage: false,
+            hasPreviousPage: false,
+          },
+          placementsLoading: false,
+          error: null,
+        });
+      } else {
+        // In a real implementation, you would call an API here
+        // For now, we'll simulate the API call with mock data
+        // const response = await fetch('/api/placements', {
+        //   method: 'GET',
+        //   headers: { 'Content-Type': 'application/json' },
+        // });
+        // const data = await response.json();
+        
+        // For now, we'll use mock data as fallback
+        const mockLeftPlacements = mockPlacements.filter(
+          (p) => p.position === "left",
+        );
+        const mockRightPlacements = mockPlacements.filter(
+          (p) => p.position === "right",
+        );
+        const mockHeroPlacements = mockPlacements.filter(
+          (p) => p.placementType === "featured",
+        );
+
+        set({
+          heroPlacements: [...mockHeroPlacements],
+          leftPlacements: mockLeftPlacements,
+          rightPlacements: mockRightPlacements,
+          placementsPagination: {
+            page: 1,
+            limit: 10,
+            total: mockPlacements.length,
+            totalPages: Math.ceil(mockPlacements.length / 10),
+            hasNextPage: false,
+            hasPreviousPage: false,
+          },
+          placementsLoading: false,
+          error: null,
+        });
+      }
+    } catch (error) {
+      set({
+        error: error instanceof Error ? error.message : "Failed to refresh placements",
+        placementsLoading: false,
+      });
+    }
+  },
+
   // Filters
   setQuery: (query) =>
     set((state) => ({
