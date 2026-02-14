@@ -1,9 +1,9 @@
-import { NextResponse } from "next/server";
-import { connectToDatabase } from "@/lib/mongodb";
 import { getUserFromSession } from "@/lib/get-user-from-session";
-import { getClientIdentifier, isSameOrigin } from "@/lib/security";
-import { rateLimit } from "@/lib/rate-limit";
 import Placement from "@/lib/models/placement";
+import { connectToDatabase } from "@/lib/mongodb";
+import { rateLimit } from "@/lib/rate-limit";
+import { getClientIdentifier, isSameOrigin } from "@/lib/security";
+import { NextResponse } from "next/server";
 
 export async function PUT(request: Request) {
   try {
@@ -43,22 +43,11 @@ export async function PUT(request: Request) {
     }
 
     const body = await request.json();
-    
-    // Validate required fields
-    if (!body.paymentIntentId || !body.paymentStatus) {
-      return NextResponse.json(
-        { success: false, message: "paymentIntentId and paymentStatus are required." },
-        { status: 400 },
-      );
-    }
 
     await connectToDatabase();
 
-    // Find placement by payment intent ID
-    const placement = await Placement.findOne({ 
-      paymentIntentId: body.paymentIntentId,
-      userId: user._id
-    });
+    // Find placement by ID
+    const placement = await Placement.findById(body.id);
 
     if (!placement) {
       return NextResponse.json(
@@ -67,21 +56,41 @@ export async function PUT(request: Request) {
       );
     }
 
-    // Update payment status
-    placement.paymentStatus = body.paymentStatus;
-    
-    // If payment is successful, activate the placement
-    if (body.paymentStatus === 'paid') {
-      placement.status = 'active';
-    } else if (['failed', 'refunded'].includes(body.paymentStatus)) {
-      placement.status = 'inactive';
+    // Check if the placement belongs to the current user
+    if (placement.userId.toString() !== user._id.toString()) {
+      return NextResponse.json(
+        { success: false, message: "Unauthorized access to this placement." },
+        { status: 403 },
+      );
     }
+
+    // Validate required fields
+    if (!body.status) {
+      return NextResponse.json(
+        { success: false, message: "Status is required." },
+        { status: 400 },
+      );
+    }
+
+    // Only allow activation if payment has been successfully processed
+    if (body.status === "active" && placement.paymentStatus !== "paid") {
+      return NextResponse.json(
+        { 
+          success: false, 
+          message: "Cannot activate placement. Payment must be completed first. Current payment status: " + placement.paymentStatus 
+        },
+        { status: 400 },
+      );
+    }
+
+    // Update placement status
+    placement.status = body.status;
 
     await placement.save();
 
-    return NextResponse.json({ 
-      success: true, 
-      placement 
+    return NextResponse.json({
+      success: true,
+      placement,
     });
   } catch (error) {
     console.error("Error updating placement status:", error);

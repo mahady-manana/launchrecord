@@ -20,7 +20,7 @@ async function getPlacement(id: string): Promise<PlacementType | null> {
     // Find the placement and ensure it belongs to the user
     const placement = (await Placement.findOne({
       _id: id,
-      userId: user._id,
+      userId: user._id.toString(),
     }).lean()) as unknown as PlacementType;
 
     if (!placement) {
@@ -30,6 +30,7 @@ async function getPlacement(id: string): Promise<PlacementType | null> {
     // Convert ObjectId to string for serialization
     return {
       ...placement,
+      _id: placement._id.toString(),
     };
   } catch (error) {
     console.error("Error fetching placement:", error);
@@ -72,7 +73,7 @@ export default async function PlacementSetupPage({
 
   return (
     <PlacementSetupClient
-      initialPlacement={structuredClone(placement) as PlacementType}
+      initialPlacement={JSON.parse(JSON.stringify(placement)) as PlacementType}
       placementId={id}
     />
   );

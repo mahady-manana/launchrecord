@@ -1,14 +1,21 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { useUser } from '@/hooks/use-user';
-import { PlacementForm } from '@/components/launchrecord/placement-form';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Loader2 } from 'lucide-react';
-import { PlacementCard } from '@/components/launchrecord/placement-card';
-import { FeaturedPlacementCard } from '@/components/launchrecord/featured-placement-card';
+import { FeaturedPlacementCard } from "@/components/launchrecord/featured-placement-card";
+import { PlacementCard } from "@/components/launchrecord/placement-card";
+import { PlacementForm } from "@/components/launchrecord/placement-form";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { useUser } from "@/hooks/use-user";
+import { Loader2 } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
 
 interface Placement {
   _id: string;
@@ -24,6 +31,7 @@ interface Placement {
   price: number;
   status: string;
   codeName: string;
+  color?: string;
   createdAt: string;
 }
 
@@ -32,18 +40,27 @@ interface PlacementSetupClientProps {
   placementId: string;
 }
 
-export default function PlacementSetupClient({ initialPlacement, placementId }: PlacementSetupClientProps) {
+export default function PlacementSetupClient({
+  initialPlacement,
+  placementId,
+}: PlacementSetupClientProps) {
   const router = useRouter();
   const { user, authStatus } = useUser();
-  const [placement, setPlacement] = useState<Placement>(initialPlacement);
+  const [placement, setPlacement] = useState<Placement>({
+    ...initialPlacement,
+    color: initialPlacement.color || "#001b46", // Default to blue if not set
+  });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (authStatus === 'loading') return;
+    if (authStatus === "loading") return;
 
-    if (authStatus !== 'authenticated') {
-      router.push('/auth/signin?callbackUrl=' + encodeURIComponent(window.location.pathname));
+    if (authStatus !== "authenticated") {
+      router.push(
+        "/auth/signin?callbackUrl=" +
+          encodeURIComponent(window.location.pathname),
+      );
       return;
     }
   }, [authStatus, router]);
@@ -51,10 +68,10 @@ export default function PlacementSetupClient({ initialPlacement, placementId }: 
   const handleUpdatePlacement = async (formData: any) => {
     try {
       setLoading(true);
-      const response = await fetch('/api/placements/update', {
-        method: 'PUT',
+      const response = await fetch("/api/placements/update", {
+        method: "PUT",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           id: placement._id,
@@ -65,32 +82,66 @@ export default function PlacementSetupClient({ initialPlacement, placementId }: 
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.message || 'Failed to update placement');
+        throw new Error(data.message || "Failed to update placement");
       }
 
       // Redirect to placements dashboard after successful update
-      router.push('/dashboard/placements');
+      router.push("/dashboard");
     } catch (err: any) {
-      setError(err.message || 'Failed to update placement');
-      console.error('Error updating placement:', err);
+      setError(err.message || "Failed to update placement");
+      console.error("Error updating placement:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSetLive = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch("/api/placements/update-status", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          id: placement._id,
+          status: "active",
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || "Failed to activate placement");
+      }
+
+      // Update local state
+      setPlacement((prev) => ({ ...prev, status: "active" }));
+
+      toast.success("Placement is now live!");
+      router.push("/dashboard");
+    } catch (err: any) {
+      setError(err.message || "Failed to activate placement");
+      console.error("Error activating placement:", err);
+      toast.error(err.message || "Failed to activate placement");
     } finally {
       setLoading(false);
     }
   };
 
   const handleCancel = () => {
-    router.push('/dashboard/placements');
+    router.push("/dashboard/placements");
   };
 
   // Update placement state when form data changes for preview
   const handlePlacementChange = (updatedData: Partial<Placement>) => {
-    setPlacement(prev => ({
+    setPlacement((prev) => ({
       ...prev,
-      ...updatedData
+      ...updatedData,
     }));
   };
 
-  if (authStatus === 'loading') {
+  if (authStatus === "loading") {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
@@ -101,7 +152,7 @@ export default function PlacementSetupClient({ initialPlacement, placementId }: 
     );
   }
 
-  if (authStatus !== 'authenticated') {
+  if (authStatus !== "authenticated") {
     return null; // Redirect handled by useEffect
   }
 
@@ -127,10 +178,14 @@ export default function PlacementSetupClient({ initialPlacement, placementId }: 
         <Card className="w-full max-w-md">
           <CardHeader>
             <CardTitle>Placement Not Found</CardTitle>
-            <CardDescription>The placement you're looking for doesn't exist.</CardDescription>
+            <CardDescription>
+              The placement you're looking for doesn't exist.
+            </CardDescription>
           </CardHeader>
           <CardContent>
-            <Button onClick={() => router.push('/dashboard/placements')}>Back to Placements</Button>
+            <Button onClick={() => router.push("/dashboard/placements")}>
+              Back to Placements
+            </Button>
           </CardContent>
         </Card>
       </div>
@@ -151,31 +206,38 @@ export default function PlacementSetupClient({ initialPlacement, placementId }: 
           <Card>
             <CardHeader>
               <CardTitle>Placement Details</CardTitle>
-              <CardDescription>Fill in the details for your placement</CardDescription>
+              <CardDescription>
+                Fill in the details for your placement
+              </CardDescription>
             </CardHeader>
             <CardContent>
               <PlacementForm
                 placement={placement}
                 onSubmit={handleUpdatePlacement}
                 onCancel={handleCancel}
+                onSetLive={handleSetLive}
                 onChange={handlePlacementChange} // Pass the change handler to the form
               />
             </CardContent>
           </Card>
         </div>
-        
+
         <div>
           <Card>
             <CardHeader>
               <CardTitle>Preview</CardTitle>
-              <CardDescription>How your placement will appear on the site</CardDescription>
+              <CardDescription>
+                How your placement will appear on the site
+              </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-6">
                 {/* Featured Placement Preview */}
-                {placement.placementType === 'featured' && (
+                {placement.placementType === "featured" && (
                   <div>
-                    <h4 className="text-sm font-medium mb-2">Featured Placement</h4>
+                    <h4 className="text-sm font-medium mb-2">
+                      Featured Placement
+                    </h4>
                     <div className="bg-muted rounded-lg p-4 min-h-[300px] flex items-center justify-center">
                       <div className="w-full max-w-md">
                         <FeaturedPlacementCard placements={[placement]} />
@@ -185,9 +247,12 @@ export default function PlacementSetupClient({ initialPlacement, placementId }: 
                 )}
 
                 {/* Sidebar Placement Preview */}
-                {(placement.placementType === 'sidebar' || !placement.placementType) && (
+                {(placement.placementType === "sidebar" ||
+                  !placement.placementType) && (
                   <div>
-                    <h4 className="text-sm font-medium mb-2">Sidebar Placement</h4>
+                    <h4 className="text-sm font-medium mb-2">
+                      Sidebar Placement
+                    </h4>
                     <div className="bg-muted rounded-lg p-4 min-h-[200px] flex items-center justify-center">
                       <div className="w-full max-w-xs">
                         <PlacementCard placement={placement} />
@@ -197,7 +262,8 @@ export default function PlacementSetupClient({ initialPlacement, placementId }: 
                 )}
               </div>
               <p className="text-sm text-muted-foreground mt-4 text-center">
-                This is how your {placement.placementType || 'placement'} will appear on the site
+                This is how your {placement.placementType || "placement"} will
+                appear on the site
               </p>
             </CardContent>
           </Card>

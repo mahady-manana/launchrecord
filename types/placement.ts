@@ -22,6 +22,7 @@ export interface Placement {
   paymentIntentId?: string;
   paymentStatus: 'pending' | 'paid' | 'failed' | 'refunded';
   codeName: string;
+  color?: string; // Color for the placement
   createdAt: string;
   updatedAt: string;
 }
@@ -38,6 +39,7 @@ export interface CreatePlacementPayload {
   endDate: string;
   price: number;
   codeName: string;
+  color?: string;
 }
 
 export interface UpdatePlacementPayload {
@@ -55,6 +57,7 @@ export interface UpdatePlacementPayload {
   status?: 'active' | 'inactive' | 'expired';
   paymentIntentId?: string;
   paymentStatus?: 'pending' | 'paid' | 'failed' | 'refunded';
+  color?: string;
 }
 
 export interface PlacementSlot {

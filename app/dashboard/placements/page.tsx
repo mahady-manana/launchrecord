@@ -1,12 +1,19 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { useUser } from '@/hooks/use-user';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Loader2 } from 'lucide-react';
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { useUser } from "@/hooks/use-user";
+import { Loader2 } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 interface Placement {
   _id: string;
@@ -31,30 +38,33 @@ export default function PlacementsPage() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (authStatus === 'loading') return;
-    
-    if (authStatus !== 'authenticated') {
-      router.push('/auth/signin?callbackUrl=' + encodeURIComponent(window.location.pathname));
+    if (authStatus === "loading") return;
+
+    if (authStatus !== "authenticated") {
+      router.push(
+        "/auth/signin?callbackUrl=" +
+          encodeURIComponent(window.location.pathname),
+      );
       return;
     }
-    
+
     fetchPlacements();
   }, [authStatus, router]);
 
   const fetchPlacements = async () => {
     try {
       setLoading(true);
-      const response = await fetch('/api/placements/user');
+      const response = await fetch("/api/placements/user");
       const data = await response.json();
-      
+
       if (!response.ok) {
-        throw new Error(data.message || 'Failed to fetch placements');
+        throw new Error(data.message || "Failed to fetch placements");
       }
-      
+
       setPlacements(data.placements);
     } catch (err: any) {
-      setError(err.message || 'Failed to load placements');
-      console.error('Error fetching placements:', err);
+      setError(err.message || "Failed to load placements");
+      console.error("Error fetching placements:", err);
     } finally {
       setLoading(false);
     }
@@ -64,7 +74,7 @@ export default function PlacementsPage() {
     router.push(`/dashboard/placement/${id}`);
   };
 
-  if (authStatus === 'loading' || loading) {
+  if (authStatus === "loading" || loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
@@ -75,7 +85,7 @@ export default function PlacementsPage() {
     );
   }
 
-  if (authStatus !== 'authenticated') {
+  if (authStatus !== "authenticated") {
     return null; // Redirect handled by useEffect
   }
 
@@ -109,11 +119,12 @@ export default function PlacementsPage() {
           <CardHeader>
             <CardTitle>No placements yet</CardTitle>
             <CardDescription>
-              You haven't purchased any placements yet. Start promoting your product today!
+              You haven't purchased any placements yet. Start promoting your
+              product today!
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <Button onClick={() => router.push('/')}>
+            <Button onClick={() => router.push("/")}>
               Browse Placement Options
             </Button>
           </CardContent>
@@ -125,11 +136,13 @@ export default function PlacementsPage() {
               <CardHeader>
                 <div className="flex justify-between items-start">
                   <CardTitle className="text-lg">{placement.title}</CardTitle>
-                  <Badge 
+                  <Badge
                     variant={
-                      placement.status === 'active' ? 'default' :
-                      placement.status === 'inactive' ? 'secondary' :
-                      'destructive'
+                      placement.status === "active"
+                        ? "default"
+                        : placement.status === "inactive"
+                          ? "secondary"
+                          : "destructive"
                     }
                   >
                     {placement.status}
@@ -141,7 +154,9 @@ export default function PlacementsPage() {
                 <div className="space-y-3">
                   <div className="flex justify-between text-sm">
                     <span>Type:</span>
-                    <span className="font-medium">{placement.placementType} {placement.position}</span>
+                    <span className="font-medium">
+                      {placement.placementType} {placement.position}
+                    </span>
                   </div>
                   <div className="flex justify-between text-sm">
                     <span>Code:</span>
@@ -150,7 +165,8 @@ export default function PlacementsPage() {
                   <div className="flex justify-between text-sm">
                     <span>Period:</span>
                     <span className="font-medium">
-                      {new Date(placement.startDate).toLocaleDateString()} - {new Date(placement.endDate).toLocaleDateString()}
+                      {new Date(placement.startDate).toLocaleDateString()} -{" "}
+                      {new Date(placement.endDate).toLocaleDateString()}
                     </span>
                   </div>
                   <div className="flex justify-between text-sm">
@@ -160,12 +176,12 @@ export default function PlacementsPage() {
                 </div>
               </CardContent>
               <CardFooter>
-                <Button 
-                  variant="outline" 
+                <Button
+                  variant="outline"
                   className="w-full"
                   onClick={() => handleEditPlacement(placement._id)}
                 >
-                  {placement.status === 'inactive' ? 'Set Up' : 'Edit'}
+                  {placement.status === "inactive" ? "Set Up" : "Edit"}
                 </Button>
               </CardFooter>
             </Card>

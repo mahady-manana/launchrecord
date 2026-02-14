@@ -53,7 +53,10 @@ export function FeaturedPlacementCard({
               href={item.website}
               target="_blank"
               rel="noopener noreferrer"
-              className={`block absolute inset-0 transition-opacity duration-500 ${isCurrent ? "opacity-100 z-10" : "opacity-0 z-0"}`}
+              className={`block  p-1 overflow-hidden absolute inset-0 transition-opacity duration-500 ${isCurrent ? "opacity-100 z-10" : "opacity-0 z-0"}`}
+              style={{
+                background: item.color,
+              }}
             >
               <div className="relative h-full min-h-[300px]">
                 <img
@@ -63,9 +66,9 @@ export function FeaturedPlacementCard({
                     "/placeholder-hero-bg.jpg"
                   }
                   alt={item.title}
-                  className="absolute inset-0 w-full h-full object-cover"
+                  className="absolute inset-0 w-full h-full rounded-xl object-cover"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent"></div>
+                <div className="absolute inset-0"></div>
                 <div className="relative z-10 p-0 text-white flex flex-col justify-end h-full">
                   <div className="px-6">
                     <div className="h-12 w-12 rounded-lg overflow-hidden border-2 border-white mb-3">
@@ -82,10 +85,13 @@ export function FeaturedPlacementCard({
                       )}
                     </div>
                   </div>
-                  <div className="bg-blue-800 p-6">
+                  <div
+                    className="px-6 py-4"
+                    style={{ backgroundColor: item.color || "#1e40af" }} // Default to blue-800 if no color set
+                  >
                     <h3 className="text-xl font-bold">{item.title}</h3>
-                    <p className="text-white/90 mt-1">{item.tagline}</p>
-                    <p className="text-sm text-white/70 mt-2 truncate">
+                    <p className="text-white/90">{item.tagline}</p>
+                    <p className="text-sm text-white/70 underline truncate">
                       {item.website}
                     </p>
                   </div>

@@ -56,7 +56,11 @@ export function PlacementCard({ launch, placement }: PlacementCardProps) {
               
               {/* Badge */}
               <div className="mt-2">
-                <Badge variant="default" className="bg-primary/90 text-xs text-white">
+                <Badge 
+                  variant="default" 
+                  className="text-xs text-white"
+                  style={{ backgroundColor: placement.color || '#2563eb' }} // Default to primary blue
+                >
                   Sponsored
                 </Badge>
               </div>

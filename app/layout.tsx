@@ -1,6 +1,7 @@
+import { PlacementDataLoader } from "@/components/launchrecord/placement-data-loader";
+import { SessionProvider } from "@/components/providers/session-provider";
 import type { Metadata } from "next";
 import "./globals.css";
-import { SessionProvider } from "@/components/providers/session-provider";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://www.launchrecord.com"),
@@ -42,6 +43,7 @@ export default function RootLayout({
     <html lang="en">
       <body className="font-sans antialiased">
         <SessionProvider>{children}</SessionProvider>
+        <PlacementDataLoader />
       </body>
     </html>
   );

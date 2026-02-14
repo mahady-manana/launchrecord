@@ -1,8 +1,8 @@
-import { 
-  CreatePlacementPayload, 
-  Placement, 
+import {
+  CreatePlacementPayload,
+  Placement,
+  PlacementSlot,
   UpdatePlacementPayload,
-  PlacementSlot 
 } from "@/types/placement";
 
 interface PlacementActions {
@@ -44,18 +44,15 @@ interface PlacementActions {
 export function usePlacementActions(): PlacementActions {
   const fetchPlacements = async (params: {
     query?: string;
-    type?: string | string[];
+    status?: string;
     position?: string | string[];
     page?: number;
     limit?: number;
   }) => {
     try {
       // Handle type and position serialization - if they're arrays, join with commas
-      let typeParam = params.type;
-      if (Array.isArray(params.type)) {
-        typeParam = params.type.join(",");
-      }
-      
+      let status = params.status;
+
       let positionParam = params.position;
       if (Array.isArray(params.position)) {
         positionParam = params.position.join(",");
@@ -63,18 +60,15 @@ export function usePlacementActions(): PlacementActions {
 
       const urlParams = new URLSearchParams({
         ...(params.query && { q: params.query }),
-        ...(typeParam && { type: String(typeParam) }),
+        ...(status && { status: String(status) }),
         ...(positionParam && { position: String(positionParam) }),
         page: String(params.page || 1),
         limit: String(params.limit || 20),
       });
 
-      const response = await fetch(
-        `/api/placements/get?${urlParams.toString()}`,
-        {
-          cache: "no-store",
-        },
-      );
+      const response = await fetch(`/api/placements?${urlParams.toString()}`, {
+        cache: "no-store",
+      });
       const data = await response.json();
 
       if (!response.ok || !data.success) {

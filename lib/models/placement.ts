@@ -117,6 +117,11 @@ const PlacementSchema = new Schema<IPlacement>(
       required: [true, "Duration is required"],
       min: [1, "Duration must be at least 1 day"],
     },
+    color: {
+      type: String,
+      default: "#3B82F6", // Default to blue-500
+      match: [/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, "Please enter a valid hex color code"],
+    },
   },
   { timestamps: true },
 );

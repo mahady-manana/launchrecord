@@ -179,7 +179,7 @@ export const useLaunchStore = create<LaunchStore>((set, get) => ({
   // Refresh placements from API
   refreshPlacements: async () => {
     set({ placementsLoading: true, error: null });
-    
+
     try {
       // Check if we should use mock data
       const useMockData =
@@ -222,7 +222,7 @@ export const useLaunchStore = create<LaunchStore>((set, get) => ({
         //   headers: { 'Content-Type': 'application/json' },
         // });
         // const data = await response.json();
-        
+
         // For now, we'll use mock data as fallback
         const mockLeftPlacements = mockPlacements.filter(
           (p) => p.position === "left",
