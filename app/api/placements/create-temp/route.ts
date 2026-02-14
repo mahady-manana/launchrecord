@@ -6,6 +6,7 @@ import { getClientIdentifier, isSameOrigin } from "@/lib/security";
 import { rateLimit } from "@/lib/rate-limit";
 import Placement from "@/lib/models/placement";
 import { PLACEMENT_TYPES, PLACEMENT_POSITIONS } from "@/types/placement";
+import { serializeMongooseDocument } from "@/lib/utils";
 
 const createPlacementSchema = z.object({
   title: z.string().min(2).max(100),
@@ -85,7 +86,10 @@ export async function POST(request: Request) {
       paymentStatus: "pending",
     });
 
-    return NextResponse.json({ success: true, placement }, { status: 201 });
+    // Convert to plain object to remove any potential circular references
+    const plainPlacement = serializeMongooseDocument(placement);
+
+    return NextResponse.json({ success: true, placement: plainPlacement }, { status: 201 });
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(

@@ -47,7 +47,6 @@ export function HomePage({ initialQuery }: HomePageProps) {
       <Navbar
         query={launchStore.filters.query}
         onQueryChange={launchStore.setQuery}
-        onOpenLaunchModal={handleOpenLaunchModal}
         user={user}
         authStatus={authStatus}
       />

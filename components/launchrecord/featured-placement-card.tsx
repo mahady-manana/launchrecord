@@ -1,13 +1,12 @@
-import { mockFeaturedLaunch } from "@/mocks/launch.mocks";
 import { Placement } from "@/types/placement";
 import { useEffect, useState } from "react";
 
 interface FeaturedPlacementCardProps {
-  placements?: Placement[];
+  placements: Placement[];
 }
 
-export function FeaturedPlacementCard({ 
-  placements = [] 
+export function FeaturedPlacementCard({
+  placements = []
 }: FeaturedPlacementCardProps) {
   // Use only placements for the slider
   const allItems = [...placements];
@@ -42,30 +41,29 @@ export function FeaturedPlacementCard({
       {/* All slides container */}
       <div className="relative h-full min-h-[300px] overflow-hidden">
         {allItems.map((item, index) => {
-          // All items are placements
           const isCurrent = index === currentIndex;
-          
+
           return (
-            <a 
+            <a
               key={item._id}
-              href={item.website} 
-              target="_blank" 
+              href={item.website}
+              target="_blank"
               rel="noopener noreferrer"
               className={`block absolute inset-0 transition-opacity duration-500 ${isCurrent ? 'opacity-100 z-10' : 'opacity-0 z-0'}`}
             >
               <div className="relative h-full min-h-[300px]">
-                <img 
-                  src={item.backgroundImage || item.logoUrl || '/placeholder-hero-bg.jpg'} 
-                  alt={item.title} 
+                <img
+                  src={item.backgroundImage || item.logoUrl || '/placeholder-hero-bg.jpg'}
+                  alt={item.title}
                   className="absolute inset-0 w-full h-full object-cover"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
                 <div className="relative z-10 p-6 text-white flex flex-col justify-end h-full">
                   <div className="h-12 w-12 rounded-lg overflow-hidden border-2 border-white mb-3">
                     {item.logoUrl ? (
-                      <img 
-                        src={item.logoUrl} 
-                        alt={`${item.title} logo`} 
+                      <img
+                        src={item.logoUrl}
+                        alt={`${item.title} logo`}
                         className="w-full h-full object-cover"
                       />
                     ) : (

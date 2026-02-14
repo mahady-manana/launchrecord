@@ -5,6 +5,7 @@ import { getUserFromSession } from "@/lib/get-user-from-session";
 import { getClientIdentifier, isSameOrigin } from "@/lib/security";
 import { rateLimit } from "@/lib/rate-limit";
 import Placement from "@/lib/models/placement";
+import { serializeMongooseDocument } from "@/lib/utils";
 
 const updatePlacementSchema = z.object({
   id: z.string(),
@@ -96,9 +97,12 @@ export async function PUT(request: Request) {
       validatedBody.id,
       updateData,
       { new: true }
-    );
+    ).lean();
 
-    return NextResponse.json({ success: true, placement: updatedPlacement });
+    // Convert to plain object to remove any potential circular references
+    const plainUpdatedPlacement = serializeMongooseDocument(updatedPlacement);
+
+    return NextResponse.json({ success: true, placement: plainUpdatedPlacement });
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(

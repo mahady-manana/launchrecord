@@ -1,13 +1,20 @@
 "use client";
 
-import { Search, User, Settings, CreditCard, LogOut, LayoutDashboard } from "lucide-react";
-import { signIn, signOut } from "next-auth/react";
-import { AppUser } from "@/types";
+import { Logo } from "@/components/launchrecord/logo";
+import { PlacementAdvertiseButton } from "@/components/launchrecord/placement-advertise-button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Logo } from "@/components/launchrecord/logo";
-import { PlacementAdvertiseButton } from "@/components/launchrecord/placement-advertise-button";
+import { AppUser } from "@/types";
+import {
+  CreditCard,
+  LayoutDashboard,
+  LogOut,
+  Search,
+  User,
+} from "lucide-react";
+import { signIn, signOut } from "next-auth/react";
+
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -16,23 +23,35 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useLaunches } from "@/hooks/use-launches";
+import { useUser } from "@/hooks/use-user";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { LaunchModal } from "./launch-modal";
 
 interface NavbarProps {
   query: string;
   onQueryChange: (query: string) => void;
-  onOpenLaunchModal: () => void;
+
   user: AppUser | null;
   authStatus: "loading" | "authenticated" | "unauthenticated";
 }
 
-export function Navbar({
-  query,
-  onQueryChange,
-  onOpenLaunchModal,
-  user,
-  authStatus,
-}: NavbarProps) {
+export function Navbar({ query, onQueryChange }: NavbarProps) {
+  const router = useRouter();
+  const { user, authStatus } = useUser();
+  const launchStore = useLaunches();
+  const [isLaunchModalOpen, setLaunchModalOpen] = useState(false);
+
+  const handleOpenLaunchModal = () => {
+    if (authStatus !== "authenticated") {
+      router.push("/auth/signin?callbackUrl=/");
+      return;
+    }
+
+    setLaunchModalOpen(true);
+  };
   return (
     <header className="sticky top-0 z-20 border-b bg-background/95 backdrop-blur">
       <div className="mx-auto flex h-16 w-full max-w-7xl items-center gap-3 px-4 sm:px-6">
@@ -49,15 +68,21 @@ export function Navbar({
         </div>
 
         <PlacementAdvertiseButton />
-        <Button onClick={onOpenLaunchModal}>Submit new launch</Button>
+        <Button onClick={handleOpenLaunchModal}>Submit new launch</Button>
 
         {authStatus === "authenticated" && user ? (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="sm" className="flex items-center gap-2 p-0">
+              <Button
+                variant="ghost"
+                size="sm"
+                className="flex items-center gap-2 p-0"
+              >
                 <Avatar className="h-8 w-8">
                   <AvatarImage src={user.image || undefined} alt={user.name} />
-                  <AvatarFallback>{user.name.slice(0, 1).toUpperCase()}</AvatarFallback>
+                  <AvatarFallback>
+                    {user.name.slice(0, 1).toUpperCase()}
+                  </AvatarFallback>
                 </Avatar>
               </Button>
             </DropdownMenuTrigger>
@@ -100,6 +125,12 @@ export function Navbar({
           </Button>
         )}
       </div>
+      <LaunchModal
+        open={isLaunchModalOpen}
+        onOpenChange={setLaunchModalOpen}
+        onSubmit={launchStore.createLaunch}
+        onCompleteDetails={launchStore.updateLaunch}
+      />
     </header>
   );
 }

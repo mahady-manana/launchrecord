@@ -1,14 +1,6 @@
 "use client";
 
-import { FormEvent, useState, useEffect } from "react";
-import {
-  BUSINESS_MODELS,
-  CreateLaunchPayload,
-  LAUNCH_CATEGORIES,
-  Launch,
-  PRICING_MODELS,
-  UpdateLaunchPayload,
-} from "@/types";
+import LogoUpload from "@/components/LogoUpload";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -27,8 +19,15 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { Checkbox } from "@/components/ui/checkbox";
-import LogoUpload from "@/components/LogoUpload";
+import {
+  BUSINESS_MODELS,
+  CreateLaunchPayload,
+  LAUNCH_CATEGORIES,
+  Launch,
+  PRICING_MODELS,
+  UpdateLaunchPayload,
+} from "@/types";
+import { FormEvent, useEffect, useRef, useState } from "react";
 
 interface LaunchModalProps {
   open: boolean;
@@ -41,7 +40,7 @@ interface LaunchModalProps {
   ) => Promise<{ success: boolean; message?: string }>;
 }
 
-interface LaunchModalForm extends Omit<CreateLaunchPayload, 'category'> {
+interface LaunchModalForm extends Omit<CreateLaunchPayload, "category"> {
   category: (typeof LAUNCH_CATEGORIES)[number][];
 }
 
@@ -54,23 +53,22 @@ const initialForm: LaunchModalForm = {
   category: [LAUNCH_CATEGORIES[0]],
   businessModel: BUSINESS_MODELS[0],
   pricingModel: PRICING_MODELS[1],
-  authorName: "",
 };
 
 interface OptionalDetailsForm {
   valueProposition: string;
   problem: string;
   audience: string;
-  authorX: string;
-  authorLinkedIn: string;
+  x: string;
+  linkedin: string;
 }
 
 const initialOptionalDetails: OptionalDetailsForm = {
   valueProposition: "",
   problem: "",
   audience: "",
-  authorX: "",
-  authorLinkedIn: "",
+  x: "",
+  linkedin: "",
 };
 
 export function LaunchModal({
@@ -83,25 +81,31 @@ export function LaunchModal({
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isCategoryDropdownOpen, setIsCategoryDropdownOpen] = useState(false);
-  
+  const categoryDropdownRef = useRef<HTMLDivElement>(null);
+
   // Close dropdown when clicking outside
   useEffect(() => {
-    const handleClickOutside = () => {
-      if (isCategoryDropdownOpen) {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        isCategoryDropdownOpen && 
+        categoryDropdownRef.current && 
+        !categoryDropdownRef.current.contains(event.target as Node)
+      ) {
         setIsCategoryDropdownOpen(false);
       }
     };
-    
-    document.addEventListener('mousedown', handleClickOutside);
+
+    document.addEventListener("mousedown", handleClickOutside);
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [isCategoryDropdownOpen]);
 
   const [createdLaunch, setCreatedLaunch] = useState<Launch | null>(null);
   const [showOptionalModal, setShowOptionalModal] = useState(false);
-  const [optionalDetails, setOptionalDetails] =
-    useState<OptionalDetailsForm>(initialOptionalDetails);
+  const [optionalDetails, setOptionalDetails] = useState<OptionalDetailsForm>(
+    initialOptionalDetails,
+  );
   const [optionalError, setOptionalError] = useState<string | null>(null);
   const [isSavingOptional, setIsSavingOptional] = useState(false);
 
@@ -148,7 +152,10 @@ export function LaunchModal({
       return "Problem must be at least 10 characters.";
     }
 
-    if (optionalDetails.audience && optionalDetails.audience.trim().length < 4) {
+    if (
+      optionalDetails.audience &&
+      optionalDetails.audience.trim().length < 4
+    ) {
       return "Audience must be at least 4 characters.";
     }
 
@@ -175,8 +182,6 @@ export function LaunchModal({
       valueProposition: optionalDetails.valueProposition.trim() || undefined,
       problem: optionalDetails.problem.trim() || undefined,
       audience: optionalDetails.audience.trim() || undefined,
-      authorX: optionalDetails.authorX.trim() || undefined,
-      authorLinkedIn: optionalDetails.authorLinkedIn.trim() || undefined,
     });
 
     if (!result.success) {
@@ -216,7 +221,10 @@ export function LaunchModal({
                 required
                 value={form.name}
                 onChange={(event) =>
-                  setForm((current) => ({ ...current, name: event.target.value }))
+                  setForm((current) => ({
+                    ...current,
+                    name: event.target.value,
+                  }))
                 }
               />
             </div>
@@ -241,7 +249,10 @@ export function LaunchModal({
                 placeholder="One-line hook founders remember"
                 value={form.tagline}
                 onChange={(event) =>
-                  setForm((current) => ({ ...current, tagline: event.target.value }))
+                  setForm((current) => ({
+                    ...current,
+                    tagline: event.target.value,
+                  }))
                 }
               />
             </div>
@@ -285,20 +296,41 @@ export function LaunchModal({
                   <button
                     type="button"
                     className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
-                    onClick={() => setIsCategoryDropdownOpen(!isCategoryDropdownOpen)}
+                    onClick={() =>
+                      setIsCategoryDropdownOpen(!isCategoryDropdownOpen)
+                    }
                   >
                     <span className="truncate">
                       {form.category.length === 0
                         ? "Select categories..."
                         : `${form.category.length} category${form.category.length > 1 ? "s" : ""} selected`}
                     </span>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4 opacity-50"><path d="m6 9 6 6 6-6"/></svg>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      className="h-4 w-4 opacity-50"
+                    >
+                      <path d="m6 9 6 6 6-6" />
+                    </svg>
                   </button>
-                  
+
                   {isCategoryDropdownOpen && (
-                    <div className="absolute z-10 mt-1 w-full rounded-md border bg-popover p-2 shadow-md">
+                    <div 
+                      ref={categoryDropdownRef}
+                      className="absolute z-10 mt-1 w-full rounded-md border bg-popover p-2 shadow-md"
+                    >
                       {LAUNCH_CATEGORIES.map((category) => (
-                        <div key={category} className="flex items-center space-x-2 py-1.5">
+                        <div
+                          key={category}
+                          className="flex items-center space-x-2 py-1.5"
+                        >
                           <input
                             type="checkbox"
                             id={`category-${category}`}
@@ -306,7 +338,10 @@ export function LaunchModal({
                             onChange={(e) => {
                               if (e.target.checked) {
                                 // Add category if not already selected and less than 3
-                                if (form.category.length < 3 && !form.category.includes(category)) {
+                                if (
+                                  form.category.length < 3 &&
+                                  !form.category.includes(category)
+                                ) {
                                   setForm((current) => ({
                                     ...current,
                                     category: [...current.category, category],
@@ -316,11 +351,16 @@ export function LaunchModal({
                                 // Remove category
                                 setForm((current) => ({
                                   ...current,
-                                  category: current.category.filter(c => c !== category),
+                                  category: current.category.filter(
+                                    (c) => c !== category,
+                                  ),
                                 }));
                               }
                             }}
-                            disabled={!form.category.includes(category) && form.category.length >= 3}
+                            disabled={
+                              !form.category.includes(category) &&
+                              form.category.length >= 3
+                            }
                             className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
                           />
                           <label
@@ -373,7 +413,8 @@ export function LaunchModal({
                   onValueChange={(value) =>
                     setForm((current) => ({
                       ...current,
-                      pricingModel: value as CreateLaunchPayload["pricingModel"],
+                      pricingModel:
+                        value as CreateLaunchPayload["pricingModel"],
                     }))
                   }
                 >
@@ -391,21 +432,6 @@ export function LaunchModal({
               </div>
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="author-name">Author name</Label>
-              <Input
-                id="author-name"
-                required
-                value={form.authorName}
-                onChange={(event) =>
-                  setForm((current) => ({
-                    ...current,
-                    authorName: event.target.value,
-                  }))
-                }
-              />
-            </div>
-
             {error ? <p className="text-sm text-destructive">{error}</p> : null}
 
             <Button type="submit" className="w-full" disabled={isSubmitting}>
@@ -420,13 +446,16 @@ export function LaunchModal({
           <DialogHeader>
             <DialogTitle>Add more details (optional)</DialogTitle>
             <DialogDescription>
-              Your launch is live. You can enrich it now or skip and do it later.
+              Your launch is live. You can enrich it now or skip and do it
+              later.
             </DialogDescription>
           </DialogHeader>
 
           <div className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="optional-value-proposition">Value proposition</Label>
+              <Label htmlFor="optional-value-proposition">
+                Value proposition
+              </Label>
               <Input
                 id="optional-value-proposition"
                 maxLength={220}
@@ -473,29 +502,29 @@ export function LaunchModal({
 
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-2">
-                <Label htmlFor="optional-author-x">Author X handle</Label>
+                <Label htmlFor="optional-author-x">X handle</Label>
                 <Input
                   id="optional-author-x"
-                  value={optionalDetails.authorX}
+                  value={optionalDetails.x}
                   onChange={(event) =>
                     setOptionalDetails((current) => ({
                       ...current,
-                      authorX: event.target.value,
+                      x: event.target.value,
                     }))
                   }
                   placeholder="@username"
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="optional-author-linkedin">Author LinkedIn</Label>
+                <Label htmlFor="optional-author-linkedin">LinkedIn</Label>
                 <Input
                   id="optional-author-linkedin"
                   type="url"
-                  value={optionalDetails.authorLinkedIn}
+                  value={optionalDetails.linkedin}
                   onChange={(event) =>
                     setOptionalDetails((current) => ({
                       ...current,
-                      authorLinkedIn: event.target.value,
+                      linkedin: event.target.value,
                     }))
                   }
                   placeholder="https://linkedin.com/in/"

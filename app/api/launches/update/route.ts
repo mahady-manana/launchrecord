@@ -1,22 +1,14 @@
+import { getUserFromSession } from "@/lib/get-user-from-session";
+import Launch from "@/lib/models/launch";
+import { connectToDatabase } from "@/lib/mongodb";
+import { rateLimit } from "@/lib/rate-limit";
+import { sanitizeSlugInput, sanitizeText, slugify } from "@/lib/sanitize";
+import { getClientIdentifier, isSameOrigin } from "@/lib/security";
+import { BUSINESS_MODELS, LAUNCH_CATEGORIES, PRICING_MODELS } from "@/types";
 import { Types } from "mongoose";
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import {
-  BUSINESS_MODELS,
-  LAUNCH_CATEGORIES,
-  PRICING_MODELS,
-} from "@/types";
-import { connectToDatabase } from "@/lib/mongodb";
-import { getUserFromSession } from "@/lib/get-user-from-session";
-import Launch from "@/lib/models/launch";
-import { getClientIdentifier, isSameOrigin } from "@/lib/security";
-import { rateLimit } from "@/lib/rate-limit";
-import {
-  sanitizeOptionalText,
-  sanitizeSlugInput,
-  sanitizeText,
-  slugify,
-} from "@/lib/sanitize";
+import { serializeMongooseDocument } from "@/lib/utils";
 
 const updateLaunchSchema = z.object({
   id: z.string().min(1),
@@ -26,15 +18,15 @@ const updateLaunchSchema = z.object({
   tagline: z.string().min(4).max(140).optional(),
   description: z.string().min(10).max(1200).optional(),
   website: z.string().url().optional(),
-  category: z.enum(LAUNCH_CATEGORIES).optional().or(z.array(z.enum(LAUNCH_CATEGORIES)).max(3)),
+  category: z
+    .enum(LAUNCH_CATEGORIES)
+    .optional()
+    .or(z.array(z.enum(LAUNCH_CATEGORIES)).max(3)),
   valueProposition: z.string().max(220).optional(),
   problem: z.string().max(600).optional(),
   audience: z.string().max(220).optional(),
   businessModel: z.enum(BUSINESS_MODELS).optional(),
   pricingModel: z.enum(PRICING_MODELS).optional(),
-  authorName: z.string().min(2).max(100).optional(),
-  authorX: z.string().max(100).optional(),
-  authorLinkedIn: z.string().url().max(200).optional().or(z.literal("")),
 });
 
 function randomSlugSuffix() {
@@ -178,7 +170,9 @@ export async function PUT(request: Request) {
     }
 
     if (validatedBody.valueProposition !== undefined) {
-      updateData.valueProposition = sanitizeText(validatedBody.valueProposition);
+      updateData.valueProposition = sanitizeText(
+        validatedBody.valueProposition,
+      );
     }
 
     if (validatedBody.problem !== undefined) {
@@ -197,19 +191,6 @@ export async function PUT(request: Request) {
       updateData.pricingModel = validatedBody.pricingModel;
     }
 
-    if (validatedBody.authorName) {
-      updateData.authorName = sanitizeText(validatedBody.authorName);
-    }
-
-    if (validatedBody.authorX !== undefined) {
-      updateData.authorX = sanitizeOptionalText(validatedBody.authorX) || "";
-    }
-
-    if (validatedBody.authorLinkedIn !== undefined) {
-      updateData.authorLinkedIn =
-        sanitizeOptionalText(validatedBody.authorLinkedIn) || "";
-    }
-
     const updatedLaunch = await Launch.findByIdAndUpdate(
       validatedBody.id,
       updateData,
@@ -217,13 +198,19 @@ export async function PUT(request: Request) {
         new: true,
         runValidators: true,
       },
-    );
+    ).lean();
 
-    return NextResponse.json({ success: true, launch: updatedLaunch });
+    // Convert to plain object to remove any potential circular references
+    const plainUpdatedLaunch = serializeMongooseDocument(updatedLaunch);
+
+    return NextResponse.json({ success: true, launch: plainUpdatedLaunch });
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { success: false, message: error.errors[0]?.message || "Invalid payload." },
+        {
+          success: false,
+          message: error.errors[0]?.message || "Invalid payload.",
+        },
         { status: 400 },
       );
     }

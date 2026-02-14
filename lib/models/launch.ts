@@ -1,9 +1,5 @@
+import { BUSINESS_MODELS, LAUNCH_CATEGORIES, PRICING_MODELS } from "@/types";
 import mongoose, { Document, Model, Schema } from "mongoose";
-import {
-  BUSINESS_MODELS,
-  LAUNCH_CATEGORIES,
-  PRICING_MODELS,
-} from "@/types";
 
 export interface ILaunch extends Document {
   _id: mongoose.Types.ObjectId;
@@ -13,17 +9,16 @@ export interface ILaunch extends Document {
   tagline: string;
   description: string;
   website: string;
-  category: (typeof LAUNCH_CATEGORIES)[number] | (typeof LAUNCH_CATEGORIES)[number][];
+  category:
+    | (typeof LAUNCH_CATEGORIES)[number]
+    | (typeof LAUNCH_CATEGORIES)[number][];
   valueProposition: string;
   problem: string;
   audience: string;
   businessModel: (typeof BUSINESS_MODELS)[number];
   pricingModel: (typeof PRICING_MODELS)[number];
-  authorName: string;
-  authorX?: string;
-  authorLinkedIn?: string;
-  placement: "none" | "hero" | "left" | "right";
   submittedBy: mongoose.Types.ObjectId;
+  placement: "none" | "hero" | "left" | "right";
   isArchived: boolean;
   createdAt: Date;
   updatedAt: Date;
@@ -76,16 +71,16 @@ const LaunchSchema = new Schema<ILaunch>(
       required: [true, "Category is required"],
       index: true,
       validate: {
-        validator: function(value: any) {
+        validator: function (value: any) {
           // Allow either a single category or an array of up to 3 categories
           if (Array.isArray(value)) {
             if (value.length > 3) return false;
-            return value.every(cat => LAUNCH_CATEGORIES.includes(cat));
+            return value.every((cat) => LAUNCH_CATEGORIES.includes(cat));
           }
           return LAUNCH_CATEGORIES.includes(value);
         },
-        message: 'Invalid category or too many categories (maximum 3)'
-      }
+        message: "Invalid category or too many categories (maximum 3)",
+      },
     },
     valueProposition: {
       type: String,
@@ -116,19 +111,6 @@ const LaunchSchema = new Schema<ILaunch>(
       enum: PRICING_MODELS,
       required: [true, "Pricing model is required"],
       index: true,
-    },
-    authorName: {
-      type: String,
-      required: [true, "Author name is required"],
-      maxlength: [100, "Author name must be less than 100 characters"],
-    },
-    authorX: {
-      type: String,
-      maxlength: [100, "X handle must be less than 100 characters"],
-    },
-    authorLinkedIn: {
-      type: String,
-      maxlength: [200, "LinkedIn URL must be less than 200 characters"],
     },
     placement: {
       type: String,

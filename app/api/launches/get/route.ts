@@ -1,15 +1,16 @@
+import Launch from "@/lib/models/launch";
+import { connectToDatabase } from "@/lib/mongodb";
+import { escapeRegex, sanitizeText } from "@/lib/sanitize";
+import { LAUNCH_CATEGORIES } from "@/types";
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { LAUNCH_CATEGORIES } from "@/types";
-import { connectToDatabase } from "@/lib/mongodb";
-import Launch from "@/lib/models/launch";
-import { escapeRegex, sanitizeText } from "@/lib/sanitize";
+import { serializeMongooseDocument } from "@/lib/utils";
 
 const getLaunchesSchema = z.object({
   category: z.union([
-    z.enum(["all", ...LAUNCH_CATEGORIES]), 
+    z.enum(["all", ...LAUNCH_CATEGORIES]),
     z.array(z.enum(LAUNCH_CATEGORIES)).max(3),
-    z.undefined()
+    z.undefined(),
   ]),
   q: z.string().max(100).optional(),
   page: z.coerce.number().int().min(1).default(1),
@@ -37,7 +38,7 @@ export async function GET(request: Request) {
       // Handle both single category and array of categories
       query.$or = [
         { category: parsedQuery.category },
-        { category: { $in: [parsedQuery.category] } }
+        { category: { $in: [parsedQuery.category] } },
       ];
     }
 
@@ -54,38 +55,21 @@ export async function GET(request: Request) {
       ];
     }
 
-    const skip = (parsedQuery.page - 1) * parsedQuery.limit;
+    const total = await Launch.countDocuments(query);
 
-    const [launches, total, leftPlacements, rightPlacements, heroPlacements] =
-      await Promise.all([
-        Launch.find(query)
-          .sort({ createdAt: -1 })
-          .skip(skip)
-          .limit(parsedQuery.limit)
-          .lean(),
-        Launch.countDocuments(query),
-        Launch.find({ isArchived: false, placement: "left" })
-          .sort({ createdAt: -1 })
-          .limit(10)
-          .lean(),
-        Launch.find({ isArchived: false, placement: "right" })
-          .sort({ createdAt: -1 })
-          .limit(10)
-          .lean(),
-        Launch.find({ isArchived: false, placement: "hero" })
-          .sort({ createdAt: -1 })
-          .limit(2)
-          .lean(),
-      ]);
+    // Aggregation pipeline to populate user info for launches
+    const populatedLaunches = await Launch.find(query)
+      .populate("submittedBy", "name x linkedin")
+      .lean();
 
+    // Convert to plain objects to remove any potential circular references
+    const plainLaunches = serializeMongooseDocument(populatedLaunches);
+    
     const totalPages = Math.max(Math.ceil(total / parsedQuery.limit), 1);
 
     return NextResponse.json({
       success: true,
-      launches,
-      leftPlacements,
-      rightPlacements,
-      heroPlacements,
+      launches: plainLaunches,
       pagination: {
         page: parsedQuery.page,
         limit: parsedQuery.limit,
@@ -98,7 +82,10 @@ export async function GET(request: Request) {
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { success: false, message: error.errors[0]?.message || "Invalid query." },
+        {
+          success: false,
+          message: error.errors[0]?.message || "Invalid query.",
+        },
         { status: 400 },
       );
     }

@@ -28,9 +28,9 @@ type LeanLaunch = {
   category: string | string[];
   businessModel?: string;
   pricingModel?: string;
-  authorName: string;
-  authorX?: string;
-  authorLinkedIn?: string;
+  name: string;
+  x?: string;
+  linkedin?: string;
   valueProposition?: string;
   problem?: string;
   audience?: string;
@@ -193,9 +193,9 @@ export default async function LaunchDetailPage({ params }: LaunchPageProps) {
     audience: launch.audience || "",
     businessModel: launch.businessModel as LaunchType["businessModel"],
     pricingModel: launch.pricingModel as LaunchType["pricingModel"],
-    authorName: launch.authorName,
-    authorX: launch.authorX,
-    authorLinkedIn: launch.authorLinkedIn,
+    name: launch.name,
+    x: launch.x,
+    linkedin: launch.linkedin,
     placement: launch.placement,
     createdAt: new Date(launch.createdAt).toISOString(),
     updatedAt: new Date(launch.updatedAt).toISOString(),
@@ -295,11 +295,11 @@ export default async function LaunchDetailPage({ params }: LaunchPageProps) {
           </section>
 
           <footer className="flex flex-wrap items-center gap-3 border-t pt-4 text-sm text-muted-foreground">
-            <span>By {launch.authorName}</span>
-            {launch.authorX ? <span>X: {launch.authorX}</span> : null}
-            {launch.authorLinkedIn ? (
+            <span>By {launch.name}</span>
+            {launch.x ? <span>X: {launch.x}</span> : null}
+            {launch.linkedin ? (
               <Link
-                href={launch.authorLinkedIn}
+                href={launch.linkedin}
                 target="_blank"
                 rel="noreferrer"
                 className="text-primary hover:underline"

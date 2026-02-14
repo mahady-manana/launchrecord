@@ -10,6 +10,8 @@ export interface IUser extends Document {
   providerId?: string;
   website?: string;
   bio?: string;
+  x?: string;
+  linkedin?: string;
   stripeCustomerId?: string;
   createdAt: Date;
   updatedAt: Date;
@@ -54,6 +56,14 @@ const UserSchema = new Schema<IUser>(
     bio: {
       type: String,
       maxlength: [500, "Bio must be less than 500 characters"],
+    },
+    x: {
+      type: String,
+      maxlength: [100, "X handle must be less than 100 characters"],
+    },
+    linkedin: {
+      type: String,
+      maxlength: [200, "LinkedIn URL must be less than 200 characters"],
     },
     stripeCustomerId: {
       type: String,

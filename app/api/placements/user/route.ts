@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { connectToDatabase } from "@/lib/mongodb";
 import { getUserFromSession } from "@/lib/get-user-from-session";
 import Placement from "@/lib/models/placement";
+import { serializeMongooseDocument } from "@/lib/utils";
 
 export async function GET() {
   try {
@@ -20,7 +21,10 @@ export async function GET() {
       .sort({ createdAt: -1 })
       .lean();
 
-    return NextResponse.json({ success: true, placements: userPlacements });
+    // Convert to plain objects to remove any potential circular references
+    const plainUserPlacements = serializeMongooseDocument(userPlacements);
+
+    return NextResponse.json({ success: true, placements: plainUserPlacements });
   } catch (error) {
     console.error("Error fetching user placements:", error);
     return NextResponse.json(

@@ -44,11 +44,8 @@ export interface Launch {
   audience?: string;
   businessModel: BusinessModel;
   pricingModel: PricingModel;
-  authorName: string;
-  authorX?: string;
-  authorLinkedIn?: string;
-  placement: LaunchPlacement;
   submittedBy: string;
+  placement: LaunchPlacement;
   createdAt: string;
   updatedAt: string;
 }
@@ -78,7 +75,6 @@ export interface CreateLaunchPayload {
   category: LaunchCategory | LaunchCategory[];
   businessModel: BusinessModel;
   pricingModel: PricingModel;
-  authorName: string;
 }
 
 export interface UpdateLaunchPayload {
@@ -95,7 +91,4 @@ export interface UpdateLaunchPayload {
   audience?: string;
   businessModel?: BusinessModel;
   pricingModel?: PricingModel;
-  authorName?: string;
-  authorX?: string;
-  authorLinkedIn?: string;
 }

@@ -84,9 +84,6 @@ export function LaunchCard({ launch }: LaunchCardProps) {
             ) : (
               <Badge variant="outline">{launch.category}</Badge>
             )}
-            <span className="hidden text-xs text-muted-foreground sm:inline">
-              {launch.authorName}
-            </span>
             <ArrowUpRight className="h-4 w-4 text-muted-foreground" />
           </div>
         </div>

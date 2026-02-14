@@ -117,7 +117,7 @@ export function PlacementCard({ launch, placement }: PlacementCardProps) {
               </div>
             </div>
             
-            {/* Categories and badge */}
+            {/* Categories and author badge */}
             <div className="mt-2 flex flex-wrap items-center justify-between">
               <div className="flex flex-wrap gap-1">
                 {Array.isArray(launch.category) ? (
@@ -133,7 +133,7 @@ export function PlacementCard({ launch, placement }: PlacementCardProps) {
                 )}
               </div>
               <Badge variant="default" className="bg-primary/90 text-xs text-white">
-                Featured
+                {launch.name || 'Unknown'}
               </Badge>
             </div>
           </div>

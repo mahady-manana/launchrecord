@@ -1,13 +1,20 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { UploadDropzone } from '@/components/uploadthing';
-import { toast } from 'sonner';
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { useState } from "react";
+
+import { toast } from "sonner";
+import LogoUpload from "../LogoUpload";
 
 interface PlacementFormProps {
   placement: {
@@ -26,27 +33,33 @@ interface PlacementFormProps {
   onCancel: () => void;
 }
 
-export function PlacementForm({ placement, onSubmit, onCancel }: PlacementFormProps) {
+export function PlacementForm({
+  placement,
+  onSubmit,
+  onCancel,
+}: PlacementFormProps) {
   const [formData, setFormData] = useState({
-    title: placement.title || '',
-    tagline: placement.tagline || '',
-    logoUrl: placement.logoUrl || '',
-    backgroundImage: placement.backgroundImage || '',
-    website: placement.website || '',
+    title: placement.title || "",
+    tagline: placement.tagline || "",
+    logoUrl: placement.logoUrl || "",
+    backgroundImage: placement.backgroundImage || "",
+    website: placement.website || "",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleLogoUpload = (url: string) => {
-    setFormData(prev => ({ ...prev, logoUrl: url }));
+    setFormData((prev) => ({ ...prev, logoUrl: url }));
   };
 
   const handleBackgroundUpload = (url: string) => {
-    setFormData(prev => ({ ...prev, backgroundImage: url }));
+    setFormData((prev) => ({ ...prev, backgroundImage: url }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -55,10 +68,10 @@ export function PlacementForm({ placement, onSubmit, onCancel }: PlacementFormPr
 
     try {
       await onSubmit(formData);
-      toast.success('Placement updated successfully!');
+      toast.success("Placement updated successfully!");
     } catch (error) {
-      console.error('Error updating placement:', error);
-      toast.error('Failed to update placement. Please try again.');
+      console.error("Error updating placement:", error);
+      toast.error("Failed to update placement. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
@@ -69,7 +82,8 @@ export function PlacementForm({ placement, onSubmit, onCancel }: PlacementFormPr
       <CardHeader>
         <CardTitle>Create Your Placement</CardTitle>
         <CardDescription>
-          Customize your placement details. This will appear on the site once activated.
+          Customize your placement details. This will appear on the site once
+          activated.
         </CardDescription>
       </CardHeader>
       <form onSubmit={handleSubmit}>
@@ -116,29 +130,22 @@ export function PlacementForm({ placement, onSubmit, onCancel }: PlacementFormPr
             <div className="flex flex-col sm:flex-row gap-4">
               {formData.logoUrl && (
                 <div className="flex-shrink-0">
-                  <img 
-                    src={formData.logoUrl} 
-                    alt="Current logo" 
+                  <img
+                    src={formData.logoUrl}
+                    alt="Current logo"
                     className="h-16 w-16 object-contain rounded-md border"
                   />
                 </div>
               )}
               <div className="flex-1">
-                <UploadDropzone
-                  endpoint="imageUploader"
-                  onClientUploadComplete={(res) => {
-                    if (res && res[0]) {
-                      handleLogoUpload(res[0].url);
-                      toast.success('Logo uploaded successfully!');
-                    }
-                  }}
-                  onUploadError={(error: Error) => {
-                    toast.error(`Upload failed: ${error.message}`);
+                <LogoUpload
+                  onChange={(s) => {
+                    // toast.error(`Upload failed: ${error.message}`);
                   }}
                 />
                 {formData.logoUrl && (
                   <p className="text-xs text-muted-foreground mt-1">
-                    Current: {formData.logoUrl.split('/').pop()}
+                    Current: {formData.logoUrl.split("/").pop()}
                   </p>
                 )}
               </div>
@@ -150,9 +157,9 @@ export function PlacementForm({ placement, onSubmit, onCancel }: PlacementFormPr
             <div className="flex flex-col sm:flex-row gap-4">
               {formData.backgroundImage && (
                 <div className="flex-shrink-0">
-                  <img 
-                    src={formData.backgroundImage} 
-                    alt="Current background" 
+                  <img
+                    src={formData.backgroundImage}
+                    alt="Current background"
                     className="h-16 w-16 object-cover rounded-md border"
                   />
                 </div>
@@ -163,7 +170,7 @@ export function PlacementForm({ placement, onSubmit, onCancel }: PlacementFormPr
                   onClientUploadComplete={(res) => {
                     if (res && res[0]) {
                       handleBackgroundUpload(res[0].url);
-                      toast.success('Background image uploaded successfully!');
+                      toast.success("Background image uploaded successfully!");
                     }
                   }}
                   onUploadError={(error: Error) => {
@@ -172,7 +179,7 @@ export function PlacementForm({ placement, onSubmit, onCancel }: PlacementFormPr
                 />
                 {formData.backgroundImage && (
                   <p className="text-xs text-muted-foreground mt-1">
-                    Current: {formData.backgroundImage.split('/').pop()}
+                    Current: {formData.backgroundImage.split("/").pop()}
                   </p>
                 )}
               </div>
@@ -184,7 +191,7 @@ export function PlacementForm({ placement, onSubmit, onCancel }: PlacementFormPr
             Cancel
           </Button>
           <Button type="submit" disabled={isSubmitting}>
-            {isSubmitting ? 'Updating...' : 'Update Placement'}
+            {isSubmitting ? "Updating..." : "Update Placement"}
           </Button>
         </CardFooter>
       </form>

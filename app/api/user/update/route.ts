@@ -5,6 +5,7 @@ import { getUserFromSession } from "@/lib/get-user-from-session";
 import { getClientIdentifier, isSameOrigin } from "@/lib/security";
 import { rateLimit } from "@/lib/rate-limit";
 import User from "@/lib/models/user";
+import { serializeMongooseDocument } from "@/lib/utils";
 
 const updateUserSchema = z.object({
   name: z.string().min(2).max(100),
@@ -64,7 +65,7 @@ export async function PUT(request: Request) {
         bio: validatedBody.bio,
       },
       { new: true, runValidators: true }
-    );
+    ).lean();
 
     if (!updatedUser) {
       return NextResponse.json(
@@ -73,7 +74,10 @@ export async function PUT(request: Request) {
       );
     }
 
-    return NextResponse.json({ success: true, user: updatedUser });
+    // Convert to plain object to remove any potential circular references
+    const plainUpdatedUser = serializeMongooseDocument(updatedUser);
+
+    return NextResponse.json({ success: true, user: plainUpdatedUser });
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(

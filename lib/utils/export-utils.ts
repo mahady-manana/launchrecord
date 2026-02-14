@@ -6,19 +6,23 @@ interface CleanLaunch {
   description: string;
   website: string;
   category: string;
-  authorName: string;
+  makerName: string;
+  x: string;
+  linkedin: string;
   placement: string;
   createdAt: string;
 }
 
-export function cleanLaunchData(launches: Launch[]): CleanLaunch[] {
+export function cleanLaunchData(launches: any[]): CleanLaunch[] {
   return launches.map((launch) => ({
     id: launch._id,
     name: launch.name,
     description: launch.description,
     website: launch.website,
     category: launch.category,
-    authorName: launch.authorName,
+    makerName: launch.name || launch.authorName,
+    x: launch.x || launch.authorX,
+    linkedin: launch.linkedin || launch.authorLinkedIn,
     placement: launch.placement,
     createdAt: launch.createdAt,
   }));

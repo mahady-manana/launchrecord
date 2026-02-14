@@ -31,26 +31,9 @@ export function useLaunches() {
           if (data.success) {
             // Separate launches by placement type
             const launches = data.launches || [];
-            const heroPlacements = data.heroPlacements || [];
-            const leftPlacements = data.leftPlacements || [];
-            const rightPlacements = data.rightPlacements || [];
 
             store.setLaunchesData({
               launches: launches,
-              pagination: data.pagination || {
-                page: 1,
-                limit: 20,
-                total: 0,
-                totalPages: 1,
-                hasNextPage: false,
-                hasPreviousPage: false,
-              },
-            });
-            
-            store.setPlacementsData({
-              heroPlacements: heroPlacements,
-              leftPlacements: leftPlacements,
-              rightPlacements: rightPlacements,
               pagination: data.pagination || {
                 page: 1,
                 limit: 20,

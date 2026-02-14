@@ -1,5 +1,4 @@
 import { CreateLaunchPayload, Launch, UpdateLaunchPayload } from "@/types";
-import { Placement } from "@/types/placement";
 
 interface LaunchActions {
   createLaunch: (
@@ -15,9 +14,8 @@ interface LaunchActions {
     limit?: number;
   }) => Promise<{
     success: boolean;
-    heroPlacements?: Placement[];
-    leftPlacements?: Placement[];
-    rightPlacements?: Placement[];
+
+    launches?: Launch[];
     pagination?: {
       page: number;
       limit: number;
@@ -69,9 +67,6 @@ export function useLaunchActions(): LaunchActions {
       return {
         success: true,
         launches: data.launches || [],
-        heroPlacements: data.heroPlacements || [],
-        leftPlacements: data.leftPlacements || [],
-        rightPlacements: data.rightPlacements || [],
         pagination: data.pagination,
       };
     } catch (error) {

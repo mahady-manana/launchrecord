@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   BUSINESS_MODELS,
   LAUNCH_CATEGORIES,
@@ -52,9 +52,9 @@ interface LaunchEditForm {
   audience: string;
   businessModel: (typeof BUSINESS_MODELS)[number];
   pricingModel: (typeof PRICING_MODELS)[number];
-  authorName: string;
-  authorX: string;
-  authorLinkedIn: string;
+  name: string;
+  x: string;
+  linkedin: string;
 }
 
 function getInitialForm(launch: Launch): LaunchEditForm {
@@ -71,9 +71,9 @@ function getInitialForm(launch: Launch): LaunchEditForm {
     audience: launch.audience || "",
     businessModel: launch.businessModel || BUSINESS_MODELS[0],
     pricingModel: launch.pricingModel || PRICING_MODELS[1],
-    authorName: launch.authorName || "",
-    authorX: launch.authorX || "",
-    authorLinkedIn: launch.authorLinkedIn || "",
+    name: launch.name || "",
+    x: launch.x || "",
+    linkedin: launch.linkedin || "",
   };
 }
 
@@ -87,15 +87,20 @@ export function LaunchEditModal({
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isCategoryDropdownOpen, setIsCategoryDropdownOpen] = useState(false);
-  
+  const categoryDropdownRef = useRef<HTMLDivElement>(null);
+
   // Close dropdown when clicking outside
   useEffect(() => {
-    const handleClickOutside = () => {
-      if (isCategoryDropdownOpen) {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        isCategoryDropdownOpen && 
+        categoryDropdownRef.current && 
+        !categoryDropdownRef.current.contains(event.target as Node)
+      ) {
         setIsCategoryDropdownOpen(false);
       }
     };
-    
+
     document.addEventListener('mousedown', handleClickOutside);
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
@@ -133,9 +138,9 @@ export function LaunchEditModal({
       audience: form.audience,
       businessModel: form.businessModel,
       pricingModel: form.pricingModel,
-      authorName: form.authorName,
-      authorX: form.authorX,
-      authorLinkedIn: form.authorLinkedIn,
+      name: form.name,
+      x: form.x,
+      linkedin: form.linkedin,
     };
 
     const result = await onSave(payload);
@@ -298,7 +303,7 @@ export function LaunchEditModal({
                 </button>
                 
                 {isCategoryDropdownOpen && (
-                  <div className="absolute z-10 mt-1 w-full rounded-md border bg-popover p-2 shadow-md">
+                  <div ref={categoryDropdownRef} className="absolute z-10 mt-1 w-full rounded-md border bg-popover p-2 shadow-md">
                     {LAUNCH_CATEGORIES.map((category) => (
                       <div key={category} className="flex items-center space-x-2 py-1.5">
                         <input
@@ -307,7 +312,7 @@ export function LaunchEditModal({
                           checked={Array.isArray(form.category) ? form.category.includes(category) : form.category === category}
                           onChange={(e) => {
                             const currentCategories = Array.isArray(form.category) ? form.category : [form.category];
-                            
+
                             if (e.target.checked) {
                               // Add category if not already selected and less than 3
                               if (currentCategories.length < 3 && !currentCategories.includes(category)) {
@@ -320,7 +325,7 @@ export function LaunchEditModal({
                               // Remove category
                               setForm((current) => ({
                                 ...current,
-                                category: Array.isArray(current.category) 
+                                category: Array.isArray(current.category)
                                   ? current.category.filter(c => c !== category)
                                   : current.category === category ? [LAUNCH_CATEGORIES[0]] : current.category,
                               }));
@@ -328,11 +333,11 @@ export function LaunchEditModal({
                           }}
                           disabled={
                             !(
-                              Array.isArray(form.category) 
-                                ? form.category.includes(category) 
+                              Array.isArray(form.category)
+                                ? form.category.includes(category)
                                 : form.category === category
-                            ) && 
-                            Array.isArray(form.category) && 
+                            ) &&
+                            Array.isArray(form.category) &&
                             form.category.length >= 3
                           }
                           className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
@@ -408,9 +413,9 @@ export function LaunchEditModal({
             <Input
               id="edit-author-name"
               required
-              value={form.authorName}
+              value={form.name}
               onChange={(event) =>
-                setForm((current) => ({ ...current, authorName: event.target.value }))
+                setForm((current) => ({ ...current, name: event.target.value }))
               }
             />
           </div>
@@ -420,9 +425,9 @@ export function LaunchEditModal({
               <Label htmlFor="edit-author-x">X handle</Label>
               <Input
                 id="edit-author-x"
-                value={form.authorX}
+                value={form.x}
                 onChange={(event) =>
-                  setForm((current) => ({ ...current, authorX: event.target.value }))
+                  setForm((current) => ({ ...current, x: event.target.value }))
                 }
               />
             </div>
@@ -431,11 +436,11 @@ export function LaunchEditModal({
               <Input
                 id="edit-author-linkedin"
                 type="url"
-                value={form.authorLinkedIn}
+                value={form.linkedin}
                 onChange={(event) =>
                   setForm((current) => ({
                     ...current,
-                    authorLinkedIn: event.target.value,
+                    linkedin: event.target.value,
                   }))
                 }
               />

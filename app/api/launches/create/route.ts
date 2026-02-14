@@ -1,5 +1,6 @@
 import { getUserFromSession } from "@/lib/get-user-from-session";
 import Launch from "@/lib/models/launch";
+import User from "@/lib/models/user";
 import { connectToDatabase } from "@/lib/mongodb";
 import { rateLimit } from "@/lib/rate-limit";
 import { sanitizeText, slugify } from "@/lib/sanitize";
@@ -11,6 +12,7 @@ import {
 } from "@/types";
 import { NextResponse } from "next/server";
 import { z } from "zod";
+import { serializeMongooseDocument } from "@/lib/utils";
 
 const createLaunchSchema = z.object({
   name: z.string().min(2).max(100),
@@ -21,7 +23,6 @@ const createLaunchSchema = z.object({
   category: z.enum(LAUNCH_CATEGORIES).or(z.array(z.enum(LAUNCH_CATEGORIES)).max(3)),
   businessModel: z.enum(BUSINESS_MODELS),
   pricingModel: z.enum(PRICING_MODELS),
-  authorName: z.string().min(2).max(100),
 });
 
 function randomSlugSuffix() {
@@ -99,6 +100,9 @@ export async function POST(request: Request) {
       );
     }
 
+    // Get user's author information
+    const dbUser = await User.findById(user._id).select('name x linkedin').lean();
+    
     const launch = await Launch.create({
       name: cleanedName,
       slug,
@@ -112,12 +116,14 @@ export async function POST(request: Request) {
       audience: "",
       businessModel: validatedBody.businessModel,
       pricingModel: validatedBody.pricingModel,
-      authorName: sanitizeText(validatedBody.authorName),
       placement: "none",
       submittedBy: user._id,
     });
 
-    return NextResponse.json({ success: true, launch }, { status: 201 });
+    // Convert to plain object to remove any potential circular references
+    const plainLaunch = serializeMongooseDocument(launch);
+
+    return NextResponse.json({ success: true, launch: plainLaunch }, { status: 201 });
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
