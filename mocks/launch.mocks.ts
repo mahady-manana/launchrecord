@@ -27,28 +27,12 @@ export const mockFeaturedLaunch: Launch = {
 
 export const mockPlacements: Placement[] = [
   {
-    _id: "mock-placement-1",
-    title: "Vercel",
-    tagline: "Deploy web projects in seconds",
-    logoUrl: "/vercel-logo.svg",
-    backgroundImage: "/vercel-bg.jpg",
-    website: "https://vercel.com",
-    placementType: "sidebar",
-    position: "left",
-    startDate: new Date(Date.now() - 86400000).toISOString(), // 1 day ago
-    endDate: new Date(Date.now() + 2592000000).toISOString(), // 30 days from now
-    price: 299,
-    status: "active",
-    createdAt: new Date(Date.now() - 86400000).toISOString(),
-    updatedAt: new Date().toISOString(),
-  },
-  {
     _id: "mock-placement-2",
-    title: "Supabase",
-    tagline: "The open source Firebase alternative",
-    logoUrl: "/supabase-logo.svg",
+    title: "Your App Name",
+    tagline: "Your one liner hook founders will look",
+    website: "https://yourwebsite.com",
+    logoUrl: "/lr-logo.svg",
     backgroundImage: "/placeholder-ads-1.webp",
-    website: "https://supabase.com",
     placementType: "featured",
     position: "right",
     startDate: new Date(Date.now() - 172800000).toISOString(), // 2 days ago
@@ -57,14 +41,17 @@ export const mockPlacements: Placement[] = [
     status: "active",
     createdAt: new Date(Date.now() - 172800000).toISOString(),
     updatedAt: new Date().toISOString(),
+    codeName: "",
+    paymentStatus: "paid",
+    userId: "",
   },
   {
     _id: "mock-placement-3",
-    title: "PlanetScale",
-    tagline: "Serverless MySQL platform",
-    logoUrl: "/planetscale-logo.svg",
+    title: "Your App Name",
+    tagline: "Your one liner hook founders will look",
+    website: "https://yourwebsite.com",
+    logoUrl: "/lr-logo.svg",
     backgroundImage: "/placeholder-ads-1.webp",
-    website: "https://planetscale.com",
     placementType: "featured",
     startDate: new Date(Date.now() - 259200000).toISOString(), // 3 days ago
     endDate: new Date(Date.now() + 2419200000).toISOString(), // 28 days from now
@@ -72,14 +59,17 @@ export const mockPlacements: Placement[] = [
     status: "active",
     createdAt: new Date(Date.now() - 259200000).toISOString(),
     updatedAt: new Date().toISOString(),
+    codeName: "",
+    paymentStatus: "paid",
+    userId: "",
   },
   {
     _id: "mock-placement-4",
-    title: "Tailwind CSS",
-    tagline: "Rapidly build modern websites",
-    logoUrl: "/tailwind-logo.svg",
-    backgroundImage: "/tailwind-bg.jpg",
-    website: "https://tailwindcss.com",
+    title: "Your App Name",
+    tagline: "Your one liner hook founders will look",
+    website: "https://yourwebsite.com",
+    logoUrl: "/lr-logo.svg",
+    backgroundImage: "/placeholder-ads-1.webp",
     placementType: "sidebar",
     position: "left",
     startDate: new Date(Date.now() - 345600000).toISOString(), // 4 days ago
@@ -88,22 +78,9 @@ export const mockPlacements: Placement[] = [
     status: "active",
     createdAt: new Date(Date.now() - 345600000).toISOString(),
     updatedAt: new Date().toISOString(),
-  },
-  {
-    _id: "mock-placement-5",
-    title: "Framer",
-    tagline: "Build websites visually",
-    logoUrl: "/framer-logo.svg",
-    backgroundImage: "/placeholder-ads-1.webp",
-    website: "https://framer.com",
-    placementType: "featured",
-    position: "right",
-    startDate: new Date(Date.now() - 432000000).toISOString(), // 5 days ago
-    endDate: new Date(Date.now() + 2246400000).toISOString(), // 26 days from now
-    price: 349,
-    status: "active",
-    createdAt: new Date(Date.now() - 432000000).toISOString(),
-    updatedAt: new Date().toISOString(),
+    codeName: "",
+    paymentStatus: "paid",
+    userId: "",
   },
 ];
 

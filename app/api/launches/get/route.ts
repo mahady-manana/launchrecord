@@ -60,6 +60,7 @@ export async function GET(request: Request) {
     // Aggregation pipeline to populate user info for launches
     const populatedLaunches = await Launch.find(query)
       .populate("submittedBy", "name x linkedin")
+      .select("-__v") // Exclude version field
       .lean();
 
     // Convert to plain objects to remove any potential circular references

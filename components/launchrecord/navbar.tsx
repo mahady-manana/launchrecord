@@ -10,6 +10,7 @@ import {
   CreditCard,
   LayoutDashboard,
   LogOut,
+  Rocket,
   Search,
   User,
 } from "lucide-react";
@@ -54,83 +55,89 @@ export function Navbar({ query, onQueryChange }: NavbarProps) {
   };
   return (
     <header className="sticky top-0 z-20 border-b bg-background/95 backdrop-blur">
-      <div className="mx-auto flex h-16 w-full max-w-7xl items-center gap-3 px-4 sm:px-6">
+      <div className="mx-auto justify-between flex h-16 w-full max-w-8xl items-center gap-3 px-4 sm:px-6">
         <Logo />
+        <div className="flex items-center md:gap-4 gap-2">
+          <div className="relative hidden max-w-xs flex-1 md:block">
+            <Search className="text-muted-foreground absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2" />
+            <Input
+              value={query}
+              onChange={(event) => onQueryChange(event.target.value)}
+              placeholder="Search launches..."
+              className="pl-9"
+            />
+          </div>
 
-        <div className="relative hidden flex-1 md:block">
-          <Search className="text-muted-foreground absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2" />
-          <Input
-            value={query}
-            onChange={(event) => onQueryChange(event.target.value)}
-            placeholder="Search launches..."
-            className="pl-9"
-          />
-        </div>
-
-        <PlacementAdvertiseButton />
-        <Button onClick={handleOpenLaunchModal}>Submit new launch</Button>
-
-        {authStatus === "authenticated" && user ? (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="flex items-center gap-2 p-0"
-              >
-                <Avatar className="h-8 w-8">
-                  <AvatarImage src={user.image || undefined} alt={user.name} />
-                  <AvatarFallback>
-                    {user.name.slice(0, 1).toUpperCase()}
-                  </AvatarFallback>
-                </Avatar>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-56">
-              <DropdownMenuLabel>My Account</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <Link href="/dashboard">
-                <DropdownMenuItem>
-                  <LayoutDashboard className="mr-2 h-4 w-4" />
-                  <span>Dashboard</span>
-                </DropdownMenuItem>
-              </Link>
-              <Link href="/dashboard/placements">
-                <DropdownMenuItem>
-                  <CreditCard className="mr-2 h-4 w-4" />
-                  <span>Manage Placements</span>
-                </DropdownMenuItem>
-              </Link>
-              <Link href="/profile">
-                <DropdownMenuItem>
-                  <User className="mr-2 h-4 w-4" />
-                  <span>Profile Settings</span>
-                </DropdownMenuItem>
-              </Link>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => signOut({ callbackUrl: "/" })}>
-                <LogOut className="mr-2 h-4 w-4" />
-                <span>Sign out</span>
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        ) : (
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => signIn(undefined, { callbackUrl: "/" })}
-            disabled={authStatus === "loading"}
-          >
-            Sign in
+          <PlacementAdvertiseButton />
+          <Button onClick={handleOpenLaunchModal}>
+            <Rocket></Rocket> New launch
           </Button>
-        )}
+
+          {authStatus === "authenticated" && user ? (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="flex items-center gap-2 p-0"
+                >
+                  <Avatar className="h-8 w-8">
+                    <AvatarImage
+                      src={user.image || undefined}
+                      alt={user.name}
+                    />
+                    <AvatarFallback>
+                      {user.name.slice(0, 1).toUpperCase()}
+                    </AvatarFallback>
+                  </Avatar>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-56">
+                <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <Link href="/dashboard">
+                  <DropdownMenuItem>
+                    <LayoutDashboard className="mr-2 h-4 w-4" />
+                    <span>Dashboard</span>
+                  </DropdownMenuItem>
+                </Link>
+                <Link href="/dashboard/placements">
+                  <DropdownMenuItem>
+                    <CreditCard className="mr-2 h-4 w-4" />
+                    <span>Manage Placements</span>
+                  </DropdownMenuItem>
+                </Link>
+                <Link href="/profile">
+                  <DropdownMenuItem>
+                    <User className="mr-2 h-4 w-4" />
+                    <span>Profile Settings</span>
+                  </DropdownMenuItem>
+                </Link>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={() => signOut({ callbackUrl: "/" })}>
+                  <LogOut className="mr-2 h-4 w-4" />
+                  <span>Sign out</span>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          ) : (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => signIn(undefined, { callbackUrl: "/" })}
+              disabled={authStatus === "loading"}
+            >
+              Sign in
+            </Button>
+          )}
+        </div>
+        <LaunchModal
+          open={isLaunchModalOpen}
+          onOpenChange={setLaunchModalOpen}
+          onSubmit={launchStore.createLaunch}
+          onCompleteDetails={launchStore.updateLaunch}
+        />
       </div>
-      <LaunchModal
-        open={isLaunchModalOpen}
-        onOpenChange={setLaunchModalOpen}
-        onSubmit={launchStore.createLaunch}
-        onCompleteDetails={launchStore.updateLaunch}
-      />
     </header>
   );
 }

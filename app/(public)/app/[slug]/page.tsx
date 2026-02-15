@@ -1,16 +1,17 @@
+import { AppPageOwnerActions } from "@/components/launchrecord/app-page-owner-actions";
+import { ClientLaunchDetailPage } from "@/components/launchrecord/client-launch-detail-page";
+import { Logo } from "@/components/launchrecord/logo";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { getUserFromSession } from "@/lib/get-user-from-session";
+import Launch from "@/lib/models/launch";
+import { connectToDatabase } from "@/lib/mongodb";
+import { Launch as LaunchType } from "@/types";
+import { Search } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import Launch from "@/lib/models/launch";
-import { connectToDatabase } from "@/lib/mongodb";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Logo } from "@/components/launchrecord/logo";
-import { Input } from "@/components/ui/input";
-import { Search } from "lucide-react";
-import { getUserFromSession } from "@/lib/get-user-from-session";
-import { Launch as LaunchType } from "@/types";
-import { AppPageOwnerActions } from "@/components/launchrecord/app-page-owner-actions";
 
 interface LaunchPageProps {
   params: Promise<{ slug: string }>;
@@ -28,13 +29,13 @@ type LeanLaunch = {
   category: string | string[];
   businessModel?: string;
   pricingModel?: string;
-  name: string;
   x?: string;
   linkedin?: string;
   valueProposition?: string;
   problem?: string;
   audience?: string;
   placement: "none" | "hero" | "left" | "right";
+  commentCount: number;
   createdAt: Date | string;
   updatedAt: Date | string;
 };
@@ -79,7 +80,30 @@ function LaunchMiniCard({ launch }: { launch: LeanLaunch }) {
           <p className="line-clamp-2 text-xs text-muted-foreground">
             {launch.tagline || launch.description}
           </p>
-          <p className="mt-1 text-xs text-primary">{getWebsiteHost(launch.website)}</p>
+          <div className="mt-1 flex items-center justify-between">
+            <p className="text-xs text-primary">
+              {getWebsiteHost(launch.website)}
+            </p>
+            <div className="flex items-center gap-1">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="12"
+                height="12"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="h-3 w-3 text-muted-foreground"
+              >
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+              </svg>
+              <span className="text-xs text-muted-foreground">
+                {launch.commentCount}
+              </span>
+            </div>
+          </div>
         </div>
       </div>
     </Link>
@@ -87,6 +111,8 @@ function LaunchMiniCard({ launch }: { launch: LeanLaunch }) {
 }
 
 async function getSectionData(currentLaunch: LeanLaunch) {
+  await connectToDatabase();
+
   const currentId = currentLaunch._id.toString();
 
   // Build query for similar apps based on category
@@ -102,42 +128,55 @@ async function getSectionData(currentLaunch: LeanLaunch) {
     similarAppsQuery.category = currentLaunch.category;
   }
 
-  const [similarApps, newApps, topLaunchesRaw] = await Promise.all([
-    Launch.find(similarAppsQuery)
-      .sort({ createdAt: -1 })
-      .limit(6)
-      .lean<LeanLaunch[]>(),
+  // Use aggregation to fetch all three sets of launches in one pipeline
+  const pipeline = [
+    {
+      $facet: {
+        similarApps: [
+          { $match: similarAppsQuery },
+          { $sort: { createdAt: -1 } },
+          { $limit: 6 },
+        ],
+        newApps: [
+          { $match: { isArchived: false, _id: { $ne: currentId } } },
+          { $sort: { createdAt: -1 } },
+          { $limit: 6 },
+        ],
+        topLaunches: [
+          {
+            $match: {
+              isArchived: false,
+              _id: { $ne: currentId },
+              placement: { $in: ["hero", "left", "right"] },
+            },
+          },
+          { $sort: { createdAt: -1 } },
+          { $limit: 6 },
+        ],
+      },
+    },
+  ];
 
-    Launch.find({
+  const results = await Launch.aggregate(pipeline);
+  const { similarApps, newApps, topLaunches } = results[0];
+
+  // If no top launches were found, get regular launches as fallback
+  let finalTopLaunches = topLaunches;
+  if (topLaunches.length === 0) {
+    finalTopLaunches = await Launch.find({
       isArchived: false,
       _id: { $ne: currentId },
     })
       .sort({ createdAt: -1 })
       .limit(6)
-      .lean<LeanLaunch[]>(),
+      .lean<LeanLaunch[]>();
+  }
 
-    Launch.find({
-      isArchived: false,
-      _id: { $ne: currentId },
-      placement: { $in: ["hero", "left", "right"] },
-    })
-      .sort({ createdAt: -1 })
-      .limit(6)
-      .lean<LeanLaunch[]>(),
-  ]);
-
-  const topLaunches =
-    topLaunchesRaw.length > 0
-      ? topLaunchesRaw
-      : await Launch.find({
-          isArchived: false,
-          _id: { $ne: currentId },
-        })
-          .sort({ createdAt: -1 })
-          .limit(6)
-          .lean<LeanLaunch[]>();
-
-  return { similarApps, newApps, topLaunches };
+  return {
+    similarApps: similarApps as LeanLaunch[],
+    newApps: newApps as LeanLaunch[],
+    topLaunches: finalTopLaunches as LeanLaunch[],
+  };
 }
 
 export async function generateMetadata({
@@ -193,10 +232,10 @@ export default async function LaunchDetailPage({ params }: LaunchPageProps) {
     audience: launch.audience || "",
     businessModel: launch.businessModel as LaunchType["businessModel"],
     pricingModel: launch.pricingModel as LaunchType["pricingModel"],
-    name: launch.name,
     x: launch.x,
     linkedin: launch.linkedin,
     placement: launch.placement,
+    commentCount: launch.commentCount || 0,
     createdAt: new Date(launch.createdAt).toISOString(),
     updatedAt: new Date(launch.updatedAt).toISOString(),
   };
@@ -241,7 +280,9 @@ export default async function LaunchDetailPage({ params }: LaunchPageProps) {
                 )}
               </div>
               <div className="space-y-2">
-                <h1 className="text-2xl font-semibold sm:text-3xl">{launch.name}</h1>
+                <h1 className="text-2xl font-semibold sm:text-3xl">
+                  {launch.name}
+                </h1>
                 <p className="text-muted-foreground">{launch.tagline}</p>
                 <div className="flex flex-wrap items-center gap-2">
                   {Array.isArray(launch.category) ? (
@@ -266,14 +307,18 @@ export default async function LaunchDetailPage({ params }: LaunchPageProps) {
               <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
                 Description
               </h2>
-              <p className="mt-2 text-sm text-foreground/90">{launch.description}</p>
+              <p className="mt-2 text-sm text-foreground/90">
+                {launch.description}
+              </p>
             </div>
             {valueProposition ? (
               <div>
                 <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
                   Value proposition
                 </h2>
-                <p className="mt-2 text-sm text-foreground/90">{valueProposition}</p>
+                <p className="mt-2 text-sm text-foreground/90">
+                  {valueProposition}
+                </p>
               </div>
             ) : null}
             {problem ? (
@@ -310,6 +355,12 @@ export default async function LaunchDetailPage({ params }: LaunchPageProps) {
           </footer>
         </article>
 
+        {/* Comments Section */}
+        <ClientLaunchDetailPage
+          launchId={launch._id.toString()}
+          commentCount={launch.commentCount}
+        />
+
         <section className="space-y-3">
           <h2 className="text-lg font-semibold">Similar Apps</h2>
           {similarApps.length ? (
@@ -319,7 +370,9 @@ export default async function LaunchDetailPage({ params }: LaunchPageProps) {
               ))}
             </div>
           ) : (
-            <p className="text-sm text-muted-foreground">No similar apps yet.</p>
+            <p className="text-sm text-muted-foreground">
+              No similar apps yet.
+            </p>
           )}
         </section>
 

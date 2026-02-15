@@ -25,10 +25,10 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useUser } from "@/hooks/use-user";
-import { toast } from "sonner";
-import { Clock, DollarSign, MapPin } from "lucide-react";
+import { Clock, DollarSign, MapPin, Megaphone } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { toast } from "sonner";
 
 interface PlacementSlot {
   id: string;
@@ -92,7 +92,7 @@ export function PlacementAdvertiseButton() {
     if (!slot) return;
 
     // Set loading state for this specific slot
-    setSlotLoadingStates(prev => ({ ...prev, [slotId]: true }));
+    setSlotLoadingStates((prev) => ({ ...prev, [slotId]: true }));
 
     // Get selected duration for this specific slot (default to 30 days)
     const selectedDuration = selectedDurations[slotId] || 30;
@@ -131,15 +131,15 @@ export function PlacementAdvertiseButton() {
       console.error("Error creating checkout session:", error);
     } finally {
       // Reset loading state for this specific slot
-      setSlotLoadingStates(prev => ({ ...prev, [slotId]: false }));
+      setSlotLoadingStates((prev) => ({ ...prev, [slotId]: false }));
     }
   };
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" size="sm" onClick={handleAdvertiseClick}>
-          Advertise
+        <Button variant="outline" onClick={handleAdvertiseClick}>
+          <Megaphone /> Advertise
         </Button>
       </DialogTrigger>
       <DialogContent className="max-w-[80%] md:max-w-[80%] max-h-[90vh] overflow-y-auto">
@@ -250,8 +250,10 @@ export function PlacementAdvertiseButton() {
                           </svg>
                           Processing...
                         </>
+                      ) : slot.isAvailable ? (
+                        "Purchase"
                       ) : (
-                        slot.isAvailable ? "Purchase" : "Not Available"
+                        "Not Available"
                       )}
                     </Button>
                   </CardFooter>

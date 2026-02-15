@@ -1,9 +1,8 @@
 "use client";
 
 import { Badge } from "@/components/ui/badge";
-import { Card } from "@/components/ui/card";
 import { Launch } from "@/types";
-import { ArrowUpRight } from "lucide-react";
+import { ArrowUpRight, MessageCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 interface LaunchCardProps {
@@ -29,8 +28,8 @@ export function LaunchCard({ launch }: LaunchCardProps) {
 
   return (
     <>
-      <Card
-        className="overflow-hidden border-white/10 bg-[rgba(18,22,34,0.82)] py-0 shadow-[0_10px_24px_rgba(0,0,0,0.28)] backdrop-blur-sm transition-all duration-300 hover:-translate-y-0.5 hover:border-white/20 hover:bg-[rgba(28,34,50,0.72)] hover:shadow-[0_16px_36px_rgba(0,0,0,0.38)]"
+      <div
+        className="overflow-hidden p-4 border-b border-neutral-700 shadow-[0_10px_24px_rgba(0,0,0,0.28)] backdrop-blur-sm transition-all duration-300 hover:-translate-y-0.5 hover:bg-[rgba(28,34,50,0.72)] hover:shadow-[0_16px_36px_rgba(0,0,0,0.38)]"
         role="button"
         tabIndex={0}
         onClick={openLaunchPage}
@@ -41,7 +40,7 @@ export function LaunchCard({ launch }: LaunchCardProps) {
           }
         }}
       >
-        <div className="flex cursor-pointer items-center justify-between gap-3 p-3 transition-all duration-300 hover:backdrop-blur-md">
+        <div className="flex cursor-pointer items-center justify-between gap-3 px-2 transition-all duration-300 hover:backdrop-blur-md">
           <div className="flex min-w-0 items-center gap-3">
             <div className="h-11 w-11 shrink-0 overflow-hidden rounded-md border bg-muted">
               {launch.logoUrl ? (
@@ -68,6 +67,10 @@ export function LaunchCard({ launch }: LaunchCardProps) {
           </div>
 
           <div className="flex shrink-0 items-end gap-2 sm:flex-col">
+            <div className="flex items-center gap-1">
+              <MessageCircle className="h-3 w-3 text-muted-foreground" />
+              <span className="text-xs text-muted-foreground">{launch.commentCount}</span>
+            </div>
             {Array.isArray(launch.category) ? (
               <div className="flex flex-wrap gap-1">
                 {launch.category.slice(0, 2).map((cat, index) => (
@@ -87,7 +90,7 @@ export function LaunchCard({ launch }: LaunchCardProps) {
             <ArrowUpRight className="h-4 w-4 text-muted-foreground" />
           </div>
         </div>
-      </Card>
+      </div>
     </>
   );
 }

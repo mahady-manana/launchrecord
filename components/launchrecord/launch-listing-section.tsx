@@ -11,6 +11,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { mockPlacements } from "@/mocks/launch.mocks";
 import { LAUNCH_CATEGORIES, Launch, PaginationMeta } from "@/types";
 import { Placement } from "@/types/placement";
 
@@ -36,7 +37,7 @@ interface LaunchListingSectionProps {
 }
 
 function TenPlacementCards({ placements }: { placements: Placement[] }) {
-  const slots = Array.from({ length: 5 }, (_, index) => placements[index]);
+  const slots = Array.from({ length: 5 }, (_, index) => mockPlacements[index]);
 
   return (
     <div className="space-y-3">
@@ -74,13 +75,13 @@ export function LaunchListingSection({
   onPageChange,
 }: LaunchListingSectionProps) {
   return (
-    <section className="mx-auto grid w-full max-w-7xl gap-4 px-4 pb-10 sm:px-6 lg:grid-cols-[260px_1fr_260px]">
+    <section className="mx-auto grid w-full max-w-8xl gap-4 px-4 pb-10 sm:px-6 lg:grid-cols-[260px_1fr_260px]">
       <aside className="hidden lg:block">
         <TenPlacementCards placements={leftPlacements} />
       </aside>
 
-      <main className="space-y-4 rounded-2xl border bg-card p-4">
-        <div className="flex flex-col gap-3 md:flex-row md:items-center">
+      <main className="space-y-4 py-4 bg-card px-0 rounded-xl">
+        <div className="flex flex-col gap-3 md:flex-row md:items-center px-6">
           <Input
             value={query}
             onChange={(event) => onQueryChange(event.target.value)}
@@ -115,14 +116,14 @@ export function LaunchListingSection({
             No launches found for this filter.
           </p>
         ) : (
-          <div className="space-y-3">
+          <div className="">
             {launches.map((launch) => (
               <LaunchCard key={launch._id} launch={launch} />
             ))}
           </div>
         )}
 
-        <div className="flex items-center justify-between border-t pt-4">
+        <div className="flex items-center justify-between pt-4">
           <Button
             variant="outline"
             size="sm"

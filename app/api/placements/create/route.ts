@@ -1,15 +1,15 @@
-import { NextResponse } from "next/server";
-import { z } from "zod";
-import { connectToDatabase } from "@/lib/mongodb";
 import { getUserFromSession } from "@/lib/get-user-from-session";
-import { getClientIdentifier, isSameOrigin } from "@/lib/security";
-import { rateLimit } from "@/lib/rate-limit";
 import Placement from "@/lib/models/placement";
 import User from "@/lib/models/user";
+import { connectToDatabase } from "@/lib/mongodb";
+import { rateLimit } from "@/lib/rate-limit";
+import { getClientIdentifier, isSameOrigin } from "@/lib/security";
+import { NextResponse } from "next/server";
 import Stripe from "stripe";
+import { z } from "zod";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: "2023-10-16",
+  apiVersion: "2026-01-28.clover",
 });
 
 const createPlacementSchema = z.object({
@@ -60,11 +60,16 @@ export async function POST(request: Request) {
     await connectToDatabase();
 
     // Check if placement with this codeName is available
-    const isCodeAvailable = await Placement.isCodeAvailable(validatedBody.placementCode);
-    
+    const isCodeAvailable = await Placement.isCodeAvailable(
+      validatedBody.placementCode,
+    );
+
     if (!isCodeAvailable) {
       return NextResponse.json(
-        { success: false, message: "This placement is already taken or reserved." },
+        {
+          success: false,
+          message: "This placement is already taken or reserved.",
+        },
         { status: 400 },
       );
     }
@@ -80,9 +85,11 @@ export async function POST(request: Request) {
 
     // Calculate price based on duration (15 days = 70% of 30-day price)
     // For simplicity, assuming sidebar placement is $299 and featured is $599
-    const basePrice = validatedBody.placementCode.startsWith('HERO') ? 599 : 299;
+    const basePrice = validatedBody.placementCode.startsWith("HERO")
+      ? 599
+      : 299;
     let amount = basePrice;
-    
+
     if (validatedBody.duration === 15) {
       amount = Math.round(basePrice * 0.7); // 70% of base price for 15 days
     } else if (validatedBody.duration === 30) {
@@ -96,7 +103,7 @@ export async function POST(request: Request) {
 
     // Create or retrieve Stripe customer
     let stripeCustomerId = dbUser.stripeCustomerId;
-    
+
     if (!stripeCustomerId) {
       // Create a new customer in Stripe
       const customer = await stripe.customers.create({
@@ -106,9 +113,9 @@ export async function POST(request: Request) {
           userId: dbUser._id.toString(),
         },
       });
-      
+
       stripeCustomerId = customer.id;
-      
+
       // Save the customer ID to the user record
       await User.findByIdAndUpdate(user._id, {
         stripeCustomerId: stripeCustomerId,
@@ -124,27 +131,32 @@ export async function POST(request: Request) {
     const tempPlacement = await Placement.create({
       title: `Placement ${validatedBody.placementCode}`,
       tagline: `Premium placement for ${validatedBody.duration} days`,
-      website: dbUser.website || 'https://launchrecord.com',
-      placementType: validatedBody.placementCode.startsWith('HERO') ? 'featured' : 'sidebar',
-      position: validatedBody.placementCode.includes('LEFT') ? 'left' : 
-                 validatedBody.placementCode.includes('RIGHT') ? 'right' : 'hero',
+      website: dbUser.website || "https://launchrecord.com",
+      placementType: validatedBody.placementCode.startsWith("HERO")
+        ? "featured"
+        : "sidebar",
+      position: validatedBody.placementCode.includes("LEFT")
+        ? "left"
+        : validatedBody.placementCode.includes("RIGHT")
+          ? "right"
+          : "hero",
       startDate,
       endDate,
       price: amount,
-      status: 'inactive', // Will become active after payment
+      status: "inactive", // Will become active after payment
       userId: user._id,
-      paymentStatus: 'pending',
+      paymentStatus: "pending",
       codeName: validatedBody.placementCode,
       duration: validatedBody.duration,
     });
 
     // Create a Stripe checkout session
     const session = await stripe.checkout.sessions.create({
-      payment_method_types: ['card'],
+      payment_method_types: ["card"],
       line_items: [
         {
           price_data: {
-            currency: 'usd',
+            currency: "usd",
             product_data: {
               name: `Placement: ${validatedBody.placementCode}`,
               description: `Premium placement for ${validatedBody.duration} days`,
@@ -154,7 +166,7 @@ export async function POST(request: Request) {
           quantity: 1,
         },
       ],
-      mode: 'payment',
+      mode: "payment",
       customer: stripeCustomerId,
       success_url: `${process.env.NEXT_PUBLIC_BASE_URL}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${process.env.NEXT_PUBLIC_BASE_URL}/checkout/cancel`,
@@ -166,8 +178,8 @@ export async function POST(request: Request) {
       },
     });
 
-    return NextResponse.json({ 
-      success: true, 
+    return NextResponse.json({
+      success: true,
       sessionId: session.id,
       paymentIntentId: session.payment_intent,
       url: session.url,

@@ -46,6 +46,7 @@ export interface Launch {
   pricingModel: PricingModel;
   submittedBy: string;
   placement: LaunchPlacement;
+  commentCount: number;
   createdAt: string;
   updatedAt: string;
 }

@@ -1,14 +1,14 @@
-import { NextResponse } from "next/server";
-import { connectToDatabase } from "@/lib/mongodb";
 import { getUserFromSession } from "@/lib/get-user-from-session";
-import { getClientIdentifier, isSameOrigin } from "@/lib/security";
-import { rateLimit } from "@/lib/rate-limit";
 import Placement from "@/lib/models/placement";
+import { connectToDatabase } from "@/lib/mongodb";
+import { rateLimit } from "@/lib/rate-limit";
+import { getClientIdentifier, isSameOrigin } from "@/lib/security";
 import { Types } from "mongoose";
+import { NextResponse } from "next/server";
 
 export async function GET(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     if (!isSameOrigin(request)) {
@@ -45,9 +45,9 @@ export async function GET(
         { status: 401 },
       );
     }
-
+    const id = (await params).id;
     // Validate the placement ID format
-    if (!Types.ObjectId.isValid(params.id)) {
+    if (!Types.ObjectId.isValid(id)) {
       return NextResponse.json(
         { success: false, message: "Invalid placement ID." },
         { status: 400 },
@@ -58,7 +58,7 @@ export async function GET(
 
     // Find the placement and ensure it belongs to the user
     const placement = await Placement.findOne({
-      _id: params.id,
+      _id: id,
       userId: user._id,
     });
 
@@ -69,7 +69,10 @@ export async function GET(
       );
     }
 
-    return NextResponse.json({ success: true, placement: placement.toObject() });
+    return NextResponse.json({
+      success: true,
+      placement: placement.toObject(),
+    });
   } catch (error) {
     console.error("Error fetching placement:", error);
     return NextResponse.json(

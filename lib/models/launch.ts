@@ -20,6 +20,7 @@ export interface ILaunch extends Document {
   submittedBy: mongoose.Types.ObjectId;
   placement: "none" | "hero" | "left" | "right";
   isArchived: boolean;
+  commentCount: number;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -128,6 +129,11 @@ const LaunchSchema = new Schema<ILaunch>(
       type: Boolean,
       default: false,
       index: true,
+    },
+    commentCount: {
+      type: Number,
+      default: 0,
+      min: 0,
     },
   },
   { timestamps: true },
