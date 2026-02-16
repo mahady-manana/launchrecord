@@ -61,6 +61,7 @@ export default async function PlacementSetupPage({
   }
 
   const placement = await getPlacement(id, user._id);
+  console.log({ placement });
 
   if (!placement) {
     // Handle case where placement doesn't exist

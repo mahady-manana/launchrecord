@@ -12,9 +12,7 @@ export interface SessionUser {
 
 export async function getUserFromSession(): Promise<SessionUser | null> {
   const session = await getServerSession(authOptions);
-  console.log("====================================");
-  console.log({ session });
-  console.log("====================================");
+
   if (!session?.user?.email) {
     return null;
   }
@@ -24,7 +22,6 @@ export async function getUserFromSession(): Promise<SessionUser | null> {
   const user = await User.findOne({ email: session.user.email })
     .select("name email image")
     .lean();
-  console.log({ user });
   if (!user) {
     return null;
   }

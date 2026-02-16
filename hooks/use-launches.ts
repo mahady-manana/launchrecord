@@ -16,7 +16,6 @@ export function useLaunches() {
       localStorage.getItem("useMockData") === "true";
 
     if (useMockData) {
-      store.setMockData();
     } else {
       store.setLaunchesLoading(true);
       store.setPlacementsLoading(true);

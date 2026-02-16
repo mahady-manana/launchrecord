@@ -71,20 +71,28 @@ export async function PUT(request: Request) {
         { status: 404 },
       );
     }
+    console.log({ validatedBody });
 
     // Update the placement with provided fields
     const updateData: any = {};
-    if (validatedBody.title !== undefined)
+    if (validatedBody.title !== undefined) {
       updateData.title = validatedBody.title;
-    if (validatedBody.tagline !== undefined)
+    }
+    if (validatedBody.tagline !== undefined) {
       updateData.tagline = validatedBody.tagline;
-    if (validatedBody.logoUrl !== undefined)
+    }
+    if (validatedBody.logoUrl !== undefined) {
       updateData.logoUrl = validatedBody.logoUrl;
-    if (validatedBody.backgroundImage !== undefined)
+    }
+    if (validatedBody.backgroundImage !== undefined) {
       updateData.backgroundImage = validatedBody.backgroundImage;
-    if (validatedBody.website !== undefined)
+    }
+    if (validatedBody.website !== undefined) {
       updateData.website = validatedBody.website;
-
+    }
+    if (validatedBody.appName) {
+      updateData.appName = validatedBody.appName;
+    }
     // Only activate the placement if all required fields are filled
     if (
       updateData.title &&
@@ -99,6 +107,7 @@ export async function PUT(request: Request) {
       updateData.status = "inactive";
     }
 
+    console.log({ updateData });
     const updatedPlacement = await Placement.findByIdAndUpdate(
       validatedBody.id,
       updateData,

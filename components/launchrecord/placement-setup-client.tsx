@@ -11,9 +11,16 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { useUser } from "@/hooks/use-user";
-import { Placement } from "@/types/placement";
-import { Loader2 } from "lucide-react";
+import { Placement, PlacementSlot } from "@/types/placement";
+import { DotSquareIcon, Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -35,6 +42,13 @@ export default function PlacementSetupClient({
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // State for publish campaign modal
+  const [isPublishModalOpen, setIsPublishModalOpen] = useState(false);
+  const [selectedSlot, setSelectedSlot] = useState<string | null>(null);
+  const [selectedDuration, setSelectedDuration] = useState<number>(30); // Default to 30 days
+  const [slots, setSlots] = useState<PlacementSlot[]>([]);
+  const [slotsLoading, setSlotsLoading] = useState(false);
 
   useEffect(() => {
     if (authStatus === "loading") return;
@@ -68,45 +82,10 @@ export default function PlacementSetupClient({
         throw new Error(data.message || "Failed to update placement");
       }
 
-      // Redirect to placements dashboard after successful update
-      router.push("/dashboard");
+      toast.success("Campaign updated"); // Redirect to placements dashboard after successful update
     } catch (err: any) {
       setError(err.message || "Failed to update placement");
       console.error("Error updating placement:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleSetLive = async () => {
-    try {
-      setLoading(true);
-      const response = await fetch("/api/placements/update-status", {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          id: placement._id,
-          status: "active",
-        }),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.message || "Failed to activate placement");
-      }
-
-      // Update local state
-      setPlacement((prev) => ({ ...prev, status: "active" }));
-
-      toast.success("Placement is now live!");
-      router.push("/dashboard");
-    } catch (err: any) {
-      setError(err.message || "Failed to activate placement");
-      console.error("Error activating placement:", err);
-      toast.error(err.message || "Failed to activate placement");
     } finally {
       setLoading(false);
     }
@@ -175,6 +154,82 @@ export default function PlacementSetupClient({
     );
   }
 
+  // Function to fetch available slots
+  const fetchSlots = async () => {
+    setSlotsLoading(true);
+    try {
+      const response = await fetch("/api/placements/available");
+      const data = await response.json();
+
+      if (data.success) {
+        setSlots(data.slots);
+      } else {
+        toast.error(data.message || "Failed to fetch available slots");
+      }
+    } catch (error) {
+      console.error("Error fetching slots:", error);
+      toast.error("Failed to fetch available slots");
+    } finally {
+      setSlotsLoading(false);
+    }
+  };
+
+  // Function to handle slot selection
+  const handleSlotSelect = (slotId: string) => {
+    setSelectedSlot(slotId);
+    setSelectedDuration(30); // Default to 30 days when selecting a slot
+  };
+
+  // Function to handle payment
+  const handlePayment = async () => {
+    if (!selectedSlot) {
+      toast.error("Please select a placement slot");
+      return;
+    }
+
+    try {
+      // Find the selected slot
+      const selectedSlotObj = slots.find((slot) => slot.id === selectedSlot);
+      if (!selectedSlotObj) {
+        toast.error("Selected slot not found");
+        return;
+      }
+
+      // Show notification about redirecting to Stripe
+      toast.info("Redirecting to secure payment page...", {
+        duration: 2000,
+      });
+
+      // Call the API to create a Stripe checkout session
+      const response = await fetch("/api/placements/create-checkout-session", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          placementId: placementId, // Use placementId instead of placementCode
+          placementCode: selectedSlotObj.codeName, // Also send the selected slot code
+          duration: selectedDuration, // Use the selected duration
+        }),
+      });
+
+      const data = await response.json();
+
+      if (data.success && data.url) {
+        // Redirect to Stripe checkout
+        window.location.href = data.url;
+      } else {
+        // Show error notification
+        toast.error(data.message || "Failed to create checkout session");
+        console.error("Failed to create checkout session:", data.message);
+      }
+    } catch (error) {
+      // Show error notification
+      toast.error("An error occurred while processing your payment request");
+      console.error("Error creating checkout session:", error);
+    }
+  };
+
   return (
     <div className="container max-w-6xl mx-auto py-8 px-4">
       <div className="md:flex items-center mb-8 justify-between">
@@ -186,18 +241,38 @@ export default function PlacementSetupClient({
         </div>
         <div>
           <div className="flex justify-end">
-            <Button
-              onClick={() => {
-                // Open modal to select placement and pay
-                // This would trigger the same flow as the advertise button
-                // For now, navigate to the placements page to select and pay
-                router.push("/dashboard/placements");
-              }}
-              size="lg"
-              className="bg-green-600 hover:bg-green-700"
-            >
-              Publish Campaign
-            </Button>
+            {placement.paymentStatus === "pending" ? (
+              <Button
+                size="lg"
+                className="bg-yellow-600 hover:bg-yellow-700"
+                disabled
+              >
+                Payment Under Process
+              </Button>
+            ) : null}
+            {placement.paymentStatus === "draft" ? (
+              <Button
+                onClick={() => {
+                  setIsPublishModalOpen(true);
+                  fetchSlots(); // Fetch available slots when modal opens
+                }}
+                size="lg"
+                className="bg-green-600 hover:bg-green-700"
+              >
+                Publish Campaign
+              </Button>
+            ) : null}
+            {placement.paymentStatus === "paid" &&
+            placement.status === "active" ? (
+              <Button
+                size="lg"
+                variant="ghost"
+                className="bg-green-600 hover:bg-green-700"
+              >
+                <DotSquareIcon size={20} />
+                Campaign published
+              </Button>
+            ) : null}
           </div>
         </div>
       </div>
@@ -216,7 +291,6 @@ export default function PlacementSetupClient({
                 placement={placement}
                 onSubmit={handleUpdatePlacement}
                 onCancel={handleCancel}
-                onSetLive={handleSetLive}
                 onChange={handlePlacementChange} // Pass the change handler to the form
               />
             </CardContent>
@@ -282,6 +356,150 @@ export default function PlacementSetupClient({
           </Card>
         </div>
       </div>
+
+      <Dialog open={isPublishModalOpen} onOpenChange={setIsPublishModalOpen}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Publish Your Campaign</DialogTitle>
+            <DialogDescription>
+              Follow these steps to publish your campaign
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="py-4">
+            {selectedSlot ? (
+              // Second screen: Notification and legal engagement
+              <div>
+                <h3 className="text-lg font-medium mb-4">Complete Payment</h3>
+
+                {/* Duration Selection */}
+                <div className="mb-6">
+                  <h4 className="font-medium mb-3">Select Duration</h4>
+                  <div className="flex gap-4">
+                    <div
+                      className={`border rounded-lg p-4 flex-1 text-center cursor-pointer transition-all ${
+                        selectedDuration === 15
+                          ? "border-green-500 bg-green-700"
+                          : "hover:border-primary"
+                      }`}
+                      onClick={() => setSelectedDuration(15)}
+                    >
+                      <div className="font-medium">
+                        $$
+                        {Math.round(
+                          slots.find((s) => s.id === selectedSlot)?.price *
+                            0.7 || 0,
+                        )}
+                      </div>
+                      <div className="text-sm text-white">15 Days</div>
+                    </div>
+                    <div
+                      className={`border rounded-lg p-4 flex-1 text-center cursor-pointer transition-all ${
+                        selectedDuration === 30
+                          ? "border-green-500 bg-green-700"
+                          : "hover:border-primary"
+                      }`}
+                      onClick={() => setSelectedDuration(30)}
+                    >
+                      <div className="font-medium">
+                        $${slots.find((s) => s.id === selectedSlot)?.price || 0}
+                      </div>
+                      <div className="text-sm text-white">30 Days</div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="border border-blue-200 rounded-lg p-4 mb-6">
+                  <p className="text-sm mb-4">
+                    <strong>Important:</strong> You will be redirected to Stripe
+                    for secure payment processing. Your invoice will be issued
+                    under <strong>Retold.me</strong> name because LaunchRecord
+                    operates under Retold.me and Azesapce, Inc jurisdiction.
+                  </p>
+                  <div className="text-sm">
+                    <p className="font-medium mb-2">Legal Agreement:</p>
+                    <ul className="list-disc pl-5 space-y-1 text-xs">
+                      <li>
+                        I acknowledge that I am purchasing a placement slot on
+                        LaunchRecord
+                      </li>
+                      <li>
+                        I agree to the terms of service and privacy policy
+                      </li>
+                      <li>
+                        I understand that payments are processed securely
+                        through Stripe
+                      </li>
+                      <li>
+                        I consent to receiving billing information under the
+                        Retold.me & Azespace, Inc. name
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+
+                <div className="flex justify-between">
+                  <Button
+                    variant="outline"
+                    onClick={() => setSelectedSlot(null)}
+                  >
+                    Back
+                  </Button>
+                  <Button
+                    onClick={handlePayment}
+                    className="bg-green-600 hover:bg-green-700"
+                  >
+                    Go to payment ($
+                    {selectedDuration === 15
+                      ? Math.round(
+                          slots.find((s) => s.id === selectedSlot)?.price *
+                            0.7 || 0,
+                        )
+                      : slots.find((s) => s.id === selectedSlot)?.price || 0}
+                    )
+                  </Button>
+                </div>
+              </div>
+            ) : (
+              // First screen: Select placement slot
+              <div>
+                <h3 className="text-lg font-medium mb-2">
+                  Select a Placement Slot
+                </h3>
+                {slotsLoading ? (
+                  <div className="flex justify-center py-8">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {slots.map((slot) => (
+                      <div
+                        key={slot.id}
+                        className={`border rounded-lg p-4 cursor-pointer transition-all ${
+                          selectedSlot === slot.id
+                            ? "border-green-500 bg-green-700"
+                            : "hover:border-primary"
+                        }`}
+                        onClick={() => handleSlotSelect(slot.id)}
+                      >
+                        <div className="flex justify-between items-start">
+                          <div>
+                            <h4 className="font-medium">{slot.name}</h4>
+                            <p className="text-sm text-muted-foreground">
+                              ${Math.round(slot.price * 0.7)} for 15 days | $
+                              {slot.price} for 30 days
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

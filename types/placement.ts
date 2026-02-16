@@ -20,7 +20,7 @@ export interface Placement {
   userId: string;
   launchId?: string;
   paymentIntentId?: string;
-  paymentStatus: "pending" | "paid" | "failed" | "refunded";
+  paymentStatus: "draft" | "pending" | "paid" | "failed" | "refunded";
   codeName: string;
   appName: string;
   color?: string; // Color for the placement
@@ -69,4 +69,5 @@ export interface PlacementSlot {
   duration: number; // in days
   codeName: string;
   isAvailable: boolean;
+  name: string;
 }

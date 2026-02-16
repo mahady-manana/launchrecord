@@ -21,7 +21,7 @@ export interface IPlacement extends Document {
   userId: mongoose.Types.ObjectId;
   launchId?: mongoose.Types.ObjectId;
   paymentIntentId?: string;
-  paymentStatus: "pending" | "paid" | "failed" | "refunded";
+  paymentStatus: "draft" | "pending" | "paid" | "failed" | "refunded";
   codeName: string;
   appName: string;
   duration: number; // Duration in days
@@ -96,8 +96,8 @@ const PlacementSchema = new Schema<IPlacement>(
     },
     paymentStatus: {
       type: String,
-      enum: ["pending", "paid", "failed", "refunded"],
-      default: "pending",
+      enum: ["draft", "pending", "paid", "failed", "refunded"],
+      default: "draft",
     },
     codeName: {
       type: String,

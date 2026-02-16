@@ -1,4 +1,3 @@
-import { mockPlacements } from "@/mocks/launch.mocks";
 import { Placement } from "@/types/placement";
 import { useEffect, useState } from "react";
 
@@ -12,10 +11,8 @@ export function FeaturedPlacementCard({
   preview,
 }: FeaturedPlacementCardProps) {
   // Use only placements for the slider
-  const allItemsPrep = preview
-    ? placements
-    : [...placements, ...mockPlacements];
-  const allItems = allItemsPrep.slice(0, 3);
+
+  const allItems = placements;
 
   const [currentIndex, setCurrentIndex] = useState(0);
 
@@ -67,7 +64,7 @@ export function FeaturedPlacementCard({
               <div className="relative h-full min-h-[300px]">
                 {item.backgroundImage ? (
                   <img
-                    src={item.backgroundImage || "/placeholder-ads-1.webp"}
+                    src={item.backgroundImage || "/promote-image.jpg"}
                     alt={item.appName}
                     className="absolute inset-0 w-full h-full rounded-xl object-cover"
                   />

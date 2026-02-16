@@ -11,7 +11,8 @@ interface PlacementCardProps {
 
 export function PlacementCard({ launch, placement }: PlacementCardProps) {
   // If we have a placement, use that; otherwise use the launch
-  if (placement) {
+  const isMock = placement?._id.includes("mock");
+  if (placement && !isMock) {
     return (
       <a
         href={placement.website}
@@ -20,7 +21,7 @@ export function PlacementCard({ launch, placement }: PlacementCardProps) {
         className="block"
       >
         <Card
-          style={{ background: placement.color }}
+          style={{ background: isMock ? "#414040" : placement.color }}
           className="relative flex items-end h-full min-h-40 overflow-hidden rounded-xl border-0 bg-transparent shadow-none"
         >
           {placement.backgroundImage ? (
@@ -30,6 +31,9 @@ export function PlacementCard({ launch, placement }: PlacementCardProps) {
               className="absolute inset-0 w-full h-full rounded-xl object-cover"
             />
           ) : null}
+          <div className="absolute inset-0 w-full h-full pt-10 rounded-xl object-cover">
+            <p className="text-center text-gray-400">Available slot</p>
+          </div>
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
 
           {/* Content overlay */}
@@ -45,13 +49,20 @@ export function PlacementCard({ launch, placement }: PlacementCardProps) {
                       className="h-full w-full object-cover"
                     />
                   ) : (
-                    <div className="flex h-full w-full items-center justify-center text-sm font-semibold text-white">
+                    <div
+                      style={{
+                        background: isMock ? "#575757" : undefined,
+                      }}
+                      className="flex h-full rounded-full w-full items-center justify-center text-sm font-semibold text-white"
+                    >
                       {placement.title.slice(0, 1).toUpperCase()}
                     </div>
                   )}
                 </div>
                 <div>
-                  <h3 className="text-lg font-bold">{placement.appName}</h3>
+                  <h3 className="text-lg font-bold">
+                    {placement.appName || "Get featured here"}
+                  </h3>
                 </div>
               </div>
               <p className="line-clamp-2 text-xs text-white/90">
@@ -67,9 +78,10 @@ export function PlacementCard({ launch, placement }: PlacementCardProps) {
   // Fallback to launch if no placement
   if (!launch) {
     return (
-      <Card className="border-dashed rounded-xl h-24 flex items-center justify-center bg-muted">
+      <Card className="border-dashed rounded-xl h-24 flex items-center justify-center bg-gray-800">
         <div className="text-center">
           <h3 className="text-sm text-muted-foreground">Available Slot</h3>
+          <p className="text-gray-500">Buy or contact sales</p>
         </div>
       </Card>
     );
@@ -114,7 +126,9 @@ export function PlacementCard({ launch, placement }: PlacementCardProps) {
                 )}
               </div>
               <div>
-                <h3 className="text-lg font-bold">{launch.name}</h3>
+                <h3 className="text-lg font-bold">
+                  {launch.name || "App name"}
+                </h3>
                 <p className="line-clamp-2 text-sm text-white/90">
                   {shortText}
                 </p>

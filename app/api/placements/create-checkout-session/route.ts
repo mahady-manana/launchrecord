@@ -51,19 +51,22 @@ export async function POST(request: Request) {
     const body = await request.json();
 
     // Validate required fields
-    if (!body.placementCode || !body.duration) {
+    if (!body.placementId || !body.placementCode || !body.duration) {
       return NextResponse.json(
-        { success: false, message: "placementCode and duration are required." },
+        { success: false, message: "Invalid data" },
         { status: 400 },
       );
     }
 
     await connectToDatabase();
-
+    const currentDate = new Date();
     // Check if placement with this codeName already exists and is active
     const existingActivePlacement = await Placement.findOne({
       codeName: body.placementCode,
-      status: { $in: ["active", "inactive"] },
+      status: "active",
+      paymentStatus: "paid",
+      startDate: { $lte: currentDate },
+      endDate: { $gte: currentDate },
     });
 
     if (existingActivePlacement) {
@@ -122,33 +125,6 @@ export async function POST(request: Request) {
       });
     }
 
-    // Create a temporary placement record to hold the checkout info
-    const startDate = new Date();
-    const endDate = new Date(startDate);
-    endDate.setDate(endDate.getDate() + body.duration);
-
-    const tempPlacement = await Placement.create({
-      title: `Placement ${body.placementCode}`,
-      tagline: `Premium placement for ${body.duration} days`,
-      website: dbUser.website || "https://launchrecord.com",
-      placementType: body.placementCode.startsWith("HERO")
-        ? "featured"
-        : "sidebar",
-      position: body.placementCode.includes("LEFT")
-        ? "left"
-        : body.placementCode.includes("RIGHT")
-          ? "right"
-          : "hero",
-      startDate,
-      endDate,
-      price: amount,
-      status: "inactive", // Will become active after payment
-      userId: user._id,
-      paymentStatus: "pending",
-      codeName: body.placementCode,
-      duration: body.duration,
-    });
-
     // Create a Stripe checkout session
     const session = await stripe.checkout.sessions.create({
       line_items: [
@@ -164,16 +140,30 @@ export async function POST(request: Request) {
           quantity: 1,
         },
       ],
+      allow_promotion_codes: true,
       mode: "payment",
       customer: stripeCustomerId,
-      success_url: `${process.env.NEXT_PUBLIC_BASE_URL}/dashboard/placement/${tempPlacement._id}?session_id={CHECKOUT_SESSION_ID}`,
+      success_url: `${process.env.NEXT_PUBLIC_BASE_URL}/dashboard/placement/${body.placementId}?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${process.env.NEXT_PUBLIC_BASE_URL}/checkout/cancel`,
       metadata: {
-        placementId: tempPlacement._id.toString(),
+        placementId: body.placementId,
         userId: user._id.toString(),
         placementCode: body.placementCode,
         duration: body.duration.toString(),
       },
+    });
+    // Create a temporary placement record to hold the checkout info
+    const startDate = new Date();
+    const endDate = new Date(startDate);
+    endDate.setDate(endDate.getDate() + body.duration + 1);
+
+    await Placement.findByIdAndUpdate(body.placementId, {
+      paymentStatus: "pending",
+      codeName: body.placementCode,
+      duration: body.duration,
+      paymentIntentId: session.id,
+      startDate,
+      endDate,
     });
 
     return NextResponse.json({

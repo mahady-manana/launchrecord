@@ -11,7 +11,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { mockPlacements } from "@/mocks/launch.mocks";
 import { LAUNCH_CATEGORIES, Launch, PaginationMeta } from "@/types";
 import { Placement } from "@/types/placement";
 import { useEffect, useState } from "react";
@@ -42,11 +41,9 @@ interface LaunchListingSectionProps {
 }
 
 function TenPlacementCards({ placements }: { placements: Placement[] }) {
-  const slots = Array.from({ length: 5 }, (_, index) => mockPlacements[index]);
-
   return (
     <div className="space-y-3">
-      {slots.map((placement, index) => {
+      {placements.map((placement, index) => {
         if (!placement) {
           // Render empty placeholder if no placement exists at this index
           return (
@@ -122,7 +119,7 @@ export function LaunchListingSection({
             placeholder="Search by launch name or description (min 3 chars)"
             className="md:w-1/3"
           />
-          
+
           <div className="flex flex-wrap gap-2 md:gap-3">
             <Select
               value={category}
@@ -142,7 +139,7 @@ export function LaunchListingSection({
                 ))}
               </SelectContent>
             </Select>
-            
+
             <Select
               value={timeFilter}
               onValueChange={(value) =>
@@ -159,7 +156,7 @@ export function LaunchListingSection({
                 <SelectItem value="month">This month</SelectItem>
               </SelectContent>
             </Select>
-            
+
             <Button
               variant={prelaunchOnly ? "default" : "outline"}
               onClick={() => onPrelaunchOnlyChange(!prelaunchOnly)}
@@ -167,7 +164,7 @@ export function LaunchListingSection({
             >
               Prelaunch
             </Button>
-            
+
             <Button
               variant="outline"
               onClick={() => {

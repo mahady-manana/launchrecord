@@ -246,21 +246,6 @@ export function PlacementForm({
             <Button type="submit" disabled={isSubmitting}>
               {isSubmitting ? "Updating..." : "Update Campaign"}
             </Button>
-            {placement.status === "inactive" && (
-              <Button
-                type="button"
-                variant="default"
-                onClick={() => {
-                  // Call a function to set the placement live
-                  if (onSetLive) {
-                    onSetLive();
-                  }
-                }}
-                disabled={isSubmitting}
-              >
-                {isSubmitting ? "Processing..." : "Set Live"}
-              </Button>
-            )}
           </div>
         </CardFooter>
       </form>
