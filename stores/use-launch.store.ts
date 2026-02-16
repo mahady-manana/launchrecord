@@ -50,8 +50,11 @@ interface LaunchStore {
   // Combined actions
 
   setLaunchesLoading: (loading: boolean) => void;
+
   setPlacementsLoading: (loading: boolean) => void;
   setError: (error: string | null) => void;
+  setTimeFilter: (timeFilter: any) => void;
+  setPrelaunchOnly: (prelaunchOnly: any) => void;
 
   // Filters
   setQuery: (query: string) => void;
@@ -97,7 +100,7 @@ export const useLaunchStore = create<LaunchStore>((set, get) => ({
   // Error state
   error: null,
 
-  // Launches actions
+  // Launches sactions
   setLaunchesData: (data) =>
     set({
       launches: data.launches,
@@ -131,11 +134,11 @@ export const useLaunchStore = create<LaunchStore>((set, get) => ({
     set((state) => ({
       filters: { ...state.filters, category, page: 1 },
     })),
-  setTimeFilter: (timeFilter) =>
+  setTimeFilter: (timeFilter: any) =>
     set((state) => ({
       filters: { ...state.filters, timeFilter, page: 1 },
     })),
-  setPrelaunchOnly: (prelaunchOnly) =>
+  setPrelaunchOnly: (prelaunchOnly: any) =>
     set((state) => ({
       filters: { ...state.filters, prelaunchOnly, page: 1 },
     })),

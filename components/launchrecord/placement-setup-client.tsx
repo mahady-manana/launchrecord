@@ -389,8 +389,8 @@ export default function PlacementSetupClient({
                       <div className="font-medium">
                         $$
                         {Math.round(
-                          slots.find((s) => s.id === selectedSlot)?.price *
-                            0.7 || 0,
+                          (slots.find((s) => s.id === selectedSlot)?.price ||
+                            0) * 0.7 || 0,
                         )}
                       </div>
                       <div className="text-sm text-white">10 Days</div>
@@ -454,8 +454,8 @@ export default function PlacementSetupClient({
                     Go to payment ($
                     {selectedDuration === 10
                       ? Math.round(
-                          slots.find((s) => s.id === selectedSlot)?.price *
-                            0.7 || 0,
+                          (slots.find((s) => s.id === selectedSlot)?.price ||
+                            0) * 0.7 || 0,
                         )
                       : slots.find((s) => s.id === selectedSlot)?.price || 0}
                     )

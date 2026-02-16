@@ -164,13 +164,22 @@ export async function GET() {
     await connectToDatabase();
 
     // Get all available placement codes using the model method
-    const availableCodes = await Placement.getAvailableCodes();
+    const availableCodes = await Placement.find({
+      status: "active",
+      paymentStatus: "paid",
+      $or: [
+        { endDate: { $gte: new Date() } }, // Still within the active period
+        { startDate: { $lte: new Date() } }, // Or has started but not yet ended
+      ],
+    });
 
     // Update availability based on available codes
     const slotsWithAvailability = ALL_SLOTS.map((slot) => {
       return {
         ...slot,
-        isAvailable: availableCodes.includes(slot.codeName),
+        isAvailable: !availableCodes.find(
+          (place) => place.codeName === slot.codeName,
+        ),
       };
     });
 

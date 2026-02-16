@@ -1,18 +1,15 @@
-import { NextResponse } from "next/server";
-import { connectToDatabase } from "@/lib/mongodb";
-import { getUserFromSession } from "@/lib/get-user-from-session";
-import { getClientIdentifier, isSameOrigin } from "@/lib/security";
-import { rateLimit } from "@/lib/rate-limit";
-import Stripe from "stripe";
 import Placement from "@/lib/models/placement";
+import { connectToDatabase } from "@/lib/mongodb";
+import { NextResponse } from "next/server";
+import Stripe from "stripe";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: "2023-10-16",
+  apiVersion: "2026-01-28.clover",
 });
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
-  const sessionId = searchParams.get('session_id');
+  const sessionId = searchParams.get("session_id");
 
   if (!sessionId) {
     return NextResponse.json(
@@ -27,19 +24,19 @@ export async function GET(request: Request) {
     // Retrieve the checkout session from Stripe
     const session = await stripe.checkout.sessions.retrieve(sessionId);
 
-    if (session.payment_status === 'paid') {
+    if (session.payment_status === "paid") {
       // Update the placement record with payment information
       await Placement.findOneAndUpdate(
         { _id: session.metadata?.placementId },
         {
           paymentIntentId: session.payment_intent,
-          paymentStatus: 'paid',
-          status: 'active',
-        }
+          paymentStatus: "paid",
+          status: "active",
+        },
       );
 
-      return NextResponse.json({ 
-        success: true, 
+      return NextResponse.json({
+        success: true,
         message: "Payment successful! Your placement is now active.",
         placementId: session.metadata?.placementId,
       });
@@ -48,9 +45,9 @@ export async function GET(request: Request) {
       await Placement.findOneAndUpdate(
         { _id: session.metadata?.placementId },
         {
-          paymentStatus: 'failed',
-          status: 'inactive',
-        }
+          paymentStatus: "failed",
+          status: "inactive",
+        },
       );
 
       return NextResponse.json(

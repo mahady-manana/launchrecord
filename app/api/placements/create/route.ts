@@ -59,21 +59,6 @@ export async function POST(request: Request) {
 
     await connectToDatabase();
 
-    // Check if placement with this codeName is available
-    const isCodeAvailable = await Placement.isCodeAvailable(
-      validatedBody.placementCode,
-    );
-
-    if (!isCodeAvailable) {
-      return NextResponse.json(
-        {
-          success: false,
-          message: "This placement is already taken or reserved.",
-        },
-        { status: 400 },
-      );
-    }
-
     // Find the user in the database
     const dbUser = await User.findById(user._id);
     if (!dbUser) {

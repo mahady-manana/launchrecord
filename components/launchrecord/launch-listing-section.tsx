@@ -292,7 +292,7 @@ export function LaunchListingSection({
 
           <div className="flex flex-wrap gap-2 md:gap-3">
             <Select
-              value={category}
+              value={category as unknown as string}
               onValueChange={(value) =>
                 onCategoryChange(value as LaunchListingSectionProps["category"])
               }

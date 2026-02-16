@@ -67,7 +67,7 @@ export function HomePage({ initialQuery }: HomePageProps) {
         prelaunchOnly={launchStore.filters.prelaunchOnly}
         isLoading={launchStore.launchesLoading}
         onQueryChange={launchStore.setQuery}
-        onCategoryChange={launchStore.setCategory}
+        onCategoryChange={launchStore.setCategory as unknown as any}
         onTimeFilterChange={launchStore.setTimeFilter}
         onPrelaunchOnlyChange={launchStore.setPrelaunchOnly}
         onPageChange={launchStore.setLaunchesPage}

@@ -1,13 +1,13 @@
 // hooks/use-current-user.ts
-import { useCallback } from "react";
-import { useUserStore } from "@/stores/use-user.store";
 import { userService } from "@/services/user-service";
+import { useUserStore } from "@/stores/use-user.store";
+import { useCallback, useEffect } from "react";
 
 export const useCurrentUser = () => {
-  const setUser = useUserStore(state => state.setUser);
-  const setAuthStatus = useUserStore(state => state.setAuthStatus);
-  const user = useUserStore(state => state.user);
-  const authStatus = useUserStore(state => state.authStatus);
+  const setUser = useUserStore((state) => state.setUser);
+  const setAuthStatus = useUserStore((state) => state.setAuthStatus);
+  const user = useUserStore((state) => state.user);
+  const authStatus = useUserStore((state) => state.authStatus);
 
   const refreshUser = useCallback(async () => {
     try {

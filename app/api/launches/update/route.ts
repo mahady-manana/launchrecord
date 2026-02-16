@@ -167,7 +167,7 @@ export async function PUT(request: Request) {
     }
 
     if (validatedBody.category) {
-      updateData.category = validatedBody.category;
+      updateData.category = validatedBody.category as unknown as string;
     }
 
     if (validatedBody.valueProposition !== undefined) {

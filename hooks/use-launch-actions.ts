@@ -12,6 +12,8 @@ interface LaunchActions {
     category?: string | string[];
     page?: number;
     limit?: number;
+    timeFilter?: "all" | "today" | "week" | "month";
+    prelaunchOnly?: boolean;
   }) => Promise<{
     success: boolean;
 
@@ -48,7 +50,9 @@ export function useLaunchActions(): LaunchActions {
         ...(params.query && { q: params.query }),
         ...(categoryParam && { category: String(categoryParam) }),
         ...(params.timeFilter && { timeFilter: params.timeFilter }),
-        ...(params.prelaunchOnly !== undefined && { prelaunchOnly: String(params.prelaunchOnly) }),
+        ...(params.prelaunchOnly !== undefined && {
+          prelaunchOnly: String(params.prelaunchOnly),
+        }),
         page: String(params.page || 1),
         limit: String(params.limit || 20),
       });

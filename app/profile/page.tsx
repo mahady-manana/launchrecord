@@ -1,14 +1,20 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { useUser } from '@/hooks/use-user';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { toast } from 'sonner';
-import { Loader2 } from 'lucide-react';
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { useUser } from "@/hooks/use-user";
+import { Loader2 } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
 
 interface UserProfile {
   name: string;
@@ -22,38 +28,41 @@ export default function ProfilePage() {
   const router = useRouter();
   const { user, authStatus } = useUser();
   const [profile, setProfile] = useState<UserProfile>({
-    name: '',
-    email: '',
-    image: '',
-    website: '',
-    bio: '',
+    name: "",
+    email: "",
+    image: "",
+    website: "",
+    bio: "",
   });
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
-    if (authStatus === 'loading') return;
-    
-    if (authStatus !== 'authenticated') {
-      router.push('/auth/signin?callbackUrl=' + encodeURIComponent(window.location.pathname));
+    if (authStatus === "loading") return;
+
+    if (authStatus !== "authenticated") {
+      router.push(
+        "/auth/signin?callbackUrl=" +
+          encodeURIComponent(window.location.pathname),
+      );
       return;
     }
-    
+
     if (user) {
       setProfile({
         name: user.name,
         email: user.email,
-        image: user.image,
-        website: user.website || '',
-        bio: user.bio || '',
+        image: user.image || undefined,
       });
       setLoading(false);
     }
   }, [authStatus, user, router]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
     const { name, value } = e.target;
-    setProfile(prev => ({ ...prev, [name]: value }));
+    setProfile((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -61,10 +70,10 @@ export default function ProfilePage() {
     setSaving(true);
 
     try {
-      const response = await fetch('/api/user/update', {
-        method: 'PUT',
+      const response = await fetch("/api/user/update", {
+        method: "PUT",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(profile),
       });
@@ -72,19 +81,19 @@ export default function ProfilePage() {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.message || 'Failed to update profile');
+        throw new Error(data.message || "Failed to update profile");
       }
 
-      toast.success('Profile updated successfully!');
+      toast.success("Profile updated successfully!");
     } catch (error: any) {
-      console.error('Error updating profile:', error);
-      toast.error(error.message || 'Failed to update profile');
+      console.error("Error updating profile:", error);
+      toast.error(error.message || "Failed to update profile");
     } finally {
       setSaving(false);
     }
   };
 
-  if (authStatus === 'loading' || loading) {
+  if (authStatus === "loading" || loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
@@ -95,7 +104,7 @@ export default function ProfilePage() {
     );
   }
 
-  if (authStatus !== 'authenticated') {
+  if (authStatus !== "authenticated") {
     return null; // Redirect handled by useEffect
   }
 
@@ -142,7 +151,8 @@ export default function ProfilePage() {
                 disabled
               />
               <p className="text-xs text-muted-foreground">
-                Email cannot be changed. Contact support if you need to update it.
+                Email cannot be changed. Contact support if you need to update
+                it.
               </p>
             </div>
 
@@ -179,7 +189,7 @@ export default function ProfilePage() {
                   Saving...
                 </>
               ) : (
-                'Save Changes'
+                "Save Changes"
               )}
             </Button>
           </div>

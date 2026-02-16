@@ -149,7 +149,9 @@ PlacementSchema.statics.getAvailableCodes = async function (): Promise<
   });
 
   // Return all codes that are NOT in the active placements
-  const activeCodes = activePlacements.map((placement) => placement.codeName);
+  const activeCodes = activePlacements.map(
+    (placement: any) => placement.codeName,
+  );
 
   // Define all possible codes (this should match the codes defined in the API)
   const allPossibleCodes = [
@@ -171,10 +173,7 @@ PlacementSchema.statics.getAvailableCodes = async function (): Promise<
   return allPossibleCodes.filter((code) => !activeCodes.includes(code));
 };
 
-const Placement: Model<IPlacement> & {
-  isCodeAvailable(codeName: string): Promise<boolean>;
-  getAvailableCodes(): Promise<string[]>;
-} =
+const Placement: Model<IPlacement> =
   mongoose.models.Placement ||
   mongoose.model<IPlacement>("Placement", PlacementSchema);
 // Placement.collection.dropIndexes();

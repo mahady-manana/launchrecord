@@ -2,7 +2,7 @@
 
 import { usePlacementActions } from "@/hooks/use-placement-actions";
 import { useLaunchStore } from "@/stores/use-launch.store";
-import { useEffect, useCallback } from "react";
+import { useCallback, useEffect } from "react";
 
 export function usePlacements() {
   const store = useLaunchStore();
@@ -17,24 +17,29 @@ export function usePlacements() {
 
     if (useMockData) {
       // Mock data is handled in the store's setMockData function
-      store.setMockData();
     } else {
       store.setPlacementsLoading(true);
-      
+
       try {
         // Fetch all placements
         const data = await actions.fetchPlacements({
           page: store.filters.page,
           limit: store.filters.limit,
         });
-        
+
         if (data.success) {
           // Separate placements by position
           const allPlacements = data.placements || [];
-          
-          const heroPlacements = allPlacements.filter(p => p.position === 'hero');
-          const leftPlacements = allPlacements.filter(p => p.position === 'left');
-          const rightPlacements = allPlacements.filter(p => p.position === 'right');
+
+          const heroPlacements = allPlacements.filter(
+            (p) => p.position === "hero",
+          );
+          const leftPlacements = allPlacements.filter(
+            (p) => p.position === "left",
+          );
+          const rightPlacements = allPlacements.filter(
+            (p) => p.position === "right",
+          );
 
           store.setPlacementsData({
             heroPlacements,

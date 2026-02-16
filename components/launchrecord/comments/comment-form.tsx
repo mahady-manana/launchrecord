@@ -89,9 +89,9 @@ export function CommentForm({
     <form onSubmit={handleSubmit} className="space-y-3">
       <div className="flex items-start gap-3">
         <div className="h-8 w-8 shrink-0 overflow-hidden rounded-full bg-muted">
-          {user?.avatar ? (
+          {user?.image ? (
             <img
-              src={user.avatar}
+              src={user.image}
               alt={user.name || "User"}
               className="h-full w-full object-cover"
             />
