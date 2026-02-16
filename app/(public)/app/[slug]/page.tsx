@@ -9,6 +9,7 @@ import Launch from "@/lib/models/launch";
 import { connectToDatabase } from "@/lib/mongodb";
 import { Launch as LaunchType } from "@/types";
 import { Search } from "lucide-react";
+import { PipelineStage } from "mongoose";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -35,6 +36,7 @@ type LeanLaunch = {
   problem?: string;
   audience?: string;
   placement: "none" | "hero" | "left" | "right";
+  status: "draft" | "prelaunch" | "launched";
   commentCount: number;
   createdAt: Date | string;
   updatedAt: Date | string;
@@ -129,7 +131,7 @@ async function getSectionData(currentLaunch: LeanLaunch) {
   }
 
   // Use aggregation to fetch all three sets of launches in one pipeline
-  const pipeline = [
+  const pipeline: PipelineStage[] = [
     {
       $facet: {
         similarApps: [
@@ -232,8 +234,7 @@ export default async function LaunchDetailPage({ params }: LaunchPageProps) {
     audience: launch.audience || "",
     businessModel: launch.businessModel as LaunchType["businessModel"],
     pricingModel: launch.pricingModel as LaunchType["pricingModel"],
-    x: launch.x,
-    linkedin: launch.linkedin,
+    status: launch.status || "draft",
     placement: launch.placement,
     commentCount: launch.commentCount || 0,
     createdAt: new Date(launch.createdAt).toISOString(),
@@ -341,17 +342,6 @@ export default async function LaunchDetailPage({ params }: LaunchPageProps) {
 
           <footer className="flex flex-wrap items-center gap-3 border-t pt-4 text-sm text-muted-foreground">
             <span>By {launch.name}</span>
-            {launch.x ? <span>X: {launch.x}</span> : null}
-            {launch.linkedin ? (
-              <Link
-                href={launch.linkedin}
-                target="_blank"
-                rel="noreferrer"
-                className="text-primary hover:underline"
-              >
-                LinkedIn
-              </Link>
-            ) : null}
           </footer>
         </article>
 

@@ -53,6 +53,7 @@ const initialForm: LaunchModalForm = {
   category: [LAUNCH_CATEGORIES[0]],
   businessModel: BUSINESS_MODELS[0],
   pricingModel: PRICING_MODELS[1],
+  status: "draft",
 };
 
 interface OptionalDetailsForm {
@@ -71,6 +72,9 @@ const initialOptionalDetails: OptionalDetailsForm = {
   linkedin: "",
 };
 
+// Step types
+type Step = "name" | "details" | "info" | "publish";
+
 export function LaunchModal({
   open,
   onOpenChange,
@@ -82,13 +86,14 @@ export function LaunchModal({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isCategoryDropdownOpen, setIsCategoryDropdownOpen] = useState(false);
   const categoryDropdownRef = useRef<HTMLDivElement>(null);
+  const [step, setStep] = useState<Step>("name"); // Track current step
 
   // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
-        isCategoryDropdownOpen && 
-        categoryDropdownRef.current && 
+        isCategoryDropdownOpen &&
+        categoryDropdownRef.current &&
         !categoryDropdownRef.current.contains(event.target as Node)
       ) {
         setIsCategoryDropdownOpen(false);
@@ -109,21 +114,52 @@ export function LaunchModal({
   const [optionalError, setOptionalError] = useState<string | null>(null);
   const [isSavingOptional, setIsSavingOptional] = useState(false);
 
-  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
+  // Navigation functions
+  const goToNextStep = () => {
+    if (step === "name") {
+      if (!form.name.trim()) {
+        setError("Name is required");
+        return;
+      }
+      setStep("details");
+    } else if (step === "details") {
+      if (!form.tagline.trim() || !form.description.trim()) {
+        setError("Tagline and Description are required");
+        return;
+      }
+      setStep("info");
+    } else if (step === "info") {
+      if (!form.website.trim()) {
+        setError("Website is required");
+        return;
+      }
+      setStep("publish");
+    }
+    setError(null);
+  };
+
+  const goToPrevStep = () => {
+    if (step === "details") setStep("name");
+    else if (step === "info") setStep("details");
+    else if (step === "publish") setStep("info");
+    setError(null);
+  };
+
+  // Handle publishing options
+  const handleSaveAsDraft = async () => {
     setError(null);
     setIsSubmitting(true);
 
-    // Prepare the payload with the category as either a single value or array
     const payload: CreateLaunchPayload = {
       ...form,
       category: form.category.length === 1 ? form.category[0] : form.category,
+      status: "draft",
     };
 
     const result = await onSubmit(payload);
 
     if (!result.success) {
-      setError(result.message || "Failed to submit launch.");
+      setError(result.message || "Failed to save as draft.");
       setIsSubmitting(false);
       return;
     }
@@ -131,6 +167,55 @@ export function LaunchModal({
     setIsSubmitting(false);
     onOpenChange(false);
     setForm(initialForm);
+    setStep("name");
+  };
+
+  const handlePrelaunch = async () => {
+    setError(null);
+    setIsSubmitting(true);
+
+    const payload: CreateLaunchPayload = {
+      ...form,
+      category: form.category.length === 1 ? form.category[0] : form.category,
+      status: "prelaunch",
+    };
+
+    const result = await onSubmit(payload);
+
+    if (!result.success) {
+      setError(result.message || "Failed to submit for prelaunch.");
+      setIsSubmitting(false);
+      return;
+    }
+
+    setIsSubmitting(false);
+    onOpenChange(false);
+    setForm(initialForm);
+    setStep("name");
+  };
+
+  const handleLaunch = async () => {
+    setError(null);
+    setIsSubmitting(true);
+
+    const payload: CreateLaunchPayload = {
+      ...form,
+      category: form.category.length === 1 ? form.category[0] : form.category,
+      status: "launched",
+    };
+
+    const result = await onSubmit(payload);
+
+    if (!result.success) {
+      setError(result.message || "Failed to launch.");
+      setIsSubmitting(false);
+      return;
+    }
+
+    setIsSubmitting(false);
+    onOpenChange(false);
+    setForm(initialForm);
+    setStep("name");
 
     if (result.launch) {
       setCreatedLaunch(result.launch);
@@ -202,23 +287,85 @@ export function LaunchModal({
     setOptionalError(null);
   };
 
-  return (
-    <>
-      <Dialog open={open} onOpenChange={onOpenChange}>
-        <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-xl">
-          <DialogHeader>
-            <DialogTitle>Submit new launch</DialogTitle>
-            <DialogDescription>
-              Add your app to LaunchRecord so builders can discover it.
-            </DialogDescription>
-          </DialogHeader>
+  // Render step indicator
+  const renderStepIndicator = () => (
+    <div className="mb-6">
+      <div className="flex justify-between relative">
+        {/* Progress bar */}
+        <div className="absolute top-4 left-0 right-0 h-0.5 bg-gray-200 -z-10">
+          <div 
+            className="h-full bg-blue-500 transition-all duration-300 ease-in-out" 
+            style={{ 
+              width: step === "name" ? "25%" : 
+                     step === "details" ? "50%" : 
+                     step === "info" ? "75%" : "100%" 
+            }}
+          />
+        </div>
+        
+        {/* Step indicators */}
+        <div className="flex-1 flex flex-col items-center">
+          <div className={`w-8 h-8 rounded-full flex items-center justify-center mb-2 ${
+            step === "name" || step === "details" || step === "info" || step === "publish" 
+              ? "bg-blue-500 text-white" 
+              : "bg-gray-200 text-gray-500"
+          }`}>
+            1
+          </div>
+          <span className={`text-xs ${step === "name" ? "font-medium text-blue-500" : "text-gray-500"}`}>
+            Name
+          </span>
+        </div>
+        <div className="flex-1 flex flex-col items-center">
+          <div className={`w-8 h-8 rounded-full flex items-center justify-center mb-2 ${
+            step === "details" || step === "info" || step === "publish" 
+              ? "bg-blue-500 text-white" 
+              : "bg-gray-200 text-gray-500"
+          }`}>
+            2
+          </div>
+          <span className={`text-xs ${step === "details" ? "font-medium text-blue-500" : "text-gray-500"}`}>
+            Details
+          </span>
+        </div>
+        <div className="flex-1 flex flex-col items-center">
+          <div className={`w-8 h-8 rounded-full flex items-center justify-center mb-2 ${
+            step === "info" || step === "publish" 
+              ? "bg-blue-500 text-white" 
+              : "bg-gray-200 text-gray-500"
+          }`}>
+            3
+          </div>
+          <span className={`text-xs ${step === "info" ? "font-medium text-blue-500" : "text-gray-500"}`}>
+            Info
+          </span>
+        </div>
+        <div className="flex-1 flex flex-col items-center">
+          <div className={`w-8 h-8 rounded-full flex items-center justify-center mb-2 ${
+            step === "publish" 
+              ? "bg-blue-500 text-white" 
+              : "bg-gray-200 text-gray-500"
+          }`}>
+            4
+          </div>
+          <span className={`text-xs ${step === "publish" ? "font-medium text-blue-500" : "text-gray-500"}`}>
+            Publish
+          </span>
+        </div>
+      </div>
+    </div>
+  );
 
-          <form onSubmit={handleSubmit} className="space-y-4">
+  // Render current step content
+  const renderStepContent = () => {
+    switch (step) {
+      case "name":
+        return (
+          <div className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="launch-name">Name</Label>
+              <Label htmlFor="launch-name">App Name *</Label>
               <Input
                 id="launch-name"
-                required
                 value={form.name}
                 onChange={(event) =>
                   setForm((current) => ({
@@ -226,6 +373,7 @@ export function LaunchModal({
                     name: event.target.value,
                   }))
                 }
+                placeholder="Enter your app name"
               />
             </div>
 
@@ -239,12 +387,16 @@ export function LaunchModal({
                 disabled={isSubmitting}
               />
             </div>
-
+          </div>
+        );
+      
+      case "details":
+        return (
+          <div className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="launch-tagline">Tagline</Label>
+              <Label htmlFor="launch-tagline">Tagline *</Label>
               <Input
                 id="launch-tagline"
-                required
                 maxLength={140}
                 placeholder="One-line hook founders remember"
                 value={form.tagline}
@@ -255,13 +407,15 @@ export function LaunchModal({
                   }))
                 }
               />
+              <p className="text-xs text-muted-foreground">
+                {form.tagline.length}/140 characters
+              </p>
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="launch-description">Description</Label>
+              <Label htmlFor="launch-description">Description *</Label>
               <Textarea
                 id="launch-description"
-                required
                 value={form.description}
                 onChange={(event) =>
                   setForm((current) => ({
@@ -270,16 +424,21 @@ export function LaunchModal({
                   }))
                 }
                 rows={4}
+                placeholder="Describe your app in detail"
               />
             </div>
-
+          </div>
+        );
+      
+      case "info":
+        return (
+          <div className="space-y-4">
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-2">
-                <Label htmlFor="launch-website">Website</Label>
+                <Label htmlFor="launch-website">Website *</Label>
                 <Input
                   id="launch-website"
                   type="url"
-                  required
                   placeholder="https://"
                   value={form.website}
                   onChange={(event) =>
@@ -322,7 +481,7 @@ export function LaunchModal({
                   </button>
 
                   {isCategoryDropdownOpen && (
-                    <div 
+                    <div
                       ref={categoryDropdownRef}
                       className="absolute z-10 mt-1 w-full rounded-md border bg-popover p-2 shadow-md"
                     >
@@ -431,13 +590,115 @@ export function LaunchModal({
                 </Select>
               </div>
             </div>
+          </div>
+        );
+      
+      case "publish":
+        return (
+          <div className="space-y-6">
+            <div className="text-center">
+              <h3 className="text-lg font-medium">Ready to publish?</h3>
+              <p className="text-sm text-muted-foreground mt-1">
+                Choose how you want to publish your launch
+              </p>
+            </div>
+            
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div className="border rounded-lg p-4 flex flex-col items-center text-center">
+                <h4 className="font-medium mb-2">Save Draft</h4>
+                <p className="text-xs text-muted-foreground mb-3">
+                  Keep it private for now
+                </p>
+                <Button 
+                  variant="outline" 
+                  className="w-full"
+                  onClick={handleSaveAsDraft}
+                  disabled={isSubmitting}
+                >
+                  {isSubmitting ? "Saving..." : "Save Draft"}
+                </Button>
+              </div>
+              
+              <div className="border rounded-lg p-4 flex flex-col items-center text-center border-blue-300 bg-blue-50">
+                <h4 className="font-medium mb-2 text-blue-700">Prelaunch</h4>
+                <p className="text-xs text-blue-600 mb-3">
+                  Get early feedback from the community
+                </p>
+                <Button 
+                  variant="outline" 
+                  className="w-full border-blue-600 text-blue-700 hover:bg-blue-50 hover:text-blue-800"
+                  onClick={handlePrelaunch}
+                  disabled={isSubmitting}
+                >
+                  {isSubmitting ? "Publishing..." : "Prelaunch"}
+                </Button>
+              </div>
+              
+              <div className="border rounded-lg p-4 flex flex-col items-center text-center border-green-300 bg-green-50">
+                <h4 className="font-medium mb-2 text-green-700">Launch</h4>
+                <p className="text-xs text-green-600 mb-3">
+                  Go live to the world
+                </p>
+                <Button 
+                  className="w-full bg-green-600 hover:bg-green-700 text-white"
+                  onClick={handleLaunch}
+                  disabled={isSubmitting}
+                >
+                  {isSubmitting ? "Launching..." : "Launch Now"}
+                </Button>
+              </div>
+            </div>
+          </div>
+        );
+    }
+  };
 
-            {error ? <p className="text-sm text-destructive">{error}</p> : null}
+  return (
+    <>
+      <Dialog open={open} onOpenChange={onOpenChange}>
+        <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-xl">
+          <DialogHeader>
+            <DialogTitle>
+              {step === "name" && "What's your app called?"}
+              {step === "details" && "Tell us about your app"}
+              {step === "info" && "Add more details"}
+              {step === "publish" && "Ready to publish?"}
+            </DialogTitle>
+            <DialogDescription>
+              {step === "name" && "Give your app a name and upload a logo"}
+              {step === "details" && "Share your tagline and description"}
+              {step === "info" && "Add website, categories, and pricing"}
+              {step === "publish" && "Choose how you want to publish - your launch will appear differently based on your selection"}
+            </DialogDescription>
+          </DialogHeader>
 
-            <Button type="submit" className="w-full" disabled={isSubmitting}>
-              {isSubmitting ? "Submitting..." : "Submit launch"}
-            </Button>
-          </form>
+          {renderStepIndicator()}
+
+          {renderStepContent()}
+
+          {error ? <p className="text-sm text-destructive mt-2">{error}</p> : null}
+
+          {/* Navigation buttons */}
+          {step !== "publish" && (
+            <div className="flex justify-between pt-4">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={goToPrevStep}
+                disabled={step === "name"}
+              >
+                Back
+              </Button>
+              <Button
+                type="button"
+                onClick={goToNextStep}
+              >
+                Continue
+              </Button>
+            </div>
+          )}
+
+          {/* For the last step, we show the publish options instead of navigation */}
         </DialogContent>
       </Dialog>
 

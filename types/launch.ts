@@ -44,6 +44,7 @@ export interface Launch {
   audience?: string;
   businessModel: BusinessModel;
   pricingModel: PricingModel;
+  status: "draft" | "prelaunch" | "launched";
   submittedBy: string;
   placement: LaunchPlacement;
   commentCount: number;
@@ -76,6 +77,7 @@ export interface CreateLaunchPayload {
   category: LaunchCategory | LaunchCategory[];
   businessModel: BusinessModel;
   pricingModel: PricingModel;
+  status?: "draft" | "prelaunch" | "launched";
 }
 
 export interface UpdateLaunchPayload {
@@ -92,4 +94,5 @@ export interface UpdateLaunchPayload {
   audience?: string;
   businessModel?: BusinessModel;
   pricingModel?: PricingModel;
+  status?: "draft" | "prelaunch" | "launched";
 }

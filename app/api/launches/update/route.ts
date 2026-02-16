@@ -4,20 +4,20 @@ import { connectToDatabase } from "@/lib/mongodb";
 import { rateLimit } from "@/lib/rate-limit";
 import { sanitizeSlugInput, sanitizeText, slugify } from "@/lib/sanitize";
 import { getClientIdentifier, isSameOrigin } from "@/lib/security";
+import { serializeMongooseDocument } from "@/lib/utils";
 import { BUSINESS_MODELS, LAUNCH_CATEGORIES, PRICING_MODELS } from "@/types";
 import { Types } from "mongoose";
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { serializeMongooseDocument } from "@/lib/utils";
 
 const updateLaunchSchema = z.object({
   id: z.string().min(1),
   name: z.string().min(2).max(100).optional(),
   slug: z.string().min(1).max(120).optional(),
-  logoUrl: z.string().url().optional().or(z.literal("")),
+  logoUrl: z.string().optional(),
   tagline: z.string().min(4).max(140).optional(),
   description: z.string().min(10).max(1200).optional(),
-  website: z.string().url().optional(),
+  website: z.string().optional(),
   category: z
     .enum(LAUNCH_CATEGORIES)
     .optional()
@@ -27,6 +27,7 @@ const updateLaunchSchema = z.object({
   audience: z.string().max(220).optional(),
   businessModel: z.enum(BUSINESS_MODELS).optional(),
   pricingModel: z.enum(PRICING_MODELS).optional(),
+  status: z.string().optional(),
 });
 
 function randomSlugSuffix() {
@@ -189,6 +190,10 @@ export async function PUT(request: Request) {
 
     if (validatedBody.pricingModel) {
       updateData.pricingModel = validatedBody.pricingModel;
+    }
+
+    if (validatedBody.status) {
+      updateData.status = validatedBody.status;
     }
 
     const updatedLaunch = await Launch.findByIdAndUpdate(

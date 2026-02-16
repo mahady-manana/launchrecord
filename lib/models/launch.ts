@@ -17,6 +17,7 @@ export interface ILaunch extends Document {
   audience: string;
   businessModel: (typeof BUSINESS_MODELS)[number];
   pricingModel: (typeof PRICING_MODELS)[number];
+  status: "draft" | "prelaunch" | "launched";
   submittedBy: mongoose.Types.ObjectId;
   placement: "none" | "hero" | "left" | "right";
   isArchived: boolean;
@@ -111,6 +112,12 @@ const LaunchSchema = new Schema<ILaunch>(
       type: String,
       enum: PRICING_MODELS,
       required: [true, "Pricing model is required"],
+      index: true,
+    },
+    status: {
+      type: String,
+      enum: ["draft", "prelaunch", "launched"],
+      default: "draft",
       index: true,
     },
     placement: {

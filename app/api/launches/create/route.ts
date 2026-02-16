@@ -16,10 +16,10 @@ import { serializeMongooseDocument } from "@/lib/utils";
 
 const createLaunchSchema = z.object({
   name: z.string().min(2).max(100),
-  logoUrl: z.string().url().optional().or(z.literal("")),
+  logoUrl: z.string().optional().or(z.literal("")),
   tagline: z.string().min(4).max(140),
   description: z.string().min(10).max(1200),
-  website: z.string().url(),
+  website: z.string(),
   category: z.enum(LAUNCH_CATEGORIES).or(z.array(z.enum(LAUNCH_CATEGORIES)).max(3)),
   businessModel: z.enum(BUSINESS_MODELS),
   pricingModel: z.enum(PRICING_MODELS),

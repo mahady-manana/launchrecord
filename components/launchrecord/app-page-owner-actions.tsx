@@ -1,18 +1,21 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { Launch, UpdateLaunchPayload } from "@/types";
-import { Button } from "@/components/ui/button";
 import { LaunchEditModal } from "@/components/launchrecord/launch-edit-modal";
+import { Button } from "@/components/ui/button";
+import { Launch, UpdateLaunchPayload } from "@/types";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 interface AppPageOwnerActionsProps {
   launch: Launch;
   isOwner: boolean;
 }
 
-export function AppPageOwnerActions({ launch, isOwner }: AppPageOwnerActionsProps) {
+export function AppPageOwnerActions({
+  launch,
+  isOwner,
+}: AppPageOwnerActionsProps) {
   const router = useRouter();
   const [isEditOpen, setEditOpen] = useState(false);
   const [isSharing, setIsSharing] = useState(false);
@@ -74,6 +77,16 @@ export function AppPageOwnerActions({ launch, isOwner }: AppPageOwnerActionsProp
 
   return (
     <div className="flex flex-wrap items-center justify-end gap-2">
+      {isOwner ? (
+        <Button
+          variant="ghost"
+          className="bg-green-900"
+          size="sm"
+          onClick={() => setEditOpen(true)}
+        >
+          {launch.status}
+        </Button>
+      ) : null}
       {isOwner ? (
         <Button variant="outline" size="sm" onClick={() => setEditOpen(true)}>
           Edit launch

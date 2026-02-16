@@ -7,21 +7,11 @@ import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
 import { useLaunches } from "@/hooks/use-launches";
-import {
-  Calendar,
-  Clock,
-  DollarSign,
-  MapPin,
-  Plus,
-  Rocket,
-  ShoppingBag,
-  User,
-} from "lucide-react";
+import { Calendar, DollarSign, MapPin, ShoppingBag, User } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -48,6 +38,7 @@ interface Launch {
   description: string;
   website: string;
   category: string;
+  status: "draft" | "prelaunch" | "launched";
   createdAt: string;
 }
 
@@ -118,118 +109,12 @@ export default function DashboardPage() {
               <div>
                 <CardTitle className="text-2xl">Welcome back!</CardTitle>
                 <CardDescription>
-                  You have {placements.length} placements and {launches.length} launches
+                  You have {placements.length} placements and {launches.length}{" "}
+                  launches
                 </CardDescription>
               </div>
             </div>
           </CardHeader>
-        </Card>
-
-        {/* Active Placements */}
-        <Card>
-          <CardHeader>
-            <div className="flex justify-between items-center">
-              <div>
-                <CardTitle>Your Placements</CardTitle>
-                <CardDescription>
-                  Manage your purchased placements
-                </CardDescription>
-              </div>
-              <Button
-                variant="outline"
-                onClick={() => router.push("/dashboard/placements")}
-              >
-                Manage All
-              </Button>
-            </div>
-          </CardHeader>
-          <CardContent>
-            {placements.length === 0 ? (
-              <div className="text-center py-8">
-                <p className="text-muted-foreground">
-                  You don't have any active placements yet
-                </p>
-                <Button
-                  className="mt-4"
-                  onClick={() => router.push("/dashboard/placements")}
-                >
-                  Buy a Placement
-                </Button>
-              </div>
-            ) : (
-              <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                {placements.map((placement) => (
-                  <Card key={placement._id}>
-                    <CardHeader>
-                      <div className="flex justify-between items-start">
-                        <CardTitle className="text-lg">
-                          {placement.title}
-                        </CardTitle>
-                        <Badge
-                          variant={
-                            placement.status === "active"
-                              ? "default"
-                              : placement.status === "inactive"
-                                ? "secondary"
-                                : "destructive"
-                          }
-                        >
-                          {placement.status}
-                        </Badge>
-                      </div>
-                      <CardDescription>{placement.tagline}</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="space-y-3">
-                        <div className="flex items-center">
-                          <MapPin className="h-4 w-4 mr-2 text-muted-foreground" />
-                          <span className="text-sm">
-                            {placement.placementType} - {placement.position}
-                          </span>
-                        </div>
-                        <div className="flex items-center">
-                          <DollarSign className="h-4 w-4 mr-2 text-muted-foreground" />
-                          <span className="text-sm">${placement.price}</span>
-                        </div>
-                        <div className="flex items-center">
-                          <Calendar className="h-4 w-4 mr-2 text-muted-foreground" />
-                          <span className="text-sm">
-                            {new Date(placement.startDate).toLocaleDateString()}{" "}
-                            - {new Date(placement.endDate).toLocaleDateString()}
-                          </span>
-                        </div>
-                        <div className="flex items-center">
-                          <Clock className="h-4 w-4 mr-2 text-muted-foreground" />
-                          <span className="text-sm">
-                            Code: {placement.codeName}
-                          </span>
-                        </div>
-                      </div>
-                    </CardContent>
-                    <CardFooter className="flex flex-col gap-2">
-                      <Button
-                        variant="outline"
-                        className="w-full"
-                        onClick={() => window.open(placement.website, "_blank")}
-                      >
-                        View Live
-                      </Button>
-                      {placement.status === "inactive" && (
-                        <Button
-                          className="w-full"
-                          onClick={() =>
-                            router.push(`/dashboard/placement/${placement._id}`)
-                          }
-                        >
-                          Set Up Placement
-                        </Button>
-                      )}
-                    </CardFooter>
-                  </Card>
-                ))}
-              </div>
-            )}
-          </CardContent>
         </Card>
 
         {/* Recent Launches */}
@@ -264,34 +149,153 @@ export default function DashboardPage() {
                 </Button>
               </div>
             ) : (
-              <div className="grid gap-4 md:grid-cols-2">
+              <div className="divide-y">
                 {launches.slice(0, 4).map((launch) => (
-                  <Card
+                  <div
                     key={launch._id}
-                    className="hover:shadow-md transition-shadow"
+                    className="py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:bg-muted/50 transition-colors p-2 rounded-md -mx-2 px-2"
                   >
-                    <CardHeader>
-                      <CardTitle className="text-lg">{launch.name}</CardTitle>
-                      <CardDescription>{launch.tagline}</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="flex justify-between text-sm text-muted-foreground">
-                        <span>{launch.category}</span>
-                        <span>
+                    <div className="flex-1">
+                      <div className="flex items-center justify-between">
+                        <h3 className="font-medium text-lg">{launch.name}</h3>
+                      </div>
+                      <p className="text-sm text-muted-foreground truncate max-w-md">
+                        {launch.tagline}
+                      </p>
+                      <div className="flex items-center gap-4 mt-2 text-sm text-muted-foreground">
+                        <span className="flex items-center">
+                          <ShoppingBag className="h-4 w-4 mr-1" />
+                          {launch.category}
+                        </span>
+                        <span className="flex items-center">
+                          <Calendar className="h-4 w-4 mr-1" />
                           {new Date(launch.createdAt).toLocaleDateString()}
                         </span>
                       </div>
-                    </CardContent>
-                    <CardFooter>
+                    </div>
+                    <div className="flex gap-2">
+                      <Badge
+                        variant={
+                          launch.status === "launched"
+                            ? "default"
+                            : launch.status === "prelaunch"
+                              ? "secondary"
+                              : "outline"
+                        }
+                      >
+                        {launch.status}
+                      </Badge>
                       <Button
                         variant="outline"
-                        className="w-full"
+                        size="sm"
                         onClick={() => router.push(`/app/${launch.slug}`)}
                       >
-                        View Details
+                        View
                       </Button>
-                    </CardFooter>
-                  </Card>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Active Placements */}
+        <Card>
+          <CardHeader>
+            <div className="flex justify-between items-center">
+              <div>
+                <CardTitle>Your Placements</CardTitle>
+                <CardDescription>
+                  Manage your purchased placements
+                </CardDescription>
+              </div>
+              <Button
+                variant="outline"
+                onClick={() => router.push("/dashboard/placements")}
+              >
+                Manage All
+              </Button>
+            </div>
+          </CardHeader>
+          <CardContent>
+            {placements.length === 0 ? (
+              <div className="text-center py-8">
+                <p className="text-muted-foreground">
+                  You don't have any active placements yet
+                </p>
+                <Button
+                  className="mt-4"
+                  onClick={() => router.push("/dashboard/placements")}
+                >
+                  Buy a Placement
+                </Button>
+              </div>
+            ) : (
+              <div className="divide-y">
+                {placements.map((placement) => (
+                  <div
+                    key={placement._id}
+                    className="py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:bg-muted/50 transition-colors p-2 rounded-md -mx-2 px-2"
+                  >
+                    <div className="flex-1">
+                      <div className="flex items-center justify-between">
+                        <h3 className="font-medium text-lg">
+                          {placement.title}
+                        </h3>
+                        <Badge
+                          variant={
+                            placement.status === "active"
+                              ? "default"
+                              : placement.status === "inactive"
+                                ? "secondary"
+                                : "destructive"
+                          }
+                        >
+                          {placement.status}
+                        </Badge>
+                      </div>
+                      <p className="text-sm text-muted-foreground truncate max-w-md">
+                        {placement.tagline}
+                      </p>
+                      <div className="flex flex-wrap gap-4 mt-2 text-sm text-muted-foreground">
+                        <span className="flex items-center">
+                          <MapPin className="h-4 w-4 mr-1" />
+                          {placement.placementType} - {placement.position}
+                        </span>
+                        <span className="flex items-center">
+                          <DollarSign className="h-4 w-4 mr-1" />$
+                          {placement.price}
+                        </span>
+                        <span className="flex items-center">
+                          <Calendar className="h-4 w-4 mr-1" />
+                          {new Date(
+                            placement.startDate,
+                          ).toLocaleDateString()} -{" "}
+                          {new Date(placement.endDate).toLocaleDateString()}
+                        </span>
+                      </div>
+                    </div>
+                    <div className="flex flex-col sm:flex-row gap-2 mt-2 sm:mt-0">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => window.open(placement.website, "_blank")}
+                      >
+                        View Live
+                      </Button>
+                      {placement.status === "inactive" && (
+                        <Button
+                          size="sm"
+                          onClick={() =>
+                            router.push(`/dashboard/placement/${placement._id}`)
+                          }
+                        >
+                          Set Up
+                        </Button>
+                      )}
+                    </div>
+                  </div>
                 ))}
               </div>
             )}

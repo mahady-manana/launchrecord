@@ -31,6 +31,7 @@ export async function GET(request: Request) {
 
     const query: Record<string, unknown> = {
       isArchived: false,
+      status: { $in: ["prelaunch", "launched"] }, // Only show prelaunch and launched, exclude drafts
       placement: { $nin: ["left", "right"] },
     };
 
