@@ -63,9 +63,13 @@ export function HomePage({ initialQuery }: HomePageProps) {
         pagination={launchStore.launchesPagination}
         query={launchStore.filters.query}
         category={launchStore.filters.category}
+        timeFilter={launchStore.filters.timeFilter}
+        prelaunchOnly={launchStore.filters.prelaunchOnly}
         isLoading={launchStore.launchesLoading}
         onQueryChange={launchStore.setQuery}
         onCategoryChange={launchStore.setCategory}
+        onTimeFilterChange={launchStore.setTimeFilter}
+        onPrelaunchOnlyChange={launchStore.setPrelaunchOnly}
         onPageChange={launchStore.setLaunchesPage}
       />
 

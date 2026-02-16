@@ -55,6 +55,8 @@ export interface Launch {
 export interface LaunchFilters {
   query: string;
   category: "all" | LaunchCategory;
+  timeFilter: "all" | "today" | "week" | "month";
+  prelaunchOnly: boolean;
   page: number;
   limit: number;
 }

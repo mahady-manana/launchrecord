@@ -12,28 +12,11 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { useUser } from "@/hooks/use-user";
+import { Placement } from "@/types/placement";
 import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-
-interface Placement {
-  _id: string;
-  title: string;
-  tagline: string;
-  logoUrl?: string;
-  backgroundImage?: string;
-  website: string;
-  placementType: string;
-  position?: string;
-  startDate: string;
-  endDate: string;
-  price: number;
-  status: string;
-  codeName: string;
-  color?: string;
-  createdAt: string;
-}
 
 interface PlacementSetupClientProps {
   initialPlacement: Placement;
@@ -193,21 +176,39 @@ export default function PlacementSetupClient({
   }
 
   return (
-    <div className="container mx-auto py-8 px-4">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold">Set Up Your Placement</h1>
-        <p className="text-muted-foreground">
-          Customize your placement details for {placement.codeName}
-        </p>
+    <div className="container max-w-6xl mx-auto py-8 px-4">
+      <div className="md:flex items-center mb-8 justify-between">
+        <div className="">
+          <h1 className="text-3xl font-bold">Set Up Your Campaign</h1>
+          <p className="text-muted-foreground">
+            Customize your campaign details for {placement.codeName}
+          </p>
+        </div>
+        <div>
+          <div className="flex justify-end">
+            <Button
+              onClick={() => {
+                // Open modal to select placement and pay
+                // This would trigger the same flow as the advertise button
+                // For now, navigate to the placements page to select and pay
+                router.push("/dashboard/placements");
+              }}
+              size="lg"
+              className="bg-green-600 hover:bg-green-700"
+            >
+              Publish Campaign
+            </Button>
+          </div>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <div>
           <Card>
             <CardHeader>
-              <CardTitle>Placement Details</CardTitle>
+              <CardTitle>Campaign Details</CardTitle>
               <CardDescription>
-                Fill in the details for your placement
+                Fill in the details for your campaign
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -227,42 +228,54 @@ export default function PlacementSetupClient({
             <CardHeader>
               <CardTitle>Preview</CardTitle>
               <CardDescription>
-                How your placement will appear on the site
+                How your campaign will appear on the site
               </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-6">
                 {/* Featured Placement Preview */}
-                {placement.placementType === "featured" && (
-                  <div>
-                    <h4 className="text-sm font-medium mb-2">
-                      Featured Placement
-                    </h4>
-                    <div className="bg-muted rounded-lg p-4 min-h-[300px] flex items-center justify-center">
-                      <div className="w-full max-w-md">
-                        <FeaturedPlacementCard placements={[placement]} />
-                      </div>
-                    </div>
-                  </div>
-                )}
 
-                {/* Sidebar Placement Preview */}
-                {(placement.placementType === "sidebar" ||
-                  !placement.placementType) && (
-                  <div>
-                    <h4 className="text-sm font-medium mb-2">
-                      Sidebar Placement
-                    </h4>
-                    <div className="bg-muted rounded-lg p-4 min-h-[200px] flex items-center justify-center">
-                      <div className="w-full max-w-xs">
-                        <PlacementCard placement={placement} />
-                      </div>
+                <div>
+                  <h4 className="text-sm font-medium mb-2">
+                    Featured Campaign
+                  </h4>
+                  <div className="bg-muted rounded-lg p-4 min-h-[300px] flex items-center justify-center">
+                    <div className="w-full max-w-md">
+                      <FeaturedPlacementCard
+                        preview
+                        placements={[
+                          {
+                            ...placement,
+                            appName:
+                              placement.appName || "Your Application Name",
+                            tagline:
+                              placement.tagline ||
+                              "Your one tagline hook for founders/users",
+                          },
+                        ]}
+                      />
                     </div>
                   </div>
-                )}
+                </div>
+                <div>
+                  <h4 className="text-sm font-medium mb-2">Sidebar Campaign</h4>
+                  <div className="bg-muted rounded-lg p-4 min-h-[200px] flex items-center justify-center">
+                    <div className="w-full max-w-xs">
+                      <PlacementCard
+                        placement={{
+                          ...placement,
+                          appName: placement.appName || "Your Application Name",
+                          tagline:
+                            placement.tagline ||
+                            "Your one tagline hook for founders/users",
+                        }}
+                      />
+                    </div>
+                  </div>
+                </div>
               </div>
               <p className="text-sm text-muted-foreground mt-4 text-center">
-                This is how your {placement.placementType || "placement"} will
+                This is how your {placement.placementType || "campaign"} will
                 appear on the site
               </p>
             </CardContent>

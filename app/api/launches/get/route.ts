@@ -13,6 +13,8 @@ const getLaunchesSchema = z.object({
     z.undefined(),
   ]),
   q: z.string().max(100).optional(),
+  timeFilter: z.enum(["all", "today", "week", "month"]).optional(),
+  prelaunchOnly: z.string().optional(),
   page: z.coerce.number().int().min(1).default(1),
   limit: z.coerce.number().int().min(1).max(50).default(20),
 });
@@ -25,6 +27,8 @@ export async function GET(request: Request) {
     const parsedQuery = getLaunchesSchema.parse({
       category: searchParams.get("category") || "all",
       q: searchParams.get("q") || "",
+      timeFilter: searchParams.get("timeFilter"),
+      prelaunchOnly: searchParams.get("prelaunchOnly"),
       page: searchParams.get("page") || 1,
       limit: searchParams.get("limit") || 20,
     });
@@ -34,6 +38,35 @@ export async function GET(request: Request) {
       status: { $in: ["prelaunch", "launched"] }, // Only show prelaunch and launched, exclude drafts
       placement: { $nin: ["left", "right"] },
     };
+
+    // Apply time filter
+    if (parsedQuery.timeFilter && parsedQuery.timeFilter !== "all") {
+      const now = new Date();
+      let startDate: Date;
+
+      switch (parsedQuery.timeFilter) {
+        case "today":
+          startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+          break;
+        case "week":
+          const dayOfWeek = now.getDay();
+          const startOfWeek = now.getDate() - dayOfWeek;
+          startDate = new Date(now.getFullYear(), now.getMonth(), startOfWeek);
+          break;
+        case "month":
+          startDate = new Date(now.getFullYear(), now.getMonth(), 1);
+          break;
+        default:
+          startDate = new Date(0); // Beginning of time if invalid filter
+      }
+
+      query.createdAt = { $gte: startDate };
+    }
+
+    // Apply prelaunch only filter
+    if (parsedQuery.prelaunchOnly === "true") {
+      query.status = "prelaunch";
+    }
 
     if (parsedQuery.category && parsedQuery.category !== "all") {
       // Handle both single category and array of categories

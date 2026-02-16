@@ -92,6 +92,8 @@ export const useLaunchStore = create<LaunchStore>((set, get) => ({
   filters: {
     query: "",
     category: "all",
+    timeFilter: "all",
+    prelaunchOnly: false,
     page: 1,
     limit: 20,
   },
@@ -128,6 +130,67 @@ export const useLaunchStore = create<LaunchStore>((set, get) => ({
     // Apply filters to mock data
     const { filters } = get();
     let filteredLaunches = [...mockLaunches];
+
+    // Apply query filter
+    if (filters.query) {
+      const queryLower = filters.query.toLowerCase();
+      filteredLaunches = filteredLaunches.filter(
+        (launch) =>
+          launch.name.toLowerCase().includes(queryLower) ||
+          launch.tagline.toLowerCase().includes(queryLower) ||
+          launch.description.toLowerCase().includes(queryLower)
+      );
+    }
+
+    // Apply category filter
+    if (filters.category !== "all") {
+      if (Array.isArray(filters.category)) {
+        filteredLaunches = filteredLaunches.filter((launch) =>
+          Array.isArray(launch.category)
+            ? launch.category.some((cat) => filters.category.includes(cat))
+            : filters.category.includes(launch.category)
+        );
+      } else {
+        filteredLaunches = filteredLaunches.filter((launch) =>
+          Array.isArray(launch.category)
+            ? launch.category.includes(filters.category)
+            : launch.category === filters.category
+        );
+      }
+    }
+
+    // Apply time filter
+    if (filters.timeFilter && filters.timeFilter !== "all") {
+      const now = new Date();
+      let startDate: Date;
+
+      switch (filters.timeFilter) {
+        case "today":
+          startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+          break;
+        case "week":
+          const dayOfWeek = now.getDay();
+          const startOfWeek = now.getDate() - dayOfWeek;
+          startDate = new Date(now.getFullYear(), now.getMonth(), startOfWeek);
+          break;
+        case "month":
+          startDate = new Date(now.getFullYear(), now.getMonth(), 1);
+          break;
+        default:
+          startDate = new Date(0); // Beginning of time if invalid filter
+      }
+
+      filteredLaunches = filteredLaunches.filter(
+        (launch) => new Date(launch.createdAt) >= startDate
+      );
+    }
+
+    // Apply prelaunch only filter
+    if (filters.prelaunchOnly) {
+      filteredLaunches = filteredLaunches.filter(
+        (launch) => launch.status === "prelaunch"
+      );
+    }
 
     // Apply pagination
     const startIndex = (filters.page - 1) * filters.limit;
@@ -266,6 +329,14 @@ export const useLaunchStore = create<LaunchStore>((set, get) => ({
   setCategory: (category) =>
     set((state) => ({
       filters: { ...state.filters, category, page: 1 },
+    })),
+  setTimeFilter: (timeFilter) =>
+    set((state) => ({
+      filters: { ...state.filters, timeFilter, page: 1 },
+    })),
+  setPrelaunchOnly: (prelaunchOnly) =>
+    set((state) => ({
+      filters: { ...state.filters, prelaunchOnly, page: 1 },
     })),
   setLaunchesPage: (page) =>
     set((state) => ({

@@ -16,12 +16,13 @@ export interface Placement {
   startDate: string;
   endDate: string;
   price: number;
-  status: 'active' | 'inactive' | 'expired';
+  status: "active" | "inactive" | "expired";
   userId: string;
   launchId?: string;
   paymentIntentId?: string;
-  paymentStatus: 'pending' | 'paid' | 'failed' | 'refunded';
+  paymentStatus: "pending" | "paid" | "failed" | "refunded";
   codeName: string;
+  appName: string;
   color?: string; // Color for the placement
   createdAt: string;
   updatedAt: string;
@@ -54,9 +55,9 @@ export interface UpdatePlacementPayload {
   startDate?: string;
   endDate?: string;
   price?: number;
-  status?: 'active' | 'inactive' | 'expired';
+  status?: "active" | "inactive" | "expired";
   paymentIntentId?: string;
-  paymentStatus?: 'pending' | 'paid' | 'failed' | 'refunded';
+  paymentStatus?: "pending" | "paid" | "failed" | "refunded";
   color?: string;
 }
 

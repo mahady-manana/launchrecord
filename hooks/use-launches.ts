@@ -24,6 +24,8 @@ export function useLaunches() {
         .fetchLaunches({
           query: store.filters.query,
           category: store.filters.category,
+          timeFilter: store.filters.timeFilter,
+          prelaunchOnly: store.filters.prelaunchOnly,
           page: store.filters.page,
           limit: store.filters.limit,
         })
@@ -51,6 +53,8 @@ export function useLaunches() {
   }, [
     store.filters.query,
     store.filters.category,
+    store.filters.timeFilter,
+    store.filters.prelaunchOnly,
     store.filters.page,
     store.filters.limit,
   ]);
@@ -60,5 +64,7 @@ export function useLaunches() {
     createLaunch: actions.createLaunch,
     updateLaunch: actions.updateLaunch,
     fetchLaunches: actions.fetchLaunches,
+    setTimeFilter: store.setTimeFilter,
+    setPrelaunchOnly: store.setPrelaunchOnly,
   };
 }

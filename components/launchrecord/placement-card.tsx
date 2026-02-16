@@ -19,12 +19,17 @@ export function PlacementCard({ launch, placement }: PlacementCardProps) {
         rel="noopener noreferrer"
         className="block"
       >
-        <Card className="relative flex items-end h-full min-h-40 overflow-hidden rounded-xl border-0 bg-transparent shadow-none">
-          <img
-            src={placement.backgroundImage || "/placeholder-hero-bg.jpg"}
-            alt={placement.title}
-            className="absolute inset-0 w-full h-full rounded-xl object-cover"
-          />
+        <Card
+          style={{ background: placement.color }}
+          className="relative flex items-end h-full min-h-40 overflow-hidden rounded-xl border-0 bg-transparent shadow-none"
+        >
+          {placement.backgroundImage ? (
+            <img
+              src={placement.backgroundImage || "/placeholder-hero-bg.jpg"}
+              alt={placement.appName}
+              className="absolute inset-0 w-full h-full rounded-xl object-cover"
+            />
+          ) : null}
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
 
           {/* Content overlay */}
@@ -36,7 +41,7 @@ export function PlacementCard({ launch, placement }: PlacementCardProps) {
                   {placement.logoUrl ? (
                     <img
                       src={placement.logoUrl}
-                      alt={`${placement.title} logo`}
+                      alt={`${placement.appName} logo`}
                       className="h-full w-full object-cover"
                     />
                   ) : (
@@ -46,7 +51,7 @@ export function PlacementCard({ launch, placement }: PlacementCardProps) {
                   )}
                 </div>
                 <div>
-                  <h3 className="text-lg font-bold">{placement.title}</h3>
+                  <h3 className="text-lg font-bold">{placement.appName}</h3>
                 </div>
               </div>
               <p className="line-clamp-2 text-xs text-white/90">

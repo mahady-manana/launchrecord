@@ -1,5 +1,5 @@
+import { PLACEMENT_POSITIONS, PLACEMENT_TYPES } from "@/types/placement";
 import mongoose, { Document, Model, Schema } from "mongoose";
-import { PLACEMENT_TYPES, PLACEMENT_POSITIONS } from "@/types/placement";
 
 // Define the constants in the model file as well
 const PLACEMENT_TYPES_ARRAY = ["featured", "sidebar"] as const;
@@ -23,7 +23,9 @@ export interface IPlacement extends Document {
   paymentIntentId?: string;
   paymentStatus: "pending" | "paid" | "failed" | "refunded";
   codeName: string;
+  appName: string;
   duration: number; // Duration in days
+  color?: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -35,9 +37,14 @@ const PlacementSchema = new Schema<IPlacement>(
       required: [true, "Title is required"],
       maxlength: [100, "Title must be less than 100 characters"],
     },
+
+    appName: {
+      type: String,
+      maxlength: [100, "Title must be less than 100 characters"],
+    },
+
     tagline: {
       type: String,
-      required: [true, "Tagline is required"],
       maxlength: [140, "Tagline must be less than 140 characters"],
     },
     logoUrl: {
@@ -50,130 +57,125 @@ const PlacementSchema = new Schema<IPlacement>(
     },
     website: {
       type: String,
-      required: [true, "Website is required"],
-      trim: true,
     },
     placementType: {
       type: String,
       enum: PLACEMENT_TYPES_ARRAY,
-      required: [true, "Placement type is required"],
-      index: true,
     },
     position: {
       type: String,
       enum: PLACEMENT_POSITIONS_ARRAY,
-      index: true,
     },
     startDate: {
       type: Date,
-      required: [true, "Start date is required"],
       index: true,
     },
     endDate: {
       type: Date,
-      required: [true, "End date is required"],
-      index: true,
     },
     price: {
       type: Number,
-      required: [true, "Price is required"],
       min: [0, "Price must be positive"],
     },
     status: {
       type: String,
       enum: ["active", "inactive", "expired"],
       default: "inactive",
-      index: true,
     },
     userId: {
       type: Schema.Types.ObjectId,
       ref: "User",
-      required: [true, "User ID is required"],
       index: true,
     },
     launchId: {
       type: Schema.Types.ObjectId,
       ref: "Launch",
-      index: true,
     },
     paymentIntentId: {
       type: String,
-      index: true,
     },
     paymentStatus: {
       type: String,
       enum: ["pending", "paid", "failed", "refunded"],
       default: "pending",
-      index: true,
     },
     codeName: {
       type: String,
-      required: [true, "Code name is required"],
-      unique: true,
-      index: true,
     },
     duration: {
       type: Number,
-      required: [true, "Duration is required"],
       min: [1, "Duration must be at least 1 day"],
     },
     color: {
       type: String,
       default: "#3B82F6", // Default to blue-500
-      match: [/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, "Please enter a valid hex color code"],
     },
   },
   { timestamps: true },
 );
 
 // Index for efficient querying
+
 PlacementSchema.index({ userId: 1, status: 1 });
-PlacementSchema.index({ placementType: 1, position: 1, status: 1 });
 PlacementSchema.index({ startDate: 1, endDate: 1 });
-PlacementSchema.index({ codeName: 1, status: 1 });
 
 // Static method to check if a placement code is available
-PlacementSchema.statics.isCodeAvailable = async function(codeName: string): Promise<boolean> {
+PlacementSchema.statics.isCodeAvailable = async function (
+  codeName: string,
+): Promise<boolean> {
   const activePlacement = await this.findOne({
     codeName,
     status: { $in: ["active", "inactive"] }, // Check for both active and inactive (reserved) placements
     $or: [
       { endDate: { $gte: new Date() } }, // Still within the active period
-      { startDate: { $lte: new Date() } } // Or has started but not yet ended
-    ]
+      { startDate: { $lte: new Date() } }, // Or has started but not yet ended
+    ],
   });
-  
+
   return !activePlacement;
 };
 
 // Static method to get all available placement codes
-PlacementSchema.statics.getAvailableCodes = async function(): Promise<string[]> {
+PlacementSchema.statics.getAvailableCodes = async function (): Promise<
+  string[]
+> {
   // Get all active placements
   const activePlacements = await this.find({
     status: { $in: ["active", "inactive"] },
     $or: [
       { endDate: { $gte: new Date() } }, // Still within the active period
-      { startDate: { $lte: new Date() } } // Or has started but not yet ended
-    ]
+      { startDate: { $lte: new Date() } }, // Or has started but not yet ended
+    ],
   });
-  
+
   // Return all codes that are NOT in the active placements
-  const activeCodes = activePlacements.map(placement => placement.codeName);
-  
+  const activeCodes = activePlacements.map((placement) => placement.codeName);
+
   // Define all possible codes (this should match the codes defined in the API)
   const allPossibleCodes = [
-    "HERO-001", "HERO-002", "HERO-003",  // Featured hero placements
-    "LEFT-001", "LEFT-002", "LEFT-003", "LEFT-004", "LEFT-005",  // Left sidebar
-    "RIGHT-001", "RIGHT-002", "RIGHT-003", "RIGHT-004", "RIGHT-005"  // Right sidebar
+    "HERO-001",
+    "HERO-002",
+    "HERO-003", // Featured hero placements
+    "LEFT-001",
+    "LEFT-002",
+    "LEFT-003",
+    "LEFT-004",
+    "LEFT-005", // Left sidebar
+    "RIGHT-001",
+    "RIGHT-002",
+    "RIGHT-003",
+    "RIGHT-004",
+    "RIGHT-005", // Right sidebar
   ];
-  
-  return allPossibleCodes.filter(code => !activeCodes.includes(code));
+
+  return allPossibleCodes.filter((code) => !activeCodes.includes(code));
 };
 
 const Placement: Model<IPlacement> & {
   isCodeAvailable(codeName: string): Promise<boolean>;
   getAvailableCodes(): Promise<string[]>;
-} = 
-  mongoose.models.Placement || mongoose.model<IPlacement>("Placement", PlacementSchema);
-
+} =
+  mongoose.models.Placement ||
+  mongoose.model<IPlacement>("Placement", PlacementSchema);
+// Placement.collection.dropIndexes();
 export default Placement;

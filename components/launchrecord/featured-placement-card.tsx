@@ -4,13 +4,17 @@ import { useEffect, useState } from "react";
 
 interface FeaturedPlacementCardProps {
   placements: Placement[];
+  preview?: boolean;
 }
 
 export function FeaturedPlacementCard({
   placements = [],
+  preview,
 }: FeaturedPlacementCardProps) {
   // Use only placements for the slider
-  const allItemsPrep = [...placements, ...mockPlacements];
+  const allItemsPrep = preview
+    ? placements
+    : [...placements, ...mockPlacements];
   const allItems = allItemsPrep.slice(0, 3);
 
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -61,15 +65,13 @@ export function FeaturedPlacementCard({
               }}
             >
               <div className="relative h-full min-h-[300px]">
-                <img
-                  src={
-                    item.backgroundImage ||
-                    item.logoUrl ||
-                    "/placeholder-hero-bg.jpg"
-                  }
-                  alt={item.title}
-                  className="absolute inset-0 w-full h-full rounded-xl object-cover"
-                />
+                {item.backgroundImage ? (
+                  <img
+                    src={item.backgroundImage || "/placeholder-ads-1.webp"}
+                    alt={item.appName}
+                    className="absolute inset-0 w-full h-full rounded-xl object-cover"
+                  />
+                ) : null}
                 <div className="absolute inset-0"></div>
                 <div className="relative z-10 p-0 text-white flex flex-col justify-end h-full">
                   <div className="px-6">
@@ -77,7 +79,7 @@ export function FeaturedPlacementCard({
                       {item.logoUrl ? (
                         <img
                           src={item.logoUrl}
-                          alt={`${item.title} logo`}
+                          alt={`${item.appName} logo`}
                           className="w-full h-full object-cover"
                         />
                       ) : (
@@ -91,7 +93,7 @@ export function FeaturedPlacementCard({
                     className="px-6 py-4"
                     style={{ backgroundColor: item.color || "#1e40af" }} // Default to blue-800 if no color set
                   >
-                    <h3 className="text-xl font-bold">{item.title}</h3>
+                    <h3 className="text-xl font-bold">{item.appName}</h3>
                     <p className="text-white/90">{item.tagline}</p>
                     <p className="text-sm text-white/70 underline truncate">
                       {item.website}

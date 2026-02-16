@@ -1,15 +1,16 @@
+import { getUserFromSession } from "@/lib/get-user-from-session";
+import Placement from "@/lib/models/placement";
+import { connectToDatabase } from "@/lib/mongodb";
+import { rateLimit } from "@/lib/rate-limit";
+import { getClientIdentifier, isSameOrigin } from "@/lib/security";
+import { serializeMongooseDocument } from "@/lib/utils";
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { connectToDatabase } from "@/lib/mongodb";
-import { getUserFromSession } from "@/lib/get-user-from-session";
-import { getClientIdentifier, isSameOrigin } from "@/lib/security";
-import { rateLimit } from "@/lib/rate-limit";
-import Placement from "@/lib/models/placement";
-import { serializeMongooseDocument } from "@/lib/utils";
 
 const updatePlacementSchema = z.object({
   id: z.string(),
   title: z.string().min(2).max(100).optional(),
+  appName: z.string().min(2).max(100).optional(),
   tagline: z.string().min(4).max(140).optional(),
   logoUrl: z.string().url().optional().or(z.literal("")).optional(),
   backgroundImage: z.string().url().optional().or(z.literal("")).optional(),
@@ -73,36 +74,44 @@ export async function PUT(request: Request) {
 
     // Update the placement with provided fields
     const updateData: any = {};
-    if (validatedBody.title !== undefined) updateData.title = validatedBody.title;
-    if (validatedBody.tagline !== undefined) updateData.tagline = validatedBody.tagline;
-    if (validatedBody.logoUrl !== undefined) updateData.logoUrl = validatedBody.logoUrl;
-    if (validatedBody.backgroundImage !== undefined) updateData.backgroundImage = validatedBody.backgroundImage;
-    if (validatedBody.website !== undefined) updateData.website = validatedBody.website;
+    if (validatedBody.title !== undefined)
+      updateData.title = validatedBody.title;
+    if (validatedBody.tagline !== undefined)
+      updateData.tagline = validatedBody.tagline;
+    if (validatedBody.logoUrl !== undefined)
+      updateData.logoUrl = validatedBody.logoUrl;
+    if (validatedBody.backgroundImage !== undefined)
+      updateData.backgroundImage = validatedBody.backgroundImage;
+    if (validatedBody.website !== undefined)
+      updateData.website = validatedBody.website;
 
     // Only activate the placement if all required fields are filled
     if (
-      updateData.title && 
-      updateData.tagline && 
-      updateData.website && 
+      updateData.title &&
+      updateData.tagline &&
+      updateData.website &&
       (updateData.logoUrl || updateData.backgroundImage) &&
-      placement.paymentStatus === 'paid'
+      placement.paymentStatus === "paid"
     ) {
-      updateData.status = 'active';
+      updateData.status = "active";
     } else {
       // Keep it inactive until all required fields are filled
-      updateData.status = 'inactive';
+      updateData.status = "inactive";
     }
 
     const updatedPlacement = await Placement.findByIdAndUpdate(
       validatedBody.id,
       updateData,
-      { new: true }
+      { new: true },
     ).lean();
 
     // Convert to plain object to remove any potential circular references
     const plainUpdatedPlacement = serializeMongooseDocument(updatedPlacement);
 
-    return NextResponse.json({ success: true, placement: plainUpdatedPlacement });
+    return NextResponse.json({
+      success: true,
+      placement: plainUpdatedPlacement,
+    });
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(

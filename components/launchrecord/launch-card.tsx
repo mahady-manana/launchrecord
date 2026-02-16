@@ -67,9 +67,18 @@ export function LaunchCard({ launch }: LaunchCardProps) {
           </div>
 
           <div className="flex shrink-0 items-end gap-2 sm:flex-col">
-            <div className="flex items-center gap-1">
-              <MessageCircle className="h-3 w-3 text-muted-foreground" />
-              <span className="text-xs text-muted-foreground">{launch.commentCount}</span>
+            <div className="flex flex-wrap gap-1">
+              <Badge variant="outline" className="text-xs">
+                {launch.businessModel}
+              </Badge>
+              <Badge variant="outline" className="text-xs">
+                {launch.pricingModel}
+              </Badge>
+              {launch.status === "prelaunch" && (
+                <Badge className="bg-blue-500 hover:bg-blue-500 text-xs">
+                  Prelaunch
+                </Badge>
+              )}
             </div>
             {Array.isArray(launch.category) ? (
               <div className="flex flex-wrap gap-1">
@@ -87,7 +96,17 @@ export function LaunchCard({ launch }: LaunchCardProps) {
             ) : (
               <Badge variant="outline">{launch.category}</Badge>
             )}
-            <ArrowUpRight className="h-4 w-4 text-muted-foreground" />
+            <div className="flex gap-2">
+              {launch.commentCount ? (
+                <div className="flex items-center gap-1">
+                  <MessageCircle className="h-3 w-3 text-muted-foreground" />
+                  <span className="text-xs text-muted-foreground">
+                    {launch.commentCount} discussions
+                  </span>
+                </div>
+              ) : null}
+              <ArrowUpRight className="h-4 w-4 text-muted-foreground" />
+            </div>
           </div>
         </div>
       </div>

@@ -32,6 +32,8 @@ export function useLaunchActions(): LaunchActions {
   const fetchLaunches = async (params: {
     query?: string;
     category?: string | string[];
+    timeFilter?: "all" | "today" | "week" | "month";
+    prelaunchOnly?: boolean;
     page?: number;
     limit?: number;
   }) => {
@@ -45,6 +47,8 @@ export function useLaunchActions(): LaunchActions {
       const urlParams = new URLSearchParams({
         ...(params.query && { q: params.query }),
         ...(categoryParam && { category: String(categoryParam) }),
+        ...(params.timeFilter && { timeFilter: params.timeFilter }),
+        ...(params.prelaunchOnly !== undefined && { prelaunchOnly: String(params.prelaunchOnly) }),
         page: String(params.page || 1),
         limit: String(params.limit || 20),
       });

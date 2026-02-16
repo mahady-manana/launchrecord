@@ -14,6 +14,7 @@ import {
 import { mockPlacements } from "@/mocks/launch.mocks";
 import { LAUNCH_CATEGORIES, Launch, PaginationMeta } from "@/types";
 import { Placement } from "@/types/placement";
+import { useEffect, useState } from "react";
 
 interface LaunchListingSectionProps {
   launches: Launch[];
@@ -25,6 +26,8 @@ interface LaunchListingSectionProps {
     | "all"
     | (typeof LAUNCH_CATEGORIES)[number]
     | (typeof LAUNCH_CATEGORIES)[number][];
+  timeFilter: "all" | "today" | "week" | "month";
+  prelaunchOnly: boolean;
   isLoading: boolean;
   onQueryChange: (query: string) => void;
   onCategoryChange: (
@@ -33,6 +36,8 @@ interface LaunchListingSectionProps {
       | (typeof LAUNCH_CATEGORIES)[number]
       | (typeof LAUNCH_CATEGORIES)[number][],
   ) => void;
+  onTimeFilterChange: (timeFilter: "all" | "today" | "week" | "month") => void;
+  onPrelaunchOnlyChange: (prelaunchOnly: boolean) => void;
   onPageChange: (page: number) => void;
 }
 
@@ -69,11 +74,37 @@ export function LaunchListingSection({
   pagination,
   query,
   category,
+  timeFilter,
+  prelaunchOnly,
   isLoading,
   onQueryChange,
   onCategoryChange,
+  onTimeFilterChange,
+  onPrelaunchOnlyChange,
   onPageChange,
 }: LaunchListingSectionProps) {
+  // Local state for the search input with debouncing
+  const [localQuery, setLocalQuery] = useState(query);
+  const [debouncedQuery, setDebouncedQuery] = useState(query);
+
+  // Debounce the query input
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      // Only trigger search if query is at least 3 characters or empty
+      if (localQuery.length >= 3 || localQuery === "") {
+        setDebouncedQuery(localQuery);
+      }
+    }, 300); // 300ms delay
+
+    return () => clearTimeout(timer);
+  }, [localQuery]);
+
+  // Sync debounced query to parent when it changes
+  useEffect(() => {
+    if (debouncedQuery !== query) {
+      onQueryChange(debouncedQuery);
+    }
+  }, [debouncedQuery, query, onQueryChange]);
   return (
     <section className="mx-auto grid w-full max-w-8xl gap-4 px-4 pb-10 sm:px-6 lg:grid-cols-[260px_1fr_260px]">
       <aside className="hidden lg:block">
@@ -83,28 +114,74 @@ export function LaunchListingSection({
       <main className="space-y-4 py-4 bg-card px-0 rounded-xl">
         <div className="flex flex-col gap-3 md:flex-row md:items-center px-6">
           <Input
-            value={query}
-            onChange={(event) => onQueryChange(event.target.value)}
-            placeholder="Search by launch name or description"
+            value={localQuery}
+            onChange={(event) => {
+              // Update local state immediately
+              setLocalQuery(event.target.value);
+            }}
+            placeholder="Search by launch name or description (min 3 chars)"
+            className="md:w-1/3"
           />
-          <Select
-            value={category}
-            onValueChange={(value) =>
-              onCategoryChange(value as LaunchListingSectionProps["category"])
-            }
-          >
-            <SelectTrigger className="w-full md:w-56">
-              <SelectValue placeholder="Category" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All categories</SelectItem>
-              {LAUNCH_CATEGORIES.map((item) => (
-                <SelectItem key={item} value={item}>
-                  {item}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          
+          <div className="flex flex-wrap gap-2 md:gap-3">
+            <Select
+              value={category}
+              onValueChange={(value) =>
+                onCategoryChange(value as LaunchListingSectionProps["category"])
+              }
+            >
+              <SelectTrigger className="w-full md:w-40">
+                <SelectValue placeholder="Category" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All categories</SelectItem>
+                {LAUNCH_CATEGORIES.map((item) => (
+                  <SelectItem key={item} value={item}>
+                    {item}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            
+            <Select
+              value={timeFilter}
+              onValueChange={(value) =>
+                onTimeFilterChange(value as "all" | "today" | "week" | "month")
+              }
+            >
+              <SelectTrigger className="w-full md:w-40">
+                <SelectValue placeholder="Time filter" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All time</SelectItem>
+                <SelectItem value="today">Today</SelectItem>
+                <SelectItem value="week">This week</SelectItem>
+                <SelectItem value="month">This month</SelectItem>
+              </SelectContent>
+            </Select>
+            
+            <Button
+              variant={prelaunchOnly ? "default" : "outline"}
+              onClick={() => onPrelaunchOnlyChange(!prelaunchOnly)}
+              className="w-full md:w-auto"
+            >
+              Prelaunch
+            </Button>
+            
+            <Button
+              variant="outline"
+              onClick={() => {
+                setLocalQuery("");
+                onQueryChange("");
+                onCategoryChange("all");
+                onTimeFilterChange("all");
+                onPrelaunchOnlyChange(false);
+              }}
+              className="w-full md:w-auto"
+            >
+              Clear All
+            </Button>
+          </div>
         </div>
 
         {isLoading ? (

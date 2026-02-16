@@ -13,6 +13,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useState } from "react";
 
+import { Placement } from "@/types/placement";
 import { toast } from "sonner";
 import LogoUpload from "../LogoUpload";
 
@@ -31,20 +32,7 @@ const PRESET_COLORS = [
 ];
 
 interface PlacementFormProps {
-  placement: {
-    _id: string;
-    title: string;
-    tagline: string;
-    logoUrl?: string;
-    backgroundImage?: string;
-    website: string;
-    placementType: string;
-    position?: string;
-    price: number;
-    codeName: string;
-    status: string;
-    color?: string;
-  };
+  placement: Placement;
   onSubmit: (data: any) => void;
   onCancel: () => void;
   onSetLive?: () => void; // Optional callback to set placement live
@@ -65,6 +53,7 @@ export function PlacementForm({
     backgroundImage: placement.backgroundImage || "",
     website: placement.website || "",
     color: placement.color || "#3B82F6", // Default to blue
+    appName: placement.appName || "",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -125,9 +114,9 @@ export function PlacementForm({
   return (
     <Card className="w-full max-w-2xl mx-auto">
       <CardHeader>
-        <CardTitle>Create Your Placement</CardTitle>
+        <CardTitle>Create Your Campaign</CardTitle>
         <CardDescription>
-          Customize your placement details. This will appear on the site once
+          Customize your campaign details. This will appear on the site once
           activated.
         </CardDescription>
       </CardHeader>
@@ -139,6 +128,17 @@ export function PlacementForm({
               id="title"
               name="title"
               value={formData.title}
+              onChange={handleChange}
+              placeholder="Your campaign name"
+              required
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="appName">Application name / website name</Label>
+            <Input
+              id="appName"
+              name="appName"
+              value={formData.appName}
               onChange={handleChange}
               placeholder="Your product/service name"
               required
@@ -244,7 +244,7 @@ export function PlacementForm({
           </Button>
           <div className="flex gap-2">
             <Button type="submit" disabled={isSubmitting}>
-              {isSubmitting ? "Updating..." : "Update Placement"}
+              {isSubmitting ? "Updating..." : "Update Campaign"}
             </Button>
             {placement.status === "inactive" && (
               <Button

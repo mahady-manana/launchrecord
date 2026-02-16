@@ -5,7 +5,10 @@ import { connectToDatabase } from "@/lib/mongodb";
 import { Placement as PlacementType } from "@/types/placement";
 import { redirect } from "next/navigation";
 
-async function getPlacement(id: string): Promise<PlacementType | null> {
+async function getPlacement(
+  id: string,
+  userId: string,
+): Promise<PlacementType | null> {
   try {
     // Connect to database directly instead of making an API call
     // This avoids potential cookie/session issues when calling from server component
@@ -18,13 +21,16 @@ async function getPlacement(id: string): Promise<PlacementType | null> {
     }
 
     // Find the placement and ensure it belongs to the user
-    const placement = (await Placement.findOne({
-      _id: id,
-      userId: user._id.toString(),
-    }).lean()) as unknown as PlacementType;
+    const placement = (await Placement.findById(
+      id,
+    ).lean()) as unknown as PlacementType;
 
     if (!placement) {
       throw new Error("Placement not found or unauthorized");
+    }
+
+    if (placement.userId?.toString() !== userId) {
+      return null;
     }
 
     // Convert ObjectId to string for serialization
@@ -54,7 +60,7 @@ export default async function PlacementSetupPage({
     );
   }
 
-  const placement = await getPlacement(id);
+  const placement = await getPlacement(id, user._id);
 
   if (!placement) {
     // Handle case where placement doesn't exist
