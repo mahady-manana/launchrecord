@@ -46,7 +46,7 @@ export default function PlacementSetupClient({
   // State for publish campaign modal
   const [isPublishModalOpen, setIsPublishModalOpen] = useState(false);
   const [selectedSlot, setSelectedSlot] = useState<string | null>(null);
-  const [selectedDuration, setSelectedDuration] = useState<number>(30); // Default to 30 days
+  const [selectedDuration, setSelectedDuration] = useState<number>(20); // Default to 30 days
   const [slots, setSlots] = useState<PlacementSlot[]>([]);
   const [slotsLoading, setSlotsLoading] = useState(false);
 
@@ -177,7 +177,7 @@ export default function PlacementSetupClient({
   // Function to handle slot selection
   const handleSlotSelect = (slotId: string) => {
     setSelectedSlot(slotId);
-    setSelectedDuration(30); // Default to 30 days when selecting a slot
+    setSelectedDuration(20); // Default to 30 days when selecting a slot
   };
 
   // Function to handle payment
@@ -210,6 +210,8 @@ export default function PlacementSetupClient({
           placementId: placementId, // Use placementId instead of placementCode
           placementCode: selectedSlotObj.codeName, // Also send the selected slot code
           duration: selectedDuration, // Use the selected duration
+          name: selectedSlotObj.name,
+          description: selectedSlotObj.description,
         }),
       });
 
@@ -250,7 +252,7 @@ export default function PlacementSetupClient({
                 Payment Under Process
               </Button>
             ) : null}
-            {placement.paymentStatus === "draft" ? (
+            {placement.paymentStatus !== "draft" ? (
               <Button
                 onClick={() => {
                   setIsPublishModalOpen(true);
@@ -358,7 +360,7 @@ export default function PlacementSetupClient({
       </div>
 
       <Dialog open={isPublishModalOpen} onOpenChange={setIsPublishModalOpen}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="max-w-[80%] md:max-w-[80%]  max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Publish Your Campaign</DialogTitle>
             <DialogDescription>
@@ -378,11 +380,11 @@ export default function PlacementSetupClient({
                   <div className="flex gap-4">
                     <div
                       className={`border rounded-lg p-4 flex-1 text-center cursor-pointer transition-all ${
-                        selectedDuration === 15
+                        selectedDuration === 10
                           ? "border-green-500 bg-green-700"
                           : "hover:border-primary"
                       }`}
-                      onClick={() => setSelectedDuration(15)}
+                      onClick={() => setSelectedDuration(10)}
                     >
                       <div className="font-medium">
                         $$
@@ -391,20 +393,20 @@ export default function PlacementSetupClient({
                             0.7 || 0,
                         )}
                       </div>
-                      <div className="text-sm text-white">15 Days</div>
+                      <div className="text-sm text-white">10 Days</div>
                     </div>
                     <div
                       className={`border rounded-lg p-4 flex-1 text-center cursor-pointer transition-all ${
-                        selectedDuration === 30
+                        selectedDuration === 20
                           ? "border-green-500 bg-green-700"
                           : "hover:border-primary"
                       }`}
-                      onClick={() => setSelectedDuration(30)}
+                      onClick={() => setSelectedDuration(20)}
                     >
                       <div className="font-medium">
                         $${slots.find((s) => s.id === selectedSlot)?.price || 0}
                       </div>
-                      <div className="text-sm text-white">30 Days</div>
+                      <div className="text-sm text-white">20 Days</div>
                     </div>
                   </div>
                 </div>
@@ -450,7 +452,7 @@ export default function PlacementSetupClient({
                     className="bg-green-600 hover:bg-green-700"
                   >
                     Go to payment ($
-                    {selectedDuration === 15
+                    {selectedDuration === 10
                       ? Math.round(
                           slots.find((s) => s.id === selectedSlot)?.price *
                             0.7 || 0,
@@ -471,23 +473,32 @@ export default function PlacementSetupClient({
                     <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
                   </div>
                 ) : (
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
                     {slots.map((slot) => (
                       <div
                         key={slot.id}
-                        className={`border rounded-lg p-4 cursor-pointer transition-all ${
+                        className={`border rounded-lg p-4 space-y-2 cursor-pointer transition-all ${
                           selectedSlot === slot.id
                             ? "border-green-500 bg-green-700"
-                            : "hover:border-primary"
+                            : "hover:border-primary bg-green-900"
                         }`}
                         onClick={() => handleSlotSelect(slot.id)}
                       >
+                        <h4 className="font-medium">{slot.name}</h4>
+                        <p className="text-sm text-muted-foreground">
+                          {slot.description}
+                        </p>
                         <div className="flex justify-between items-start">
-                          <div>
-                            <h4 className="font-medium">{slot.name}</h4>
-                            <p className="text-sm text-muted-foreground">
-                              ${Math.round(slot.price * 0.7)} for 15 days | $
-                              {slot.price} for 30 days
+                          <div className="space-y-1">
+                            <p className="font-bold text-white bg-primary p-1 px-2 rounded-full block">
+                              <span className="">
+                                ${Math.round(slot.price * 0.7)}
+                              </span>{" "}
+                              <span className="">for 10 days</span>{" "}
+                            </p>
+                            <p className="font-bold text-white bg-primary p-1 px-2 rounded-full block">
+                              <span className="">${slot.price}</span>{" "}
+                              <span className="">for 20 days</span>{" "}
                             </p>
                           </div>
                         </div>

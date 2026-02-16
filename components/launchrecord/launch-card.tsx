@@ -40,8 +40,8 @@ export function LaunchCard({ launch }: LaunchCardProps) {
           }
         }}
       >
-        <div className="flex cursor-pointer items-center justify-between gap-3 px-2 transition-all duration-300 hover:backdrop-blur-md">
-          <div className="flex min-w-0 items-center gap-3">
+        <div className="md:flex cursor-pointer items-center justify-between gap-3 px-2 transition-all duration-300 hover:backdrop-blur-md">
+          <div className="flex min-w-0 items-center gap-3 md:mb-0 mb-4">
             <div className="h-11 w-11 shrink-0 overflow-hidden rounded-md border bg-muted">
               {launch.logoUrl ? (
                 <img

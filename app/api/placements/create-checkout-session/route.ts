@@ -88,18 +88,18 @@ export async function POST(request: Request) {
       );
     }
 
-    // Calculate price based on duration (15 days = 70% of 30-day price)
+    // Calculate price based on duration (15 days = 70% of 20-day price)
     // For simplicity, assuming sidebar placement is $299 and featured is $599
     const basePrice = body.placementCode.startsWith("HERO") ? 599 : 299;
     let amount = basePrice;
 
     if (body.duration === 15) {
       amount = Math.round(basePrice * 0.7); // 70% of base price for 15 days
-    } else if (body.duration === 30) {
-      amount = basePrice; // Full price for 30 days
+    } else if (body.duration === 20) {
+      amount = basePrice; // Full price for 20 days
     } else {
       return NextResponse.json(
-        { success: false, message: "Invalid duration. Use 15 or 30 days." },
+        { success: false, message: "Invalid duration. Use 10 or 20 days." },
         { status: 400 },
       );
     }
@@ -132,8 +132,8 @@ export async function POST(request: Request) {
           price_data: {
             currency: "usd",
             product_data: {
-              name: `Placement: ${body.placementCode}`,
-              description: `Premium placement for ${body.duration} days`,
+              name: `Premium placement on LaunchRecord: ${body.name}`,
+              description: `${body.description} for ${body.duration} days`,
             },
             unit_amount: amount * 100, // Convert to cents
           },

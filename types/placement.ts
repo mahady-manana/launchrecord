@@ -70,4 +70,5 @@ export interface PlacementSlot {
   codeName: string;
   isAvailable: boolean;
   name: string;
+  description: string;
 }

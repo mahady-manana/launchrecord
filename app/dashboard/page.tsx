@@ -205,7 +205,7 @@ export default function DashboardPage() {
           <CardHeader>
             <div className="flex justify-between items-center">
               <div>
-                <CardTitle>Your Placements</CardTitle>
+                <CardTitle>Your Campaigns</CardTitle>
                 <CardDescription>
                   Manage your purchased placements
                 </CardDescription>

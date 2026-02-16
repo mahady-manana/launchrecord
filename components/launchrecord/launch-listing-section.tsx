@@ -64,6 +64,166 @@ function TenPlacementCards({ placements }: { placements: Placement[] }) {
   );
 }
 
+interface SidebarFiltersProps {
+  category:
+    | "all"
+    | (typeof LAUNCH_CATEGORIES)[number]
+    | (typeof LAUNCH_CATEGORIES)[number][];
+  timeFilter: "all" | "today" | "week" | "month";
+  prelaunchOnly: boolean;
+  onCategoryChange: (
+    category:
+      | "all"
+      | (typeof LAUNCH_CATEGORIES)[number]
+      | (typeof LAUNCH_CATEGORIES)[number][],
+  ) => void;
+  onTimeFilterChange: (timeFilter: "all" | "today" | "week" | "month") => void;
+  onPrelaunchOnlyChange: (prelaunchOnly: boolean) => void;
+}
+
+function SidebarFilters({
+  category,
+  timeFilter,
+  prelaunchOnly,
+  onCategoryChange,
+  onTimeFilterChange,
+  onPrelaunchOnlyChange,
+}: SidebarFiltersProps) {
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [localCategories, setLocalCategories] = useState<
+    (typeof LAUNCH_CATEGORIES)[number][]
+  >([]);
+
+  const handleCategoryToggle = (cat: (typeof LAUNCH_CATEGORIES)[number]) => {
+    const newCategories = localCategories.includes(cat)
+      ? localCategories.filter((c) => c !== cat)
+      : [...localCategories, cat];
+
+    setLocalCategories(newCategories);
+    onCategoryChange(newCategories.length === 0 ? "all" : newCategories);
+  };
+
+  return (
+    <div className="space-y-4 mb-4">
+      {/* Time Filter */}
+      <div>
+        <h4 className="text-sm font-medium mb-2">Time Filter</h4>
+        <div className="space-y-1">
+          <label className="flex items-center gap-2 cursor-pointer">
+            <input
+              type="radio"
+              name="timeFilter"
+              checked={timeFilter === "all"}
+              onChange={() => onTimeFilterChange("all")}
+              className="h-4 w-4"
+            />
+            <span className="text-sm">All time</span>
+          </label>
+          <label className="flex items-center gap-2 cursor-pointer">
+            <input
+              type="radio"
+              name="timeFilter"
+              checked={timeFilter === "today"}
+              onChange={() => onTimeFilterChange("today")}
+              className="h-4 w-4"
+            />
+            <span className="text-sm">Today</span>
+          </label>
+          <label className="flex items-center gap-2 cursor-pointer">
+            <input
+              type="radio"
+              name="timeFilter"
+              checked={timeFilter === "week"}
+              onChange={() => onTimeFilterChange("week")}
+              className="h-4 w-4"
+            />
+            <span className="text-sm">This week</span>
+          </label>
+          <label className="flex items-center gap-2 cursor-pointer">
+            <input
+              type="radio"
+              name="timeFilter"
+              checked={timeFilter === "month"}
+              onChange={() => onTimeFilterChange("month")}
+              className="h-4 w-4"
+            />
+            <span className="text-sm">This month</span>
+          </label>
+        </div>
+      </div>
+
+      {/* Prelaunch Filter */}
+      <div>
+        <label className="flex items-center gap-2 cursor-pointer">
+          <input
+            type="checkbox"
+            checked={prelaunchOnly}
+            onChange={() => onPrelaunchOnlyChange(!prelaunchOnly)}
+            className="h-4 w-4"
+          />
+          <span className="text-sm font-medium">Prelaunch only</span>
+        </label>
+      </div>
+
+      {/* Categories Filter */}
+      <div>
+        <h4 className="text-sm font-medium mb-2">Categories</h4>
+        <div
+          className={`space-y-1 ${!isExpanded ? "max-h-[400px] overflow-hidden relative" : ""}`}
+        >
+          {/* Select All Categories - means no filter */}
+          <label className="flex items-center gap-2 cursor-pointer font-medium">
+            <input
+              type="checkbox"
+              checked={localCategories.length === 0}
+              onChange={(e) => {
+                if (e.target.checked) {
+                  setLocalCategories([]);
+                  onCategoryChange("all");
+                }
+              }}
+              className="h-4 w-4"
+            />
+            <span className="text-sm">All categories</span>
+          </label>
+
+          <div className={!isExpanded ? "mask-image-gradient" : ""}>
+            {LAUNCH_CATEGORIES.map((cat) => (
+              <label
+                key={cat}
+                className="flex items-center gap-2 cursor-pointer"
+              >
+                <input
+                  type="checkbox"
+                  checked={localCategories.includes(cat)}
+                  onChange={() => handleCategoryToggle(cat)}
+                  className="h-4 w-4"
+                />
+                <span className="text-sm">{cat}</span>
+              </label>
+            ))}
+          </div>
+          {!isExpanded && (
+            <>
+              <div
+                className="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-background to-transparent pointer-events-none"
+                style={{ maxHeight: "80px" }}
+              />
+              <Button
+                variant="link"
+                className="w-full mt-2"
+                onClick={() => setIsExpanded(true)}
+              >
+                Expand all categories
+              </Button>
+            </>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export function LaunchListingSection({
   launches,
   leftPlacements,
@@ -105,7 +265,17 @@ export function LaunchListingSection({
   return (
     <section className="mx-auto grid w-full max-w-8xl gap-4 px-4 pb-10 sm:px-6 lg:grid-cols-[260px_1fr_260px]">
       <aside className="hidden lg:block">
-        <TenPlacementCards placements={leftPlacements} />
+        <div className="sticky top-20 space-y-4">
+          <SidebarFilters
+            category={category}
+            timeFilter={timeFilter}
+            prelaunchOnly={prelaunchOnly}
+            onCategoryChange={onCategoryChange}
+            onTimeFilterChange={onTimeFilterChange}
+            onPrelaunchOnlyChange={onPrelaunchOnlyChange}
+          />
+          {/* <TenPlacementCards placements={leftPlacements} /> */}
+        </div>
       </aside>
 
       <main className="space-y-4 py-4 bg-card px-0 rounded-xl">
@@ -190,11 +360,13 @@ export function LaunchListingSection({
             No launches found for this filter.
           </p>
         ) : (
-          <div className="">
-            {launches.map((launch) => (
-              <LaunchCard key={launch._id} launch={launch} />
-            ))}
-          </div>
+          <>
+            <div className="">
+              {launches.map((launch) => (
+                <LaunchCard key={launch._id} launch={launch} />
+              ))}
+            </div>
+          </>
         )}
 
         <div className="flex items-center justify-between pt-4">
@@ -222,7 +394,9 @@ export function LaunchListingSection({
       </main>
 
       <aside className="hidden lg:block">
-        <TenPlacementCards placements={rightPlacements} />
+        <div className="sticky top-20">
+          <TenPlacementCards placements={rightPlacements} />
+        </div>
       </aside>
     </section>
   );
