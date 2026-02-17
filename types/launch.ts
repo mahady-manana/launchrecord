@@ -50,6 +50,8 @@ export interface Launch {
   commentCount: number;
   createdAt: string;
   updatedAt: string;
+  claimed?: boolean;
+  claimKey?: string;
 }
 
 export interface LaunchFilters {
@@ -106,7 +108,8 @@ export interface Launch {
   commentCount: number;
   createdAt: string;
   updatedAt: string;
-  clickStats?: LaunchClickStats;
+  claimed?: boolean;
+  claimKey?: string;
 }
 
 export interface CreateLaunchPayload {
@@ -119,6 +122,7 @@ export interface CreateLaunchPayload {
   businessModel: BusinessModel;
   pricingModel: PricingModel;
   status?: "draft" | "prelaunch" | "launched";
+  claimed?: boolean;
 }
 
 export interface UpdateLaunchPayload {
@@ -136,4 +140,5 @@ export interface UpdateLaunchPayload {
   businessModel?: BusinessModel;
   pricingModel?: PricingModel;
   status?: "draft" | "prelaunch" | "launched";
+  claimed?: boolean;
 }

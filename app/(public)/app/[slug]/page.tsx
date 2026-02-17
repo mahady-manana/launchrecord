@@ -1,4 +1,6 @@
 import { AppPageOwnerActions } from "@/components/launchrecord/app-page-owner-actions";
+import { ClaimLaunchButton } from "@/components/launchrecord/ClaimLaunchButton";
+import { ClaimLaunchModal } from "@/components/launchrecord/ClaimLaunchModal";
 import { ClientLaunchDetailPage } from "@/components/launchrecord/client-launch-detail-page";
 import { LaunchClickTracker } from "@/components/launchrecord/LaunchClickTracker";
 import { Logo } from "@/components/launchrecord/logo";
@@ -42,6 +44,7 @@ type LeanLaunch = {
   commentCount: number;
   createdAt: Date | string;
   updatedAt: Date | string;
+  claimed?: boolean;
 };
 
 function getWebsiteHost(website: string) {
@@ -55,7 +58,9 @@ function getWebsiteHost(website: string) {
 async function getLaunchBySlug(slug: string) {
   await connectToDatabase();
 
-  return Launch.findOne({ slug, isArchived: false }).lean<LeanLaunch | null>();
+  return Launch.findOne({ slug, isArchived: false })
+    .select("+claimed")
+    .lean<LeanLaunch | null>();
 }
 
 function LaunchMiniCard({ launch }: { launch: LeanLaunch }) {
@@ -302,7 +307,11 @@ export default async function LaunchDetailPage({ params }: LaunchPageProps) {
                 </div>
               </div>
             </div>
-            <AppPageOwnerActions launch={editableLaunch} isOwner={isOwner} />
+            {!launch.claimed && user && !isOwner ? (
+              <ClaimLaunchButton slug={launch.slug} />
+            ) : (
+              <AppPageOwnerActions launch={editableLaunch} isOwner={isOwner} />
+            )}
           </header>
 
           <section className="space-y-4">

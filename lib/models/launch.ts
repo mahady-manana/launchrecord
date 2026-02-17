@@ -22,6 +22,8 @@ export interface ILaunch extends Document {
   placement: "none" | "hero" | "left" | "right";
   isArchived: boolean;
   commentCount: number;
+  claimed: boolean;
+  claimKey?: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -30,13 +32,11 @@ const LaunchSchema = new Schema<ILaunch>(
   {
     name: {
       type: String,
-      required: [true, "Launch name is required"],
       minlength: [2, "Launch name must be at least 2 characters"],
       maxlength: [100, "Launch name must be less than 100 characters"],
     },
     slug: {
       type: String,
-      required: true,
       unique: true,
       lowercase: true,
       trim: true,
@@ -48,12 +48,10 @@ const LaunchSchema = new Schema<ILaunch>(
     },
     description: {
       type: String,
-      required: [true, "Description is required"],
       maxlength: [1200, "Description must be less than 1200 characters"],
     },
     tagline: {
       type: String,
-      required: [true, "Tagline is required"],
       minlength: [4, "Tagline must be at least 4 characters"],
       maxlength: [140, "Tagline must be less than 140 characters"],
       trim: true,
@@ -65,12 +63,10 @@ const LaunchSchema = new Schema<ILaunch>(
     },
     website: {
       type: String,
-      required: [true, "Website is required"],
       trim: true,
     },
     category: {
       type: Schema.Types.Mixed,
-      required: [true, "Category is required"],
       index: true,
       validate: {
         validator: function (value: any) {
@@ -105,13 +101,11 @@ const LaunchSchema = new Schema<ILaunch>(
     businessModel: {
       type: String,
       enum: BUSINESS_MODELS,
-      required: [true, "Business model is required"],
       index: true,
     },
     pricingModel: {
       type: String,
       enum: PRICING_MODELS,
-      required: [true, "Pricing model is required"],
       index: true,
     },
     status: {
@@ -141,6 +135,16 @@ const LaunchSchema = new Schema<ILaunch>(
       type: Number,
       default: 0,
       min: 0,
+    },
+    claimed: {
+      type: Boolean,
+      default: true,
+      index: true,
+    },
+    claimKey: {
+      type: String,
+      trim: true,
+      select: false,
     },
   },
   { timestamps: true },
