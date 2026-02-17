@@ -1,6 +1,8 @@
 import { AppPageOwnerActions } from "@/components/launchrecord/app-page-owner-actions";
 import { ClientLaunchDetailPage } from "@/components/launchrecord/client-launch-detail-page";
+import { LaunchClickTracker } from "@/components/launchrecord/LaunchClickTracker";
 import { Logo } from "@/components/launchrecord/logo";
+import { VisitWebsiteButton } from "@/components/launchrecord/VisitWebsiteButton";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -340,8 +342,14 @@ export default async function LaunchDetailPage({ params }: LaunchPageProps) {
             ) : null}
           </section>
 
-          <footer className="flex flex-wrap items-center gap-3 border-t pt-4 text-sm text-muted-foreground">
-            <span>By {launch.name}</span>
+          <footer className="flex flex-wrap items-center justify-between gap-3 border-t pt-4">
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <span>By {launch.name}</span>
+            </div>
+            <VisitWebsiteButton
+              website={launch.website}
+              productId={launch._id.toString()}
+            />
           </footer>
         </article>
 
@@ -384,6 +392,10 @@ export default async function LaunchDetailPage({ params }: LaunchPageProps) {
           </div>
         </section>
       </div>
+      <LaunchClickTracker
+        productId={launch._id?.toString()}
+        enabled
+      />
     </main>
   );
 }

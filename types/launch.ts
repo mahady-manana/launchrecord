@@ -70,6 +70,45 @@ export interface PaginationMeta {
   hasPreviousPage: boolean;
 }
 
+export interface ClickStats {
+  today: number;
+  thisWeek: number;
+  lastWeek: number;
+  thisMonth: number;
+}
+
+export interface LaunchClickStats {
+  all_time: number;
+  all_time_outbound: number;
+  stats: {
+    clicks: ClickStats;
+    outbound: ClickStats;
+  };
+}
+
+export interface Launch {
+  _id: string;
+  name: string;
+  slug: string;
+  logoUrl?: string;
+  tagline: string;
+  description: string;
+  website: string;
+  category: LaunchCategory | LaunchCategory[];
+  valueProposition?: string;
+  problem?: string;
+  audience?: string;
+  businessModel: BusinessModel;
+  pricingModel: PricingModel;
+  status: "draft" | "prelaunch" | "launched";
+  submittedBy: string;
+  placement: LaunchPlacement;
+  commentCount: number;
+  createdAt: string;
+  updatedAt: string;
+  clickStats?: LaunchClickStats;
+}
+
 export interface CreateLaunchPayload {
   name: string;
   logoUrl?: string;

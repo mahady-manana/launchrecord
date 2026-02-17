@@ -14,7 +14,7 @@ export function HeroSection({
 }: HeroSectionProps) {
   return (
     <section className="mx-auto grid w-full max-w-8xl gap-4 px-4 py-8 sm:px-6 lg:grid-cols-3">
-      <div className="p-6">
+      <div className="p-4">
         <p className="mb-3 text-xs font-medium uppercase tracking-wide text-primary">
           Build in public
         </p>
@@ -35,7 +35,7 @@ export function HeroSection({
       </div>
       <FeaturedPlacementCard placements={heroPlacements} />
 
-      <div className="px-6">
+      <div className="p-4">
         <h2 className="text-lg font-semibold">Ready to launch?</h2>
         <p className="mt-2 text-sm text-muted-foreground">
           Submit now to appear in listings, featured placements, and upcoming

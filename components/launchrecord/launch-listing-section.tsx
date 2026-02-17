@@ -263,7 +263,7 @@ export function LaunchListingSection({
     }
   }, [debouncedQuery, query, onQueryChange]);
   return (
-    <section className="mx-auto grid w-full max-w-8xl gap-4 px-4 pb-10 sm:px-6 lg:grid-cols-[260px_1fr_260px]">
+    <section className="mx-auto grid w-full max-w-8xl gap-4 px-4 pb-10 sm:px-10 lg:grid-cols-[260px_1fr_260px]">
       <aside className="hidden lg:block">
         <div className="sticky top-20 space-y-4">
           <SidebarFilters

@@ -414,9 +414,7 @@ export default function PlacementSetupClient({
                 <div className="border border-blue-200 rounded-lg p-4 mb-6">
                   <p className="text-sm mb-4">
                     <strong>Important:</strong> You will be redirected to Stripe
-                    for secure payment processing. Your invoice will be issued
-                    under <strong>Retold.me</strong> name because LaunchRecord
-                    operates under Retold.me and Azesapce, Inc jurisdiction.
+                    for secure payment processing.
                   </p>
                   <div className="text-sm">
                     <p className="font-medium mb-2">Legal Agreement:</p>
@@ -431,10 +429,6 @@ export default function PlacementSetupClient({
                       <li>
                         I understand that payments are processed securely
                         through Stripe
-                      </li>
-                      <li>
-                        I consent to receiving billing information under the
-                        Retold.me & Azespace, Inc. name
                       </li>
                     </ul>
                   </div>

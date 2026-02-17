@@ -13,6 +13,7 @@ import {
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { serializeMongooseDocument } from "@/lib/utils";
+import { initializeClickTracking } from "@/lib/click-tracking";
 
 const createLaunchSchema = z.object({
   name: z.string().min(2).max(100),
@@ -119,6 +120,9 @@ export async function POST(request: Request) {
       placement: "none",
       submittedBy: user._id,
     });
+
+    // Initialize click tracking for the new launch
+    await initializeClickTracking(launch._id);
 
     // Convert to plain object to remove any potential circular references
     const plainLaunch = serializeMongooseDocument(launch);
