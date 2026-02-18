@@ -110,9 +110,6 @@ export const metadata: Metadata = {
       "max-snippet": -1,
     },
   },
-  verification: {
-    google: "3rLc979DsxiLVvTXtkcmU2TS3rqC1mqgWcTHKc4Iqss",
-  },
 };
 
 export const structuredData = {
