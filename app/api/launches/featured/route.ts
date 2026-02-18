@@ -4,6 +4,7 @@ import {
 } from "@/lib/click-stats";
 import Click from "@/lib/models/click";
 import FeaturedLaunch from "@/lib/models/featured-launch";
+import Launch from "@/lib/models/launch";
 import { connectToDatabase } from "@/lib/mongodb";
 import { serializeMongooseDocument } from "@/lib/utils";
 import { NextResponse } from "next/server";
@@ -23,7 +24,10 @@ export async function GET(request: Request) {
     });
 
     const now = new Date();
-
+    const name = Launch.name;
+    console.log("====================================");
+    console.log(name);
+    console.log("====================================");
     // Find active featured launches
     const featuredLaunches = await FeaturedLaunch.find({
       startDate: { $lte: now },
