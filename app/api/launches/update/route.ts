@@ -195,7 +195,7 @@ export async function PUT(request: Request) {
     if (validatedBody.status) {
       updateData.status = validatedBody.status;
       if (validatedBody.status === "launched" && !launch.launchedAt) {
-        updateData.launchedAt = new Date();
+        updateData.launchedAt = new Date() as unknown as string;
       }
     }
 
