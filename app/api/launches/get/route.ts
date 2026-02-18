@@ -1,15 +1,15 @@
-import Launch from "@/lib/models/launch";
-import Click from "@/lib/models/click";
-import { connectToDatabase } from "@/lib/mongodb";
-import { escapeRegex, sanitizeText } from "@/lib/sanitize";
-import { LAUNCH_CATEGORIES } from "@/types";
-import { NextResponse } from "next/server";
-import { z } from "zod";
-import { serializeMongooseDocument } from "@/lib/utils";
 import {
   aggregateClickStats,
   aggregateOutboundClickStats,
 } from "@/lib/click-stats";
+import Click from "@/lib/models/click";
+import Launch from "@/lib/models/launch";
+import { connectToDatabase } from "@/lib/mongodb";
+import { escapeRegex, sanitizeText } from "@/lib/sanitize";
+import { serializeMongooseDocument } from "@/lib/utils";
+import { LAUNCH_CATEGORIES } from "@/types";
+import { NextResponse } from "next/server";
+import { z } from "zod";
 
 const getLaunchesSchema = z.object({
   category: z.union([
@@ -51,7 +51,11 @@ export async function GET(request: Request) {
 
       switch (parsedQuery.timeFilter) {
         case "today":
-          startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+          startDate = new Date(
+            now.getFullYear(),
+            now.getMonth(),
+            now.getDate(),
+          );
           break;
         case "week":
           const dayOfWeek = now.getDay();
@@ -105,7 +109,9 @@ export async function GET(request: Request) {
     // Fetch click stats for all launches in a single query
     const launchIds = populatedLaunches.map((l) => l._id);
     const clickRecords = await Click.find({ launchId: { $in: launchIds } })
-      .select("launchId all_time all_time_outbound daily_clicks daily_outbound_clicks")
+      .select(
+        "launchId all_time all_time_outbound daily_clicks daily_outbound_clicks",
+      )
       .lean();
 
     // Build a map of click stats by launch ID
@@ -130,16 +136,14 @@ export async function GET(request: Request) {
     const plainLaunches = serializeMongooseDocument(populatedLaunches).map(
       (launch: any) => ({
         ...launch,
-        clickStats:
-          clickStatsMap.get(launch._id) ||
-          {
-            all_time: 0,
-            all_time_outbound: 0,
-            stats: {
-              clicks: { today: 0, thisWeek: 0, lastWeek: 0, thisMonth: 0 },
-              outbound: { today: 0, thisWeek: 0, lastWeek: 0, thisMonth: 0 },
-            },
+        clickStats: clickStatsMap.get(launch._id) || {
+          all_time: 0,
+          all_time_outbound: 0,
+          stats: {
+            clicks: { today: 0, thisWeek: 0, lastWeek: 0, thisMonth: 0 },
+            outbound: { today: 0, thisWeek: 0, lastWeek: 0, thisMonth: 0 },
           },
+        },
       }),
     );
 

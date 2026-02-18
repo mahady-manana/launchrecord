@@ -41,6 +41,15 @@ interface Launch {
   updatedAt: string;
 }
 
+interface FeaturedLaunch {
+  _id: string;
+  launchId: string;
+  startDate: string;
+  endDate: string;
+  priority: number;
+  isActive: boolean;
+}
+
 interface PaginationMeta {
   page: number;
   limit: number;
@@ -64,6 +73,19 @@ export default function AdminStatsPage() {
     message: string;
   } | null>(null);
   const [isBulkLoading, setIsBulkLoading] = useState(false);
+  const [featuredLaunches, setFeaturedLaunches] = useState<FeaturedLaunch[]>([]);
+  const [isFeaturedModalOpen, setIsFeaturedModalOpen] = useState(false);
+  const [featuredFormData, setFeaturedFormData] = useState({
+    launchId: "",
+    startDate: "",
+    endDate: "",
+    priority: 0,
+  });
+  const [featuredResult, setFeaturedResult] = useState<{
+    success: boolean;
+    message: string;
+  } | null>(null);
+  const [isFeaturedLoading, setIsFeaturedLoading] = useState(false);
 
   useEffect(() => {
     const isAuthenticated = sessionStorage.getItem("admin_auth");
@@ -72,6 +94,7 @@ export default function AdminStatsPage() {
       return;
     }
     fetchLaunches(page);
+    fetchFeaturedLaunches();
   }, [page, router]);
 
   const fetchLaunches = async (pageNum: number) => {
@@ -91,6 +114,28 @@ export default function AdminStatsPage() {
     }
   };
 
+  const fetchFeaturedLaunches = async () => {
+    try {
+      const response = await fetch("/api/admin/featured?includeInactive=true");
+      const data = await response.json();
+
+      if (data.success) {
+        setFeaturedLaunches(data.featuredLaunches);
+      }
+    } catch (error) {
+      console.error("Failed to fetch featured launches:", error);
+    }
+  };
+
+  const isLaunchFeatured = (launchId: string) => {
+    const now = new Date();
+    return featuredLaunches.some((fl) => {
+      const startDate = new Date(fl.startDate);
+      const endDate = new Date(fl.endDate);
+      return fl.launchId === launchId && fl.isActive && startDate <= now && endDate >= now;
+    });
+  };
+
   const handleLogout = () => {
     sessionStorage.removeItem("admin_auth");
     router.push("/admin/login");
@@ -99,6 +144,69 @@ export default function AdminStatsPage() {
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
     alert("Copied to clipboard!");
+  };
+
+  const handleOpenFeaturedModal = (launch: Launch) => {
+    const now = new Date();
+    const tomorrow = new Date(now);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    const nextWeek = new Date(now);
+    nextWeek.setDate(nextWeek.getDate() + 7);
+
+    setFeaturedFormData({
+      launchId: launch._id,
+      startDate: tomorrow.toISOString().split("T")[0],
+      endDate: nextWeek.toISOString().split("T")[0],
+      priority: 0,
+    });
+    setFeaturedResult(null);
+    setSelectedLaunch(null);
+    setIsFeaturedModalOpen(true);
+  };
+
+  const handleFeatureLaunch = async () => {
+    setIsFeaturedLoading(true);
+    setFeaturedResult(null);
+
+    try {
+      const payload = {
+        launchId: featuredFormData.launchId,
+        startDate: new Date(featuredFormData.startDate).toISOString(),
+        endDate: new Date(featuredFormData.endDate).toISOString(),
+        priority: featuredFormData.priority,
+      };
+
+      const response = await fetch("/api/admin/featured", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        setFeaturedResult({
+          success: true,
+          message: "Launch featured successfully!",
+        });
+        fetchFeaturedLaunches();
+        setTimeout(() => {
+          setIsFeaturedModalOpen(false);
+        }, 1500);
+      } else {
+        setFeaturedResult({
+          success: false,
+          message: data.message || "Failed to feature launch",
+        });
+      }
+    } catch (error) {
+      setFeaturedResult({
+        success: false,
+        message: error instanceof Error ? error.message : "Failed to feature launch",
+      });
+    } finally {
+      setIsFeaturedLoading(false);
+    }
   };
 
   const handleBulkImport = async () => {
@@ -183,6 +291,7 @@ export default function AdminStatsPage() {
                         <TableHead>Category</TableHead>
                         <TableHead>Comments</TableHead>
                         <TableHead>Created</TableHead>
+                        <TableHead className="w-[120px]">Featured</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -231,6 +340,16 @@ export default function AdminStatsPage() {
                           <TableCell>{launch.commentCount}</TableCell>
                           <TableCell className="text-muted-foreground">
                             {new Date(launch.createdAt).toLocaleDateString()}
+                          </TableCell>
+                          <TableCell onClick={(e) => e.stopPropagation()}>
+                            <Button
+                              variant={isLaunchFeatured(launch._id) ? "default" : "outline"}
+                              size="sm"
+                              onClick={() => handleOpenFeaturedModal(launch)}
+                              className="w-full"
+                            >
+                              {isLaunchFeatured(launch._id) ? "Featured" : "Feature"}
+                            </Button>
                           </TableCell>
                         </TableRow>
                       ))}
@@ -432,6 +551,97 @@ export default function AdminStatsPage() {
             </Button>
             <Button onClick={handleBulkImport} disabled={isBulkLoading}>
               {isBulkLoading ? "Importing..." : "Import Launches"}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Feature Launch Modal */}
+      <Dialog open={isFeaturedModalOpen} onOpenChange={setIsFeaturedModalOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Feature Launch</DialogTitle>
+            <DialogDescription>
+              Select the date range for this featured placement.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid gap-2">
+              <Label htmlFor="startDate">Start Date</Label>
+              <input
+                id="startDate"
+                type="date"
+                value={featuredFormData.startDate}
+                onChange={(e) =>
+                  setFeaturedFormData({
+                    ...featuredFormData,
+                    startDate: e.target.value,
+                  })
+                }
+                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                disabled={isFeaturedLoading}
+              />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="endDate">End Date</Label>
+              <input
+                id="endDate"
+                type="date"
+                value={featuredFormData.endDate}
+                onChange={(e) =>
+                  setFeaturedFormData({
+                    ...featuredFormData,
+                    endDate: e.target.value,
+                  })
+                }
+                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                disabled={isFeaturedLoading}
+              />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="priority">Priority (0-100)</Label>
+              <input
+                id="priority"
+                type="number"
+                min="0"
+                max="100"
+                value={featuredFormData.priority}
+                onChange={(e) =>
+                  setFeaturedFormData({
+                    ...featuredFormData,
+                    priority: parseInt(e.target.value) || 0,
+                  })
+                }
+                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                disabled={isFeaturedLoading}
+              />
+              <p className="text-xs text-muted-foreground">
+                Higher priority launches appear first.
+              </p>
+            </div>
+            {featuredResult && (
+              <p
+                className={`text-sm ${
+                  featuredResult.success ? "text-green-600" : "text-destructive"
+                }`}
+              >
+                {featuredResult.message}
+              </p>
+            )}
+          </div>
+          <div className="flex justify-end gap-2">
+            <Button
+              variant="outline"
+              onClick={() => {
+                setIsFeaturedModalOpen(false);
+                setFeaturedResult(null);
+              }}
+              disabled={isFeaturedLoading}
+            >
+              Cancel
+            </Button>
+            <Button onClick={handleFeatureLaunch} disabled={isFeaturedLoading}>
+              {isFeaturedLoading ? "Featuring..." : "Feature Launch"}
             </Button>
           </div>
         </DialogContent>

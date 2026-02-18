@@ -1,19 +1,11 @@
 "use client";
 
 import { Logo } from "@/components/launchrecord/logo";
-import { PlacementAdvertiseButton } from "@/components/launchrecord/placement-advertise-button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { AppUser } from "@/types";
-import {
-  CreditCard,
-  LayoutDashboard,
-  LogOut,
-  Rocket,
-  Search,
-  User,
-} from "lucide-react";
+import { LayoutDashboard, LogOut, Rocket, Search, User } from "lucide-react";
 import { signIn, signOut } from "next-auth/react";
 
 import {
@@ -68,7 +60,7 @@ export function Navbar({ query, onQueryChange }: NavbarProps) {
             />
           </div>
 
-          <PlacementAdvertiseButton />
+          {/* <PlacementAdvertiseButton /> */}
           <Button onClick={handleOpenLaunchModal}>
             <Rocket></Rocket> New launch
           </Button>
@@ -99,12 +91,6 @@ export function Navbar({ query, onQueryChange }: NavbarProps) {
                   <DropdownMenuItem>
                     <LayoutDashboard className="mr-2 h-4 w-4" />
                     <span>Dashboard</span>
-                  </DropdownMenuItem>
-                </Link>
-                <Link href="/dashboard/placements">
-                  <DropdownMenuItem>
-                    <CreditCard className="mr-2 h-4 w-4" />
-                    <span>Manage Placements</span>
                   </DropdownMenuItem>
                 </Link>
                 <Link href="/profile">

@@ -66,7 +66,7 @@ export function SidebarRight({
           {todayLaunches.slice(0, 6).map((launch) => (
             <div
               key={launch._id}
-              className="group flex items-center gap-3 p-2.5 bg-gray-900/30 hover:bg-gray-900/50 rounded-lg border border-gray-700/30 hover:border-cyan-500/30 transition-all cursor-pointer"
+              className="group flex gap-3 p-2.5 bg-gray-900/30 hover:bg-gray-900/50 rounded-lg border border-gray-700/30 hover:border-cyan-500/30 transition-all cursor-pointer"
             >
               <div className="h-11 w-11 shrink-0 overflow-hidden rounded-md border bg-muted">
                 {launch.logoUrl ? (
@@ -86,6 +86,9 @@ export function SidebarRight({
                 <h3 className="text-sm font-medium text-white group-hover:text-cyan-400 transition-colors truncate">
                   {launch.name}
                 </h3>
+                <p className="text-xs text-gray-500 line-clamp-2 mb-2">
+                  {launch.tagline}
+                </p>
                 <div className="flex items-center gap-1 text-xs text-gray-500">
                   <div className="flex flex-wrap gap-1.5">
                     {Array.isArray(launch.category) ? (
@@ -100,7 +103,7 @@ export function SidebarRight({
                         ))}
                       </div>
                     ) : (
-                      <span className="rounded-md bg-secondary px-2 py-0.5 text-[11px] font-mono text-muted-foreground">
+                      <span className="rounded-md bg-gray-800/80 px-2 py-0.5 text-[11px] font-mono text-muted-foreground">
                         {launch.category}
                       </span>
                     )}
