@@ -1,5 +1,6 @@
 import { PlacementDataLoader } from "@/components/launchrecord/placement-data-loader";
 import { SessionProvider } from "@/components/providers/session-provider";
+import { GoogleAnalytics } from "@next/third-parties/google";
 import type { Metadata } from "next";
 import { Space_Grotesk } from "next/font/google";
 import "./globals.css";
@@ -27,12 +28,14 @@ export const metadata: Metadata = {
     url: "https://www.launchrecord.com",
     siteName: "LaunchRecord",
     type: "website",
+    images: "https://www.launchrecord.com/og-image.png",
   },
   twitter: {
     card: "summary_large_image",
     title: "LaunchRecord",
     description:
       "A launch listing platform for founders, makers, and vibe coders.",
+    images: "https://www.launchrecord.com/og-image.png",
   },
   icons: {
     icon: "/lr-logo.svg",
@@ -50,6 +53,7 @@ export default function RootLayout({
       <body className={`font-sans antialiased ${sg.className}`}>
         <SessionProvider>{children}</SessionProvider>
         <PlacementDataLoader />
+        <GoogleAnalytics gaId="G-Z31MSTXKKS" />
       </body>
     </html>
   );

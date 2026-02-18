@@ -199,7 +199,8 @@ export async function generateMetadata({
     };
   }
 
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.launchrecord.com";
+  const siteUrl =
+    process.env.NEXT_PUBLIC_SITE_URL || "https://www.launchrecord.com";
   const canonicalUrl = `${siteUrl}/app/${launch.slug}`;
 
   return {
@@ -229,29 +230,13 @@ export async function generateMetadata({
       siteName: "LaunchRecord",
       title: launch.name,
       description: launch.tagline || launch.description,
-      images: launch.logoUrl
-        ? [
-            {
-              url: launch.logoUrl,
-              width: 1200,
-              height: 630,
-              alt: `${launch.name} - ${launch.tagline}`,
-            },
-          ]
-        : [
-            {
-              url: "/og-image.png",
-              width: 1200,
-              height: 630,
-              alt: launch.name,
-            },
-          ],
+      images: "/og-image.png",
     },
     twitter: {
       card: "summary_large_image",
       title: launch.name,
       description: launch.tagline || launch.description,
-      images: launch.logoUrl ? [launch.logoUrl] : ["/og-image.png"],
+      images: "/og-image.png",
       creator: "@launchrecord",
     },
     robots: {
@@ -269,7 +254,8 @@ export async function generateMetadata({
 }
 
 export async function generateStructuredData(launch: LeanLaunch) {
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.launchrecord.com";
+  const siteUrl =
+    process.env.NEXT_PUBLIC_SITE_URL || "https://www.launchrecord.com";
   const canonicalUrl = `${siteUrl}/app/${launch.slug}`;
 
   const categoryArray = Array.isArray(launch.category)
@@ -317,17 +303,16 @@ export async function generateStructuredData(launch: LeanLaunch) {
     softwareVersion: "1.0",
     installUrl: launch.website,
     downloadUrl: launch.website,
-    featureList: [
-      launch.tagline,
-      launch.valueProposition,
-      launch.problem,
-    ].filter(Boolean).join(", "),
+    featureList: [launch.tagline, launch.valueProposition, launch.problem]
+      .filter(Boolean)
+      .join(", "),
     audience: {
       "@type": "Audience",
       audienceType: launch.audience || "General",
     },
     inLanguage: "en",
-    isAccessibleForFree: launch.pricingModel === "free" || launch.pricingModel === "freemium",
+    isAccessibleForFree:
+      launch.pricingModel === "free" || launch.pricingModel === "freemium",
   };
 }
 
@@ -378,164 +363,168 @@ export default async function LaunchDetailPage({ params }: LaunchPageProps) {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
       />
       <main className="min-h-screen">
-      <header className="sticky top-0 z-20 border-b bg-background/95 backdrop-blur">
-        <div className="mx-auto flex h-16 w-full max-w-7xl items-center gap-3 px-4 sm:px-6">
-          <Logo />
-          <form action="/" className="relative hidden flex-1 md:block">
-            <Search className="text-muted-foreground absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2" />
-            <Input name="q" placeholder="Search launches..." className="pl-9" />
-          </form>
-          <div className="flex items-center gap-2">
-            <Button asChild variant="outline" size="sm">
-              <Link href="/">Back to listing</Link>
-            </Button>
-          </div>
-        </div>
-      </header>
-
-      <div className="mx-auto w-full max-w-7xl space-y-8 px-4 py-8 sm:px-6">
-        <article className="space-y-6 rounded-2xl border bg-card p-6">
-          <header className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-            <div className="flex items-start gap-4">
-              <div className="h-16 w-16 shrink-0 overflow-hidden rounded-lg border bg-muted">
-                {launch.logoUrl ? (
-                  <img
-                    src={launch.logoUrl}
-                    alt={`${launch.name} logo`}
-                    className="h-full w-full object-cover"
-                  />
-                ) : (
-                  <div className="flex h-full w-full items-center justify-center text-lg font-semibold text-muted-foreground">
-                    {launch.name.slice(0, 1).toUpperCase()}
-                  </div>
-                )}
-              </div>
-              <div className="space-y-2">
-                <h1 className="text-2xl font-semibold sm:text-3xl">
-                  {launch.name}
-                </h1>
-                <p className="text-muted-foreground">{launch.tagline}</p>
-                <div className="flex flex-wrap items-center gap-2">
-                  {Array.isArray(launch.category) ? (
-                    launch.category.map((cat, index) => (
-                      <Badge key={index} variant="outline">
-                        {cat}
-                      </Badge>
-                    ))
-                  ) : (
-                    <Badge variant="outline">{launch.category}</Badge>
-                  )}
-                  <Badge variant="outline">{launch.businessModel}</Badge>
-                  <Badge variant="outline">{launch.pricingModel}</Badge>
-                </div>
-              </div>
-            </div>
-            <div className="flex items-center gap-4">
-              {!launch.claimed && user && !isOwner ? (
-                <ClaimLaunchButton slug={launch.slug} />
-              ) : (
-                <AppPageOwnerActions
-                  launch={editableLaunch}
-                  isOwner={isOwner}
-                />
-              )}
-
-              <Button asChild>
-                <Link href={launch.website} target="_blank" rel="noreferrer">
-                  Visit website
-                </Link>
+        <header className="sticky top-0 z-20 border-b bg-background/95 backdrop-blur">
+          <div className="mx-auto flex h-16 w-full max-w-7xl items-center gap-3 px-4 sm:px-6">
+            <Logo />
+            <form action="/" className="relative hidden flex-1 md:block">
+              <Search className="text-muted-foreground absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2" />
+              <Input
+                name="q"
+                placeholder="Search launches..."
+                className="pl-9"
+              />
+            </form>
+            <div className="flex items-center gap-2">
+              <Button asChild variant="outline" size="sm">
+                <Link href="/">Back to listing</Link>
               </Button>
             </div>
-          </header>
+          </div>
+        </header>
 
-          <section className="space-y-4">
-            <div>
-              <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
-                Description
-              </h2>
-              <p className="mt-2 text-sm text-foreground/90">
-                {launch.description}
-              </p>
-            </div>
-            {valueProposition ? (
+        <div className="mx-auto w-full max-w-7xl space-y-8 px-4 py-8 sm:px-6">
+          <article className="space-y-6 rounded-2xl border bg-card p-6">
+            <header className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+              <div className="flex items-start gap-4">
+                <div className="h-16 w-16 shrink-0 overflow-hidden rounded-lg border bg-muted">
+                  {launch.logoUrl ? (
+                    <img
+                      src={launch.logoUrl}
+                      alt={`${launch.name} logo`}
+                      className="h-full w-full object-cover"
+                    />
+                  ) : (
+                    <div className="flex h-full w-full items-center justify-center text-lg font-semibold text-muted-foreground">
+                      {launch.name.slice(0, 1).toUpperCase()}
+                    </div>
+                  )}
+                </div>
+                <div className="space-y-2">
+                  <h1 className="text-2xl font-semibold sm:text-3xl">
+                    {launch.name}
+                  </h1>
+                  <p className="text-muted-foreground">{launch.tagline}</p>
+                  <div className="flex flex-wrap items-center gap-2">
+                    {Array.isArray(launch.category) ? (
+                      launch.category.map((cat, index) => (
+                        <Badge key={index} variant="outline">
+                          {cat}
+                        </Badge>
+                      ))
+                    ) : (
+                      <Badge variant="outline">{launch.category}</Badge>
+                    )}
+                    <Badge variant="outline">{launch.businessModel}</Badge>
+                    <Badge variant="outline">{launch.pricingModel}</Badge>
+                  </div>
+                </div>
+              </div>
+              <div className="flex items-center gap-4">
+                {!launch.claimed && user && !isOwner ? (
+                  <ClaimLaunchButton slug={launch.slug} />
+                ) : (
+                  <AppPageOwnerActions
+                    launch={editableLaunch}
+                    isOwner={isOwner}
+                  />
+                )}
+
+                <Button asChild>
+                  <Link href={launch.website} target="_blank" rel="noreferrer">
+                    Visit website
+                  </Link>
+                </Button>
+              </div>
+            </header>
+
+            <section className="space-y-4">
               <div>
                 <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
-                  Value proposition
+                  Description
                 </h2>
                 <p className="mt-2 text-sm text-foreground/90">
-                  {valueProposition}
+                  {launch.description}
                 </p>
               </div>
-            ) : null}
-            {problem ? (
-              <div>
-                <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
-                  Problem
-                </h2>
-                <p className="mt-2 text-sm text-foreground/90">{problem}</p>
+              {valueProposition ? (
+                <div>
+                  <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
+                    Value proposition
+                  </h2>
+                  <p className="mt-2 text-sm text-foreground/90">
+                    {valueProposition}
+                  </p>
+                </div>
+              ) : null}
+              {problem ? (
+                <div>
+                  <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
+                    Problem
+                  </h2>
+                  <p className="mt-2 text-sm text-foreground/90">{problem}</p>
+                </div>
+              ) : null}
+              {audience ? (
+                <div>
+                  <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
+                    Audience
+                  </h2>
+                  <p className="mt-2 text-sm text-foreground/90">{audience}</p>
+                </div>
+              ) : null}
+            </section>
+
+            <footer className="flex flex-wrap items-center justify-between gap-3 border-t pt-4">
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <span>By {launch.name}</span>
               </div>
-            ) : null}
-            {audience ? (
-              <div>
-                <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
-                  Audience
-                </h2>
-                <p className="mt-2 text-sm text-foreground/90">{audience}</p>
+              <VisitWebsiteButton
+                website={launch.website}
+                productId={launch._id.toString()}
+              />
+            </footer>
+          </article>
+
+          {/* Comments Section */}
+          <ClientLaunchDetailPage
+            launchId={launch._id.toString()}
+            commentCount={launch.commentCount}
+          />
+
+          <section className="space-y-3">
+            <h2 className="text-lg font-semibold">Similar Apps</h2>
+            {similarApps.length ? (
+              <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
+                {similarApps.map((item) => (
+                  <LaunchMiniCard key={item._id.toString()} launch={item} />
+                ))}
               </div>
-            ) : null}
+            ) : (
+              <p className="text-sm text-muted-foreground">
+                No similar apps yet.
+              </p>
+            )}
           </section>
 
-          <footer className="flex flex-wrap items-center justify-between gap-3 border-t pt-4">
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <span>By {launch.name}</span>
-            </div>
-            <VisitWebsiteButton
-              website={launch.website}
-              productId={launch._id.toString()}
-            />
-          </footer>
-        </article>
-
-        {/* Comments Section */}
-        <ClientLaunchDetailPage
-          launchId={launch._id.toString()}
-          commentCount={launch.commentCount}
-        />
-
-        <section className="space-y-3">
-          <h2 className="text-lg font-semibold">Similar Apps</h2>
-          {similarApps.length ? (
+          <section className="space-y-3">
+            <h2 className="text-lg font-semibold">New Apps</h2>
             <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
-              {similarApps.map((item) => (
+              {newApps.map((item) => (
                 <LaunchMiniCard key={item._id.toString()} launch={item} />
               ))}
             </div>
-          ) : (
-            <p className="text-sm text-muted-foreground">
-              No similar apps yet.
-            </p>
-          )}
-        </section>
+          </section>
 
-        <section className="space-y-3">
-          <h2 className="text-lg font-semibold">New Apps</h2>
-          <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
-            {newApps.map((item) => (
-              <LaunchMiniCard key={item._id.toString()} launch={item} />
-            ))}
-          </div>
-        </section>
-
-        <section className="space-y-3">
-          <h2 className="text-lg font-semibold">Top Launches</h2>
-          <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
-            {topLaunches.map((item) => (
-              <LaunchMiniCard key={item._id.toString()} launch={item} />
-            ))}
-          </div>
-        </section>
-      </div>
-      <LaunchClickTracker productId={launch._id?.toString()} enabled />
+          <section className="space-y-3">
+            <h2 className="text-lg font-semibold">Top Launches</h2>
+            <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
+              {topLaunches.map((item) => (
+                <LaunchMiniCard key={item._id.toString()} launch={item} />
+              ))}
+            </div>
+          </section>
+        </div>
+        <LaunchClickTracker productId={launch._id?.toString()} enabled />
       </main>
     </>
   );
