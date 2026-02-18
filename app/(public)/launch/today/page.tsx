@@ -1,246 +1,106 @@
-"use client";
+import { Metadata } from "next";
+import { TodayPageClient } from "./today-page-client";
 
-import { HeroSection } from "@/components/launchrecord/hero-section";
-import { LaunchListingSection } from "@/components/launchrecord/launch-listing-section";
-import { LaunchModal } from "@/components/launchrecord/launch-modal";
-import { Navbar } from "@/components/launchrecord/navbar";
-import { useLaunches } from "@/hooks/use-launches";
-import { useUser } from "@/hooks/use-user";
-import { Rocket, TrendingUp, Users, MessageCircle } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+export const metadata: Metadata = {
+  title: "Today's Launches | LaunchRecord - New Products Launched Today",
+  description: "Discover all the amazing products, startups, and tools launched today on LaunchRecord. Be the first to explore and provide feedback to makers.",
+  keywords: [
+    "today's launches",
+    "new products today",
+    "daily product launches",
+    "startup launches",
+    "product of the day",
+    "tech launches",
+    "new startups",
+    "product discovery",
+    "early adopters",
+    "launch calendar",
+  ],
+  authors: [{ name: "LaunchRecord" }],
+  creator: "LaunchRecord",
+  publisher: "LaunchRecord",
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://www.launchrecord.com"),
+  alternates: {
+    canonical: "/launch/today",
+  },
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    url: "/launch/today",
+    siteName: "LaunchRecord",
+    title: "Today's Launches | LaunchRecord",
+    description: "Discover all the amazing products, startups, and tools launched today.",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "Today's Product Launches on LaunchRecord",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Today's Launches | LaunchRecord",
+    description: "Discover all the amazing products launched today.",
+    images: ["/og-image.png"],
+    creator: "@launchrecord",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
+};
+
+export const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "CollectionPage",
+  name: "Today's Launches",
+  description: "Discover all the amazing products, startups, and tools launched today on LaunchRecord",
+  url: `${process.env.NEXT_PUBLIC_SITE_URL || "https://www.launchrecord.com"}/launch/today`,
+  isPartOf: {
+    "@type": "WebSite",
+    name: "LaunchRecord",
+    url: process.env.NEXT_PUBLIC_SITE_URL || "https://www.launchrecord.com",
+  },
+  about: {
+    "@type": "Thing",
+    name: "Product Launches",
+    description: "Daily product launches from makers and startups",
+  },
+  dateCreated: new Date().toISOString().split("T")[0],
+  publisher: {
+    "@type": "Organization",
+    name: "LaunchRecord",
+    logo: {
+      "@type": "ImageObject",
+      url: `${process.env.NEXT_PUBLIC_SITE_URL || "https://www.launchrecord.com"}/logo.png`,
+    },
+  },
+};
 
 interface TodayPageProps {
-  initialQuery?: string;
+  searchParams: Promise<{ q?: string }>;
 }
 
-export default function TodayPage({ initialQuery }: TodayPageProps) {
-  const router = useRouter();
-  const { user, authStatus } = useUser();
-  const launchStore = useLaunches();
-  const [isLaunchModalOpen, setLaunchModalOpen] = useState(false);
-  const hasSyncedInitialQuery = useRef(false);
-
-  useEffect(() => {
-    if (hasSyncedInitialQuery.current) {
-      return;
-    }
-
-    hasSyncedInitialQuery.current = true;
-
-    const query = initialQuery?.trim();
-
-    if (query) {
-      launchStore.setQuery(query);
-    }
-  }, [initialQuery, launchStore]);
-
-  const handleOpenLaunchModal = () => {
-    if (authStatus !== "authenticated") {
-      router.push("/auth/signin?callbackUrl=/");
-      return;
-    }
-
-    setLaunchModalOpen(true);
-  };
-
-  const handleCTAClick = () => {
-    if (authStatus !== "authenticated") {
-      router.push("/auth/signin?callbackUrl=/");
-      return;
-    }
-    handleOpenLaunchModal();
-  };
+export default async function TodayPage({ searchParams }: TodayPageProps) {
+  const params = await searchParams;
+  const initialQuery = typeof params.q === "string" ? params.q : "";
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-950 via-gray-900 to-gray-950">
-      <Navbar
-        query={launchStore.filters.query}
-        onQueryChange={launchStore.setQuery}
-        user={user}
-        authStatus={authStatus}
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
       />
-
-      <HeroSection
-        heroPlacements={launchStore.heroPlacements}
-        onOpenLaunchModal={handleOpenLaunchModal}
-      />
-
-      <LaunchListingSection
-        launches={launchStore.launches}
-        featuredLaunches={launchStore.featuredLaunches}
-        leftPlacements={launchStore.leftPlacements}
-        rightPlacements={launchStore.rightPlacements}
-        pagination={launchStore.launchesPagination}
-        query={launchStore.filters.query}
-        category={launchStore.filters.category}
-        timeFilter="today"
-        isLoading={launchStore.launchesLoading}
-        onQueryChange={launchStore.setQuery}
-        onCategoryChange={launchStore.setCategory as unknown as any}
-        onPageChange={launchStore.setLaunchesPage}
-      />
-
-      {/* CTA + Info Section */}
-      <section className="border-t border-gray-800 bg-gray-900/50">
-        <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
-          <div className="grid gap-12 lg:grid-cols-2">
-            {/* Info Section */}
-            <div className="space-y-6">
-              <h2 className="text-3xl font-bold text-white">
-                Discover Amazing Products
-              </h2>
-              <p className="text-gray-400 leading-relaxed">
-                LaunchRecord is your go-to platform for discovering the latest
-                and greatest products, startups, and tools. Join our community
-                of makers and early adopters to stay ahead of the curve.
-              </p>
-              <div className="grid grid-cols-2 gap-4 pt-4">
-                <div className="flex items-start gap-3">
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/10">
-                    <Rocket className="h-5 w-5 text-primary" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-white">New Launches</h3>
-                    <p className="text-sm text-gray-400">
-                      Fresh products daily
-                    </p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-3">
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/10">
-                    <TrendingUp className="h-5 w-5 text-primary" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-white">Trending</h3>
-                    <p className="text-sm text-gray-400">
-                      Hot products rising
-                    </p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-3">
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/10">
-                    <Users className="h-5 w-5 text-primary" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-white">Community</h3>
-                    <p className="text-sm text-gray-400">
-                      Connect with makers
-                    </p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-3">
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/10">
-                    <MessageCircle className="h-5 w-5 text-primary" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-white">Discussions</h3>
-                    <p className="text-sm text-gray-400">
-                      Share your thoughts
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* CTA Section */}
-            <div className="flex flex-col justify-center">
-              <div className="rounded-2xl border border-gray-800 bg-gradient-to-br from-gray-800/50 to-gray-900/50 p-8 backdrop-blur-sm">
-                <h3 className="text-2xl font-bold text-white mb-4">
-                  Ready to Launch Your Product?
-                </h3>
-                <p className="text-gray-400 mb-6">
-                  Share your product with thousands of early adopters and get
-                  the feedback you need to succeed.
-                </p>
-                <ul className="space-y-3 mb-8">
-                  <li className="flex items-center gap-3 text-gray-300">
-                    <svg
-                      className="h-5 w-5 text-green-500"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M5 13l4 4L19 7"
-                      />
-                    </svg>
-                    Reach engaged audience
-                  </li>
-                  <li className="flex items-center gap-3 text-gray-300">
-                    <svg
-                      className="h-5 w-5 text-green-500"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M5 13l4 4L19 7"
-                      />
-                    </svg>
-                    Get valuable feedback
-                  </li>
-                  <li className="flex items-center gap-3 text-gray-300">
-                    <svg
-                      className="h-5 w-5 text-green-500"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M5 13l4 4L19 7"
-                      />
-                    </svg>
-                    Boost your visibility
-                  </li>
-                  <li className="flex items-center gap-3 text-gray-300">
-                    <svg
-                      className="h-5 w-5 text-green-500"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M5 13l4 4L19 7"
-                      />
-                    </svg>
-                    Free to get started
-                  </li>
-                </ul>
-                <button
-                  onClick={handleCTAClick}
-                  className="w-full bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-200 flex items-center justify-center gap-2 shadow-lg shadow-cyan-500/25"
-                >
-                  <Rocket className="h-5 w-5" />
-                  Launch Your Product
-                </button>
-                <p className="text-xs text-gray-500 text-center mt-4">
-                  Join {authStatus === "authenticated" ? "our" : "the"} community of makers today
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <LaunchModal
-        open={isLaunchModalOpen}
-        onOpenChange={setLaunchModalOpen}
-        onSubmit={launchStore.createLaunch}
-        onCompleteDetails={launchStore.updateLaunch}
-      />
-    </div>
+      <TodayPageClient initialQuery={initialQuery} />
+    </>
   );
 }

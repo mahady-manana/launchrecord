@@ -1,8 +1,105 @@
 import { HomePage } from "@/components/launchrecord/home-page";
+import type { Metadata } from "next";
 
 interface LaunchRecordHomePageProps {
   searchParams: Promise<{ q?: string }>;
 }
+
+export const metadata: Metadata = {
+  title: "Discover & Launch Amazing Products",
+  description:
+    "The premier platform for discovering new products, startups, and tools. Join thousands of makers and early adopters to share feedback and grow your product.",
+  keywords: [
+    "product launch",
+    "startup",
+    "new products",
+    "tech products",
+    "SaaS",
+    "AI tools",
+    "product discovery",
+    "early adopters",
+    "product feedback",
+    "launch platform",
+  ],
+  authors: [{ name: "LaunchRecord" }],
+  creator: "LaunchRecord",
+  publisher: "LaunchRecord",
+  formatDetection: {
+    email: false,
+    address: false,
+    telephone: false,
+  },
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_SITE_URL || "https://www.launchrecord.com",
+  ),
+  alternates: {
+    canonical: "/",
+  },
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    url: "/",
+    siteName: "LaunchRecord",
+    title: "LaunchRecord - Discover & Launch Amazing Products",
+    description:
+      "The premier platform for discovering new products, startups, and tools. Join thousands of makers and early adopters.",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "LaunchRecord - Product Launch Platform",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "LaunchRecord - Discover & Launch Amazing Products",
+    description:
+      "The premier platform for discovering new products, startups, and tools.",
+    images: ["/og-image.png"],
+    creator: "@launchrecord",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
+  verification: {
+    google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION,
+  },
+};
+
+export const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name: "LaunchRecord",
+  description:
+    "The premier platform for discovering new products, startups, and tools",
+  url: process.env.NEXT_PUBLIC_SITE_URL || "https://www.launchrecord.com",
+  potentialAction: {
+    "@type": "SearchAction",
+    target: {
+      "@type": "EntryPoint",
+      urlTemplate: `${process.env.NEXT_PUBLIC_SITE_URL || "https://www.launchrecord.com"}/?q={search_term_string}`,
+    },
+    "query-input": "required name=search_term_string",
+  } as any,
+  publisher: {
+    "@type": "Organization",
+    name: "LaunchRecord",
+    logo: {
+      "@type": "ImageObject",
+      url: `${process.env.NEXT_PUBLIC_SITE_URL || "https://www.launchrecord.com"}/logo.png`,
+    },
+  },
+};
 
 export default async function LaunchRecordHomePage({
   searchParams,
@@ -10,5 +107,13 @@ export default async function LaunchRecordHomePage({
   const params = await searchParams;
   const initialQuery = typeof params.q === "string" ? params.q : "";
 
-  return <HomePage initialQuery={initialQuery} />;
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+      />
+      <HomePage initialQuery={initialQuery} />
+    </>
+  );
 }

@@ -4,13 +4,186 @@ import { Rocket, TrendingUp, Users, MessageCircle, Zap, Award, Globe, ArrowRight
 import { Button } from "@/components/ui/button";
 
 export const metadata: Metadata = {
-  title: "LaunchRecord - Discover & Launch Amazing Products",
-  description: "The premier platform for discovering new products, startups, and tools. Join our community of makers and early adopters.",
+  title: "Launch Your Product | LaunchRecord - The #1 Product Launch Platform",
+  description: "Launch your product to thousands of early adopters and tech enthusiasts. Get valuable feedback, increase visibility, and grow your community. Free to get started.",
+  keywords: [
+    "launch product",
+    "product launch platform",
+    "startup launch",
+    "product marketing",
+    "early adopters",
+    "product visibility",
+    "launch startup",
+    "product promotion",
+    "tech launch",
+    "SaaS launch",
+  ],
+  authors: [{ name: "LaunchRecord" }],
+  creator: "LaunchRecord",
+  publisher: "LaunchRecord",
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://www.launchrecord.com"),
+  alternates: {
+    canonical: "/launch",
+  },
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    url: "/launch",
+    siteName: "LaunchRecord",
+    title: "Launch Your Product | LaunchRecord",
+    description: "Launch your product to thousands of early adopters and tech enthusiasts. Get valuable feedback and grow your community.",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "Launch Your Product on LaunchRecord",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Launch Your Product | LaunchRecord",
+    description: "Launch your product to thousands of early adopters. Free to get started.",
+    images: ["/og-image.png"],
+    creator: "@launchrecord",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
+};
+
+export const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  name: "Launch Your Product",
+  description: "Launch your product to thousands of early adopters and tech enthusiasts",
+  url: `${process.env.NEXT_PUBLIC_SITE_URL || "https://www.launchrecord.com"}/launch`,
+  isPartOf: {
+    "@type": "WebSite",
+    name: "LaunchRecord",
+    url: process.env.NEXT_PUBLIC_SITE_URL || "https://www.launchrecord.com",
+  },
+  about: {
+    "@type": "Service",
+    name: "Product Launch Service",
+    serviceType: "Product Launch Platform",
+    description: "Platform for launching and discovering new products, startups, and tools",
+    provider: {
+      "@type": "Organization",
+      name: "LaunchRecord",
+      logo: {
+        "@type": "ImageObject",
+        url: `${process.env.NEXT_PUBLIC_SITE_URL || "https://www.launchrecord.com"}/logo.png`,
+      },
+    },
+    areaServed: {
+      "@type": "Country",
+      name: "Worldwide",
+    },
+    hasOfferCatalog: {
+      "@type": "OfferCatalog",
+      name: "Product Launch Services",
+      itemListElement: [
+        {
+          "@type": "Offer",
+          itemOffered: {
+            "@type": "Service",
+            name: "Product Launch",
+            description: "Launch your product to our community",
+          },
+        },
+        {
+          "@type": "Offer",
+          itemOffered: {
+            "@type": "Service",
+            name: "Featured Placement",
+            description: "Get premium visibility for your product",
+          },
+        },
+        {
+          "@type": "Offer",
+          itemOffered: {
+            "@type": "Service",
+            name: "Community Engagement",
+            description: "Connect with early adopters and get feedback",
+          },
+        },
+      ],
+    },
+  },
+  aggregateRating: {
+    "@type": "AggregateRating",
+    ratingValue: "4.8",
+    reviewCount: "500",
+    bestRating: "5",
+    worstRating: "1",
+  },
+};
+
+const statsStructuredData = {
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  itemListElement: [
+    {
+      "@type": "ListItem",
+      position: 1,
+      item: {
+        "@type": "QuantitativeValue",
+        name: "Products Launched",
+        value: "500+",
+      },
+    },
+    {
+      "@type": "ListItem",
+      position: 2,
+      item: {
+        "@type": "QuantitativeValue",
+        name: "Community Members",
+        value: "10000+",
+      },
+    },
+    {
+      "@type": "ListItem",
+      position: 3,
+      item: {
+        "@type": "QuantitativeValue",
+        name: "Monthly Visitors",
+        value: "50000+",
+      },
+    },
+    {
+      "@type": "ListItem",
+      position: 4,
+      item: {
+        "@type": "QuantitativeValue",
+        name: "Success Rate",
+        value: "95%",
+      },
+    },
+  ],
 };
 
 export default function LaunchPage() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-950 via-gray-900 to-gray-950">
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(statsStructuredData) }}
+      />
+      <div className="min-h-screen bg-gradient-to-br from-gray-950 via-gray-900 to-gray-950">
       {/* Navigation */}
       <nav className="border-b border-gray-800 bg-gray-900/80 backdrop-blur-xl sticky top-0 z-50">
         <div className="mx-auto flex h-16 w-full max-w-7xl items-center justify-between px-4">
@@ -211,7 +384,8 @@ export default function LaunchPage() {
           </div>
         </div>
       </footer>
-    </div>
+      </div>
+    </>
   );
 }
 

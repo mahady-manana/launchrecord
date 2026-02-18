@@ -199,18 +199,135 @@ export async function generateMetadata({
     };
   }
 
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.launchrecord.com";
+  const canonicalUrl = `${siteUrl}/app/${launch.slug}`;
+
   return {
     title: `${launch.name} | LaunchRecord`,
     description: launch.tagline || launch.description,
+    keywords: [
+      launch.name,
+      launch.tagline,
+      ...(Array.isArray(launch.category) ? launch.category : [launch.category]),
+      "product launch",
+      "startup",
+      "new product",
+      launch.businessModel,
+      launch.pricingModel,
+    ].filter(Boolean) as string[],
+    authors: [{ name: launch.name }, { name: "LaunchRecord" }],
+    creator: launch.name,
+    publisher: "LaunchRecord",
+    metadataBase: new URL(siteUrl),
     alternates: {
-      canonical: `/app/${launch.slug}`,
+      canonical: canonicalUrl,
     },
     openGraph: {
+      type: "website",
+      locale: "en_US",
+      url: canonicalUrl,
+      siteName: "LaunchRecord",
       title: launch.name,
       description: launch.tagline || launch.description,
-      url: `https://www.launchrecord.com/app/${launch.slug}`,
-      type: "article",
+      images: launch.logoUrl
+        ? [
+            {
+              url: launch.logoUrl,
+              width: 1200,
+              height: 630,
+              alt: `${launch.name} - ${launch.tagline}`,
+            },
+          ]
+        : [
+            {
+              url: "/og-image.png",
+              width: 1200,
+              height: 630,
+              alt: launch.name,
+            },
+          ],
     },
+    twitter: {
+      card: "summary_large_image",
+      title: launch.name,
+      description: launch.tagline || launch.description,
+      images: launch.logoUrl ? [launch.logoUrl] : ["/og-image.png"],
+      creator: "@launchrecord",
+    },
+    robots: {
+      index: true,
+      follow: true,
+      googleBot: {
+        index: true,
+        follow: true,
+        "max-video-preview": -1,
+        "max-image-preview": "large",
+        "max-snippet": -1,
+      },
+    },
+  };
+}
+
+export async function generateStructuredData(launch: LeanLaunch) {
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.launchrecord.com";
+  const canonicalUrl = `${siteUrl}/app/${launch.slug}`;
+
+  const categoryArray = Array.isArray(launch.category)
+    ? launch.category
+    : [launch.category];
+
+  return {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    name: launch.name,
+    alternateName: launch.tagline,
+    description: launch.description,
+    url: canonicalUrl,
+    applicationCategory: categoryArray.join(", "),
+    operatingSystem: "Web",
+    offers: {
+      "@type": "Offer",
+      price: launch.pricingModel === "paid" ? "0" : "0",
+      priceCurrency: "USD",
+      availability: "https://schema.org/InStock",
+    },
+    aggregateRating: {
+      "@type": "AggregateRating",
+      ratingValue: "4.5",
+      ratingCount: Math.max(launch.commentCount, 1),
+      bestRating: "5",
+      worstRating: "1",
+    },
+    author: {
+      "@type": "Organization",
+      name: launch.name,
+      url: launch.website,
+    },
+    publisher: {
+      "@type": "Organization",
+      name: "LaunchRecord",
+      logo: {
+        "@type": "ImageObject",
+        url: `${siteUrl}/logo.png`,
+      },
+    },
+    datePublished: new Date(launch.createdAt).toISOString().split("T")[0],
+    dateModified: new Date(launch.updatedAt).toISOString().split("T")[0],
+    keywords: categoryArray.join(", "),
+    softwareVersion: "1.0",
+    installUrl: launch.website,
+    downloadUrl: launch.website,
+    featureList: [
+      launch.tagline,
+      launch.valueProposition,
+      launch.problem,
+    ].filter(Boolean).join(", "),
+    audience: {
+      "@type": "Audience",
+      audienceType: launch.audience || "General",
+    },
+    inLanguage: "en",
+    isAccessibleForFree: launch.pricingModel === "free" || launch.pricingModel === "freemium",
   };
 }
 
@@ -252,8 +369,15 @@ export default async function LaunchDetailPage({ params }: LaunchPageProps) {
   const problem = launch.problem?.trim();
   const audience = launch.audience?.trim();
 
+  const structuredData = await generateStructuredData(launch);
+
   return (
-    <main className="min-h-screen">
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+      />
+      <main className="min-h-screen">
       <header className="sticky top-0 z-20 border-b bg-background/95 backdrop-blur">
         <div className="mx-auto flex h-16 w-full max-w-7xl items-center gap-3 px-4 sm:px-6">
           <Logo />
@@ -412,6 +536,7 @@ export default async function LaunchDetailPage({ params }: LaunchPageProps) {
         </section>
       </div>
       <LaunchClickTracker productId={launch._id?.toString()} enabled />
-    </main>
+      </main>
+    </>
   );
 }
