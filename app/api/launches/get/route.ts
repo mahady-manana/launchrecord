@@ -4,6 +4,7 @@ import {
 } from "@/lib/click-stats";
 import Click from "@/lib/models/click";
 import Launch from "@/lib/models/launch";
+import User from "@/lib/models/user";
 import { connectToDatabase } from "@/lib/mongodb";
 import { escapeRegex, sanitizeText } from "@/lib/sanitize";
 import { serializeMongooseDocument } from "@/lib/utils";
@@ -98,6 +99,10 @@ export async function GET(request: Request) {
       ];
     }
 
+    const x = User.name;
+    console.log("====================================");
+    console.log(x);
+    console.log("====================================");
     const total = await Launch.countDocuments(query);
 
     // Aggregation pipeline to populate user info for launches
