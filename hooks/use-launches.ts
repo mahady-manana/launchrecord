@@ -2,11 +2,12 @@
 
 import { useLaunchActions } from "@/hooks/use-launch-actions";
 import { useLaunchStore } from "@/stores/use-launch.store";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 
 export function useLaunches() {
   const store = useLaunchStore();
   const actions = useLaunchActions();
+  const hasFetchedInitial = useRef(false);
 
   useEffect(() => {
     // Fetch featured launches on mount
@@ -19,6 +20,12 @@ export function useLaunches() {
   }, []);
 
   useEffect(() => {
+    // Skip initial fetch if we already have data from server (SSR)
+    if (store.launches.length > 0 && !hasFetchedInitial.current) {
+      hasFetchedInitial.current = true;
+      return;
+    }
+
     // Determine if we should use mock data
     const useMockData =
       process.env.NODE_ENV === "development" &&

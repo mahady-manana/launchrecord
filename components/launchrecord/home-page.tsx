@@ -6,34 +6,41 @@ import { LaunchModal } from "@/components/launchrecord/launch-modal";
 import { Navbar } from "@/components/launchrecord/navbar";
 import { useLaunches } from "@/hooks/use-launches";
 import { useUser } from "@/hooks/use-user";
-import { Rocket, TrendingUp, Users, MessageCircle } from "lucide-react";
+import { Launch, PaginationMeta } from "@/types";
+import { MessageCircle, Rocket, TrendingUp, Users } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
 interface HomePageProps {
   initialQuery?: string;
+  initialLaunches: Launch[];
+  initialPagination: PaginationMeta;
 }
 
-export function HomePage({ initialQuery }: HomePageProps) {
+export function HomePage({
+  initialQuery,
+  initialLaunches,
+  initialPagination,
+}: HomePageProps) {
   const router = useRouter();
   const { user, authStatus } = useUser();
   const launchStore = useLaunches();
   const [isLaunchModalOpen, setLaunchModalOpen] = useState(false);
-  const hasSyncedInitialQuery = useRef(false);
+  const hasInitialized = useRef(false);
 
+  // Initialize store with server-fetched data
   useEffect(() => {
-    if (hasSyncedInitialQuery.current) {
+    if (hasInitialized.current) {
       return;
     }
+    hasInitialized.current = true;
 
-    hasSyncedInitialQuery.current = true;
-
+    // Set initial query if provided
     const query = initialQuery?.trim();
-
     if (query) {
       launchStore.setQuery(query);
     }
-  }, [initialQuery, launchStore]);
+  }, [initialPagination, initialQuery, launchStore]);
 
   const handleOpenLaunchModal = () => {
     if (authStatus !== "authenticated") {
@@ -67,7 +74,9 @@ export function HomePage({ initialQuery }: HomePageProps) {
       />
 
       <LaunchListingSection
-        launches={launchStore.launches}
+        launches={
+          launchStore.launches.length ? launchStore.launches : initialLaunches
+        }
         featuredLaunches={launchStore.featuredLaunches}
         leftPlacements={launchStore.leftPlacements}
         rightPlacements={launchStore.rightPlacements}
@@ -112,9 +121,7 @@ export function HomePage({ initialQuery }: HomePageProps) {
                   </div>
                   <div>
                     <h3 className="font-semibold text-white">Trending</h3>
-                    <p className="text-sm text-gray-400">
-                      Hot products rising
-                    </p>
+                    <p className="text-sm text-gray-400">Hot products rising</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-3">
@@ -123,9 +130,7 @@ export function HomePage({ initialQuery }: HomePageProps) {
                   </div>
                   <div>
                     <h3 className="font-semibold text-white">Community</h3>
-                    <p className="text-sm text-gray-400">
-                      Connect with makers
-                    </p>
+                    <p className="text-sm text-gray-400">Connect with makers</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-3">
@@ -134,9 +139,7 @@ export function HomePage({ initialQuery }: HomePageProps) {
                   </div>
                   <div>
                     <h3 className="font-semibold text-white">Discussions</h3>
-                    <p className="text-sm text-gray-400">
-                      Share your thoughts
-                    </p>
+                    <p className="text-sm text-gray-400">Share your thoughts</p>
                   </div>
                 </div>
               </div>
@@ -226,7 +229,8 @@ export function HomePage({ initialQuery }: HomePageProps) {
                   Launch Your Product
                 </button>
                 <p className="text-xs text-gray-500 text-center mt-4">
-                  Join {authStatus === "authenticated" ? "our" : "the"} community of makers today
+                  Join {authStatus === "authenticated" ? "our" : "the"}{" "}
+                  community of makers today
                 </p>
               </div>
             </div>

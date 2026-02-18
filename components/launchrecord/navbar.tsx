@@ -11,7 +11,14 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { AppUser, Launch } from "@/types";
-import { LayoutDashboard, LogOut, Rocket, Search, User } from "lucide-react";
+import {
+  LayoutDashboard,
+  LogOut,
+  Rocket,
+  Search,
+  User,
+  User2,
+} from "lucide-react";
 import { signIn, signOut } from "next-auth/react";
 
 import {
@@ -185,7 +192,7 @@ export function Navbar({ query, onQueryChange }: NavbarProps) {
         <div className="flex items-center md:gap-4 gap-2">
           <button
             onClick={() => setSearchModalOpen(true)}
-            className="relative flex items-center gap-2 px-3 py-1.5 rounded-md border bg-muted/30 hover:bg-muted/50 transition-colors md:min-w-[200px] min-w-[150px]"
+            className="relative flex items-center gap-2 px-3 h-9 rounded-md border bg-muted/30 hover:bg-muted/50 transition-colors md:min-w-[200px] min-w-[60px]"
           >
             <Search className="text-muted-foreground h-4 w-4" />
             <span className="text-sm text-muted-foreground hidden md:inline">
@@ -249,11 +256,11 @@ export function Navbar({ query, onQueryChange }: NavbarProps) {
           ) : (
             <Button
               variant="outline"
-              size="sm"
               onClick={() => signIn(undefined, { callbackUrl: "/" })}
               disabled={authStatus === "loading"}
             >
-              Sign in
+              <span className="md:block hidden">Sign in</span>
+              <User2 size={22}></User2>
             </Button>
           )}
         </div>

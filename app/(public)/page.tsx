@@ -5,8 +5,47 @@ interface LaunchRecordHomePageProps {
   searchParams: Promise<{ q?: string }>;
 }
 
+async function getInitialLaunches() {
+  try {
+    const urlParams = new URLSearchParams({
+      page: String(1),
+      limit: String(50),
+      category: "all",
+      timeFilter: "all",
+    });
+
+    const response = await fetch(
+      process.env.NEXT_PUBLIC_BASE_URL +
+        `/api/launches/get?${urlParams.toString()}`,
+      {
+        cache: "no-store",
+      },
+    );
+    const data = await response.json();
+
+    if (!response.ok || !data.success) {
+      return {
+        success: false,
+        message: data.message || "Failed to fetch launches.",
+      };
+    }
+
+    return {
+      success: true,
+      launches: data.launches || [],
+      pagination: data.pagination,
+    };
+  } catch (error) {
+    console.error("Error loading launches:", error);
+    return {
+      success: false,
+      message: "Failed to fetch launches.",
+    };
+  }
+}
+
 export const metadata: Metadata = {
-  title: "Discover & Launch Amazing Products",
+  title: "LaunchRecord - Discover & Launch Amazing Products",
   description:
     "The premier platform for discovering new products, startups, and tools. Join thousands of makers and early adopters to share feedback and grow your product.",
   keywords: [
@@ -106,6 +145,7 @@ export default async function LaunchRecordHomePage({
 }: LaunchRecordHomePageProps) {
   const params = await searchParams;
   const initialQuery = typeof params.q === "string" ? params.q : "";
+  const initialData = await getInitialLaunches();
 
   return (
     <>
@@ -113,7 +153,11 @@ export default async function LaunchRecordHomePage({
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
       />
-      <HomePage initialQuery={initialQuery} />
+      <HomePage
+        initialQuery={initialQuery}
+        initialLaunches={initialData.launches || []}
+        initialPagination={initialData.pagination}
+      />
     </>
   );
 }

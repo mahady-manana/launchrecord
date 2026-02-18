@@ -19,8 +19,8 @@ const getLaunchesSchema = z.object({
     z.undefined(),
   ]),
   q: z.string().max(100).optional(),
-  timeFilter: z.enum(["all", "today", "week", "month"]).optional(),
-  prelaunchOnly: z.string().optional(),
+  timeFilter: z.string().optional(),
+  prelaunchOnly: z.string().optional().nullable(),
   page: z.coerce.number().int().min(1).default(1),
   limit: z.coerce.number().int().min(1).max(50).default(20),
 });
@@ -168,6 +168,9 @@ export async function GET(request: Request) {
     });
   } catch (error) {
     if (error instanceof z.ZodError) {
+      console.log("====================================");
+      console.log(error);
+      console.log("====================================");
       return NextResponse.json(
         {
           success: false,
