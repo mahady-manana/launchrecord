@@ -92,16 +92,14 @@ export async function GET(request: Request) {
     }
 
     const x = User.name;
-    console.log("====================================");
-    console.log(x, query);
-    console.log("====================================");
+    console.log(x);
     const total = await Launch.countDocuments(query);
 
     // Aggregation pipeline to populate user info for launches
     const populatedLaunches = await Launch.find(query)
       .populate("submittedBy", "name x linkedin")
       .select("-__v")
-      .sort({ createdAt: -1 }) // Exclude version field
+      .sort({ launchedAt: -1 }) // Exclude version field
       .lean();
 
     // Fetch click stats for all launches in a single query

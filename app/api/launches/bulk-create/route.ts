@@ -128,6 +128,7 @@ export async function POST(request: Request) {
           website: launchData.website?.trim() || "",
           category: launchData.category || [],
           status: launchData.status || "launched",
+          launchedAt: launchData.status === "launched" ? new Date() : undefined,
           valueProposition: "",
           problem: "",
           audience: "",

@@ -109,6 +109,7 @@ export async function POST(request: Request) {
       category: validatedBody.category,
       valueProposition: "",
       status: validatedBody.status || "draft",
+      launchedAt: validatedBody.status === "launched" ? new Date() : undefined,
       problem: "",
       audience: "",
       businessModel: validatedBody.businessModel,

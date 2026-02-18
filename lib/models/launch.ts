@@ -18,6 +18,7 @@ export interface ILaunch extends Document {
   businessModel: (typeof BUSINESS_MODELS)[number];
   pricingModel: (typeof PRICING_MODELS)[number];
   status: "draft" | "prelaunch" | "launched";
+  launchedAt?: Date;
   submittedBy: mongoose.Types.ObjectId;
   placement: "none" | "hero" | "left" | "right";
   isArchived: boolean;
@@ -113,6 +114,9 @@ const LaunchSchema = new Schema<ILaunch>(
       enum: ["draft", "prelaunch", "launched"],
       default: "draft",
       index: true,
+    },
+    launchedAt: {
+      type: Date,
     },
     placement: {
       type: String,

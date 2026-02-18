@@ -194,6 +194,9 @@ export async function PUT(request: Request) {
 
     if (validatedBody.status) {
       updateData.status = validatedBody.status;
+      if (validatedBody.status === "launched" && !launch.launchedAt) {
+        updateData.launchedAt = new Date();
+      }
     }
 
     const updatedLaunch = await Launch.findByIdAndUpdate(
