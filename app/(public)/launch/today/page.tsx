@@ -10,11 +10,11 @@ import { Rocket, TrendingUp, Users, MessageCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
-interface HomePageProps {
+interface TodayPageProps {
   initialQuery?: string;
 }
 
-export function HomePage({ initialQuery }: HomePageProps) {
+export default function TodayPage({ initialQuery }: TodayPageProps) {
   const router = useRouter();
   const { user, authStatus } = useUser();
   const launchStore = useLaunches();
@@ -74,6 +74,7 @@ export function HomePage({ initialQuery }: HomePageProps) {
         pagination={launchStore.launchesPagination}
         query={launchStore.filters.query}
         category={launchStore.filters.category}
+        timeFilter="today"
         isLoading={launchStore.launchesLoading}
         onQueryChange={launchStore.setQuery}
         onCategoryChange={launchStore.setCategory as unknown as any}

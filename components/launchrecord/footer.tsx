@@ -21,8 +21,8 @@ const navigation = {
     { name: "Careers", href: "#" },
   ],
   legal: [
-    { name: "Privacy", href: "#" },
-    { name: "Terms", href: "#" },
+    { name: "Privacy", href: "/privacy" },
+    { name: "Terms", href: "/terms" },
   ],
 };
 

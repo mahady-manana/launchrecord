@@ -1,19 +1,15 @@
+import { initializeClickTracking } from "@/lib/click-tracking";
 import { getUserFromSession } from "@/lib/get-user-from-session";
 import Launch from "@/lib/models/launch";
 import { connectToDatabase } from "@/lib/mongodb";
 import { rateLimit } from "@/lib/rate-limit";
 import { sanitizeText, slugify } from "@/lib/sanitize";
 import { getClientIdentifier, isSameOrigin } from "@/lib/security";
-import {
-  BUSINESS_MODELS,
-  LAUNCH_CATEGORIES,
-  PRICING_MODELS,
-} from "@/types";
+import { serializeMongooseDocument } from "@/lib/utils";
+import { BUSINESS_MODELS, LAUNCH_CATEGORIES, PRICING_MODELS } from "@/types";
+import crypto from "crypto";
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { serializeMongooseDocument } from "@/lib/utils";
-import { initializeClickTracking } from "@/lib/click-tracking";
-import crypto from "crypto";
 
 const bulkLaunchSchema = z.object({
   name: z.string().min(2).max(100),
@@ -21,6 +17,7 @@ const bulkLaunchSchema = z.object({
   tagline: z.string().min(4).max(140).optional().or(z.literal("")),
   description: z.string().min(10).max(1200).optional().or(z.literal("")),
   website: z.string().optional().or(z.literal("")),
+  status: z.string().optional(),
   category: z
     .enum(LAUNCH_CATEGORIES)
     .or(z.array(z.enum(LAUNCH_CATEGORIES)).max(3))
@@ -130,6 +127,7 @@ export async function POST(request: Request) {
           description: sanitizeText(launchData.description || ""),
           website: launchData.website?.trim() || "",
           category: launchData.category || [],
+          status: launchData.status || "launched",
           valueProposition: "",
           problem: "",
           audience: "",

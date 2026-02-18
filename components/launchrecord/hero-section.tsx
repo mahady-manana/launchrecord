@@ -36,7 +36,7 @@ export function HeroSection({
             <div className="flex items-center gap-2 mb-2">
               <div className="flex items-center gap-1.5 rounded-full border border-primary/30 bg-primary/10 px-2.5 py-1 text-xs font-medium text-primary">
                 <Zap className="h-3 w-3" />
-                <span>Live now</span>
+                <span>Live beta</span>
               </div>
               <span className="text-xs text-muted-foreground font-mono">
                 Feb 18, 2026

@@ -1,19 +1,14 @@
+import { initializeClickTracking } from "@/lib/click-tracking";
 import { getUserFromSession } from "@/lib/get-user-from-session";
 import Launch from "@/lib/models/launch";
-import User from "@/lib/models/user";
 import { connectToDatabase } from "@/lib/mongodb";
 import { rateLimit } from "@/lib/rate-limit";
 import { sanitizeText, slugify } from "@/lib/sanitize";
 import { getClientIdentifier, isSameOrigin } from "@/lib/security";
-import {
-  BUSINESS_MODELS,
-  LAUNCH_CATEGORIES,
-  PRICING_MODELS,
-} from "@/types";
+import { serializeMongooseDocument } from "@/lib/utils";
+import { BUSINESS_MODELS, LAUNCH_CATEGORIES, PRICING_MODELS } from "@/types";
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { serializeMongooseDocument } from "@/lib/utils";
-import { initializeClickTracking } from "@/lib/click-tracking";
 
 const createLaunchSchema = z.object({
   name: z.string().min(2).max(100),
@@ -21,7 +16,10 @@ const createLaunchSchema = z.object({
   tagline: z.string().min(4).max(140),
   description: z.string().min(10).max(1200),
   website: z.string(),
-  category: z.enum(LAUNCH_CATEGORIES).or(z.array(z.enum(LAUNCH_CATEGORIES)).max(3)),
+  status: z.string().optional(),
+  category: z
+    .enum(LAUNCH_CATEGORIES)
+    .or(z.array(z.enum(LAUNCH_CATEGORIES)).max(3)),
   businessModel: z.enum(BUSINESS_MODELS),
   pricingModel: z.enum(PRICING_MODELS),
 });
@@ -101,9 +99,6 @@ export async function POST(request: Request) {
       );
     }
 
-    // Get user's author information
-    const dbUser = await User.findById(user._id).select('name x linkedin').lean();
-    
     const launch = await Launch.create({
       name: cleanedName,
       slug,
@@ -113,6 +108,7 @@ export async function POST(request: Request) {
       website: validatedBody.website.trim(),
       category: validatedBody.category,
       valueProposition: "",
+      status: validatedBody.status || "draft",
       problem: "",
       audience: "",
       businessModel: validatedBody.businessModel,
@@ -127,7 +123,10 @@ export async function POST(request: Request) {
     // Convert to plain object to remove any potential circular references
     const plainLaunch = serializeMongooseDocument(launch);
 
-    return NextResponse.json({ success: true, launch: plainLaunch }, { status: 201 });
+    return NextResponse.json(
+      { success: true, launch: plainLaunch },
+      { status: 201 },
+    );
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(

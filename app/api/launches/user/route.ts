@@ -4,8 +4,8 @@ import User from "@/lib/models/user";
 import { connectToDatabase } from "@/lib/mongodb";
 import { rateLimit } from "@/lib/rate-limit";
 import { getClientIdentifier, isSameOrigin } from "@/lib/security";
-import { NextResponse } from "next/server";
 import { serializeMongooseDocument } from "@/lib/utils";
+import { NextResponse } from "next/server";
 
 export async function GET(request: Request) {
   try {
@@ -62,7 +62,6 @@ export async function GET(request: Request) {
         // Add user information to the launch object
         return {
           ...launch,
-          name: dbUser?.name || "Unknown",
           x: dbUser?.x,
           linkedin: dbUser?.linkedin,
         };

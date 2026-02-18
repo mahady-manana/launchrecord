@@ -1,6 +1,5 @@
 import { AppPageOwnerActions } from "@/components/launchrecord/app-page-owner-actions";
 import { ClaimLaunchButton } from "@/components/launchrecord/ClaimLaunchButton";
-import { ClaimLaunchModal } from "@/components/launchrecord/ClaimLaunchModal";
 import { ClientLaunchDetailPage } from "@/components/launchrecord/client-launch-detail-page";
 import { LaunchClickTracker } from "@/components/launchrecord/LaunchClickTracker";
 import { Logo } from "@/components/launchrecord/logo";
@@ -307,11 +306,22 @@ export default async function LaunchDetailPage({ params }: LaunchPageProps) {
                 </div>
               </div>
             </div>
-            {!launch.claimed && user && !isOwner ? (
-              <ClaimLaunchButton slug={launch.slug} />
-            ) : (
-              <AppPageOwnerActions launch={editableLaunch} isOwner={isOwner} />
-            )}
+            <div className="flex items-center gap-4">
+              {!launch.claimed && user && !isOwner ? (
+                <ClaimLaunchButton slug={launch.slug} />
+              ) : (
+                <AppPageOwnerActions
+                  launch={editableLaunch}
+                  isOwner={isOwner}
+                />
+              )}
+
+              <Button asChild>
+                <Link href={launch.website} target="_blank" rel="noreferrer">
+                  Visit website
+                </Link>
+              </Button>
+            </div>
           </header>
 
           <section className="space-y-4">
@@ -401,10 +411,7 @@ export default async function LaunchDetailPage({ params }: LaunchPageProps) {
           </div>
         </section>
       </div>
-      <LaunchClickTracker
-        productId={launch._id?.toString()}
-        enabled
-      />
+      <LaunchClickTracker productId={launch._id?.toString()} enabled />
     </main>
   );
 }

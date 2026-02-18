@@ -24,6 +24,7 @@ interface LaunchListingSectionProps {
     | "all"
     | (typeof LAUNCH_CATEGORIES)[number]
     | (typeof LAUNCH_CATEGORIES)[number][];
+  timeFilter?: "all" | "today" | "week" | "month";
   isLoading: boolean;
   onQueryChange: (query: string) => void;
   onCategoryChange: (
@@ -32,6 +33,9 @@ interface LaunchListingSectionProps {
       | (typeof LAUNCH_CATEGORIES)[number]
       | (typeof LAUNCH_CATEGORIES)[number][],
   ) => void;
+  onTimeFilterChange?: (timeFilter: "all" | "today" | "week" | "month") => void;
+  prelaunchOnly?: boolean;
+  onPrelaunchOnlyChange?: (prelaunchOnly: boolean) => void;
   onPageChange: (page: number) => void;
 }
 
@@ -116,6 +120,7 @@ export function LaunchListingSection({
   pagination,
   query,
   category,
+  timeFilter = "all",
   isLoading,
   onQueryChange,
   onCategoryChange,
@@ -125,6 +130,37 @@ export function LaunchListingSection({
   const [localQuery, setLocalQuery] = useState(query);
   const [debouncedQuery, setDebouncedQuery] = useState(query);
   const featuredLaunches = useLaunchStore((s) => s.featuredLaunches);
+
+  // Filter launches by time
+  const filteredLaunches = launches.filter((launch) => {
+    if (timeFilter === "all") return true;
+
+    const launchDate = new Date(launch.createdAt);
+    const now = new Date();
+
+    if (timeFilter === "today") {
+      return (
+        launchDate.getDate() === now.getDate() &&
+        launchDate.getMonth() === now.getMonth() &&
+        launchDate.getFullYear() === now.getFullYear()
+      );
+    }
+
+    if (timeFilter === "week") {
+      const startOfWeek = new Date(now);
+      startOfWeek.setDate(now.getDate() - now.getDay());
+      startOfWeek.setHours(0, 0, 0, 0);
+      return launchDate >= startOfWeek;
+    }
+
+    if (timeFilter === "month") {
+      const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+      return launchDate >= startOfMonth;
+    }
+
+    return true;
+  });
+
   // Debounce the query input
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -160,7 +196,7 @@ export function LaunchListingSection({
               <p className="py-10 text-center text-sm text-muted-foreground">
                 Loading launches...
               </p>
-            ) : launches.length === 0 ? (
+            ) : filteredLaunches.length === 0 ? (
               <p className="py-10 text-center text-sm text-muted-foreground">
                 No launches found for this filter.
               </p>
@@ -168,7 +204,7 @@ export function LaunchListingSection({
               <div>
                 <div className="mb-6">
                   <div className="space-y-4">
-                    {launches.map((launch) => (
+                    {filteredLaunches.map((launch) => (
                       <LaunchCard key={launch._id} launch={launch} />
                     ))}
                   </div>

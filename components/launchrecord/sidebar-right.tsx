@@ -1,5 +1,6 @@
 import { Launch } from "@/types/launch";
 import { Crown, TrendingUp } from "lucide-react";
+import Link from "next/link";
 
 interface SidebarProps {
   featuredLaunches: Launch[];
@@ -20,7 +21,8 @@ export function SidebarRight({
 
         <div className="space-y-3">
           {featuredLaunches.slice(0, 5).map((launch, index) => (
-            <div
+            <Link
+              href={`/app/${launch.slug}`}
               key={launch._id}
               className="group flex items-start gap-3 p-3 bg-gray-900/30 hover:bg-gray-900/50 rounded-lg border border-gray-700/50 hover:border-cyan-500/30 transition-all cursor-pointer"
             >
@@ -51,7 +53,7 @@ export function SidebarRight({
                   {launch.tagline}
                 </p>
               </div>
-            </div>
+            </Link>
           ))}
         </div>
       </div>
@@ -64,7 +66,8 @@ export function SidebarRight({
 
         <div className="space-y-2">
           {todayLaunches.slice(0, 6).map((launch) => (
-            <div
+            <Link
+              href={`/app/${launch.slug}`}
               key={launch._id}
               className="group flex gap-3 p-2.5 bg-gray-900/30 hover:bg-gray-900/50 rounded-lg border border-gray-700/30 hover:border-cyan-500/30 transition-all cursor-pointer"
             >
@@ -110,7 +113,7 @@ export function SidebarRight({
                   </div>
                 </div>
               </div>
-            </div>
+            </Link>
           ))}
         </div>
       </div>

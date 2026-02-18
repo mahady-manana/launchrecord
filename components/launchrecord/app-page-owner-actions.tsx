@@ -3,7 +3,6 @@
 import { LaunchEditModal } from "@/components/launchrecord/launch-edit-modal";
 import { Button } from "@/components/ui/button";
 import { Launch, UpdateLaunchPayload } from "@/types";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
@@ -92,20 +91,6 @@ export function AppPageOwnerActions({
           Edit launch
         </Button>
       ) : null}
-      <Button asChild size="sm">
-        <Link href={launch.website} target="_blank" rel="noreferrer">
-          Visit website
-        </Link>
-      </Button>
-      <Button
-        type="button"
-        variant="outline"
-        size="sm"
-        onClick={handleShare}
-        disabled={isSharing}
-      >
-        {isSharing ? "Sharing..." : shareLabel}
-      </Button>
       <LaunchEditModal
         launch={launch}
         open={isEditOpen}
