@@ -69,7 +69,6 @@ export async function GET(request: Request) {
 
     const featuredLaunches = await FeaturedLaunch.find(query)
       .sort({ priority: -1, startDate: -1 })
-      .populate("launchId")
       .lean();
 
     const plainFeaturedLaunches = serializeMongooseDocument(featuredLaunches);
@@ -109,7 +108,7 @@ export async function POST(request: Request) {
     const startDate = new Date(validatedBody.startDate);
     const endDate = new Date(validatedBody.endDate);
 
-    if (startDate >= endDate) {
+    if (startDate >= endDate && !validatedBody.launchId) {
       return NextResponse.json(
         {
           success: false,

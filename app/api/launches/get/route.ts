@@ -8,16 +8,12 @@ import User from "@/lib/models/user";
 import { connectToDatabase } from "@/lib/mongodb";
 import { escapeRegex, sanitizeText } from "@/lib/sanitize";
 import { serializeMongooseDocument } from "@/lib/utils";
-import { LAUNCH_CATEGORIES } from "@/types";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
 const getLaunchesSchema = z.object({
-  category: z.union([
-    z.enum(["all", ...LAUNCH_CATEGORIES]),
-    z.array(z.enum(LAUNCH_CATEGORIES)).max(3),
-    z.undefined(),
-  ]),
+  category: z.string(),
+
   q: z.string().max(100).optional(),
   timeFilter: z.string().optional(),
   prelaunchOnly: z.string().optional().nullable(),
@@ -42,7 +38,6 @@ export async function GET(request: Request) {
     const query: Record<string, unknown> = {
       isArchived: false,
       status: { $in: ["prelaunch", "launched"] }, // Only show prelaunch and launched, exclude drafts
-      placement: { $nin: ["left", "right"] },
     };
 
     // Apply time filter
@@ -80,10 +75,7 @@ export async function GET(request: Request) {
 
     if (parsedQuery.category && parsedQuery.category !== "all") {
       // Handle both single category and array of categories
-      query.$or = [
-        { category: parsedQuery.category },
-        { category: { $in: [parsedQuery.category] } },
-      ];
+      query.category = { $in: parsedQuery.category.split(",") };
     }
 
     if (parsedQuery.q?.trim()) {
@@ -101,14 +93,15 @@ export async function GET(request: Request) {
 
     const x = User.name;
     console.log("====================================");
-    console.log(x);
+    console.log(x, query);
     console.log("====================================");
     const total = await Launch.countDocuments(query);
 
     // Aggregation pipeline to populate user info for launches
     const populatedLaunches = await Launch.find(query)
       .populate("submittedBy", "name x linkedin")
-      .select("-__v") // Exclude version field
+      .select("-__v")
+      .sort({ createdAt: -1 }) // Exclude version field
       .lean();
 
     // Fetch click stats for all launches in a single query

@@ -20,6 +20,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Textarea } from "@/components/ui/textarea";
+import { endOfDay, isWithinInterval, startOfDay } from "date-fns";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -73,7 +74,9 @@ export default function AdminStatsPage() {
     message: string;
   } | null>(null);
   const [isBulkLoading, setIsBulkLoading] = useState(false);
-  const [featuredLaunches, setFeaturedLaunches] = useState<FeaturedLaunch[]>([]);
+  const [featuredLaunches, setFeaturedLaunches] = useState<FeaturedLaunch[]>(
+    [],
+  );
   const [isFeaturedModalOpen, setIsFeaturedModalOpen] = useState(false);
   const [featuredFormData, setFeaturedFormData] = useState({
     launchId: "",
@@ -130,9 +133,12 @@ export default function AdminStatsPage() {
   const isLaunchFeatured = (launchId: string) => {
     const now = new Date();
     return featuredLaunches.some((fl) => {
-      const startDate = new Date(fl.startDate);
-      const endDate = new Date(fl.endDate);
-      return fl.launchId === launchId && fl.isActive && startDate <= now && endDate >= now;
+      const startDate = startOfDay(new Date(fl.startDate));
+      const endDate = endOfDay(new Date(fl.endDate));
+      return (
+        fl.launchId === launchId &&
+        isWithinInterval(now, { start: startDate, end: endDate })
+      );
     });
   };
 
@@ -147,21 +153,56 @@ export default function AdminStatsPage() {
   };
 
   const handleOpenFeaturedModal = (launch: Launch) => {
+    const date = featuredLaunches.find((l) => l.launchId === launch._id);
     const now = new Date();
-    const tomorrow = new Date(now);
-    tomorrow.setDate(tomorrow.getDate() + 1);
-    const nextWeek = new Date(now);
-    nextWeek.setDate(nextWeek.getDate() + 7);
+    const tomorrow = new Date(date?.startDate || now);
+    tomorrow.setDate(tomorrow.getDate());
+    const nextWeek = new Date(date?.endDate || now);
+    nextWeek.setDate(nextWeek.getDate());
 
     setFeaturedFormData({
       launchId: launch._id,
       startDate: tomorrow.toISOString().split("T")[0],
       endDate: nextWeek.toISOString().split("T")[0],
-      priority: 0,
+      priority: date?.priority || 0,
     });
     setFeaturedResult(null);
     setSelectedLaunch(null);
     setIsFeaturedModalOpen(true);
+  };
+
+  const handleUnfeatureLaunch = async (launchId: string) => {
+    const featuredLaunch = featuredLaunches.find(
+      (fl) => fl.launchId === launchId,
+    );
+    if (!featuredLaunch?._id) return;
+
+    if (
+      !confirm("Are you sure you want to remove this launch from featured?")
+    ) {
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        `/api/admin/featured?id=${featuredLaunch._id}`,
+        {
+          method: "DELETE",
+        },
+      );
+
+      const data = await response.json();
+
+      if (data.success) {
+        fetchFeaturedLaunches();
+      } else {
+        alert(data.message || "Failed to unfeature launch");
+      }
+    } catch (error) {
+      alert(
+        error instanceof Error ? error.message : "Failed to unfeature launch",
+      );
+    }
   };
 
   const handleFeatureLaunch = async () => {
@@ -202,7 +243,8 @@ export default function AdminStatsPage() {
     } catch (error) {
       setFeaturedResult({
         success: false,
-        message: error instanceof Error ? error.message : "Failed to feature launch",
+        message:
+          error instanceof Error ? error.message : "Failed to feature launch",
       });
     } finally {
       setIsFeaturedLoading(false);
@@ -343,12 +385,18 @@ export default function AdminStatsPage() {
                           </TableCell>
                           <TableCell onClick={(e) => e.stopPropagation()}>
                             <Button
-                              variant={isLaunchFeatured(launch._id) ? "default" : "outline"}
+                              variant={
+                                isLaunchFeatured(launch._id)
+                                  ? "default"
+                                  : "outline"
+                              }
                               size="sm"
                               onClick={() => handleOpenFeaturedModal(launch)}
                               className="w-full"
                             >
-                              {isLaunchFeatured(launch._id) ? "Featured" : "Feature"}
+                              {isLaunchFeatured(launch._id)
+                                ? "Featured"
+                                : "Feature"}
                             </Button>
                           </TableCell>
                         </TableRow>
@@ -629,20 +677,38 @@ export default function AdminStatsPage() {
               </p>
             )}
           </div>
-          <div className="flex justify-end gap-2">
-            <Button
-              variant="outline"
-              onClick={() => {
-                setIsFeaturedModalOpen(false);
-                setFeaturedResult(null);
-              }}
-              disabled={isFeaturedLoading}
-            >
-              Cancel
-            </Button>
-            <Button onClick={handleFeatureLaunch} disabled={isFeaturedLoading}>
-              {isFeaturedLoading ? "Featuring..." : "Feature Launch"}
-            </Button>
+          <div className="flex justify-between gap-2">
+            {featuredLaunches.some(
+              (fl) =>
+                fl.launchId === featuredFormData.launchId &&
+                isLaunchFeatured(featuredFormData.launchId),
+            ) && (
+              <Button
+                variant="destructive"
+                onClick={async () => {
+                  await handleUnfeatureLaunch(featuredFormData.launchId);
+                  setIsFeaturedModalOpen(false);
+                }}
+                disabled={isFeaturedLoading}
+              >
+                Unfeature
+              </Button>
+            )}
+            <div className="flex gap-2 ml-auto">
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setIsFeaturedModalOpen(false);
+                  setFeaturedResult(null);
+                }}
+                disabled={isFeaturedLoading}
+              >
+                Cancel
+              </Button>
+              <Button onClick={handleFeatureLaunch} disabled={isFeaturedLoading}>
+                {isFeaturedLoading ? "Featuring..." : "Feature Launch"}
+              </Button>
+            </div>
           </div>
         </DialogContent>
       </Dialog>
