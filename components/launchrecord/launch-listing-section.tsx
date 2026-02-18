@@ -3,13 +3,19 @@
 import { LaunchCard } from "@/components/launchrecord/launch-card";
 import { PlacementCard } from "@/components/launchrecord/placement-card";
 import { Button } from "@/components/ui/button";
-import { LAUNCH_CATEGORIES, Launch, PaginationMeta } from "@/types";
+import {
+  FeaturedLaunch,
+  LAUNCH_CATEGORIES,
+  Launch,
+  PaginationMeta,
+} from "@/types";
 import { Placement } from "@/types/placement";
 import { useEffect, useState } from "react";
 import { SidebarRight } from "./sidebar-right";
 
 interface LaunchListingSectionProps {
   launches: Launch[];
+  featuredLaunches: FeaturedLaunch[];
   leftPlacements: Placement[];
   rightPlacements: Placement[];
   pagination: PaginationMeta;
@@ -133,6 +139,7 @@ function HorizontalFilters({
 
 export function LaunchListingSection({
   launches,
+  featuredLaunches,
   leftPlacements,
   rightPlacements,
   pagination,
@@ -210,7 +217,7 @@ export function LaunchListingSection({
   };
 
   return (
-    <section className="max-w-7xl mx-auto py-8 border-gray-800 grid grid-cols-1 lg:grid-cols-3 gap-6 w-full gap-4 pb-10 px-4">
+    <section className="max-w-7xl mx-auto py-8 border-gray-800 grid grid-cols-1 lg:grid-cols-3 gap-10 w-full pb-10 px-4">
       <main className="space-y-4 py-4 px-0 md:col-span-2">
         <div className="grid md:grid-cols-[140px_1fr] md:gap-6 ">
           <HorizontalFilters
@@ -257,7 +264,7 @@ export function LaunchListingSection({
         </div>
       </main>
 
-      <aside className="hidden lg:block md:col-span-1 px-6 py-4">
+      <aside className="hidden lg:block md:col-span-1 py-4">
         <SidebarRight
           featuredLaunches={launches}
           todayLaunches={launches}

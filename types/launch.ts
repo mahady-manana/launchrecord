@@ -142,3 +142,32 @@ export interface UpdateLaunchPayload {
   status?: "draft" | "prelaunch" | "launched";
   claimed?: boolean;
 }
+
+export interface FeaturedLaunch {
+  _id: string;
+  launchId: string;
+  launch?: Launch;
+  startDate: string;
+  endDate: string;
+  isActive: boolean;
+  priority: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CreateFeaturedLaunchPayload {
+  launchId: string;
+  startDate: string;
+  endDate: string;
+  priority?: number;
+  isActive?: boolean;
+}
+
+export interface UpdateFeaturedLaunchPayload {
+  id: string;
+  launchId?: string;
+  startDate?: string;
+  endDate?: string;
+  priority?: number;
+  isActive?: boolean;
+}

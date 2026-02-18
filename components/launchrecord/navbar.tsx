@@ -55,7 +55,7 @@ export function Navbar({ query, onQueryChange }: NavbarProps) {
   };
   return (
     <header className="sticky top-0 z-20 border-b bg-gray-900/80 backdrop-blur-xl">
-      <div className="mx-auto justify-between flex h-16 w-full max-w-8xl items-center gap-3 px-4 sm:px-6">
+      <div className="mx-auto justify-between flex h-16 w-full max-w-7xl items-center gap-3 px-4">
         <Logo />
         <div className="flex items-center md:gap-4 gap-2">
           <div className="relative hidden max-w-xs flex-1 md:block">

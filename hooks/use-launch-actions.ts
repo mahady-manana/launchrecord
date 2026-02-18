@@ -1,4 +1,4 @@
-import { CreateLaunchPayload, Launch, UpdateLaunchPayload } from "@/types";
+import { CreateLaunchPayload, FeaturedLaunch, Launch, UpdateLaunchPayload } from "@/types";
 
 interface LaunchActions {
   createLaunch: (
@@ -26,6 +26,11 @@ interface LaunchActions {
       hasNextPage: boolean;
       hasPreviousPage: boolean;
     };
+    message?: string;
+  }>;
+  fetchFeaturedLaunches: () => Promise<{
+    success: boolean;
+    featuredLaunches?: FeaturedLaunch[];
     message?: string;
   }>;
 }
@@ -138,9 +143,37 @@ export function useLaunchActions(): LaunchActions {
     }
   };
 
+  const fetchFeaturedLaunches = async () => {
+    try {
+      const response = await fetch("/api/launches/featured", {
+        cache: "no-store",
+      });
+      const data = await response.json();
+
+      if (!response.ok || !data.success) {
+        return {
+          success: false,
+          message: data.message || "Failed to fetch featured launches.",
+        };
+      }
+
+      return {
+        success: true,
+        featuredLaunches: data.featuredLaunches || [],
+      };
+    } catch (error) {
+      console.error("Error loading featured launches:", error);
+      return {
+        success: false,
+        message: "Failed to fetch featured launches.",
+      };
+    }
+  };
+
   return {
     createLaunch,
     updateLaunch,
     fetchLaunches,
+    fetchFeaturedLaunches,
   };
 }

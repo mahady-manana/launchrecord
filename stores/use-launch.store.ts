@@ -1,4 +1,4 @@
-import { Launch, LaunchFilters, PaginationMeta } from "@/types";
+import { FeaturedLaunch, Launch, LaunchFilters, PaginationMeta } from "@/types";
 import { Placement } from "@/types/placement";
 import { create } from "zustand";
 
@@ -17,6 +17,9 @@ interface LaunchStore {
   launches: Launch[];
   launchesPagination: PaginationMeta;
 
+  // Featured launches state
+  featuredLaunches: FeaturedLaunch[];
+
   // Placements state
   heroPlacements: Placement[];
   leftPlacements: Placement[];
@@ -29,6 +32,7 @@ interface LaunchStore {
   // Loading states
   launchesLoading: boolean;
   placementsLoading: boolean;
+  featuredLoading: boolean;
 
   // Error states
   error: string | null;
@@ -38,6 +42,9 @@ interface LaunchStore {
     launches: Launch[];
     pagination: PaginationMeta;
   }) => void;
+
+  // Featured launches actions
+  setFeaturedLaunchesData: (data: FeaturedLaunch[]) => void;
 
   // Placements actions
   setPlacementsData: (data: {
@@ -52,6 +59,7 @@ interface LaunchStore {
   setLaunchesLoading: (loading: boolean) => void;
 
   setPlacementsLoading: (loading: boolean) => void;
+  setFeaturedLoading: (loading: boolean) => void;
   setError: (error: string | null) => void;
   setTimeFilter: (timeFilter: any) => void;
   setPrelaunchOnly: (prelaunchOnly: any) => void;
@@ -77,6 +85,9 @@ export const useLaunchStore = create<LaunchStore>((set, get) => ({
   launches: [],
   launchesPagination: initialPagination,
 
+  // Featured launches state
+  featuredLaunches: [],
+
   // Placements state
   heroPlacements: [],
   leftPlacements: [],
@@ -96,6 +107,7 @@ export const useLaunchStore = create<LaunchStore>((set, get) => ({
   // Loading states
   launchesLoading: false,
   placementsLoading: false,
+  featuredLoading: false,
 
   // Error state
   error: null,
@@ -106,6 +118,14 @@ export const useLaunchStore = create<LaunchStore>((set, get) => ({
       launches: data.launches,
       launchesPagination: data.pagination,
       launchesLoading: false,
+      error: null,
+    }),
+
+  // Featured launches actions
+  setFeaturedLaunchesData: (data) =>
+    set({
+      featuredLaunches: data,
+      featuredLoading: false,
       error: null,
     }),
 
@@ -122,6 +142,7 @@ export const useLaunchStore = create<LaunchStore>((set, get) => ({
 
   setLaunchesLoading: (loading) => set({ launchesLoading: loading }),
   setPlacementsLoading: (loading) => set({ placementsLoading: loading }),
+  setFeaturedLoading: (loading) => set({ featuredLoading: loading }),
   setError: (error) =>
     set({ error, launchesLoading: false, placementsLoading: false }),
 

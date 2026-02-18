@@ -9,6 +9,16 @@ export function useLaunches() {
   const actions = useLaunchActions();
 
   useEffect(() => {
+    // Fetch featured launches on mount
+    store.setFeaturedLoading(true);
+    actions.fetchFeaturedLaunches().then((data) => {
+      if (data.success) {
+        store.setFeaturedLaunchesData(data.featuredLaunches || []);
+      }
+    });
+  }, []);
+
+  useEffect(() => {
     // Determine if we should use mock data
     const useMockData =
       process.env.NODE_ENV === "development" &&

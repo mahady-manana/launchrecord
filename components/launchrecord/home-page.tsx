@@ -58,6 +58,7 @@ export function HomePage({ initialQuery }: HomePageProps) {
 
       <LaunchListingSection
         launches={launchStore.launches}
+        featuredLaunches={launchStore.featuredLaunches}
         leftPlacements={launchStore.leftPlacements}
         rightPlacements={launchStore.rightPlacements}
         pagination={launchStore.launchesPagination}
