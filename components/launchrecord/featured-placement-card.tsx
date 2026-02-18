@@ -30,7 +30,7 @@ export function FeaturedPlacementCard({
   // If no items, show a message
   if (allItems.length === 0) {
     return (
-      <div className="relative rounded-2xl overflow-hidden h-[300px] flex items-center justify-center bg-muted">
+      <div className="relative rounded-2xl overflow-hidden h-[150px] flex items-center justify-center bg-muted">
         <div className="text-center">
           <p className="text-muted-foreground">
             No featured placements available
@@ -46,7 +46,7 @@ export function FeaturedPlacementCard({
   return (
     <div className="relative rounded-2xl overflow-hidden">
       {/* All slides container */}
-      <div className="relative h-full min-h-[300px] overflow-hidden">
+      <div className="relative h-full overflow-hidden">
         {allItems.map((item, index) => {
           const isCurrent = index === currentIndex;
 
@@ -56,20 +56,9 @@ export function FeaturedPlacementCard({
               href={item.website}
               target="_blank"
               rel="noopener noreferrer"
-              className={`block  p-1 overflow-hidden absolute inset-0 transition-opacity duration-500 ${isCurrent ? "opacity-100 z-10" : "opacity-0 z-0"}`}
-              style={{
-                background: item.color,
-              }}
+              className={`block  p-1  absolute inset-0 transition-opacity duration-500 ${isCurrent ? "opacity-100 z-10" : "opacity-0 z-0"}`}
             >
-              <div className="relative h-full min-h-[300px]">
-                {item.backgroundImage ? (
-                  <img
-                    src={item.backgroundImage || "/promote-image.jpg"}
-                    alt={item.appName}
-                    className="absolute inset-0 w-full h-full rounded-xl object-cover"
-                  />
-                ) : null}
-                <div className="absolute inset-0"></div>
+              <div className="relative h-full">
                 <div className="relative z-10 p-0 text-white flex flex-col justify-end h-full">
                   <div className="px-6">
                     <div className="h-12 w-12 overflow-hidden rounded-lg mb-3">
@@ -86,10 +75,7 @@ export function FeaturedPlacementCard({
                       )}
                     </div>
                   </div>
-                  <div
-                    className="px-6 py-4"
-                    style={{ backgroundColor: item.color || "#1e40af" }} // Default to blue-800 if no color set
-                  >
+                  <div className="px-6 py-4">
                     <h3 className="text-xl font-bold">{item.appName}</h3>
                     <p className="text-white/90">{item.tagline}</p>
                     <p className="text-sm text-white/70 underline truncate">

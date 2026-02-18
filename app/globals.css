@@ -81,6 +81,7 @@
   --color-sidebar-ring: var(--sidebar-ring);
   --container-8xl: 96rem;
   --container-9xl: 112rem;
+  --color-darker: #1a1a1e;
 }
 
 @layer base {

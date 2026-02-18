@@ -3,17 +3,10 @@
 import { LaunchCard } from "@/components/launchrecord/launch-card";
 import { PlacementCard } from "@/components/launchrecord/placement-card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { LAUNCH_CATEGORIES, Launch, PaginationMeta } from "@/types";
 import { Placement } from "@/types/placement";
 import { useEffect, useState } from "react";
+import { SidebarRight } from "./sidebar-right";
 
 interface LaunchListingSectionProps {
   launches: Launch[];
@@ -25,8 +18,6 @@ interface LaunchListingSectionProps {
     | "all"
     | (typeof LAUNCH_CATEGORIES)[number]
     | (typeof LAUNCH_CATEGORIES)[number][];
-  timeFilter: "all" | "today" | "week" | "month";
-  prelaunchOnly: boolean;
   isLoading: boolean;
   onQueryChange: (query: string) => void;
   onCategoryChange: (
@@ -35,8 +26,6 @@ interface LaunchListingSectionProps {
       | (typeof LAUNCH_CATEGORIES)[number]
       | (typeof LAUNCH_CATEGORIES)[number][],
   ) => void;
-  onTimeFilterChange: (timeFilter: "all" | "today" | "week" | "month") => void;
-  onPrelaunchOnlyChange: (prelaunchOnly: boolean) => void;
   onPageChange: (page: number) => void;
 }
 
@@ -64,35 +53,27 @@ function TenPlacementCards({ placements }: { placements: Placement[] }) {
   );
 }
 
-interface SidebarFiltersProps {
+interface HorizontalFiltersProps {
   category:
     | "all"
     | (typeof LAUNCH_CATEGORIES)[number]
     | (typeof LAUNCH_CATEGORIES)[number][];
-  timeFilter: "all" | "today" | "week" | "month";
-  prelaunchOnly: boolean;
   onCategoryChange: (
     category:
       | "all"
       | (typeof LAUNCH_CATEGORIES)[number]
       | (typeof LAUNCH_CATEGORIES)[number][],
   ) => void;
-  onTimeFilterChange: (timeFilter: "all" | "today" | "week" | "month") => void;
-  onPrelaunchOnlyChange: (prelaunchOnly: boolean) => void;
 }
 
-function SidebarFilters({
+function HorizontalFilters({
   category,
-  timeFilter,
-  prelaunchOnly,
   onCategoryChange,
-  onTimeFilterChange,
-  onPrelaunchOnlyChange,
-}: SidebarFiltersProps) {
-  const [isExpanded, setIsExpanded] = useState(false);
+}: HorizontalFiltersProps) {
   const [localCategories, setLocalCategories] = useState<
     (typeof LAUNCH_CATEGORIES)[number][]
   >([]);
+  const [isExpanded, setIsExpanded] = useState(false);
 
   const handleCategoryToggle = (cat: (typeof LAUNCH_CATEGORIES)[number]) => {
     const newCategories = localCategories.includes(cat)
@@ -103,122 +84,48 @@ function SidebarFilters({
     onCategoryChange(newCategories.length === 0 ? "all" : newCategories);
   };
 
+  const isActive = (cat: (typeof LAUNCH_CATEGORIES)[number]) => {
+    return localCategories.includes(cat);
+  };
+
   return (
-    <div className="space-y-4 mb-4">
-      {/* Time Filter */}
-      <div>
-        <h4 className="text-sm font-medium mb-2">Time Filter</h4>
-        <div className="space-y-1">
-          <label className="flex items-center gap-2 cursor-pointer">
-            <input
-              type="radio"
-              name="timeFilter"
-              checked={timeFilter === "all"}
-              onChange={() => onTimeFilterChange("all")}
-              className="h-4 w-4"
-            />
-            <span className="text-sm">All time</span>
-          </label>
-          <label className="flex items-center gap-2 cursor-pointer">
-            <input
-              type="radio"
-              name="timeFilter"
-              checked={timeFilter === "today"}
-              onChange={() => onTimeFilterChange("today")}
-              className="h-4 w-4"
-            />
-            <span className="text-sm">Today</span>
-          </label>
-          <label className="flex items-center gap-2 cursor-pointer">
-            <input
-              type="radio"
-              name="timeFilter"
-              checked={timeFilter === "week"}
-              onChange={() => onTimeFilterChange("week")}
-              className="h-4 w-4"
-            />
-            <span className="text-sm">This week</span>
-          </label>
-          <label className="flex items-center gap-2 cursor-pointer">
-            <input
-              type="radio"
-              name="timeFilter"
-              checked={timeFilter === "month"}
-              onChange={() => onTimeFilterChange("month")}
-              className="h-4 w-4"
-            />
-            <span className="text-sm">This month</span>
-          </label>
-        </div>
-      </div>
-
-      {/* Prelaunch Filter */}
-      <div>
-        <label className="flex items-center gap-2 cursor-pointer">
-          <input
-            type="checkbox"
-            checked={prelaunchOnly}
-            onChange={() => onPrelaunchOnlyChange(!prelaunchOnly)}
-            className="h-4 w-4"
-          />
-          <span className="text-sm font-medium">Prelaunch only</span>
-        </label>
-      </div>
-
-      {/* Categories Filter */}
-      <div>
-        <h4 className="text-sm font-medium mb-2">Categories</h4>
-        <div
-          className={`space-y-1 ${!isExpanded ? "max-h-[400px] overflow-hidden relative" : ""}`}
+    <div className="mb-6">
+      <div
+        className={`flex md:flex-col md:items-start px-2 items-center gap-2 flex-wrap relative`}
+      >
+        {/* All Categories Button */}
+        <button
+          onClick={() => {
+            setLocalCategories([]);
+            onCategoryChange("all");
+          }}
+          className={`px-4 py-1 rounded-md text-sm font-medium transition-all duration-200 ${
+            localCategories.length === 0
+              ? "bg-primary text-primary-foreground shadow-md"
+              : "bg-gray-600/50 text-muted-foreground hover:bg-muted/80"
+          }`}
         >
-          {/* Select All Categories - means no filter */}
-          <label className="flex items-center gap-2 cursor-pointer font-medium">
-            <input
-              type="checkbox"
-              checked={localCategories.length === 0}
-              onChange={(e) => {
-                if (e.target.checked) {
-                  setLocalCategories([]);
-                  onCategoryChange("all");
-                }
-              }}
-              className="h-4 w-4"
-            />
-            <span className="text-sm">All categories</span>
-          </label>
+          <span className="flex items-center gap-1.5">All</span>
+        </button>
 
-          <div className={!isExpanded ? "mask-image-gradient" : ""}>
-            {LAUNCH_CATEGORIES.map((cat) => (
-              <label
-                key={cat}
-                className="flex items-center gap-2 cursor-pointer"
-              >
-                <input
-                  type="checkbox"
-                  checked={localCategories.includes(cat)}
-                  onChange={() => handleCategoryToggle(cat)}
-                  className="h-4 w-4"
-                />
-                <span className="text-sm">{cat}</span>
-              </label>
-            ))}
-          </div>
-          {!isExpanded && (
-            <>
-              <div
-                className="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-background to-transparent pointer-events-none"
-                style={{ maxHeight: "80px" }}
-              />
-              <Button
-                variant="link"
-                className="w-full mt-2"
-                onClick={() => setIsExpanded(true)}
-              >
-                Expand all categories
-              </Button>
-            </>
-          )}
-        </div>
+        {/* Category Pills */}
+        {LAUNCH_CATEGORIES.map((cat) => {
+          const active = isActive(cat);
+          return (
+            <button
+              key={cat}
+              onClick={() => handleCategoryToggle(cat)}
+              className={`px-4 py-1 rounded-md whitespace-nowrap
+ text-xs font-medium transition-all duration-200 ${
+   active
+     ? "bg-primary text-primary-foreground shadow-md"
+     : "bg-gray-600/50 text-muted-foreground hover:bg-muted/80"
+ }`}
+            >
+              {cat}
+            </button>
+          );
+        })}
       </div>
     </div>
   );
@@ -231,18 +138,34 @@ export function LaunchListingSection({
   pagination,
   query,
   category,
-  timeFilter,
-  prelaunchOnly,
   isLoading,
   onQueryChange,
   onCategoryChange,
-  onTimeFilterChange,
-  onPrelaunchOnlyChange,
   onPageChange,
 }: LaunchListingSectionProps) {
   // Local state for the search input with debouncing
   const [localQuery, setLocalQuery] = useState(query);
   const [debouncedQuery, setDebouncedQuery] = useState(query);
+  const [expandedSections, setExpandedSections] = useState<{
+    featured: boolean;
+    today: boolean;
+    week: boolean;
+    month: boolean;
+  }>({
+    featured: false,
+    today: false,
+    week: false,
+    month: false,
+  });
+
+  const toggleSection = (section: keyof typeof expandedSections) => {
+    setExpandedSections((prev) => ({
+      ...prev,
+      [section]: !prev[section],
+    }));
+  };
+
+  const ITEMS_PER_SECTION = 3;
 
   // Debounce the query input
   useEffect(() => {
@@ -262,141 +185,83 @@ export function LaunchListingSection({
       onQueryChange(debouncedQuery);
     }
   }, [debouncedQuery, query, onQueryChange]);
+
+  const LaunchSection = ({
+    title,
+    sectionKey,
+  }: {
+    title: string;
+    sectionKey: keyof typeof expandedSections;
+  }) => {
+    const isExpanded = expandedSections[sectionKey];
+    const displayedLaunches = isExpanded
+      ? launches
+      : launches.slice(0, ITEMS_PER_SECTION);
+
+    return (
+      <div className="mb-6">
+        <div className="space-y-4">
+          {displayedLaunches.map((launch) => (
+            <LaunchCard key={launch._id} launch={launch} />
+          ))}
+        </div>
+      </div>
+    );
+  };
+
   return (
-    <section className="mx-auto grid w-full max-w-8xl gap-4 px-4 pb-10 sm:px-10 lg:grid-cols-[260px_1fr_260px]">
-      <aside className="hidden lg:block">
-        <div className="sticky top-20 space-y-4">
-          <SidebarFilters
+    <section className="max-w-7xl mx-auto py-8 border-gray-800 grid grid-cols-1 lg:grid-cols-3 gap-6 w-full gap-4 pb-10 px-4">
+      <main className="space-y-4 py-4 px-0 md:col-span-2">
+        <div className="grid md:grid-cols-[140px_1fr] md:gap-6 ">
+          <HorizontalFilters
             category={category}
-            timeFilter={timeFilter}
-            prelaunchOnly={prelaunchOnly}
             onCategoryChange={onCategoryChange}
-            onTimeFilterChange={onTimeFilterChange}
-            onPrelaunchOnlyChange={onPrelaunchOnlyChange}
           />
-          {/* <TenPlacementCards placements={leftPlacements} /> */}
-        </div>
-      </aside>
-
-      <main className="space-y-4 py-4 bg-card px-0 rounded-xl">
-        <div className="flex flex-col gap-3 md:flex-row md:items-center px-6">
-          <Input
-            value={localQuery}
-            onChange={(event) => {
-              // Update local state immediately
-              setLocalQuery(event.target.value);
-            }}
-            placeholder="Search by launch name or description (min 3 chars)"
-            className="md:w-1/3"
-          />
-
-          <div className="flex flex-wrap gap-2 md:gap-3">
-            <Select
-              value={category as unknown as string}
-              onValueChange={(value) =>
-                onCategoryChange(value as LaunchListingSectionProps["category"])
-              }
-            >
-              <SelectTrigger className="w-full md:w-40">
-                <SelectValue placeholder="Category" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All categories</SelectItem>
-                {LAUNCH_CATEGORIES.map((item) => (
-                  <SelectItem key={item} value={item}>
-                    {item}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-
-            <Select
-              value={timeFilter}
-              onValueChange={(value) =>
-                onTimeFilterChange(value as "all" | "today" | "week" | "month")
-              }
-            >
-              <SelectTrigger className="w-full md:w-40">
-                <SelectValue placeholder="Time filter" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All time</SelectItem>
-                <SelectItem value="today">Today</SelectItem>
-                <SelectItem value="week">This week</SelectItem>
-                <SelectItem value="month">This month</SelectItem>
-              </SelectContent>
-            </Select>
-
-            <Button
-              variant={prelaunchOnly ? "default" : "outline"}
-              onClick={() => onPrelaunchOnlyChange(!prelaunchOnly)}
-              className="w-full md:w-auto"
-            >
-              Prelaunch
-            </Button>
-
-            <Button
-              variant="outline"
-              onClick={() => {
-                setLocalQuery("");
-                onQueryChange("");
-                onCategoryChange("all");
-                onTimeFilterChange("all");
-                onPrelaunchOnlyChange(false);
-              }}
-              className="w-full md:w-auto"
-            >
-              Clear All
-            </Button>
+          <div>
+            {isLoading ? (
+              <p className="py-10 text-center text-sm text-muted-foreground">
+                Loading launches...
+              </p>
+            ) : launches.length === 0 ? (
+              <p className="py-10 text-center text-sm text-muted-foreground">
+                No launches found for this filter.
+              </p>
+            ) : (
+              <div>
+                <LaunchSection title="Featured launch" sectionKey="featured" />
+                <div className="flex items-center justify-between pt-4 ">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => onPageChange(pagination.page - 1)}
+                    disabled={!pagination.hasPreviousPage}
+                  >
+                    Previous
+                  </Button>
+                  <p className="text-xs text-muted-foreground">
+                    Page {pagination.page} of {pagination.totalPages} (
+                    {pagination.total} launches)
+                  </p>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => onPageChange(pagination.page + 1)}
+                    disabled={!pagination.hasNextPage}
+                  >
+                    Next
+                  </Button>
+                </div>
+              </div>
+            )}
           </div>
-        </div>
-
-        {isLoading ? (
-          <p className="py-10 text-center text-sm text-muted-foreground">
-            Loading launches...
-          </p>
-        ) : launches.length === 0 ? (
-          <p className="py-10 text-center text-sm text-muted-foreground">
-            No launches found for this filter.
-          </p>
-        ) : (
-          <>
-            <div className="">
-              {launches.map((launch) => (
-                <LaunchCard key={launch._id} launch={launch} />
-              ))}
-            </div>
-          </>
-        )}
-
-        <div className="flex items-center justify-between pt-4">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => onPageChange(pagination.page - 1)}
-            disabled={!pagination.hasPreviousPage}
-          >
-            Previous
-          </Button>
-          <p className="text-xs text-muted-foreground">
-            Page {pagination.page} of {pagination.totalPages} (
-            {pagination.total} launches)
-          </p>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => onPageChange(pagination.page + 1)}
-            disabled={!pagination.hasNextPage}
-          >
-            Next
-          </Button>
         </div>
       </main>
 
-      <aside className="hidden lg:block">
-        <div className="sticky top-20">
-          <TenPlacementCards placements={rightPlacements} />
-        </div>
+      <aside className="hidden lg:block md:col-span-1 px-6 py-4">
+        <SidebarRight
+          featuredLaunches={launches}
+          todayLaunches={launches}
+        ></SidebarRight>
       </aside>
     </section>
   );

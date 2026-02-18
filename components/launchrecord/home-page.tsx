@@ -43,7 +43,7 @@ export function HomePage({ initialQuery }: HomePageProps) {
     setLaunchModalOpen(true);
   };
   return (
-    <div className="min-h-screen bg-gradient-to-b from-background via-background to-muted/30">
+    <div className="min-h-screen bg-gradient-to-br from-gray-950 via-gray-900 to-gray-950">
       <Navbar
         query={launchStore.filters.query}
         onQueryChange={launchStore.setQuery}
@@ -63,13 +63,9 @@ export function HomePage({ initialQuery }: HomePageProps) {
         pagination={launchStore.launchesPagination}
         query={launchStore.filters.query}
         category={launchStore.filters.category}
-        timeFilter={launchStore.filters.timeFilter}
-        prelaunchOnly={launchStore.filters.prelaunchOnly}
         isLoading={launchStore.launchesLoading}
         onQueryChange={launchStore.setQuery}
         onCategoryChange={launchStore.setCategory as unknown as any}
-        onTimeFilterChange={launchStore.setTimeFilter}
-        onPrelaunchOnlyChange={launchStore.setPrelaunchOnly}
         onPageChange={launchStore.setLaunchesPage}
       />
 

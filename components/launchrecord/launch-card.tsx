@@ -1,115 +1,110 @@
 "use client";
 
-import { Badge } from "@/components/ui/badge";
 import { Launch } from "@/types";
-import { ArrowUpRight, MessageCircle } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { Clock, MessageCircle } from "lucide-react";
+import Link from "next/link";
 
 interface LaunchCardProps {
   launch: Launch;
 }
 
-function getWebsiteHost(website: string) {
-  try {
-    return new URL(website).host.replace("www.", "");
-  } catch {
-    return website;
-  }
+function isLaunchToday(launch: Launch): boolean {
+  const launchDate = new Date(launch.createdAt);
+  const today = new Date();
+  return (
+    launchDate.getDate() === today.getDate() &&
+    launchDate.getMonth() === today.getMonth() &&
+    launchDate.getFullYear() === today.getFullYear()
+  );
+}
+
+function isLaunchThisWeek(launch: Launch): boolean {
+  const launchDate = new Date(launch.createdAt);
+  const today = new Date();
+  const startOfWeek = new Date(today);
+  startOfWeek.setDate(today.getDate() - today.getDay());
+  startOfWeek.setHours(0, 0, 0, 0);
+
+  const endOfWeek = new Date(startOfWeek);
+  endOfWeek.setDate(startOfWeek.getDate() + 6);
+  endOfWeek.setHours(23, 59, 59, 999);
+
+  return launchDate >= startOfWeek && launchDate <= endOfWeek;
 }
 
 export function LaunchCard({ launch }: LaunchCardProps) {
-  const router = useRouter();
-  const tagline = launch.tagline || launch.description;
-  const websiteHost = getWebsiteHost(launch.website);
-
-  const openLaunchPage = () => {
-    router.push(`/app/${launch.slug}`);
-  };
-
   return (
-    <>
-      <div
-        className="overflow-hidden p-4 border-b border-neutral-700 shadow-[0_10px_24px_rgba(0,0,0,0.28)] backdrop-blur-sm transition-all duration-300 hover:-translate-y-0.5 hover:bg-[rgba(28,34,50,0.72)] hover:shadow-[0_16px_36px_rgba(0,0,0,0.38)]"
-        role="button"
-        tabIndex={0}
-        onClick={openLaunchPage}
-        onKeyDown={(event) => {
-          if (event.key === "Enter" || event.key === " ") {
-            event.preventDefault();
-            openLaunchPage();
-          }
-        }}
-      >
-        <div className="md:flex cursor-pointer items-center justify-between gap-3 px-2 transition-all duration-300 hover:backdrop-blur-md">
-          <div className="flex min-w-0 items-center gap-3 md:mb-0 mb-4">
-            <div className="h-11 w-11 shrink-0 overflow-hidden rounded-md border bg-muted">
-              {launch.logoUrl ? (
-                <img
-                  src={launch.logoUrl}
-                  alt={`${launch.name} logo`}
-                  className="h-full w-full object-cover"
-                />
-              ) : (
-                <div className="flex h-full w-full items-center justify-center text-sm font-semibold text-muted-foreground">
-                  {launch.name.slice(0, 1).toUpperCase()}
-                </div>
-              )}
-            </div>
+    <Link
+      href={`/app/${launch.slug}`}
+      className="group block relative bg-gray-800/40 backdrop-blur-sm border border-gray-800 rounded-xl p-4 hover:bg-gray-800/60 hover:border-cyan-500/50 transition-all duration-300 hover:shadow-xl hover:shadow-cyan-500/10 cursor-pointer"
+    >
+      <div className="absolute -top-2 -right-2 bg-gradient-to-r from-cyan-500 to-blue-600 text-white text-xs font-bold px-3 py-1 rounded-full flex items-center gap-1 shadow-lg">
+        <Clock className="w-3 h-3" />
+        NEW
+      </div>
 
-            <div className="min-w-0 flex-1">
-              <p className="line-clamp-1 text-sm font-semibold">
+      <div className="flex gap-4">
+        <div className="flex flex-col items-center gap-2 flex-shrink-0">
+          <div className="h-11 w-11 shrink-0 overflow-hidden rounded-md border bg-muted">
+            {launch.logoUrl ? (
+              <img
+                src={launch.logoUrl}
+                alt={`${launch.name} logo`}
+                className="h-full w-full object-cover"
+              />
+            ) : (
+              <div className="flex h-full w-full items-center justify-center text-sm font-semibold text-muted-foreground">
+                {launch.name.slice(0, 1).toUpperCase()}
+              </div>
+            )}
+          </div>
+        </div>
+
+        <div className="flex-1 min-w-0">
+          <div className="flex items-start justify-between gap-2 mb-2">
+            <div className="flex-1 min-w-0">
+              <h3 className="text-lg font-bold text-white group-hover:text-cyan-400 transition-colors truncate">
                 {launch.name}
-              </p>
-              <p className="line-clamp-1 text-xs text-muted-foreground">
-                {tagline}
-              </p>
+              </h3>
+              <p className="text-sm text-gray-400">{launch.tagline}</p>
             </div>
           </div>
 
-          <div className="flex shrink-0 items-end gap-2 sm:flex-col">
-            <div className="flex flex-wrap gap-1">
-              <Badge variant="outline" className="text-xs">
-                {launch.businessModel}
-              </Badge>
-              <Badge variant="outline" className="text-xs">
-                {launch.pricingModel}
-              </Badge>
-              {launch.status === "prelaunch" && (
-                <Badge className="bg-blue-500 hover:bg-blue-500 text-xs">
-                  Prelaunch
-                </Badge>
+          <div className="flex items-center justify-between">
+            <div className="flex flex-wrap gap-1.5">
+              {Array.isArray(launch.category) ? (
+                <div className="flex flex-wrap gap-1">
+                  {launch.category.slice(0, 2).map((cat, index) => (
+                    <span
+                      key={cat}
+                      className="rounded-md bg-gray-800/80 px-2 py-0.5 text-[11px] font-mono text-muted-foreground"
+                    >
+                      {cat}
+                    </span>
+                  ))}
+                </div>
+              ) : (
+                <span className="rounded-md bg-gray-800/80 px-2 py-0.5 text-[11px] font-mono text-muted-foreground">
+                  {launch.category}
+                </span>
               )}
             </div>
-            {Array.isArray(launch.category) ? (
-              <div className="flex flex-wrap gap-1">
-                {launch.category.slice(0, 2).map((cat, index) => (
-                  <Badge key={index} variant="outline" className="text-xs">
-                    {cat}
-                  </Badge>
-                ))}
-                {launch.category.length > 2 && (
-                  <Badge variant="outline" className="text-xs">
-                    +{launch.category.length - 2}
-                  </Badge>
-                )}
+
+            <div className="flex items-center gap-2 flex-shrink-0">
+              <div className="flex gap-2">
+                {launch.commentCount ? (
+                  <div className="flex items-center gap-1">
+                    <MessageCircle className="h-3 w-3 text-muted-foreground" />
+                    <span className="text-xs text-muted-foreground">
+                      {launch.commentCount} discussions
+                    </span>
+                  </div>
+                ) : null}
               </div>
-            ) : (
-              <Badge variant="outline">{launch.category}</Badge>
-            )}
-            <div className="flex gap-2">
-              {launch.commentCount ? (
-                <div className="flex items-center gap-1">
-                  <MessageCircle className="h-3 w-3 text-muted-foreground" />
-                  <span className="text-xs text-muted-foreground">
-                    {launch.commentCount} discussions
-                  </span>
-                </div>
-              ) : null}
-              <ArrowUpRight className="h-4 w-4 text-muted-foreground" />
             </div>
           </div>
         </div>
       </div>
-    </>
+    </Link>
   );
 }

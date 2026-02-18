@@ -1,7 +1,13 @@
 import { PlacementDataLoader } from "@/components/launchrecord/placement-data-loader";
 import { SessionProvider } from "@/components/providers/session-provider";
 import type { Metadata } from "next";
+import { Space_Grotesk } from "next/font/google";
 import "./globals.css";
+
+const sg = Space_Grotesk({
+  subsets: ["latin"], // Specifies which subsets to preload
+  display: "swap", // Ensures text remains visible while loading
+});
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://www.launchrecord.com"),
@@ -41,7 +47,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className="font-sans antialiased">
+      <body className={`font-sans antialiased ${sg.className}`}>
         <SessionProvider>{children}</SessionProvider>
         <PlacementDataLoader />
       </body>
