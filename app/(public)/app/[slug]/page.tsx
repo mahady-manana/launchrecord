@@ -204,8 +204,8 @@ export async function generateMetadata({
   const canonicalUrl = `${siteUrl}/app/${launch.slug}`;
 
   return {
-    title: `${launch.name} | LaunchRecord`,
-    description: launch.tagline || launch.description,
+    title: `${launch.name} - ${launch.tagline}`,
+    description: launch.description || launch.tagline,
     keywords: [
       launch.name,
       launch.tagline,
