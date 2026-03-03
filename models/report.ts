@@ -1,21 +1,21 @@
+import type {
+  AEOIndex,
+  AuditMeta,
+  CategoryWeights,
+  ClarityVelocity,
+  Competitor,
+  EgoStab,
+  FounderProofVault,
+  MomentumSignal,
+  OverallAssessment,
+  PositioningSharpness,
+} from "@/types/audit-report-v1";
 import mongoose, { Document, Model, Schema, Types } from "mongoose";
 import type { IProduct } from "./product";
-import type {
-  AuditMeta,
-  AEOIndex,
-  PositioningSharpness,
-  ClarityVelocity,
-  MomentumSignal,
-  FounderProofVault,
-  Competitor,
-  OverallAssessment,
-  EgoStab,
-  CategoryWeights,
-} from "@/types/audit-report-v1";
 
 export interface IReport extends Document {
   product: Types.ObjectId | IProduct;
-  
+
   // V1 Audit Format Fields
   meta: AuditMeta;
   aeo_index: AEOIndex;
@@ -47,15 +47,15 @@ const ReportSchema = new Schema<IReport>(
       required: [true, "Product reference is required"],
       index: true,
     },
-    
+
     // V1 Audit Format Fields
     meta: {
       analysis_version: { type: String, required: true, default: "SIO_V5" },
       confidence_score: { type: Number, required: true, min: 0, max: 1 },
-      analysis_scope: { 
-        type: String, 
+      analysis_scope: {
+        type: String,
         required: true,
-        enum: ["homepage_only", "full_site", "homepage_plus_social"],
+        // No enum - AI may return variations
       },
     },
     aeo_index: {
@@ -67,129 +67,148 @@ const ReportSchema = new Schema<IReport>(
         missing_types: { type: [String], default: [] },
       },
       direct_answer_potential: { type: String, required: true },
-      search_visibility_risk: { 
-        type: String, 
+      search_visibility_risk: {
+        type: String,
         required: true,
-        enum: ["low", "medium", "high"],
+        // No enum - AI may return "low", "LOW", "Low", etc.
       },
       audit: {
-        type: [{
-          action: { type: String, required: true },
-          priority: { type: Number, required: true, min: 0, max: 100 },
-        }],
+        type: [
+          {
+            action: { type: String, required: true },
+            priority: { type: Number, required: true, min: 0, max: 100 },
+          },
+        ],
         default: [],
       },
     },
     positioning_sharpness: {
       score: { type: Number, required: true, min: 0, max: 100 },
-      band: { 
-        type: String, 
+      band: {
+        type: String,
         required: true,
-        enum: ["dominant", "strong", "blended", "weak", "ghost"],
+        // No enum - AI may return variations or typos
       },
       critique: { type: String, required: true },
       audit: {
-        type: [{
-          action: { type: String, required: true },
-          priority: { type: Number, required: true, min: 0, max: 100 },
-        }],
+        type: [
+          {
+            action: { type: String, required: true },
+            priority: { type: Number, required: true, min: 0, max: 100 },
+          },
+        ],
         default: [],
       },
     },
     clarity_velocity: {
       score: { type: Number, required: true, min: 0, max: 100 },
-      band: { 
-        type: String, 
+      band: {
+        type: String,
         required: true,
-        enum: ["instant", "clear", "average", "confusing", "opaque"],
+        // No enum - AI may return variations
       },
       critique: { type: String, required: true },
       audit: {
-        type: [{
-          action: { type: String, required: true },
-          priority: { type: Number, required: true, min: 0, max: 100 },
-        }],
+        type: [
+          {
+            action: { type: String, required: true },
+            priority: { type: Number, required: true, min: 0, max: 100 },
+          },
+        ],
         default: [],
       },
     },
     momentum_signal: {
       score: { type: Number, required: true, min: 0, max: 100 },
-      band: { 
-        type: String, 
+      band: {
+        type: String,
         required: true,
-        enum: ["viral", "rising", "stable", "flat", "dead"],
+        // No enum - AI may return variations
       },
       critique: { type: String, required: true },
       audit: {
-        type: [{
-          action: { type: String, required: true },
-          priority: { type: Number, required: true, min: 0, max: 100 },
-        }],
+        type: [
+          {
+            action: { type: String, required: true },
+            priority: { type: Number, required: true, min: 0, max: 100 },
+          },
+        ],
         default: [],
       },
     },
     founder_proof_vault: {
       score: { type: Number, required: true, min: 0, max: 100 },
-      evidence_types: { 
-        type: [String], 
+      evidence_types: {
+        type: [String],
         default: [],
-        enum: ["testimonials", "case_studies", "metrics", "logos", "press", "founder_authority"],
+        // No enum - AI may return variations
       },
       critique: { type: String, required: true },
       audit: {
-        type: [{
-          action: { type: String, required: true },
-          priority: { type: Number, required: true, min: 0, max: 100 },
-        }],
+        type: [
+          {
+            action: { type: String, required: true },
+            priority: { type: Number, required: true, min: 0, max: 100 },
+          },
+        ],
         default: [],
       },
     },
     top_competitors: {
-      type: [{
-        name: { type: String, required: true },
-        threat_level: { 
-          type: String, 
-          required: true,
-          enum: ["low", "medium", "high"],
+      type: [
+        {
+          name: { type: String, required: true },
+          threat_level: {
+            type: String,
+            required: true,
+            // No enum - AI may return "HIGH", "high", "Medium", etc.
+          },
         },
-      }],
+      ],
       default: [],
     },
     overall_assessment: {
       composite_score: { type: Number, required: true, min: 0, max: 100 },
-      category_position: { 
-        type: String, 
+      category_position: {
+        type: String,
         required: true,
-        enum: ["leader", "challenger", "replicable", "invisible"],
+        // No enum - AI may return variations
       },
       biggest_leverage_point: { type: String, required: true },
-      primary_constraint: { 
-        type: String, 
+      primary_constraint: {
+        type: String,
         required: true,
-        enum: ["authority", "positioning", "clarity", "momentum", "proof"],
+        // No enum - AI may return variations
       },
-      survival_probability_12m: { type: Number, required: true, min: 0, max: 100 },
+      survival_probability_12m: {
+        type: Number,
+        required: true,
+        min: 0,
+        max: 100,
+      },
     },
     the_ego_stab: {
-      triggered_by: { 
-        type: [String], 
+      triggered_by: {
+        type: [String],
         default: [],
-        enum: ["low_positioning", "weak_proof", "clarity_confusion", "authority_gap", "momentum_flat"],
+        // No enum - AI may return variations
       },
       severity: { type: Number, required: true, min: 1, max: 100 },
       brutal_summary: { type: String, required: true },
       founder_ego_bait: { type: String, required: true },
       cliche_density: { type: String, required: true },
-      founder_bias_risk: { 
-        type: String, 
+      founder_bias_risk: {
+        type: String,
         required: true,
-        enum: ["low", "medium", "high"],
+        // No enum - AI may return "HIGH", "high", "Medium", etc.
       },
       audit: {
-        type: [{
-          action: { type: String, required: true },
-          priority: { type: Number, required: true, min: 0, max: 100 },
-        }],
+        type: [
+          {
+            action: { type: String, required: true },
+            priority: { type: Number, required: true, min: 0, max: 100 },
+          },
+        ],
         default: [],
       },
     },
@@ -212,7 +231,7 @@ const ReportSchema = new Schema<IReport>(
     },
     status: {
       type: String,
-      enum: ["UNTOUCHABLE", "LETHAL", "PLASTIC", "ZOMBIE", "GHOST"],
+      // No enum - computed from score, but allow flexibility
       required: [true, "Status is required"],
     },
     rawAnalysis: {

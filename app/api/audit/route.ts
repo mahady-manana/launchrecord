@@ -1,7 +1,12 @@
-import { NextRequest, NextResponse } from "next/server";
+import { saveAnalysis } from "@/lib/analysis-service";
+import { connectToDatabase } from "@/lib/db";
 import { getOpenAIClient } from "@/lib/openai";
+import Product from "@/models/product";
+import Report from "@/models/report";
 import { promptMasterGeneralAnalyze } from "@/reports/prompt";
+import { responsesFormatter } from "@/reports/responses_formatter";
 import type { AuditReportV1 } from "@/types/audit-report-v1";
+import { NextRequest, NextResponse } from "next/server";
 
 interface SurveyData {
   email: string;
@@ -32,210 +37,268 @@ Analyze their positioning, AEO visibility, and competitive moat. Be specific and
 
 export async function POST(request: NextRequest) {
   try {
+    await connectToDatabase();
+
     const body = await request.json();
-    const {
-      founderName = "John Smith",
-      saasName = "Acme Analytics",
-      saasUrl = "https://acmeanalytics.com",
-      email = "test@example.com",
-      role = "solo-founder",
-      teamSize = "just-me",
-      revenue = "pre-revenue",
-      biggestChallenge = "invisible-llms",
-      competitorThreat = "somewhat-concerned",
-      willingToInvest = "49-tier",
-    } = body;
+    const { productId } = body;
+
+    if (!productId) {
+      return NextResponse.json(
+        { error: "Product ID is required" },
+        { status: 400 },
+      );
+    }
+
+    // Find the product
+    const product = await Product.findById(productId);
+    if (!product) {
+      return NextResponse.json({ error: "Product not found" }, { status: 404 });
+    }
+
+    // Check if product already has an audit report
+    const existingReport = await Report.findOne({
+      product: productId,
+      "overall_assessment.composite_score": { $exists: true },
+    }).sort({ createdAt: -1 });
+
+    if (existingReport) {
+      // Return existing report to prevent duplicate audits
+      return NextResponse.json({
+        success: true,
+        data: {
+          report: existingReport,
+          analysis: {
+            meta: existingReport.meta,
+            aeo_index: existingReport.aeo_index,
+            positioning_sharpness: existingReport.positioning_sharpness,
+            clarity_velocity: existingReport.clarity_velocity,
+            momentum_signal: existingReport.momentum_signal,
+            founder_proof_vault: existingReport.founder_proof_vault,
+            top_competitors: existingReport.top_competitors,
+            overall_assessment: existingReport.overall_assessment,
+            the_ego_stab: existingReport.the_ego_stab,
+            category_weights: existingReport.category_weights,
+          },
+          existing: true,
+        },
+      });
+    }
+
+    // Get survey data from product
+    const surveyData: SurveyData = product.surveyData || {
+      email: "",
+      founderName: product.name || "Unknown",
+      saasName: product.name || "Unknown",
+      saasUrl: product.website || "",
+      role: "solo-founder",
+      teamSize: "just-me",
+      revenue: "pre-revenue",
+      biggestChallenge: "invisible-llms",
+      aeoAwareness: "never-heard",
+      competitorThreat: "somewhat-concerned",
+      willingToInvest: "49-tier",
+    };
 
     let auditReport: AuditReportV1 | null = null;
+    let errorMessage: string | null = null;
 
     try {
       const client = getOpenAIClient();
 
       const userPrompt = ANALYSIS_USER_PROMPT.replace(
         "{{name}}",
-        saasName,
+        surveyData.saasName,
       )
-        .replace("{{website}}", saasUrl)
-        .replace("{{founder}}", founderName)
-        .replace("{{teamSize}}", teamSize)
-        .replace("{{revenue}}", revenue)
-        .replace("{{challenge}}", biggestChallenge)
-        .replace("{{threat}}", competitorThreat);
+        .replace("{{website}}", surveyData.saasUrl)
+        .replace("{{founder}}", surveyData.founderName)
+        .replace("{{teamSize}}", surveyData.teamSize)
+        .replace("{{revenue}}", surveyData.revenue)
+        .replace("{{challenge}}", surveyData.biggestChallenge)
+        .replace("{{threat}}", surveyData.competitorThreat);
 
       const response = await client.chat.completions.create({
         model: "gpt-4o-mini-search-preview",
         messages: [
-          { 
-            role: "system", 
-            content: promptMasterGeneralAnalyze
+          {
+            role: "system",
+            content: promptMasterGeneralAnalyze,
           },
           { role: "user", content: userPrompt },
         ],
-        temperature: 0.7,
-        response_format: { type: "json_object" },
-        tools: [
-          {
-            type: "web_search",
-          },
-        ],
-        tool_choice: "auto",
       });
-
       const content = response.choices[0]?.message?.content;
       if (!content) {
         throw new Error("No analysis content returned from OpenAI");
       }
 
-      auditReport = JSON.parse(content) as AuditReportV1;
-    } catch (aiError) {
-      console.log("AI analysis not available, using fallback analysis");
-      // Fallback to basic analysis if OpenAI is not configured
-      auditReport = {
-        meta: {
-          analysis_version: "SIO_V5",
-          confidence_score: 0.85,
-          analysis_scope: "homepage_only",
-        },
-        aeo_index: {
-          score: 45,
-          critique: "Your AEO presence is minimal. AI chatbots rarely cite you as an authority.",
-          schema_markup: {
-            present: false,
-            quality_score: 20,
-            missing_types: ["SoftwareApplication", "Organization"],
-          },
-          direct_answer_potential: "A tool for analytics but lacks distinctive positioning in AI recommendations.",
-          search_visibility_risk: "high",
-          audit: [
-            {
-              action: "Add structured data markup for SoftwareApplication schema",
-              priority: 90,
-            },
-            {
-              action: "Create authoritative content targeting AI answer engines",
-              priority: 85,
-            },
-          ],
-        },
-        positioning_sharpness: {
-          score: 60,
-          band: "blended",
-          critique: "Positioning is clear but blends with 10+ similar analytics tools. Lacks a unique category.",
-          audit: [
-            {
-              action: "Define a proprietary category name that you can own",
-              priority: 95,
-            },
-            {
-              action: "Eliminate generic terms like 'analytics' from H1",
-              priority: 80,
-            },
-          ],
-        },
-        clarity_velocity: {
-          score: 70,
-          band: "clear",
-          critique: "Value proposition is understandable but takes >5 seconds to grasp the core outcome.",
-          audit: [
-            {
-              action: "Lead with the specific outcome, not the feature",
-              priority: 85,
-            },
-            {
-              action: "Remove jargon from hero section",
-              priority: 70,
-            },
-          ],
-        },
-        momentum_signal: {
-          score: 55,
-          band: "stable",
-          critique: "Showing steady progress but no viral loops or network effects visible.",
-          audit: [
-            {
-              action: "Add public usage metrics or growth indicators",
-              priority: 75,
-            },
-            {
-              action: "Create shareable moments in the product",
-              priority: 65,
-            },
-          ],
-        },
-        founder_proof_vault: {
-          score: 50,
-          evidence_types: ["testimonials", "metrics"],
-          critique: "Some social proof present but lacks depth of case studies or proprietary data evidence.",
-          audit: [
-            {
-              action: "Add 3 detailed case studies with quantified outcomes",
-              priority: 90,
-            },
-            {
-              action: "Showcase founder authority through content or speaking",
-              priority: 70,
-            },
-          ],
-        },
-        top_competitors: [
+      const formatResponse = await client.chat.completions.create({
+        model: "gpt-4.1-nano",
+        messages: [
           {
-            name: "Mixpanel",
-            threat_level: "high",
+            role: "system",
+            content: responsesFormatter,
           },
-          {
-            name: "Amplitude",
-            threat_level: "medium",
-          },
-          {
-            name: "PostHog",
-            threat_level: "medium",
-          },
+          { role: "user", content: content },
         ],
-        overall_assessment: {
-          composite_score: 56,
-          category_position: "replicable",
-          biggest_leverage_point: "Category creation and AEO optimization",
-          primary_constraint: "positioning",
-          survival_probability_12m: 65,
+        response_format: { type: "json_object" },
+      });
+
+      const formattedContent = formatResponse.choices[0]?.message?.content;
+      if (!formattedContent) {
+        throw new Error("No formatted content returned from OpenAI");
+      }
+
+      auditReport = JSON.parse(formattedContent) as AuditReportV1;
+    } catch (aiError: any) {
+      console.error("AI analysis error:", aiError);
+
+      // Check for capacity errors
+      if (
+        aiError.message?.includes("capacity") ||
+        aiError.message?.includes("rate_limit") ||
+        aiError.message?.includes("overloaded")
+      ) {
+        errorMessage =
+          "System is currently at capacity. We will rerun the audit automatically when it resumes.";
+
+        // Mark product for retry
+        product.markModified("surveyData");
+        if (!product.surveyData) {
+          product.surveyData = {};
+        }
+        product.surveyData.retryAudit = true;
+        product.surveyData.retryReason = "capacity_error";
+        product.surveyData.retryAt = new Date(Date.now() + 5 * 60 * 1000); // Retry in 5 minutes
+        await product.save();
+
+        return NextResponse.json(
+          {
+            error: errorMessage,
+            retry: true,
+            retryAt: product.surveyData.retryAt,
+          },
+          { status: 503 },
+        );
+      }
+
+      // For other errors, throw to be caught by outer catch
+      throw aiError;
+    }
+
+    if (!auditReport) {
+      throw new Error("Failed to generate audit report");
+    }
+
+    // Save the analysis to database
+    const savedReport = await saveAnalysis({
+      product,
+      report: auditReport,
+    });
+
+    // Update product score
+    product.score = auditReport.overall_assessment.composite_score;
+    await product.save();
+
+    return NextResponse.json({
+      success: true,
+      data: {
+        report: savedReport,
+        analysis: auditReport,
+        existing: false,
+      },
+    });
+  } catch (error: any) {
+    console.error("Audit API error:", error);
+
+    // Handle capacity errors
+    if (
+      error.message?.includes("capacity") ||
+      error.message?.includes("rate_limit") ||
+      error.message?.includes("overloaded")
+    ) {
+      return NextResponse.json(
+        {
+          error:
+            "System is currently at capacity. We will rerun the audit automatically when it resumes.",
+          retry: true,
         },
-        the_ego_stab: {
-          triggered_by: ["low_positioning", "authority_gap"],
-          severity: 72,
-          brutal_summary: "You're building a feature, not a category. Competitors own the mindshare.",
-          founder_ego_bait: "Your execution is solid, but solid doesn't win—distinctive does.",
-          cliche_density: "35%",
-          founder_bias_risk: "medium",
-          audit: [
-            {
-              action: "Rewrite H1 to claim a unique outcome only you deliver",
-              priority: 100,
-            },
-            {
-              action: "Remove all 'AI-powered' and 'seamless' claims",
-              priority: 85,
-            },
-          ],
+        { status: 503 },
+      );
+    }
+
+    return NextResponse.json(
+      { error: "Failed to generate audit report" },
+      { status: 500 },
+    );
+  }
+}
+
+// GET endpoint to check audit status
+export async function GET(request: NextRequest) {
+  try {
+    await connectToDatabase();
+
+    const productId = request.nextUrl.searchParams.get("productId");
+    if (!productId) {
+      return NextResponse.json(
+        { error: "Product ID is required" },
+        { status: 400 },
+      );
+    }
+
+    const product = await Product.findById(productId);
+    if (!product) {
+      return NextResponse.json({ error: "Product not found" }, { status: 404 });
+    }
+
+    // Check if product has an existing audit
+    const existingReport = await Report.findOne({
+      product: productId,
+      "overall_assessment.composite_score": { $exists: true },
+    }).sort({ createdAt: -1 });
+
+    if (existingReport) {
+      return NextResponse.json({
+        success: true,
+        data: {
+          report: existingReport,
+          analysis: {
+            meta: existingReport.meta,
+            aeo_index: existingReport.aeo_index,
+            positioning_sharpness: existingReport.positioning_sharpness,
+            clarity_velocity: existingReport.clarity_velocity,
+            momentum_signal: existingReport.momentum_signal,
+            founder_proof_vault: existingReport.founder_proof_vault,
+            top_competitors: existingReport.top_competitors,
+            overall_assessment: existingReport.overall_assessment,
+            the_ego_stab: existingReport.the_ego_stab,
+            category_weights: existingReport.category_weights,
+          },
+          existing: true,
         },
-        category_weights: {
-          aeo_index: 25,
-          positioning_sharpness: 30,
-          clarity_velocity: 15,
-          momentum_signal: 10,
-          founder_proof_vault: 20,
-          total_must_equal: 100,
-          weighting_rationale: "For early-stage SaaS, positioning and AEO visibility are the primary defensibility levers.",
-        },
-      };
+      });
+    }
+
+    // Check if retry is scheduled
+    const retryScheduled = product.surveyData?.retryAudit;
+    if (retryScheduled) {
+      return NextResponse.json({
+        success: true,
+        retry: true,
+        retryAt: product.surveyData?.retryAt,
+        message: "Audit is scheduled for retry",
+      });
     }
 
     return NextResponse.json({
       success: true,
-      data: auditReport,
+      audited: false,
+      message: "No audit found for this product",
     });
   } catch (error) {
-    console.error("Audit API error:", error);
+    console.error("Get audit API error:", error);
     return NextResponse.json(
-      { error: "Failed to generate audit report" },
+      { error: "Failed to retrieve audit" },
       { status: 500 },
     );
   }

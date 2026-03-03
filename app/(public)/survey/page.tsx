@@ -259,8 +259,8 @@ function LaunchRecordSurveyContent() {
       if (!response.ok) throw new Error("Survey submission failed");
 
       const data = await response.json();
-      if (data.sessionId) {
-        router.push(`/survey/audit?session=${data.sessionId}`);
+      if (data.productId) {
+        router.push(`/survey/audit?product=${data.productId}`);
       }
     } catch (error) {
       console.error("Error submitting survey:", error);

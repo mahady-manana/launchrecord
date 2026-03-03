@@ -13,6 +13,9 @@ export interface IProduct extends Document {
   topics?: ITopic[];
   reports?: Types.ObjectId[] | IReport[];
   score?: number | null;
+  earlyAccess?: boolean;
+  earlyAccessGrantedAt?: Date | null;
+  surveyData?: Record<string, any> | null;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -73,6 +76,18 @@ const ProductSchema = new Schema<IProduct>(
       default: null,
       min: 0,
       max: 100,
+    },
+    earlyAccess: {
+      type: Boolean,
+      default: false,
+    },
+    earlyAccessGrantedAt: {
+      type: Date,
+      default: null,
+    },
+    surveyData: {
+      type: Schema.Types.Mixed,
+      default: null,
     },
   },
   { timestamps: true },

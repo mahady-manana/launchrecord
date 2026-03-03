@@ -1,10 +1,10 @@
-import mongoose, { Document, Model, Schema } from "mongoose";
 import type { UserRole } from "@/types/user";
+import mongoose, { Document, Model, Schema } from "mongoose";
 
 export interface IUser extends Document {
   name: string;
   email: string;
-  password: string;
+  password?: string;
   role: UserRole;
   provider: "credentials" | "google";
   providerId?: string | null;
@@ -21,6 +21,8 @@ export interface IUser extends Document {
   saasName?: string | null;
   sovereignRank?: number | null;
   surveyData?: Record<string, any> | null;
+  earlyAccess?: boolean;
+  earlyAccessGrantedAt?: Date | null;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -44,11 +46,6 @@ const UserSchema = new Schema<IUser>(
     },
     password: {
       type: String,
-      required: function requiredPassword(): boolean {
-        return this.provider === "credentials";
-      },
-      minlength: [8, "Password must be at least 8 characters"],
-      select: false,
     },
     role: {
       type: String,
@@ -117,6 +114,14 @@ const UserSchema = new Schema<IUser>(
       type: Schema.Types.Mixed,
       default: null,
     },
+    earlyAccess: {
+      type: Boolean,
+      default: false,
+    },
+    earlyAccessGrantedAt: {
+      type: Date,
+      default: null,
+    },
   },
   { timestamps: true },
 );
@@ -124,6 +129,7 @@ const UserSchema = new Schema<IUser>(
 UserSchema.index({ email: 1 });
 UserSchema.index({ deletedAt: 1 });
 
-const User: Model<IUser> = mongoose.models.User || mongoose.model<IUser>("User", UserSchema);
+const User: Model<IUser> =
+  mongoose.models.User || mongoose.model<IUser>("User", UserSchema);
 
 export default User;
