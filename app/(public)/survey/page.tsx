@@ -260,7 +260,7 @@ function LaunchRecordSurveyContent() {
 
       const data = await response.json();
       if (data.sessionId) {
-        router.push(`/survey/complete?session=${data.sessionId}`);
+        router.push(`/survey/audit?session=${data.sessionId}`);
       }
     } catch (error) {
       console.error("Error submitting survey:", error);
@@ -372,8 +372,12 @@ function LaunchRecordSurveyContent() {
               >
                 {step === questions.length - 1 ? (
                   <>
-                    <CheckCircle className="mr-2 h-4 w-4" />
-                    Join Waitlist
+                    {isLoading ? (
+                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
+                    ) : (
+                      <CheckCircle className="mr-2 h-4 w-4" />
+                    )}
+                    Generate Audit Report
                   </>
                 ) : (
                   <>

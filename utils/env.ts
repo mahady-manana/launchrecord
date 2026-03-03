@@ -30,6 +30,7 @@ const envSchema = z.object({
   SMTP_USER: z.string().min(1, "SMTP_USER is required").optional(),
   SMTP_PASS: z.string().min(1, "SMTP_PASS is required").optional(),
   EMAIL_FROM: z.string().email("EMAIL_FROM is required").optional(),
+  OPENAI_API_KEY: z.string().min(1, "OPENAI_API_KEY is required").optional(),
 });
 
 export const env = envSchema.parse(process.env);

@@ -3,6 +3,7 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { WarBriefingPreview } from "@/components/WarBriefingPreview";
 import {
   AlertCircle,
   Award,
@@ -173,7 +174,7 @@ export default function LaunchRecordLandingPage() {
                   placeholder="FOUNDER@COMPANY_DOMAIN.COM"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="flex-1 px-6 py-4 bg-slate-900 border border-slate-800 text-white rounded-none font-mono focus:border-red-600 focus:ring-0 transition-all outline-none"
+                  className="flex-1 px-6 py-4 bg-slate-500 border border-slate-200 text-white rounded-none font-mono focus:border-red-600 focus:ring-0 transition-all outline-none"
                   required
                 />
                 <Button
@@ -197,97 +198,98 @@ export default function LaunchRecordLandingPage() {
             </div>
           </div>
 
-          {/* The War Briefing Preview - Shifted to "Clinical" Style */}
-          <div className="mt-16 bg-black text-white border border-slate-800 rounded-sm overflow-hidden shadow-[0_0_50px_-12px_rgba(255,255,255,0.1)]">
-            <div className="bg-slate-900 px-6 py-3 border-b border-slate-800 flex justify-between items-center">
-              <span className="font-mono text-xs text-slate-400">
-                SESSION_ID: 0042-ALPHA
-              </span>
-              <div className="flex gap-2">
-                <div className="w-2 h-2 rounded-full bg-red-500"></div>
-                <div className="w-2 h-2 rounded-full bg-slate-700"></div>
-                <div className="w-2 h-2 rounded-full bg-slate-700"></div>
+          <WarBriefingPreview />
+        </div>
+      </section>
+      <section className="bg-slate-950 py-24 rounded-xl text-white px-6 border-t border-slate-900">
+        <div className="max-w-4xl mx-auto">
+          <div className="space-y-2 mb-16">
+            <h2 className="text-3xl font-black uppercase tracking-tighter italic">
+              The Protocol
+            </h2>
+            <p className="font-mono text-[10px] text-slate-500 uppercase tracking-widest">
+              Standardized Defensibility Testing v1.04
+            </p>
+          </div>
+
+          <div className="space-y-12">
+            {/* Step 1 */}
+            <div className="flex gap-8 group">
+              <div className="flex flex-col items-center">
+                <div className="w-8 h-8 bg-white text-black flex items-center justify-center font-black text-xs">
+                  01
+                </div>
+                <div className="w-px h-full bg-slate-800 my-2"></div>
+              </div>
+              <div className="pb-12 space-y-2">
+                <h4 className="text-xl font-bold uppercase tracking-tight">
+                  Deep-Vector Submission
+                </h4>
+                <p className="text-slate-400 text-sm leading-relaxed">
+                  Submit your URL. We cross-reference your positioning against
+                  1,400+ competitors to detect "Commodity Convergence."
+                </p>
               </div>
             </div>
 
-            <div className="p-8 md:p-12 space-y-10">
-              <div className="flex flex-col md:flex-row justify-between gap-6 border-b border-slate-800 pb-8">
-                <div className="space-y-1">
-                  <h3 className="text-2xl font-bold uppercase tracking-tighter">
-                    SF-1 War Briefing: [Your_SaaS]
-                  </h3>
-                  <p className="font-mono text-xs text-slate-500">
-                    SOVEREIGN_RANK: #42 (▼ 4) | RISK_LEVEL: CRITICAL
-                  </p>
+            {/* Step 2 */}
+            <div className="flex gap-8 group">
+              <div className="flex flex-col items-center">
+                <div className="w-8 h-8 border border-slate-700 text-slate-500 flex items-center justify-center font-black text-xs group-hover:bg-red-600 group-hover:text-white group-hover:border-red-600 transition-all">
+                  02
                 </div>
-                <div className="text-right">
-                  <div className="text-4xl font-mono font-bold text-red-500">
-                    JUNK
-                  </div>
-                  <div className="text-[10px] font-mono uppercase text-slate-500">
-                    Current Moat Rating
-                  </div>
+                <div className="w-px h-full bg-slate-800 my-2"></div>
+              </div>
+              <div className="pb-12 space-y-2">
+                <h4 className="text-xl font-bold uppercase tracking-tight">
+                  The Stress-Test
+                </h4>
+                <p className="text-slate-400 text-sm leading-relaxed">
+                  We simulate AEO (AI-Engine Optimization) visibility and run a
+                  CFO ROI-Clarity scan. We find where you are invisible.
+                </p>
+              </div>
+            </div>
+
+            {/* Step 3 */}
+            <div className="flex gap-8 group">
+              <div className="flex flex-col items-center">
+                <div className="w-8 h-8 border border-slate-700 text-slate-500 flex items-center justify-center font-black text-xs group-hover:bg-red-600 group-hover:text-white group-hover:border-red-600 transition-all">
+                  03
+                </div>
+                <div className="w-px h-full bg-slate-800 my-2"></div>
+              </div>
+              <div className="pb-12 space-y-2">
+                <h4 className="text-xl font-bold uppercase tracking-tight">
+                  The War Briefing
+                </h4>
+                <p className="text-slate-400 text-sm leading-relaxed">
+                  Receive your Record. Status: JUNK, VULNERABLE, or SOVEREIGN.
+                  Know the truth about your defensibility.
+                </p>
+              </div>
+            </div>
+
+            {/* Step 4 */}
+            <div className="flex gap-8 group">
+              <div className="flex flex-col items-center">
+                <div className="w-8 h-8 border border-slate-700 text-slate-500 flex items-center justify-center font-black text-xs group-hover:bg-green-600 group-hover:text-white group-hover:border-green-600 transition-all">
+                  04
                 </div>
               </div>
-
-              <div className="grid md:grid-cols-2 gap-12">
-                {/* AEO Pulse */}
-                <div className="space-y-4">
-                  <div className="flex items-center gap-2 font-mono text-xs text-slate-500 uppercase tracking-widest">
-                    <div className="w-1 h-1 bg-red-500"></div> AEO Visibility
-                    Pulse
-                  </div>
-                  <div className="space-y-2">
-                    <div className="text-3xl font-bold italic">
-                      “Invisible in 94% of sessions.”
-                    </div>
-                    <p className="text-sm text-slate-400 font-light">
-                      LLMs (ChatGPT/Claude) are currently recommending 4
-                      competitors over you.
-                    </p>
-                  </div>
-                </div>
-
-                {/* Positioning */}
-                <div className="space-y-4">
-                  <div className="flex items-center gap-2 font-mono text-xs text-slate-500 uppercase tracking-widest">
-                    <div className="w-1 h-1 bg-orange-500"></div> Positioning
-                    Drift
-                  </div>
-                  <div className="space-y-2">
-                    <div className="text-3xl font-bold italic">
-                      Genericity: 72%
-                    </div>
-                    <p className="text-sm text-slate-400 font-light">
-                      Your value proposition matches 8 out of 10 market
-                      laggards.
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="pt-8 border-t border-slate-800 flex flex-col md:flex-row justify-between items-end gap-6">
-                <div className="space-y-4 max-w-md">
-                  <p className="font-mono text-xs text-green-500 uppercase tracking-[0.2em]">
-                    Required_Missions_To_Level_Up:
-                  </p>
-                  <ul className="text-sm space-y-2 text-slate-300 font-mono">
-                    <li>&gt; REWRITE_H1_FOR_OUTCOME_SPECIFICITY</li>
-                    <li>&gt; UPLOAD_REVENUE_PROOF_FOR_Q1</li>
-                    <li>&gt; DEFINE_STRATEGIC_MOAT_DELTA</li>
-                  </ul>
-                </div>
-                <div className="text-[10px] font-mono text-slate-600 text-right uppercase leading-tight">
-                  Secured by LaunchRecord Protocol
-                  <br />
-                  No Moat = No Future
-                </div>
+              <div className="space-y-2">
+                <h4 className="text-xl font-bold uppercase tracking-tight">
+                  Moat Missions
+                </h4>
+                <p className="text-slate-400 text-sm leading-relaxed">
+                  Complete weekly missions to fix your record. Upload proof,
+                  climb the Sovereign 100, and build a fortress.
+                </p>
               </div>
             </div>
           </div>
         </div>
       </section>
-
       {/* Stats Section */}
       <section className="grid grid-cols-3 gap-8 pt-8 border-t border-border">
         <div>
