@@ -102,6 +102,22 @@ export const format_audit_v1 = `{
     {
       "name": "string",
       "threat_level": "low | medium | high"
+    },
+    {
+      "name": "string",
+      "threat_level": "low | medium | high"
+    },
+    {
+      "name": "string",
+      "threat_level": "low | medium | high"
+    },
+    {
+      "name": "string",
+      "threat_level": "low | medium | high"
+    },
+    {
+      "name": "string",
+      "threat_level": "low | medium | high"
     }
   ],
 

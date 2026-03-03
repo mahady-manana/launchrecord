@@ -1,90 +1,88 @@
 import { NextRequest, NextResponse } from "next/server";
 import { connectToDatabase } from "@/lib/db";
-import User from "@/models/user";
 import Product from "@/models/product";
 
-// Interface for survey responses
-interface SurveyData {
-  email: string;
-  founderName: string;
-  saasName: string;
-  saasUrl: string;
-  role: string;
-  teamSize: string;
-  revenue: string;
-  biggestChallenge: string;
-  aeoAwareness: string;
-  competitorThreat: string;
-  willingToInvest: string;
+// Normalize URL - remove trailing slashes and ensure consistent format
+function normalizeUrl(url: string): string {
+  let normalized = url.trim().toLowerCase();
+  
+  // Remove trailing slashes (but keep path slashes)
+  normalized = normalized.replace(/\/+$/, "");
+  
+  // Remove protocol if present
+  normalized = normalized.replace(/^https?:\/\//, "");
+  
+  // Remove www. for consistency
+  normalized = normalized.replace(/^www\./, "");
+  
+  return normalized;
 }
 
 export async function POST(request: NextRequest) {
   try {
-    const survey: SurveyData = await request.json();
+    await connectToDatabase();
 
-    // Validate survey data
-    if (!survey.email || !survey.founderName || !survey.saasName) {
+    const body = await request.json();
+    let { saasName, saasUrl, founderName } = body;
+
+    // Validate required fields
+    if (!saasName || !saasUrl) {
       return NextResponse.json(
-        { error: "Incomplete survey data" },
+        { error: "Product name and URL are required" },
         { status: 400 }
       );
     }
 
-    // Connect to database
-    await connectToDatabase();
+    // Normalize the URL
+    const normalizedUrl = normalizeUrl(saasUrl);
+    
+    // Extract just the domain (before any path) for duplicate checking
+    const domainPart = normalizedUrl.split('/')[0];
+    
+    // Check if product with this domain already exists
+    const existingProduct = await Product.findOne({
+      website: {
+        $regex: new RegExp('^' + domainPart.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "i"),
+      },
+    });
 
-    // Check if user already exists
-    let user = await User.findOne({ email: survey.email.toLowerCase() });
-
-    if (user) {
-      // Update existing user
-      user.founderName = survey.founderName;
-      user.saasName = survey.saasName;
-      user.surveyData = survey;
-      user.whitelisted = true;
-      user.earlyAccess = true;
-      user.earlyAccessGrantedAt = new Date();
-      await user.save();
-    } else {
-      // Create new whitelisted user with early access
-      user = await User.create({
-        email: survey.email.toLowerCase(),
-        name: survey.founderName,
-        founderName: survey.founderName,
-        saasName: survey.saasName,
-        surveyData: survey,
-        whitelisted: true,
-        earlyAccess: true,
-        earlyAccessGrantedAt: new Date(),
-        provider: "credentials",
-        role: "user",
-        password: "", // No password for whitelist-only users
+    if (existingProduct) {
+      // Return existing product instead of creating duplicate
+      return NextResponse.json({
+        message: "Audit already exists for this product",
+        productId: existingProduct._id,
+        existing: true,
       });
     }
 
     // Create incomplete product with early access flag
     const product = await Product.create({
-      name: survey.saasName,
-      website: survey.saasUrl,
+      name: saasName,
+      website: normalizedUrl, // Store normalized URL
       description: null,
       tagline: null,
       logo: null,
-      user: user._id,
+      user: null,
       score: null,
       earlyAccess: true,
       earlyAccessGrantedAt: new Date(),
-      surveyData: survey,
+      surveyData: {
+        founderName,
+        saasName,
+        saasUrl: normalizedUrl,
+        ...body,
+      },
     });
 
     return NextResponse.json({
-      message: "Survey saved successfully. Welcome to LaunchRecord!",
+      message: "Survey started successfully",
       productId: product._id,
-      userId: user._id,
+      existing: false,
     });
   } catch (error) {
     console.error("Survey API error:", error);
     return NextResponse.json(
-      { error: "Failed to process survey" },
+      { error: "Failed to start survey" },
       { status: 500 }
     );
   }

@@ -24,7 +24,7 @@ interface SurveyData {
 
 const ANALYSIS_USER_PROMPT = `Analyze this SaaS product using the Sovereign Defensibility Framework:
 
-PRODUCT DATA:
+FOUNDER SELF-ASSESSMENT SURVEY:
 - Name: {{name}}
 - Website: {{website}}
 - Founder: {{founder}}
@@ -33,7 +33,7 @@ PRODUCT DATA:
 - Biggest Challenge: {{challenge}}
 - AI Threat Concern: {{threat}}
 
-Analyze their positioning, AEO visibility, and competitive moat. Be specific and data-driven.`;
+Analyze their positioning, AEO visibility, and competitive moat. Be specific and data-driven. Don't give an emotional reports.`;
 
 export async function POST(request: NextRequest) {
   try {
@@ -98,6 +98,14 @@ export async function POST(request: NextRequest) {
       competitorThreat: "somewhat-concerned",
       willingToInvest: "49-tier",
     };
+
+    // Validate survey data has email
+    if (!surveyData.email) {
+      return NextResponse.json(
+        { error: "Email required. Please complete the survey first." },
+        { status: 400 },
+      );
+    }
 
     let auditReport: AuditReportV1 | null = null;
     let errorMessage: string | null = null;

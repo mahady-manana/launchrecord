@@ -1,7 +1,7 @@
+import { connectToDatabase } from "@/lib/db";
 import type { IProduct } from "@/models/product";
 import Report from "@/models/report";
 import type { AuditReportV1 } from "@/types/audit-report-v1";
-import { connectToDatabase } from "@/lib/db";
 
 export interface SaveAnalysisOptions {
   product: IProduct;
@@ -12,7 +12,7 @@ export interface SaveAnalysisOptions {
 // Normalize string values to handle AI variations (case sensitivity, typos, etc.)
 function normalizeString(value: string, allowedValues: string[]): string {
   const lowerValue = value.toLowerCase();
-  const found = allowedValues.find(v => v.toLowerCase() === lowerValue);
+  const found = allowedValues.find((v) => v.toLowerCase() === lowerValue);
   return found || value; // Return normalized or original if not found
 }
 
@@ -28,13 +28,19 @@ function normalizeRiskLevel(value: string): "low" | "medium" | "high" {
 // Normalize band strings
 function normalizeBand(value: string, bands: string[]): string {
   const lower = value.toLowerCase();
-  const found = bands.find(b => b.toLowerCase() === lower);
+  const found = bands.find((b) => b.toLowerCase() === lower);
   return found || bands[2]; // Return match or default (middle option)
 }
 
 // Normalize constraint type
 function normalizeConstraint(value: string): string {
-  const constraints = ["authority", "positioning", "clarity", "momentum", "proof"];
+  const constraints = [
+    "authority",
+    "positioning",
+    "clarity",
+    "momentum",
+    "proof",
+  ];
   return normalizeString(value, constraints);
 }
 
@@ -51,8 +57,15 @@ function normalizeThreatLevel(value: string): string {
 
 // Normalize evidence types
 function normalizeEvidenceTypes(types: string[]): string[] {
-  const validTypes = ["testimonials", "case_studies", "metrics", "logos", "press", "founder_authority"];
-  return types.map(type => {
+  const validTypes = [
+    "testimonials",
+    "case_studies",
+    "metrics",
+    "logos",
+    "press",
+    "founder_authority",
+  ];
+  return types.map((type) => {
     const normalized = normalizeString(type, validTypes);
     return validTypes.includes(normalized) ? normalized : type;
   });
@@ -60,8 +73,14 @@ function normalizeEvidenceTypes(types: string[]): string[] {
 
 // Normalize ego trigger types
 function normalizeEgoTriggers(triggers: string[]): string[] {
-  const validTriggers = ["low_positioning", "weak_proof", "clarity_confusion", "authority_gap", "momentum_flat"];
-  return triggers.map(trigger => {
+  const validTriggers = [
+    "low_positioning",
+    "weak_proof",
+    "clarity_confusion",
+    "authority_gap",
+    "momentum_flat",
+  ];
+  return triggers.map((trigger) => {
     const normalized = normalizeString(trigger, validTriggers);
     return validTriggers.includes(normalized) ? normalized : trigger;
   });
@@ -73,37 +92,65 @@ function normalizeReport(report: AuditReportV1): AuditReportV1 {
     ...report,
     aeo_index: {
       ...report.aeo_index,
-      search_visibility_risk: normalizeRiskLevel(report.aeo_index.search_visibility_risk),
+      search_visibility_risk: normalizeRiskLevel(
+        report.aeo_index.search_visibility_risk,
+      ),
     },
     positioning_sharpness: {
       ...report.positioning_sharpness,
-      band: normalizeBand(report.positioning_sharpness.band, ["dominant", "strong", "blended", "weak", "ghost"]),
+      band: normalizeBand(report.positioning_sharpness.band, [
+        "dominant",
+        "strong",
+        "blended",
+        "weak",
+        "ghost",
+      ]),
     },
     clarity_velocity: {
       ...report.clarity_velocity,
-      band: normalizeBand(report.clarity_velocity.band, ["instant", "clear", "average", "confusing", "opaque"]),
+      band: normalizeBand(report.clarity_velocity.band, [
+        "instant",
+        "clear",
+        "average",
+        "confusing",
+        "opaque",
+      ]),
     },
     momentum_signal: {
       ...report.momentum_signal,
-      band: normalizeBand(report.momentum_signal.band, ["viral", "rising", "stable", "flat", "dead"]),
+      band: normalizeBand(report.momentum_signal.band, [
+        "viral",
+        "rising",
+        "stable",
+        "flat",
+        "dead",
+      ]),
     },
     founder_proof_vault: {
       ...report.founder_proof_vault,
-      evidence_types: normalizeEvidenceTypes(report.founder_proof_vault.evidence_types),
+      evidence_types: normalizeEvidenceTypes(
+        report.founder_proof_vault.evidence_types,
+      ),
     },
-    top_competitors: report.top_competitors.map(comp => ({
+    top_competitors: report.top_competitors.map((comp) => ({
       ...comp,
       threat_level: normalizeThreatLevel(comp.threat_level),
     })),
     overall_assessment: {
       ...report.overall_assessment,
-      category_position: normalizeCategoryPosition(report.overall_assessment.category_position),
-      primary_constraint: normalizeConstraint(report.overall_assessment.primary_constraint),
+      category_position: normalizeCategoryPosition(
+        report.overall_assessment.category_position,
+      ),
+      primary_constraint: normalizeConstraint(
+        report.overall_assessment.primary_constraint,
+      ),
     },
     the_ego_stab: {
       ...report.the_ego_stab,
       triggered_by: normalizeEgoTriggers(report.the_ego_stab.triggered_by),
-      founder_bias_risk: normalizeRiskLevel(report.the_ego_stab.founder_bias_risk),
+      founder_bias_risk: normalizeRiskLevel(
+        report.the_ego_stab.founder_bias_risk,
+      ),
     },
   };
 }
@@ -124,7 +171,7 @@ export async function saveAnalysis({
 
   const reportDoc = await Report.create({
     product: product._id,
-    
+
     // V1 Audit Format Fields (normalized)
     meta: normalizedReport.meta,
     aeo_index: normalizedReport.aeo_index,
@@ -150,7 +197,9 @@ export async function saveAnalysis({
   return reportDoc;
 }
 
-function mapScoreToStatus(score: number): "UNTOUCHABLE" | "LETHAL" | "PLASTIC" | "ZOMBIE" | "GHOST" {
+function mapScoreToStatus(
+  score: number,
+): "UNTOUCHABLE" | "LETHAL" | "PLASTIC" | "ZOMBIE" | "GHOST" {
   if (score >= 90) return "UNTOUCHABLE";
   if (score >= 70) return "LETHAL";
   if (score >= 40) return "PLASTIC";

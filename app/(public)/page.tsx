@@ -96,12 +96,12 @@ const tiers = [
 ];
 
 export default function LaunchRecordLandingPage() {
-  const [email, setEmail] = useState("");
+  const [websiteUrl, setWebsiteUrl] = useState("");
 
-  const handleJoinWaitlist = (e: React.FormEvent) => {
+  const handleStartAudit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (email) {
-      window.location.href = `/survey?email=${encodeURIComponent(email)}`;
+    if (websiteUrl) {
+      window.location.href = `/survey?url=${encodeURIComponent(websiteUrl)}`;
     }
   };
 
@@ -166,14 +166,14 @@ export default function LaunchRecordLandingPage() {
             {/* CTA Section - The "High Status" Entry */}
             <div className="flex flex-col items-center gap-8 max-w-xl mx-auto">
               <form
-                onSubmit={handleJoinWaitlist}
+                onSubmit={handleStartAudit}
                 className="w-full flex flex-col md:flex-row gap-2"
               >
                 <input
-                  type="email"
-                  placeholder="FOUNDER@COMPANY_DOMAIN.COM"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  type="url"
+                  placeholder="www.website_url.com"
+                  value={websiteUrl}
+                  onChange={(e) => setWebsiteUrl(e.target.value)}
                   className="flex-1 px-6 py-4 bg-slate-500 border border-slate-200 text-white rounded-none font-mono focus:border-red-600 focus:ring-0 transition-all outline-none"
                   required
                 />
