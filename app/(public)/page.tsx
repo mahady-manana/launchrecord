@@ -14,7 +14,6 @@ import {
   TrendingUp,
   Zap,
 } from "lucide-react";
-import Link from "next/link";
 import { useState } from "react";
 
 const painkillers = [
@@ -107,7 +106,7 @@ export default function LaunchRecordLandingPage() {
   };
 
   return (
-    <div className="space-y-2 py-10">
+    <div className="space-y-20 py-10">
       {/* Hero Section - SF-1 War Briefing Style */}
       <div className="bg-green-300 text-center flex items-center justify-center gap-4 py-2 text-lg rounded-lg text-green-800">
         <PartyPopper></PartyPopper>
@@ -419,7 +418,7 @@ export default function LaunchRecordLandingPage() {
                       </li>
                     ))}
                   </ul>
-                  <Link href="/survey" className="block">
+                  {/* <Link href="/survey" className="block">
                     <Button
                       className={`w-full h-12 ${
                         tier.featured
@@ -429,7 +428,7 @@ export default function LaunchRecordLandingPage() {
                     >
                       Join Waitlist
                     </Button>
-                  </Link>
+                  </Link> */}
                 </CardContent>
               </Card>
             );
