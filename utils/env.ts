@@ -16,9 +16,6 @@ const envSchema = z.object({
     .optional(),
   STRIPE_DEFAULT_SUBSCRIPTION_PRICE_ID: z.string().optional(),
   STRIPE_API_VERSION: z.string().optional(),
-  NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: z
-    .string()
-    .min(1, "NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY is required"),
   AWS_REGION: z.string().min(1, "S3_REGION is required"),
   AWS_BUCKET_NAME: z.string().min(1, "S3_BUCKET is required"),
   AWS_ACCESS_KEY_ID: z.string().min(1, "S3_ACCESS_KEY_ID is required"),
