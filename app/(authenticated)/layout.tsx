@@ -1,14 +1,10 @@
-import Link from "next/link";
-import { LayoutDashboard, Sparkles, UserSquare2, WalletCards } from "lucide-react";
 import { UserActions } from "@/components/user-actions";
 import { DashboardDataProvider } from "@/providers/dashboard-data-provider";
+import { LayoutDashboard } from "lucide-react";
+import Link from "next/link";
 
 const navItems = [
   { href: "/dashboard", label: "Overview", icon: LayoutDashboard },
-  { href: "/dashboard/features", label: "Features", icon: Sparkles },
-  { href: "/dashboard/users", label: "Users", icon: UserSquare2 },
-  { href: "/dashboard/subscription", label: "Subscription", icon: WalletCards },
-  { href: "/dashboard/payments", label: "Payments", icon: WalletCards },
 ];
 
 export default function AuthenticatedLayout({
@@ -22,9 +18,11 @@ export default function AuthenticatedLayout({
         <aside className="hidden w-56 shrink-0 flex-col gap-6 rounded-3xl border border-border bg-card p-6 lg:flex">
           <div>
             <Link href="/" className="text-lg font-semibold">
-              SaaS Starter
+              LaunchRecord
             </Link>
-            <p className="mt-1 text-xs text-muted-foreground">Dashboard</p>
+            <p className="mt-1 text-xs text-muted-foreground">
+              Founding Member Access
+            </p>
           </div>
           <nav className="flex flex-col gap-2 text-sm">
             {navItems.map((item) => {

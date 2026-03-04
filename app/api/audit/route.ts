@@ -18,7 +18,7 @@ interface SurveyData {
   revenue: string;
   biggestChallenge: string;
   aeoAwareness: string;
-  competitorThreat: string;
+  description: string;
   willingToInvest: string;
 }
 
@@ -31,7 +31,7 @@ FOUNDER SELF-ASSESSMENT SURVEY:
 - Team Size: {{teamSize}}
 - Revenue Stage: {{revenue}}
 - Biggest Challenge: {{challenge}}
-- AI Threat Concern: {{threat}}
+- Product Description : {{description}}
 
 Analyze their positioning, AEO visibility, and competitive moat. Be specific and data-driven. Don't give an emotional reports.`;
 
@@ -95,7 +95,7 @@ export async function POST(request: NextRequest) {
       revenue: "pre-revenue",
       biggestChallenge: "invisible-llms",
       aeoAwareness: "never-heard",
-      competitorThreat: "somewhat-concerned",
+      description: "Not provided",
       willingToInvest: "49-tier",
     };
 
@@ -122,7 +122,7 @@ export async function POST(request: NextRequest) {
         .replace("{{teamSize}}", surveyData.teamSize)
         .replace("{{revenue}}", surveyData.revenue)
         .replace("{{challenge}}", surveyData.biggestChallenge)
-        .replace("{{threat}}", surveyData.competitorThreat);
+        .replace("{{description}}", surveyData.description);
 
       const response = await client.chat.completions.create({
         model: "gpt-4o-mini-search-preview",
@@ -202,10 +202,6 @@ export async function POST(request: NextRequest) {
       product,
       report: auditReport,
     });
-
-    // Update product score
-    product.score = auditReport.overall_assessment.composite_score;
-    await product.save();
 
     return NextResponse.json({
       success: true,

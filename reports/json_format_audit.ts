@@ -20,6 +20,7 @@ Key Rules:
     - Justify the weights briefly in the field weighting_rationale based on your audit findings.
 9. The AI must not hallucinate product metrics; infer only from the provided input (site content, PH metadata, or other explicit data).
 10. Return strictly valid JSON, ready to be parsed automatically — no explanations, no extra output, no text outside the JSON object.
+11. Overall Assessment: composite_score is the average between the 5 categories: AEO, Positioning, Clarity, Momentum and Proof Vault
 
 Here is the JSON format you must follow:
 

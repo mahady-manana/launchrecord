@@ -3,7 +3,6 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
 import {
   AlertCircle,
   ArrowRight,
@@ -28,7 +27,6 @@ interface AnalysisStep {
   title: string;
   description: string;
   icon: React.ReactNode;
-  duration: number;
 }
 
 const analysisSteps: AnalysisStep[] = [
@@ -37,42 +35,36 @@ const analysisSteps: AnalysisStep[] = [
     title: "Analyzing Website Structure",
     description: "Scanning landing page architecture and messaging clarity",
     icon: <Globe className="h-6 w-6" />,
-    duration: 1500,
   },
   {
     id: 2,
     title: "Running Genericity Algorithm",
     description: "Comparing against 10,000+ SaaS positioning patterns",
     icon: <Brain className="h-6 w-6" />,
-    duration: 2000,
   },
   {
     id: 3,
     title: "Simulating Buyer Intent",
     description: "Running 1,000 buyer journey simulations",
     icon: <Target className="h-6 w-6" />,
-    duration: 1800,
   },
   {
     id: 4,
     title: "Computing AEO Pulse",
     description: "Checking visibility across ChatGPT, Claude, Perplexity",
     icon: <BarChart3 className="h-6 w-6" />,
-    duration: 1500,
   },
   {
     id: 5,
     title: "AI Threat Assessment",
     description: "Analyzing competitive threat from AI-native solutions",
     icon: <Cpu className="h-6 w-6" />,
-    duration: 1200,
   },
   {
     id: 6,
     title: "Generating War Briefing",
     description: "Compiling your personalized audit report",
     icon: <LineChart className="h-6 w-6" />,
-    duration: 1000,
   },
 ];
 
@@ -81,8 +73,7 @@ function AuditReportContent() {
   const searchParams = useSearchParams();
   const productId = searchParams.get("product");
   
-  const [currentStep, setCurrentStep] = useState(0);
-  const [progress, setProgress] = useState(0);
+  const [currentStepIndex, setCurrentStepIndex] = useState(0);
   const [report, setReport] = useState<AuditReportV1 | null>(null);
   const [showResults, setShowResults] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -96,26 +87,13 @@ function AuditReportContent() {
       return;
     }
 
-    const runAnalysis = async () => {
-      // Run through analysis steps with animations
-      for (let i = 0; i < analysisSteps.length; i++) {
-        setCurrentStep(i);
-        const step = analysisSteps[i];
-        const stepProgress = ((i + 1) / analysisSteps.length) * 100;
-        
-        // Animate progress within each step
-        const startProgress = progress;
-        const endProgress = stepProgress;
-        const steps = 20;
-        const increment = (endProgress - startProgress) / steps;
-        
-        for (let j = 0; j < steps; j++) {
-          await new Promise((resolve) => setTimeout(resolve, step.duration / steps));
-          setProgress((prev) => Math.min(prev + increment, endProgress));
-        }
-      }
+    // Cycle through analysis steps
+    const stepInterval = setInterval(() => {
+      setCurrentStepIndex((prev) => (prev + 1) % analysisSteps.length);
+    }, 1500);
 
-      // Call the audit API with product ID
+    // Call the audit API
+    const runAnalysis = async () => {
       try {
         const response = await fetch("/api/audit", {
           method: "POST",
@@ -127,28 +105,29 @@ function AuditReportContent() {
 
         if (response.ok) {
           setReport(data.data.analysis);
-          
-          // Final celebration animation
-          await new Promise((resolve) => setTimeout(resolve, 500));
-          setProgress(100);
+          clearInterval(stepInterval);
           setShowResults(true);
         } else if (response.status === 503 && data.retry) {
-          // Capacity error - retry scheduled
+          clearInterval(stepInterval);
           setError(data.error || "System is at capacity");
           setIsRetryScheduled(true);
           if (data.retryAt) {
             setRetryAt(new Date(data.retryAt));
           }
         } else {
+          clearInterval(stepInterval);
           throw new Error(data.error || "Failed to generate audit");
         }
       } catch (error: any) {
+        clearInterval(stepInterval);
         console.error("Error running analysis:", error);
         setError(error.message || "Failed to generate audit report");
       }
     };
 
     runAnalysis();
+
+    return () => clearInterval(stepInterval);
   }, [productId, router]);
 
   // Update countdown timer
@@ -161,7 +140,6 @@ function AuditReportContent() {
       
       if (diff <= 0) {
         setCountdown("Retry available - refreshing...");
-        // Auto refresh when retry time is reached
         window.location.reload();
         return;
       }
@@ -184,7 +162,7 @@ function AuditReportContent() {
           <div className="max-w-md w-full text-center space-y-6">
             <Card className="border-2 border-orange-200">
               <CardContent className="pt-8 space-y-4">
-                <RefreshCcw className="h-16 w-16 text-orange-600 mx-auto animate-pulse" />
+                <Loader2 className="h-16 w-16 text-orange-600 mx-auto animate-spin" />
                 <h2 className="text-2xl font-bold text-foreground">
                   Audit Scheduled for Retry
                 </h2>
@@ -236,9 +214,11 @@ function AuditReportContent() {
     return <EarlyDashboard report={report} />;
   }
 
+  const currentStep = analysisSteps[currentStepIndex];
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-orange-50 to-white flex flex-col items-center justify-center p-4">
-      <div className="max-w-3xl w-full space-y-8">
+      <div className="max-w-2xl w-full space-y-8">
         {/* Header */}
         <div className="text-center space-y-4">
           <Badge className="bg-orange-600 hover:bg-orange-700 animate-pulse">
@@ -253,90 +233,89 @@ function AuditReportContent() {
           </p>
         </div>
 
-        {/* Main Progress Card */}
+        {/* Loading Indicator */}
         <Card className="border-2 border-orange-200 bg-gradient-to-br from-orange-50 to-white shadow-xl">
-          <CardContent className="pt-8 space-y-6">
-            {/* Overall Progress */}
-            <div className="space-y-4">
-              <div className="flex justify-between items-center">
-                <span className="text-sm font-medium text-foreground">
-                  Analysis Progress
-                </span>
-                <span className="text-sm font-bold text-orange-600">
-                  {Math.round(progress)}%
-                </span>
+          <CardContent className="pt-12 pb-8">
+            <div className="flex justify-center mb-8">
+              <div className="relative">
+                <div className="w-24 h-24 border-4 border-orange-200 rounded-full"></div>
+                <div className="absolute top-0 left-0 w-24 h-24 border-4 border-orange-600 rounded-full border-t-transparent animate-spin"></div>
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <div className="w-12 h-12 bg-orange-600 rounded-full animate-pulse"></div>
+                </div>
               </div>
-              <Progress value={progress} className="h-3" />
             </div>
-
-            {/* Current Step Indicator */}
-            <div className="relative">
-              <div className="absolute left-6 top-0 bottom-0 w-0.5 bg-gradient-to-b from-orange-600 via-orange-400 to-border" />
-              <div className="space-y-6 relative">
-                {analysisSteps.map((step, index) => {
-                  const isCompleted = index < currentStep;
-                  const isCurrent = index === currentStep;
-                  const isPending = index > currentStep;
-
-                  return (
-                    <div
-                      key={step.id}
-                      className={`flex items-start gap-4 transition-all duration-500 ${
-                        isPending ? "opacity-40" : "opacity-100"
-                      }`}
-                    >
-                      <div
-                        className={`relative z-10 w-12 h-12 rounded-full flex items-center justify-center border-2 transition-all duration-500 ${
-                          isCompleted
-                            ? "bg-green-600 border-green-600 text-white"
-                            : isCurrent
-                            ? "bg-orange-600 border-orange-600 text-white animate-pulse"
-                            : "bg-white border-border text-muted-foreground"
-                        }`}
-                      >
-                        {isCompleted ? (
-                          <CheckCircle className="h-5 w-5" />
-                        ) : (
-                          step.icon
-                        )}
-                      </div>
-                      <div className="flex-1 pt-2">
-                        <div
-                          className={`font-semibold transition-all duration-300 ${
-                            isCurrent
-                              ? "text-orange-600 text-lg"
-                              : isCompleted
-                              ? "text-green-600"
-                              : "text-muted-foreground"
-                          }`}
-                        >
-                          {step.title}
-                        </div>
-                        <div
-                          className={`text-sm transition-all duration-300 ${
-                            isCurrent
-                              ? "text-foreground"
-                              : "text-muted-foreground"
-                          }`}
-                        >
-                          {step.description}
-                        </div>
-                        {isCurrent && (
-                          <div className="flex items-center gap-2 mt-2">
-                            <Loader2 className="h-4 w-4 animate-spin text-orange-600" />
-                            <span className="text-xs text-orange-600">
-                              In progress...
-                            </span>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  );
-                })}
+            
+            {/* Current Step */}
+            <div className="text-center space-y-2">
+              <div className="flex justify-center mb-4">
+                <div className="w-16 h-16 rounded-full bg-orange-600 text-white flex items-center justify-center animate-pulse">
+                  {currentStep.icon}
+                </div>
               </div>
+              <h3 className="text-xl font-semibold text-orange-600">
+                {currentStep.title}
+              </h3>
+              <p className="text-muted-foreground">
+                {currentStep.description}
+              </p>
             </div>
           </CardContent>
         </Card>
+
+        {/* All Steps Indicator */}
+        <div className="space-y-3">
+          {analysisSteps.map((step, index) => {
+            const isActive = index === currentStepIndex;
+            const isCompleted = index < currentStepIndex || (index === 0 && currentStepIndex === analysisSteps.length - 1);
+            
+            return (
+              <Card 
+                key={step.id}
+                className={`transition-all duration-500 ${
+                  isActive 
+                    ? "border-orange-600 bg-orange-50 shadow-md" 
+                    : isCompleted
+                    ? "border-green-600 bg-green-50"
+                    : "border-border opacity-50"
+                }`}
+              >
+                <CardContent className="py-4">
+                  <div className="flex items-center gap-4">
+                    <div
+                      className={`w-10 h-10 rounded-full flex items-center justify-center border-2 transition-all ${
+                        isActive
+                          ? "bg-orange-600 border-orange-600 text-white animate-pulse"
+                          : isCompleted
+                          ? "bg-green-600 border-green-600 text-white"
+                          : "bg-white border-border text-muted-foreground"
+                      }`}
+                    >
+                      {isCompleted ? (
+                        <CheckCircle className="h-5 w-5" />
+                      ) : (
+                        step.icon
+                      )}
+                    </div>
+                    <div className="flex-1">
+                      <div className={`font-semibold ${
+                        isActive ? "text-orange-600" : isCompleted ? "text-green-600" : "text-muted-foreground"
+                      }`}>
+                        {step.title}
+                      </div>
+                      <div className="text-sm text-muted-foreground">
+                        {step.description}
+                      </div>
+                    </div>
+                    {isActive && (
+                      <Loader2 className="h-5 w-5 animate-spin text-orange-600" />
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+            );
+          })}
+        </div>
 
         {/* Live Stats */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -366,19 +345,12 @@ function AuditReportContent() {
           </Card>
           <Card className="bg-white/50 backdrop-blur">
             <CardContent className="pt-6 text-center">
-              <div className="text-2xl font-bold text-orange-600">~8s</div>
+              <div className="text-2xl font-bold text-orange-600">~10s</div>
               <div className="text-xs text-muted-foreground mt-1">
                 Total Time
               </div>
             </CardContent>
           </Card>
-        </div>
-
-        {/* Friendly message */}
-        <div className="text-center text-muted-foreground pt-4">
-          <p className="text-sm">
-            ☕ Grab a coffee - this deep analysis takes about 10 seconds
-          </p>
         </div>
       </div>
     </div>

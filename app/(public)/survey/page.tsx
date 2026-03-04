@@ -30,10 +30,113 @@ interface SurveyAnswers {
   revenue: string;
   biggestChallenge: string;
   aeoAwareness: string;
-  competitorThreat: string;
+  description: string;
   willingToInvest: string;
 }
 
+const questions = [
+  {
+    title: "Who are you ?",
+    key: "founderName",
+    type: "text",
+    description: "Your name for the War Briefing",
+    placeholder: "e.g., John Smith",
+  },
+  {
+    title: "Startup / SaaS Name",
+    key: "saasName",
+    type: "text",
+    description: "The product we'll analyze for insights",
+    placeholder: "e.g., Acme Analytics",
+  },
+  {
+    title: "Product Description",
+    key: "description",
+    type: "textarea",
+    description: "What does your product do?",
+    placeholder: "Describe your product...",
+  },
+  {
+    title: "Your Role",
+    key: "role",
+    type: "radio",
+    description: "Where do you sit in the company?",
+    options: [
+      { value: "solo-founder", label: "👤 Solo Founder" },
+      { value: "co-founder-ceo", label: "👔 CEO" },
+      { value: "co-founder-cto", label: "⚙️ CTO" },
+      { value: "co-founder-product", label: "📦 Product" },
+      { value: "founder-other", label: "🎯 Other" },
+    ],
+  },
+
+  {
+    title: "Team Size",
+    key: "teamSize",
+    type: "radio",
+    description: "Full-time employees (including founders)",
+    options: [
+      { value: "just-me", label: "👤 Just me" },
+      { value: "2-5", label: "👥 2-5 people" },
+      { value: "6-15", label: "🏢 6-15 people" },
+      { value: "16-50", label: "🏭 16-50 people" },
+      { value: "50+", label: "🏢 50+ people" },
+    ],
+  },
+  {
+    title: "Monthly Revenue (MRR)",
+    key: "revenue",
+    type: "radio",
+    description: "Be honest — this stays private",
+    options: [
+      { value: "pre-revenue", label: "💸 Pre-revenue" },
+      { value: "0-5k", label: "📈 $0-$5K" },
+      { value: "5k-20k", label: "📈 $5K-$20K" },
+      { value: "20k-50k", label: "📈 $20K-$50K" },
+      { value: "50k+", label: "📈 $50K+" },
+    ],
+  },
+  {
+    title: "Biggest Challenge",
+    key: "biggestChallenge",
+    type: "radio",
+    description: "What keeps you up at night?",
+    options: [
+      { value: "visibility", label: "🔍 Hard to get noticed" },
+      { value: "positioning", label: "⚠️ Positioning / messaging" },
+      { value: "competition", label: "🎯 Competitors copying" },
+      { value: "ai-risk", label: "😰 AI could replace me" },
+    ],
+  },
+  {
+    title: "AEO Awareness",
+    key: "aeoAwareness",
+    type: "radio",
+    description: "Have you heard of Answer Engine Optimization?",
+    options: [
+      { value: "never-heard", label: "❌ Never heard of it" },
+      {
+        value: "heard-but-not-tracking",
+        label: "🤔 Heard of it, not tracking",
+      },
+      { value: "tracking-manually", label: "📊 Tracking manually" },
+      { value: "using-tools", label: "🛠️ Using tools" },
+    ],
+  },
+
+  {
+    title: "Investment Willingness",
+    key: "willingToInvest",
+    type: "radio",
+    description: "What would you invest to become irreplaceable?",
+    options: [
+      { value: "49-tier", label: "💰 $49/mo (AEO Tracker + War Briefing)" },
+      { value: "99-tier", label: "💰💰 $99/mo (+ Founder Proof Vault)" },
+      { value: "299-tier", label: "💰💰💰 $299/mo (+ Strategy Calls)" },
+      { value: "need-more-info", label: "🤔 Need to see more" },
+    ],
+  },
+];
 function LaunchRecordSurveyContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -51,7 +154,7 @@ function LaunchRecordSurveyContent() {
     revenue: "",
     biggestChallenge: "",
     aeoAwareness: "",
-    competitorThreat: "",
+    description: "",
     willingToInvest: "",
   });
 
@@ -69,7 +172,7 @@ function LaunchRecordSurveyContent() {
         revenue: "",
         biggestChallenge: "",
         aeoAwareness: "",
-        competitorThreat: "",
+        description: "",
         willingToInvest: "",
       };
       setAnswers(initialData);
@@ -100,13 +203,13 @@ function LaunchRecordSurveyContent() {
                     router.push(`/survey/audit?product=${data.productId}`);
                   } else {
                     // No audit yet, continue with survey
-                    setStep(1);
+                    setStep(0);
                   }
                 })
-                .catch(() => setStep(1));
+                .catch(() => setStep(0));
             } else {
               // New product, continue with survey
-              setStep(1);
+              setStep(0);
             }
           }
         })
@@ -116,113 +219,6 @@ function LaunchRecordSurveyContent() {
         });
     }
   }, []);
-
-  const questions = [
-    {
-      title: "Founder Name",
-      key: "founderName",
-      type: "text",
-      description: "Your name for the War Briefing",
-      placeholder: "e.g., John Smith",
-    },
-    {
-      title: "Startup / SaaS Name",
-      key: "saasName",
-      type: "text",
-      description: "The product we'll analyze for insights",
-      placeholder: "e.g., Acme Analytics",
-    },
-    {
-      title: "Your Role",
-      key: "role",
-      type: "radio",
-      description: "Where do you sit in the company?",
-      options: [
-        { value: "solo-founder", label: "👤 Solo Founder" },
-        { value: "co-founder-ceo", label: "👔 CEO" },
-        { value: "co-founder-cto", label: "⚙️ CTO" },
-        { value: "co-founder-product", label: "📦 Product" },
-        { value: "founder-other", label: "🎯 Other" },
-      ],
-    },
-    {
-      title: "Team Size",
-      key: "teamSize",
-      type: "radio",
-      description: "Full-time employees (including founders)",
-      options: [
-        { value: "just-me", label: "👤 Just me" },
-        { value: "2-5", label: "👥 2-5 people" },
-        { value: "6-15", label: "🏢 6-15 people" },
-        { value: "16-50", label: "🏭 16-50 people" },
-        { value: "50+", label: "🏢 50+ people" },
-      ],
-    },
-    {
-      title: "Monthly Revenue (MRR)",
-      key: "revenue",
-      type: "radio",
-      description: "Be honest — this stays private",
-      options: [
-        { value: "pre-revenue", label: "💸 Pre-revenue" },
-        { value: "0-5k", label: "📈 $0-$5K" },
-        { value: "5k-20k", label: "📈 $5K-$20K" },
-        { value: "20k-50k", label: "📈 $20K-$50K" },
-        { value: "50k+", label: "📈 $50K+" },
-      ],
-    },
-    {
-      title: "Biggest Challenge",
-      key: "biggestChallenge",
-      type: "radio",
-      description: "What keeps you up at night?",
-      options: [
-        { value: "visibility", label: "🔍 Hard to get noticed" },
-        { value: "positioning", label: "⚠️ Positioning / messaging" },
-        { value: "competition", label: "🎯 Competitors copying" },
-        { value: "ai-risk", label: "😰 AI could replace me" },
-      ],
-    },
-    {
-      title: "AEO Awareness",
-      key: "aeoAwareness",
-      type: "radio",
-      description: "Have you heard of Answer Engine Optimization?",
-      options: [
-        { value: "never-heard", label: "❌ Never heard of it" },
-        {
-          value: "heard-but-not-tracking",
-          label: "🤔 Heard of it, not tracking",
-        },
-        { value: "tracking-manually", label: "📊 Tracking manually" },
-        { value: "using-tools", label: "🛠️ Using tools" },
-      ],
-    },
-    {
-      title: "AI Threat Concern",
-      key: "competitorThreat",
-      type: "radio",
-      description: "How threatened do you feel by AI companies?",
-      options: [
-        { value: "not-worried", label: "😌 Not worried" },
-        { value: "somewhat-concerned", label: "😐 Somewhat concerned" },
-        { value: "very-concerned", label: "😰 Very concerned" },
-        { value: "existential-threat", label: "🚨 Existential threat" },
-      ],
-    },
-    {
-      title: "Investment Willingness",
-      key: "willingToInvest",
-      type: "radio",
-      description: "What would you invest to become irreplaceable?",
-      options: [
-        { value: "49-tier", label: "💰 $49/mo (AEO Tracker + War Briefing)" },
-        { value: "99-tier", label: "💰💰 $99/mo (+ Founder Proof Vault)" },
-        { value: "299-tier", label: "💰💰💰 $299/mo (+ Strategy Calls)" },
-        { value: "need-more-info", label: "🤔 Need to see more" },
-      ],
-    },
-  ];
 
   const currentQuestion = questions[step];
   const isAnswered = answers[currentQuestion.key as keyof SurveyAnswers];
@@ -259,7 +255,9 @@ function LaunchRecordSurveyContent() {
     }
   };
 
-  const handleTextChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleTextChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
     handleAnswer(e.target.value);
   };
 
@@ -601,6 +599,26 @@ function LaunchRecordSurveyContent() {
             )}
           </CardHeader>
           <CardContent className="space-y-6">
+            {currentQuestion.type === "textarea" ? (
+              <textarea
+                placeholder={
+                  (currentQuestion as any).placeholder || "Enter your answer"
+                }
+                value={
+                  answers[currentQuestion.key as keyof SurveyAnswers] || ""
+                }
+                name={currentQuestion.key}
+                onChange={handleTextChange}
+                onKeyDown={(e) =>
+                  handleKeyDown(
+                    e,
+                    answers[currentQuestion.key as keyof SurveyAnswers],
+                  )
+                }
+                className="w-full px-4 py-3 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-600 text-base"
+                autoFocus
+              />
+            ) : null}
             {currentQuestion.type === "text" ||
             currentQuestion.type === "url" ? (
               <input

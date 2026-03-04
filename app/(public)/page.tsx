@@ -8,6 +8,7 @@ import {
   AlertCircle,
   Award,
   CheckCircle,
+  PartyPopper,
   Shield,
   Target,
   TrendingUp,
@@ -106,8 +107,12 @@ export default function LaunchRecordLandingPage() {
   };
 
   return (
-    <div className="space-y-24 pb-20">
+    <div className="space-y-2 py-10">
       {/* Hero Section - SF-1 War Briefing Style */}
+      <div className="bg-green-300 text-center flex items-center justify-center gap-4 py-2 text-lg rounded-lg text-green-800">
+        <PartyPopper></PartyPopper>
+        <p className="font-bold">Whitelist is open for Sovereign Founders</p>
+      </div>
       <section className="relative overflow-hidden bg-slate-900 rounded-xl py-20 px-6 border-b border-slate-800">
         {/* The "Judge" Background Element */}
 
@@ -186,12 +191,10 @@ export default function LaunchRecordLandingPage() {
               </form>
 
               <div className="flex flex-col items-center gap-2">
-                <div className="flex items-center gap-4 text-[10px] font-mono text-slate-600 uppercase tracking-[0.3em]">
-                  <span>LaunchRecord.com</span>
-                  <span className="text-slate-800">|</span>
-                  <span>Verified Defensibility Ledger</span>
+                <div className="flex items-center gap-4 text-[10px] font-mono text-slate-300 uppercase tracking-[0.3em]">
+                  <span>The #1 Platform For Verified Defensibility Ledger</span>
                 </div>
-                <p className="text-[10px] text-slate-700 italic">
+                <p className="rounded-md px-4 bg-green-200 text-green-800 py-1">
                   Limited to 100 Sovereign Founders for March 2026
                 </p>
               </div>

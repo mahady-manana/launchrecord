@@ -122,7 +122,7 @@ export const format_audit_v1 = `{
   ],
 
   "overall_assessment": {
-    "composite_score": "0-100",
+    "composite_score": "<0-100> = Average score of AEO, Positioning, Clarity, Momentum and Proof Vault",
     "category_position": "leader | challenger | replicable | invisible",
     "biggest_leverage_point": "<20 words>",
     "primary_constraint": "authority | positioning | clarity | momentum | proof",
