@@ -69,12 +69,6 @@ export default function PublicLayout({
           >
             Leaderboard
           </Link>
-          <Link
-            href="/login"
-            className="font-bold text p-1 bg-primary text-primary-foreground rounded-xl px-4"
-          >
-            Login
-          </Link>
         </nav>
       </header>
       <main className="mx-auto w-full max-w-6xl px-6 pb-20">{children}</main>
