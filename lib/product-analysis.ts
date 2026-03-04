@@ -1,5 +1,4 @@
 import { getOpenAIClient } from "@/lib/openai";
-import { getProductStatus } from "@/lib/product-status";
 import type { IProduct } from "@/models/product";
 import { promptMasterGeneralAnalyze } from "@/reports/prompt";
 import type { AuditReportV1 } from "@/types/audit-report-v1";
@@ -98,14 +97,6 @@ export async function analyzeProduct(
       { role: "system", content: promptMasterGeneralAnalyze },
       { role: "user", content: userPrompt },
     ],
-    temperature: 0.7,
-    response_format: { type: "json_object" },
-    tools: [
-      {
-        type: "web_search",
-      },
-    ],
-    tool_choice: "auto",
   });
 
   const content = response.choices[0]?.message?.content;

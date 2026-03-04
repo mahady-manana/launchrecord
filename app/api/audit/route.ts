@@ -85,7 +85,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Get survey data from product
-    const surveyData: SurveyData = product.surveyData || {
+    const surveyData = product.surveyData || {
       email: "",
       founderName: product.name || "Unknown",
       saasName: product.name || "Unknown",

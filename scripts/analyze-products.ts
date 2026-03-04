@@ -6,12 +6,11 @@
  * and stores the results as Report documents.
  */
 
-import mongoose from "mongoose";
 import { connectToDatabase } from "@/lib/db";
+import { analyzeProduct } from "@/lib/product-analysis";
 import Product from "@/models/product";
 import Report from "@/models/report";
-import { analyzeProduct } from "@/lib/product-analysis";
-import { saveAnalysis } from "@/lib/analysis-service";
+import mongoose from "mongoose";
 
 interface AnalyzeOptions {
   limit?: number;
@@ -74,14 +73,14 @@ async function analyzeProducts(options: AnalyzeOptions = {}) {
         const analysis = await analyzeProduct(product);
 
         // Save to database
-        const report = await saveAnalysis({
-          product,
-          analysis,
-        });
+        // const report = await saveAnalysis({
+        //   product,
+        //   analysis,
+        // });
 
-        console.log(
-          `  ✓ Score: ${analysis.overallScore}/100 (${analysis.status})`,
-        );
+        // console.log(
+        //   `  ✓ Score: ${analysis.overallScore}/100 (${analysis.status})`,
+        // );
         success++;
       } catch (error) {
         console.error(

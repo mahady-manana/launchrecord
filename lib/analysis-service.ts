@@ -87,7 +87,7 @@ function normalizeEgoTriggers(triggers: string[]): string[] {
 }
 
 // Normalize the entire report before saving
-function normalizeReport(report: AuditReportV1): AuditReportV1 {
+function normalizeReport(report: AuditReportV1) {
   return {
     ...report,
     aeo_index: {
@@ -187,14 +187,14 @@ export async function saveAnalysis({
     // Legacy fields for backward compatibility
     overallScore,
     status,
-    rawAnalysis: rawResponse || null,
+    rawAnalysis: (rawResponse as unknown as any) || null,
   });
 
   // Update product score
   product.score = overallScore;
   await product.save();
 
-  return reportDoc;
+  return reportDoc as any;
 }
 
 function mapScoreToStatus(
@@ -216,7 +216,7 @@ export async function getProductAnalysis(
     .sort({ createdAt: -1 })
     .populate("product");
 
-  return report;
+  return report as any;
 }
 
 export async function getProductAnalysisHistory(
@@ -228,7 +228,7 @@ export async function getProductAnalysisHistory(
     .sort({ createdAt: -1 })
     .populate("product");
 
-  return reports;
+  return reports as any;
 }
 
 export async function getRecentAnalyses(limit: number = 10): Promise<Report[]> {
@@ -239,5 +239,5 @@ export async function getRecentAnalyses(limit: number = 10): Promise<Report[]> {
     .limit(limit)
     .populate("product");
 
-  return reports;
+  return reports as any;
 }
