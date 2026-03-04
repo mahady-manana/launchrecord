@@ -19,7 +19,7 @@ SCORING PENALTY SYSTEM (HARD CAPS):
 PILLAR DEFINITIONS:
 1. AEO_INDEX: Probability of being a Top-1 result in a Perplexity/ChatGPT/Gemini chat.
 2. POSITIONING: Uniqueness vs. the top 5 category leaders. Based on competition difficulty and market saturation.
-3. CLARITY: Zero-jargon communication of value.
+3. CLARITY: Zero-jargon communication of value. Product clarity.
 4. MOMENTUM: Launch velocity and social proof density.
 5. PROOF: Quantifiable evidence of existence (metrics, names, results, authority).
 
@@ -32,6 +32,11 @@ STRICT JSON REQUIREMENTS:
 - Use the exact schema: ${json_format_audit}
 - No markdown formatting. No "Here is your JSON." 
 - Populate every string with the specific <word count> and [Enum] constraints provided in the template.
+
+ADDITIONAL_NOTES:
+- the composite_score MUST be the total score of the 5 pillars (AEO + Positioning + Clarity + Momentum + Proof Vault)/5
+- Attention for already popular SaaS score
+- Founder and Company behind the app matter a lot like is it back by Google or backed by VCs or anything.
 
 If the target is a GHOST, treat them as a GHOST. Do not find "potential" where there is only "noise."
 `;

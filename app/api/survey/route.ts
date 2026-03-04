@@ -1,22 +1,7 @@
-import { NextRequest, NextResponse } from "next/server";
 import { connectToDatabase } from "@/lib/db";
 import Product from "@/models/product";
-
-// Normalize URL - remove trailing slashes and ensure consistent format
-function normalizeUrl(url: string): string {
-  let normalized = url.trim().toLowerCase();
-  
-  // Remove trailing slashes (but keep path slashes)
-  normalized = normalized.replace(/\/+$/, "");
-  
-  // Remove protocol if present
-  normalized = normalized.replace(/^https?:\/\//, "");
-  
-  // Remove www. for consistency
-  normalized = normalized.replace(/^www\./, "");
-  
-  return normalized;
-}
+import { NextRequest, NextResponse } from "next/server";
+import normalizeUrl from "normalize-url";
 
 export async function POST(request: NextRequest) {
   try {
@@ -29,21 +14,14 @@ export async function POST(request: NextRequest) {
     if (!saasName || !saasUrl) {
       return NextResponse.json(
         { error: "Product name and URL are required" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
-    // Normalize the URL
     const normalizedUrl = normalizeUrl(saasUrl);
-    
-    // Extract just the domain (before any path) for duplicate checking
-    const domainPart = normalizedUrl.split('/')[0];
-    
     // Check if product with this domain already exists
     const existingProduct = await Product.findOne({
-      website: {
-        $regex: new RegExp('^' + domainPart.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "i"),
-      },
+      website: normalizedUrl,
     });
 
     if (existingProduct) {
@@ -83,7 +61,7 @@ export async function POST(request: NextRequest) {
     console.error("Survey API error:", error);
     return NextResponse.json(
       { error: "Failed to start survey" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

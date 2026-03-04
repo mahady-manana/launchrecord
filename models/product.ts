@@ -15,6 +15,7 @@ export interface IProduct extends Document {
   score?: number | null;
   earlyAccess?: boolean;
   earlyAccessGrantedAt?: Date | null;
+  addedByAdmin?: boolean;
   surveyData?: Record<string, any> | null;
   createdAt: Date;
   updatedAt: Date;
@@ -84,6 +85,10 @@ const ProductSchema = new Schema<IProduct>(
     earlyAccessGrantedAt: {
       type: Date,
       default: null,
+    },
+    addedByAdmin: {
+      type: Boolean,
+      default: false,
     },
     surveyData: {
       type: Schema.Types.Mixed,

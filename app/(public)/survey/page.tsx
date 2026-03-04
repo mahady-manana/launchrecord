@@ -141,10 +141,12 @@ function LaunchRecordSurveyContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [step, setStep] = useState(0);
+
   const [isLoading, setIsLoading] = useState(false);
   const [productId, setProductId] = useState<string | null>(null);
   const [showEmailStep, setShowEmailStep] = useState(false);
   const [email, setEmail] = useState("");
+  const initialURL = searchParams.get("url");
   const [answers, setAnswers] = useState<SurveyAnswers>({
     founderName: "",
     saasName: "",
@@ -221,7 +223,8 @@ function LaunchRecordSurveyContent() {
   }, []);
 
   const currentQuestion = questions[step];
-  const isAnswered = answers[currentQuestion.key as keyof SurveyAnswers];
+  const isAnswered =
+    step >= 0 ? answers[currentQuestion.key as keyof SurveyAnswers] : true;
   const canContinue = Boolean(isAnswered);
 
   // Save progress to DB on every answer
@@ -250,9 +253,6 @@ function LaunchRecordSurveyContent() {
     setAnswers(updated);
 
     // Save progress after each answer
-    if (productId) {
-      saveProgress(updated);
-    }
   };
 
   const handleTextChange = (
@@ -268,9 +268,16 @@ function LaunchRecordSurveyContent() {
       // Show email step before generating report
       setShowEmailStep(true);
     }
+    if (productId) {
+      saveProgress(answers);
+    }
   };
 
   const handlePrev = () => {
+    if (step === 0) {
+      setStep(-1);
+      return;
+    }
     if (showEmailStep) {
       setShowEmailStep(false);
     } else if (step > 0) {
@@ -281,17 +288,27 @@ function LaunchRecordSurveyContent() {
   // Initial survey submission - creates product and user
   const handleInitialSubmit = async () => {
     setIsLoading(true);
+    if (productId) {
+      saveProgress({ ...answers });
+      setIsLoading(false);
+      setStep(0);
+      return;
+    }
     try {
       const response = await fetch("/api/survey", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          ...answers,
-          email: "", // Email will be added later
+          saasName: "Unknown",
+          saasUrl: answers.saasUrl,
+          founderName: "",
         }),
       });
 
-      if (!response.ok) throw new Error("Survey submission failed");
+      if (!response.ok) {
+        setIsLoading(false);
+        throw new Error("Survey submission failed");
+      }
 
       const data = await response.json();
       setProductId(data.productId);
@@ -306,6 +323,7 @@ function LaunchRecordSurveyContent() {
 
         if (auditData.success && auditData.data?.existing) {
           // Audit exists, redirect directly
+          setIsLoading(false);
           router.push(`/survey/audit?product=${data.productId}`);
           return;
         }
@@ -313,12 +331,14 @@ function LaunchRecordSurveyContent() {
 
       // Save initial answers
       await saveProgress(answers);
-
+      setIsLoading(false);
       // Move to next step
-      setStep(step + 1);
+      setStep(0);
     } catch (error) {
       console.error("Error submitting survey:", error);
       alert("Error submitting survey. Please try again.");
+      setIsLoading(false);
+    } finally {
       setIsLoading(false);
     }
   };
@@ -461,17 +481,17 @@ function LaunchRecordSurveyContent() {
   }
 
   // Show initial hero with website URL on first step (only if no URL provided)
-  if (step === 0 && !productId && !answers.saasUrl) {
+  if (step === -1 || (step === 0 && !initialURL && !productId)) {
     return (
       <div className="min-h-screen bg-gradient-to-b from-orange-50 to-white py-12 px-4">
         <div className="max-w-2xl mx-auto text-center space-y-8">
           <div className="space-y-4">
-            <h1 className="text-5xl font-bold text-foreground">
-              Get Your Free SaaS Audit Report
+            <h1 className="text-4xl font-bold text-foreground">
+              Get your SIO-V5 Audit Report
             </h1>
             <p className="text-xl text-muted-foreground">
-              Discover your positioning weaknesses, AEO visibility, and how to
-              become irreplaceable
+              Discover your positioning weaknesses, AEO visibility, Product
+              Clarity and how to become irreplaceable
             </p>
           </div>
 
@@ -520,13 +540,8 @@ function LaunchRecordSurveyContent() {
                 ) : (
                   <CheckCircle className="mr-2 h-5 w-5" />
                 )}
-                Start Free Audit
+                Start SIO-V5 Audit
               </Button>
-
-              <p className="text-sm text-muted-foreground">
-                ✅ No email required to start • ✅ 100% free • ✅ Instant
-                insights
-              </p>
             </CardContent>
           </Card>
 
@@ -664,7 +679,6 @@ function LaunchRecordSurveyContent() {
             <div className="flex gap-4 pt-6 border-t border-border">
               <Button
                 onClick={handlePrev}
-                disabled={step === 0}
                 variant="outline"
                 className="flex-1 h-12"
               >

@@ -1,5 +1,6 @@
 "use client";
 
+import { LandingLeaderboard } from "@/components/LandingLeaderboard";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -108,11 +109,11 @@ export default function LaunchRecordLandingPage() {
   return (
     <div className="space-y-20 py-10">
       {/* Hero Section - SF-1 War Briefing Style */}
-      <div className="bg-green-300 text-center flex items-center justify-center gap-4 py-2 text-lg rounded-lg text-green-800">
-        <PartyPopper></PartyPopper>
-        <p className="font-bold">Whitelist is open for Sovereign Founders</p>
-      </div>
-      <section className="relative overflow-hidden bg-slate-900 rounded-xl py-20 px-6 border-b border-slate-800">
+      <section className="relative overflow-hidden bg-slate-900 rounded-xl pb-20 pt-8 px-6 border-b border-slate-800">
+        <div className="bg-green-300 mb-4 text-center max-w-lg mx-auto flex items-center justify-center gap-4 py-2 text-lg rounded-lg text-green-800">
+          <PartyPopper></PartyPopper>
+          <p className="font-bold">Whitelist is open for Sovereign Founders</p>
+        </div>
         {/* The "Judge" Background Element */}
 
         <div className="max-w-5xl mx-auto space-y-12 relative z-10">
@@ -123,7 +124,7 @@ export default function LaunchRecordLandingPage() {
                 variant="outline"
                 className="font-mono text-xs tracking-[0.2em] uppercase py-1.5 px-6 border-red-500/50 text-red-500 bg-red-500/5 animate-pulse rounded-none"
               >
-                ● SYSTEM_ACTIVE: AUDITING 42 ACTIVE RECORDS
+                ● SIO-V5 Engine ACTIVE: AUDITING 42 ACTIVE RECORDS
               </Badge>
 
               {/* The Pain-Inflicting Headline */}
@@ -199,9 +200,13 @@ export default function LaunchRecordLandingPage() {
               </div>
             </div>
           </div>
-
-          <WarBriefingPreview />
         </div>
+      </section>
+      <section>
+        <LandingLeaderboard />
+      </section>
+      <section>
+        <WarBriefingPreview />
       </section>
       <section className="bg-slate-950 py-24 rounded-xl text-white px-6 border-t border-slate-900">
         <div className="max-w-4xl mx-auto">
@@ -477,6 +482,8 @@ export default function LaunchRecordLandingPage() {
           ))}
         </div>
       </section>
+
+      {/* Leaderboard Section */}
 
       {/* Social Proof */}
       <section className="text-center space-y-6 py-12 border-t border-border">

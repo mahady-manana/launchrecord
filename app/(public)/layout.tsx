@@ -43,7 +43,7 @@ export default function PublicLayout({
 }>) {
   return (
     <div className="min-h-screen bg-background text-foreground">
-      <header className="mx-auto flex w-full max-w-6xl items-center justify-center px-6 py-6">
+      <header className="mx-auto flex w-full max-w-6xl gap-4 items-end justify-between px-6 py-6">
         <Link href="/" className="flex items-end gap-2">
           <Image
             src="/logo.svg"
@@ -56,14 +56,26 @@ export default function PublicLayout({
             Launch <span className="text-primary"> Record</span>
           </span>
         </Link>
-        {/* <nav className="flex items-center gap-3">
-          <Button asChild variant="ghost">
-            <Link href="/login">Login</Link>
-          </Button>
-          <Button asChild>
-            <Link href="/survey">Join Waitlist</Link>
-          </Button>
-        </nav> */}
+        <nav className="flex items-center gap-3">
+          <Link
+            href="/sio-v5-engine"
+            className="font-bold text p-1 bg-primary/20 text-primary rounded-xl px-4"
+          >
+            SIO-V5 Engine
+          </Link>
+          <Link
+            href="/leaderboard"
+            className="font-bold text p-1 bg-slate-200 text-slate-800 rounded-xl px-4"
+          >
+            Leaderboard
+          </Link>
+          <Link
+            href="/login"
+            className="font-bold text p-1 bg-primary text-primary-foreground rounded-xl px-4"
+          >
+            Login
+          </Link>
+        </nav>
       </header>
       <main className="mx-auto w-full max-w-6xl px-6 pb-20">{children}</main>
       <footer className="mx-auto w-full max-w-6xl px-6 py-10 text-center text-sm text-muted-foreground">

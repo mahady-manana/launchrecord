@@ -156,7 +156,7 @@ export function WarBriefingPreview({
         <div className="flex flex-col md:flex-row justify-between items-start gap-6 border-b border-slate-800 pb-10">
           <div className="space-y-2">
             <h3 className="text-3xl font-black uppercase tracking-tighter italic">
-              SF-1 War Briefing: {saasName}
+              SIO-V5 War Briefing: {saasName}
             </h3>
             <p className="font-mono text-xs text-slate-500 uppercase tracking-widest">
               Global Sovereign Rank: #{rank.toLocaleString()} (▼ {rankDrop}{" "}

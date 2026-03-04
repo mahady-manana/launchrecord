@@ -2,8 +2,10 @@ import { Toaster } from "@/components/ui/toaster";
 import { AuthProvider } from "@/providers/auth-provider";
 import { DataInitializer } from "@/providers/data-initializer";
 import { ThemeProvider } from "@/providers/theme-provider";
+import { GoogleAnalytics } from "@next/third-parties/google";
 import type { Metadata } from "next";
 import { Belanosima, Space_Grotesk } from "next/font/google";
+
 import "./globals.css";
 
 const spaceGrotesk = Space_Grotesk({
@@ -60,6 +62,9 @@ export const metadata: Metadata = {
     description: "Stop Being a Commodity. Become a Category King.",
     images: ["/og-image.png"],
   },
+  verification: {
+    google: "3rLc979DsxiLVvTXtkcmU2TS3rqC1mqgWcTHKc4Iqss",
+  },
 };
 
 export default function RootLayout({
@@ -83,6 +88,7 @@ export default function RootLayout({
             <Toaster />
           </AuthProvider>
         </ThemeProvider>
+        <GoogleAnalytics gaId="G-Z31MSTXKKS" />
       </body>
     </html>
   );
