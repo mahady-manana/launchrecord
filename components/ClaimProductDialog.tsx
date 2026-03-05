@@ -11,7 +11,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { CheckCircle2, Loader2, Mail, ShieldAlert } from "lucide-react";
+import { CheckCircle2, Loader2, Mail, ShieldAlert, XCircle } from "lucide-react";
 import { useState } from "react";
 
 interface ClaimProductDialogProps {
@@ -21,6 +21,7 @@ interface ClaimProductDialogProps {
   productName: string;
   productWebsite: string;
   onClaimSuccess: () => void;
+  alreadyClaimed?: boolean;
 }
 
 export function ClaimProductDialog({
@@ -30,12 +31,52 @@ export function ClaimProductDialog({
   productName,
   productWebsite,
   onClaimSuccess,
+  alreadyClaimed = false,
 }: ClaimProductDialogProps) {
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">(
     "idle"
   );
   const [message, setMessage] = useState("");
+
+  // If product is already claimed, show different UI
+  if (alreadyClaimed) {
+    return (
+      <Dialog open={open} onOpenChange={onOpenChange}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-destructive">
+              <XCircle className="h-5 w-5" />
+              Product Already Claimed
+            </DialogTitle>
+            <DialogDescription>
+              This product cannot be claimed
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="flex flex-col items-center justify-center py-8 text-center space-y-4">
+            <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center">
+              <XCircle className="h-8 w-8 text-red-600" />
+            </div>
+            <p className="text-sm font-medium">
+              {productName} has already been claimed by another user.
+            </p>
+            <p className="text-xs text-muted-foreground">
+              Only the owner of a product can claim it. If you believe this is an error, please contact support.
+            </p>
+          </div>
+
+          <Button
+            onClick={() => onOpenChange(false)}
+            variant="outline"
+            className="w-full"
+          >
+            Close
+          </Button>
+        </DialogContent>
+      </Dialog>
+    );
+  }
 
   const handleSendEmail = async (e: React.FormEvent) => {
     e.preventDefault();

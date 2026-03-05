@@ -1,3 +1,5 @@
+import { Types } from "mongoose";
+
 export type UserRole = "user" | "admin";
 
 export interface SessionUser {
@@ -5,6 +7,7 @@ export interface SessionUser {
   name: string;
   email: string;
   role: UserRole;
+  _id: Types.ObjectId;
 }
 
 export interface UserRecord extends SessionUser {

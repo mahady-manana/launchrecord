@@ -3,6 +3,7 @@
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
+import { getProductStatus } from "@/lib/product-status";
 import type { AuditReportV1 } from "@/types/audit-report-v1";
 import {
   AlertTriangle,
@@ -143,9 +144,17 @@ export function EarlyDashboard({
                     Category Position
                   </div>
                   <div
-                    className={`text-xl font-semibold px-4 py-2 rounded-lg ${getCategoryPositionColor(report.overall_assessment.category_position)}`}
+                    className={`text-xl font-semibold px-4 py-2 rounded-lg ${
+                      getProductStatus(
+                        report.overall_assessment.composite_score || 0,
+                      ).color
+                    }`}
                   >
-                    {report.overall_assessment.category_position.toUpperCase()}
+                    {
+                      getProductStatus(
+                        report.overall_assessment.composite_score || 0,
+                      ).status
+                    }
                   </div>
                 </div>
                 <div>

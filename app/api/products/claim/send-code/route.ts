@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { connectToDatabase } from "@/lib/db";
 import User from "@/models/user";
 import Product from "@/models/product";
-import { sendClaimVerificationCode } from "@/lib/resend-email";
+import { sendClaimVerificationLink } from "@/lib/resend-email";
 import crypto from "crypto";
 import { getClientIp, isSameOrigin } from "@/utils/security";
 import { rateLimit } from "@/utils/rate-limit";
@@ -75,25 +75,26 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Generate 6-digit verification code
-    const claimCode = Math.floor(100000 + Math.random() * 900000).toString();
-    const claimCodeHash = crypto
+    // Generate verification token (using link method instead of code)
+    const claimToken = crypto.randomBytes(32).toString("hex");
+    const claimTokenHash = crypto
       .createHash("sha256")
-      .update(claimCode)
+      .update(claimToken)
       .digest("hex");
-    const claimCodeExpiresAt = new Date(Date.now() + 15 * 60 * 1000); // 15 minutes
+    const claimTokenExpiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
 
-    user.claimTokenHash = claimCodeHash;
-    user.claimTokenExpiresAt = claimCodeExpiresAt;
-    user.claimProductId = product._id;
+    user.claimTokenHash = claimTokenHash;
+    user.claimTokenExpiresAt = claimTokenExpiresAt;
+    user.claimProductId = product._id.toString();
     await user.save();
 
-    // Send verification code email
-    await sendClaimVerificationCode(user.email, claimCode, product.name);
+    // Send verification link email
+    const verificationUrl = `${process.env.NEXT_PUBLIC_APP_URL}/verify-claim?token=${claimToken}`;
+    await sendClaimVerificationLink(user.email, verificationUrl, product.name);
 
     return NextResponse.json({
       success: true,
-      message: "Verification code sent to your email",
+      message: "Verification link sent to your email",
     });
   } catch (error) {
     console.error("Error sending claim code:", error);

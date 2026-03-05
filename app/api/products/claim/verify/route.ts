@@ -77,7 +77,7 @@ export async function POST(request: NextRequest) {
     let isNewUser = false;
 
     if (!user) {
-      const user = await User.create({
+      user = await User.create({
         name: claim.email.split("@")[0],
         email: claim.email.toLowerCase(),
         role: "user",

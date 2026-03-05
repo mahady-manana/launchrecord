@@ -11,7 +11,16 @@ export interface SurveyAnswers {
   willingToInvest: string;
 }
 
-export const questions = [
+export interface Question {
+  title: string;
+  key: keyof SurveyAnswers;
+  type: "text" | "url" | "textarea" | "radio";
+  description: string;
+  placeholder?: string;
+  options?: { value: string; label: string }[];
+}
+
+export const questions: Question[] = [
   {
     title: "Who are you ?",
     key: "founderName",

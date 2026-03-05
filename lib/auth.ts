@@ -1,11 +1,11 @@
+import { connectToDatabase } from "@/lib/db";
+import User from "@/models/user";
+import { hashPassword, verifyPassword } from "@/utils/password";
+import { sanitizeText } from "@/utils/sanitize";
 import crypto from "crypto";
 import NextAuth, { type NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
-import User from "@/models/user";
-import { connectToDatabase } from "@/lib/db";
-import { hashPassword, verifyPassword } from "@/utils/password";
-import { sanitizeText } from "@/utils/sanitize";
 
 const providers: NextAuthOptions["providers"] = [
   CredentialsProvider({
@@ -13,13 +13,41 @@ const providers: NextAuthOptions["providers"] = [
     credentials: {
       email: { label: "Email", type: "email" },
       password: { label: "Password", type: "password" },
+      signup: { label: "Signup", type: "text" },
+      name: { label: "Name", type: "text" },
     },
     async authorize(credentials) {
+      console.log("====================================");
+      console.log({ credentials });
+      console.log("====================================");
       const email = sanitizeText(credentials?.email || "").toLowerCase();
       const password = credentials?.password || "";
 
       if (!email || !password) {
         throw new Error("Missing email or password");
+      }
+
+      if (credentials?.signup === "true" && credentials.email) {
+        const user = await User.findOne({
+          email: credentials.email,
+          deletedAt: null,
+        });
+        if (user?._id) {
+          throw new Error("Email already used");
+        }
+        const newuser = new User({
+          email: credentials.email,
+          name: credentials.name,
+          password: await hashPassword(credentials.password),
+        });
+        await newuser.save();
+
+        return {
+          id: newuser._id.toString(),
+          name: newuser.name,
+          email: newuser.email,
+          role: "user",
+        };
       }
 
       await connectToDatabase();
@@ -38,7 +66,9 @@ const providers: NextAuthOptions["providers"] = [
 
       // Check if email is verified (skip for admin users)
       if (!user.emailVerified && user.role !== "admin") {
-        throw new Error("Please verify your email before signing in. Check your inbox for the verification link.");
+        throw new Error(
+          "Please verify your email before signing in. Check your inbox for the verification link.",
+        );
       }
 
       return {
@@ -87,7 +117,10 @@ export const authOptions: NextAuthOptions = {
           providerId: account.providerAccountId,
           emailVerified: new Date(),
         });
-      } else if (!existingUser.provider || existingUser.provider === "credentials") {
+      } else if (
+        !existingUser.provider ||
+        existingUser.provider === "credentials"
+      ) {
         existingUser.provider = "google";
         existingUser.providerId = account.providerAccountId;
         if (!existingUser.emailVerified) {

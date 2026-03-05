@@ -24,6 +24,17 @@ export async function POST(request: NextRequest) {
     if (productId) {
       const existingProduct = await Product.findById(productId);
       if (existingProduct) {
+        // Check if product is already claimed by another user
+        if (existingProduct.user && !existingProduct.addedByAdmin) {
+          return NextResponse.json(
+            { 
+              error: "This product has already been claimed by another user",
+              alreadyClaimed: true,
+            },
+            { status: 400 },
+          );
+        }
+
         // Update product with survey data
         existingProduct.surveyData = {
           ...(existingProduct.surveyData || {}),
@@ -50,6 +61,18 @@ export async function POST(request: NextRequest) {
     });
 
     if (existingProduct) {
+      // Check if it's already claimed by a user
+      if (existingProduct.user && !existingProduct.addedByAdmin) {
+        return NextResponse.json(
+          { 
+            error: "This product has already been claimed by another user. You cannot continue with this product URL.",
+            alreadyClaimed: true,
+            productName: existingProduct.name,
+          },
+          { status: 400 },
+        );
+      }
+
       // Check if it's admin-owned and needs claim
       if (existingProduct.addedByAdmin && !existingProduct.user) {
         return NextResponse.json({

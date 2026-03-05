@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { connectToDatabase } from "@/lib/db";
 import Product from "@/models/product";
+import type { IUser } from "@/models/user";
 import normalizeUrl from "normalize-url";
 
 // GET - Check if product exists by website
@@ -29,6 +30,8 @@ export async function GET(request: NextRequest) {
         });
       }
 
+      const user = product.user as unknown as IUser | null;
+
       return NextResponse.json({
         exists: true,
         product: {
@@ -39,11 +42,11 @@ export async function GET(request: NextRequest) {
           description: product.description,
           logo: product.logo,
           addedByAdmin: product.addedByAdmin,
-          addedByUser: product.user
+          addedByUser: user
             ? {
-                id: product.user._id,
-                name: product.user.name,
-                email: product.user.email,
+                id: user._id,
+                name: user.name,
+                email: user.email,
               }
             : null,
         },
@@ -60,6 +63,8 @@ export async function GET(request: NextRequest) {
         });
       }
 
+      const user = product.user as unknown as IUser | null;
+
       return NextResponse.json({
         exists: true,
         product: {
@@ -70,11 +75,11 @@ export async function GET(request: NextRequest) {
           description: product.description,
           logo: product.logo,
           addedByAdmin: product.addedByAdmin,
-          addedByUser: product.user
+          addedByUser: user
             ? {
-                id: product.user._id,
-                name: product.user.name,
-                email: product.user.email,
+                id: user._id,
+                name: user.name,
+                email: user.email,
               }
             : null,
         },

@@ -1,6 +1,7 @@
 import { saveAnalysis } from "@/lib/analysis-service";
 import { connectToDatabase } from "@/lib/db";
 import { getOpenAIClient } from "@/lib/openai";
+import { getUserSession } from "@/lib/session";
 import Product from "@/models/product";
 import Report from "@/models/report";
 import { promptMasterGeneralAnalyze } from "@/reports/prompt";
@@ -38,7 +39,10 @@ Analyze their positioning, AEO visibility, and competitive moat. Be specific and
 export async function POST(request: NextRequest) {
   try {
     await connectToDatabase();
-
+    const { user, response } = await getUserSession({ required: true });
+    if (response) {
+      return response;
+    }
     const body = await request.json();
     const { productId } = body;
 
@@ -50,7 +54,9 @@ export async function POST(request: NextRequest) {
     }
 
     // Find the product
-    const product = await Product.findById(productId);
+    const product = await Product.findByIdAndUpdate(productId, {
+      user: user?._id,
+    });
     if (!product) {
       return NextResponse.json({ error: "Product not found" }, { status: 404 });
     }
@@ -100,7 +106,7 @@ export async function POST(request: NextRequest) {
     };
 
     // Validate survey data has email
-    if (!surveyData.email) {
+    if (!user?.email) {
       return NextResponse.json(
         { error: "Email required. Please complete the survey first." },
         { status: 400 },
@@ -177,6 +183,7 @@ export async function POST(request: NextRequest) {
         product.surveyData.retryAudit = true;
         product.surveyData.retryReason = "capacity_error";
         product.surveyData.retryAt = new Date(Date.now() + 5 * 60 * 1000); // Retry in 5 minutes
+        product.user = user._id as any;
         await product.save();
 
         return NextResponse.json(
