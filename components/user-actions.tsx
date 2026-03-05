@@ -1,8 +1,7 @@
 "use client";
 
-import { useMemo } from "react";
-import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/use-auth";
+import { useMemo } from "react";
 
 interface UserActionsProps {
   compact?: boolean;
@@ -30,18 +29,11 @@ export function UserActions({ compact = false }: UserActionsProps) {
           <p className="truncate text-sm font-medium text-foreground">
             {user?.name || "User"}
           </p>
-          <p className="truncate text-xs text-muted-foreground">{user?.email}</p>
+          <p className="truncate text-xs text-muted-foreground">
+            {user?.email}
+          </p>
         </div>
       ) : null}
-      <Button
-        variant="ghost"
-        size="sm"
-        className="text-foreground"
-        onClick={() => logout()}
-        disabled={isLoading}
-      >
-        Sign out
-      </Button>
     </div>
   );
 }

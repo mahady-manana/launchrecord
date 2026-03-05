@@ -3,6 +3,19 @@ import type { IReport } from "./report";
 import type { ITopic } from "./topic";
 import type { IUser } from "./user";
 
+export interface IProductMetadata {
+  source?: string | null;
+  sourceId?: string | null;
+  sourceUrl?: string | null;
+  phVotes?: number | null;
+  phComments?: number | null;
+  phDayrank?: number | null;
+  phReviews?: number | null;
+  phRating?: number | null;
+
+  [key: string]: any;
+}
+
 export interface IProduct extends Document {
   name: string;
   description?: string | null;
@@ -17,6 +30,7 @@ export interface IProduct extends Document {
   earlyAccessGrantedAt?: Date | null;
   addedByAdmin?: boolean;
   surveyData?: Record<string, any> | null;
+  metadata?: IProductMetadata | null;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -91,6 +105,10 @@ const ProductSchema = new Schema<IProduct>(
       default: false,
     },
     surveyData: {
+      type: Schema.Types.Mixed,
+      default: null,
+    },
+    metadata: {
       type: Schema.Types.Mixed,
       default: null,
     },

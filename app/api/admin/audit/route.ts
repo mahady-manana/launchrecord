@@ -7,13 +7,22 @@ import { responsesFormatter } from "@/reports/responses_formatter";
 import type { AuditReportV1 } from "@/types/audit-report-v1";
 import { NextRequest, NextResponse } from "next/server";
 
-const ANALYSIS_USER_PROMPT = `Analyze this SaaS product using the Sovereign Defensibility Framework:
+const ANALYSIS_USER_PROMPT = (
+  data: any,
+) => `Analyze this SaaS product using the Sovereign Defensibility Framework:
 
 PRODUCT INFORMATION:
 - Name: {{name}}
 - Website: {{website}}
 - Tagline: {{tagline}}
 - Description: {{description}}
+
+VERIFIED PRODUCVT HUNT INFO (Only verified data will be presented here):
+- Votes: ${data.votes || "Not provided"}
+- Daily rank: ${data.phDayrank || "Not provided"}
+- Reviews: ${data.phReviews || "Not provided"}
+- Reviews rating: ${data.phRating || "Not provided"}
+- Comments count: ${data.phComments || "Not provided"}
 
 Analyze their Positioning, AEO visibility, Product Clarity, Momentum, Founder Proof Vault and Competitive moat. Be specific and data-driven. Don't give emotional reports.`;
 
@@ -45,7 +54,8 @@ export async function POST(request: NextRequest) {
       const client = getOpenAIClient();
 
       const surveyData = product.surveyData || {};
-      const userPrompt = ANALYSIS_USER_PROMPT.replace("{{name}}", product.name)
+      const userPrompt = ANALYSIS_USER_PROMPT(product.metadata || {})
+        .replace("{{name}}", product.name)
         .replace("{{website}}", product.website || "")
         .replace("{{tagline}}", product.tagline || "Not provided")
         .replace(

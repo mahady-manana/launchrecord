@@ -1,4 +1,5 @@
 import { connectToDatabase } from "@/lib/db";
+import { uploadImageUrlToS3 } from "@/lib/s3-upload";
 import Product from "@/models/product";
 import Topic from "@/models/topic";
 import { NextRequest, NextResponse } from "next/server";
@@ -26,6 +27,19 @@ async function processTopics(topicNames: string[]): Promise<string[]> {
   return topicIds;
 }
 
+// Helper function to download and upload logo to S3
+async function processLogo(logoUrl: string | null): Promise<string | null> {
+  if (!logoUrl) return null;
+
+  try {
+    const result = await uploadImageUrlToS3(logoUrl);
+    return result.url;
+  } catch (error) {
+    console.error("Failed to upload logo to S3:", error);
+    return null;
+  }
+}
+
 // POST - Bulk import products (create/update only, no audit)
 export async function POST(request: NextRequest) {
   try {
@@ -43,7 +57,7 @@ export async function POST(request: NextRequest) {
     const results = [];
 
     for (const item of body) {
-      const { name, website, tagline, topics } = item;
+      const { name, website, tagline, topics, metadata, logo } = item;
 
       if (!name || !website) {
         results.push({
@@ -51,6 +65,8 @@ export async function POST(request: NextRequest) {
           website: website || "Unknown",
           success: false,
           error: "Name and website are required",
+          logo,
+          metadata,
         });
         continue;
       }
@@ -75,6 +91,18 @@ export async function POST(request: NextRequest) {
           if (topics && Array.isArray(topics) && topics.length > 0) {
             const topicIds = await processTopics(topics);
             product.topics = topicIds as any;
+          }
+
+          if (metadata) {
+            product.metadata = metadata;
+          }
+
+          // Process logo if provided
+          if (logo) {
+            const uploadedLogoUrl = await processLogo(logo);
+            if (uploadedLogoUrl) {
+              product.logo = uploadedLogoUrl;
+            }
           }
 
           product.markModified("surveyData");
@@ -107,9 +135,21 @@ export async function POST(request: NextRequest) {
             },
           };
 
+          // Process logo if provided
+          if (logo) {
+            const uploadedLogoUrl = await processLogo(logo);
+            if (uploadedLogoUrl) {
+              productData.logo = uploadedLogoUrl;
+            }
+          }
+
           if (topics && Array.isArray(topics) && topics.length > 0) {
             const topicIds = await processTopics(topics);
             productData.topics = topicIds;
+          }
+
+          if (metadata) {
+            productData.metadata = metadata;
           }
 
           product = await Product.create(productData);
@@ -185,8 +225,7 @@ export async function GET(request: NextRequest) {
       Product.find(query)
         .sort({ createdAt: -1 })
         .skip(skip)
-        .limit(limit)
-        .populate("reports", "overallScore status createdAt"),
+        .limit(limit),
       Product.countDocuments(query),
     ]);
 

@@ -25,13 +25,31 @@ export async function PUT(request: NextRequest) {
       );
     }
 
-    // Update survey data progressively
-    product.surveyData = {
-      ...(product.surveyData || {}),
-      ...answers,
-      lastUpdated: new Date(),
-    };
-    
+    // Initialize surveyData if it doesn't exist
+    if (!product.surveyData) {
+      product.surveyData = {};
+    }
+
+    // Merge answers into surveyData
+    Object.keys(answers).forEach((key) => {
+      product.surveyData![key] = answers[key as keyof typeof answers];
+    });
+
+    // Update product fields from survey answers
+    if (answers.saasName) {
+      product.name = answers.saasName;
+    }
+    if (answers.saasUrl) {
+      product.website = answers.saasUrl;
+    }
+    if (answers.description) {
+      product.tagline = answers.description;
+      product.description = answers.description;
+    }
+
+    // Mark surveyData as modified to ensure Mongoose saves it
+    product.markModified("surveyData");
+
     await product.save();
 
     return NextResponse.json({

@@ -10,6 +10,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
+import clsx from "clsx";
 import { ExternalLink, Loader2, RefreshCw, TrendingUp } from "lucide-react";
 
 interface Product {
@@ -19,6 +20,7 @@ interface Product {
   tagline?: string;
   description?: string;
   score?: number;
+  logo?: string;
   addedByAdmin?: boolean;
   reports?: Array<{
     overallScore: number;
@@ -50,27 +52,43 @@ export function ProductsList({
             className="flex items-center gap-4 p-4 border rounded-lg hover:bg-muted/50 transition-colors"
           >
             <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2">
-                <span className="font-medium">{product.name}</span>
-                <a
-                  href={product.website}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-muted-foreground hover:text-primary"
-                >
-                  <ExternalLink className="h-3 w-3" />
-                </a>
-                {product.addedByAdmin && (
-                  <Badge variant="secondary" className="text-xs">
-                    Admin
-                  </Badge>
-                )}
+              <div className="flex gap-4">
+                <div>
+                  <img
+                    src={product.logo || "/logo.svg"}
+                    height={40}
+                    width={40}
+                    alt=""
+                    className={clsx(
+                      "w-full h-full object-cover",
+                      !product.logo && "opacity-50",
+                    )}
+                  />
+                </div>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <span className="font-medium">{product.name}</span>
+                    <a
+                      href={product.website}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-muted-foreground hover:text-primary"
+                    >
+                      <ExternalLink className="h-3 w-3" />
+                    </a>
+                    {product.addedByAdmin && (
+                      <Badge variant="secondary" className="text-xs">
+                        Admin
+                      </Badge>
+                    )}
+                  </div>
+                  {product.tagline && (
+                    <p className="text-sm text-muted-foreground truncate">
+                      {product.tagline}
+                    </p>
+                  )}
+                </div>
               </div>
-              {product.tagline && (
-                <p className="text-sm text-muted-foreground truncate">
-                  {product.tagline}
-                </p>
-              )}
               <div className="flex items-center gap-4 mt-2">
                 {hasAudit ? (
                   <>

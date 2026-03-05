@@ -50,7 +50,28 @@ export default function DashboardPage() {
 
   // Show full report if available
   if (report) {
-    return <EarlyDashboard report={report} showNavigation={false} />;
+    return (
+      <div className="space-y-8">
+        <div className="bg-blue-200 p-4 rounded-lg text-center">
+          <p className="text-xl font-bold">Launch Date</p>
+          <p className="font-bold">17th March 2026</p>
+          <p>Some features will be available before official launch date</p>
+        </div>
+        <div className="p-4 border rounded-lg">
+          <p className="text-md font-bold text-red-600">Latest update</p>
+          <p className="font-bold text-xs">5th March 2026</p>
+          <p className="text-sm">
+            - SIO V5 Engine: Improved Authority checkpoints, Clarity and
+            Positioning is expected this week
+          </p>
+          <p className="text-sm">
+            - SIDL: First version development is now started (At least a week
+            work)
+          </p>
+        </div>
+        <EarlyDashboard report={report} showNavigation={false} />
+      </div>
+    );
   }
 
   return (

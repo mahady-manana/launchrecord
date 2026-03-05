@@ -4,19 +4,18 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
-  Shield,
-  Eye,
-  Filter,
-  Scale,
-  Zap,
-  Target,
-  Brain,
-  TrendingUp,
-  CheckCircle,
   AlertTriangle,
-  Lock,
-  Database,
+  Brain,
+  CheckCircle,
+  Eye,
   FileText,
+  Filter,
+  Lock,
+  Scale,
+  Shield,
+  Target,
+  TrendingUp,
+  Zap,
 } from "lucide-react";
 import Link from "next/link";
 
@@ -129,9 +128,9 @@ const outputMetrics = [
 
 export default function SIOV5EnginePage() {
   return (
-    <div className="space-y-24 py-10">
+    <div className="space-y-24 py-10 md:px-0 px-4 bg-slate-950">
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-slate-900 rounded-xl py-20 px-6 border border-slate-800">
+      <section className="max-w-6xl mx-auto relative overflow-hidden bg-slate-900 rounded-xl py-20 px-6 border border-slate-800">
         <div className="max-w-6xl mx-auto space-y-12 relative z-10">
           <div className="space-y-8 text-center">
             {/* Status Badge */}
@@ -174,8 +173,8 @@ export default function SIOV5EnginePage() {
                 </h3>
                 <p className="text-slate-300 leading-relaxed">
                   If a standard SEO tool is a{" "}
-                  <span className="text-white">"Check Engine" light</span>,
-                  the SIO-V5 is a{" "}
+                  <span className="text-white">"Check Engine" light</span>, the
+                  SIO-V5 is a{" "}
                   <span className="text-blue-400 font-semibold">
                     full forensic crash-test simulation
                   </span>
@@ -188,7 +187,7 @@ export default function SIOV5EnginePage() {
       </section>
 
       {/* Technical Architecture */}
-      <section className="space-y-12">
+      <section className="max-w-6xl mx-auto space-y-12">
         <div className="space-y-4">
           <Badge
             variant="outline"
@@ -248,7 +247,7 @@ export default function SIOV5EnginePage() {
       </section>
 
       {/* The 5 Engines */}
-      <section className="space-y-12 bg-slate-800 rounded-xl p-12 border border-slate-700">
+      <section className="max-w-6xl mx-auto space-y-12 bg-slate-800 rounded-xl p-12 border border-slate-700">
         <div className="space-y-4">
           <Badge
             variant="outline"
@@ -301,7 +300,7 @@ export default function SIOV5EnginePage() {
       </section>
 
       {/* Sovereign Output */}
-      <section className="space-y-12">
+      <section className="max-w-6xl mx-auto space-y-12">
         <div className="space-y-4">
           <Badge
             variant="outline"
@@ -382,7 +381,7 @@ export default function SIOV5EnginePage() {
       </section>
 
       {/* Comparison Section */}
-      <section className="space-y-12 bg-red-950/40 rounded-xl p-12 border border-red-900">
+      <section className="max-w-6xl mx-auto space-y-12 bg-red-950/40 rounded-xl p-12 border border-red-900">
         <div className="text-center space-y-4">
           <h2 className="text-4xl font-black text-white uppercase tracking-tighter">
             Why SIO-V5 Exists
@@ -444,7 +443,7 @@ export default function SIOV5EnginePage() {
       </section>
 
       {/* CTA Section */}
-      <section className="space-y-8 text-center">
+      <section className="max-w-6xl mx-auto space-y-8 text-center">
         <div className="space-y-4">
           <h2 className="text-4xl font-black text-white uppercase tracking-tighter">
             Run Your Audit

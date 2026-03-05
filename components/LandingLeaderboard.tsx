@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { getStatusColorHex } from "@/lib/product-status";
+import clsx from "clsx";
 import { TrendingUp, Trophy } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -13,6 +14,7 @@ interface LeaderboardEntry {
   name: string;
   tagline?: string | null;
   website?: string | null;
+  logo?: string | null;
   score?: number | null;
   rank?: number;
 }
@@ -84,21 +86,16 @@ export function LandingLeaderboard() {
                   <div className="flex items-start justify-between gap-4">
                     <div className="flex-1 space-y-2 w-full">
                       <div className="flex items-center gap-2">
-                        {isTopThree ? (
-                          <Trophy
-                            className={`h-5 w-5 ${
-                              rank === 1
-                                ? "text-yellow-500"
-                                : rank === 2
-                                  ? "text-gray-400"
-                                  : "text-orange-600"
-                            }`}
+                        <div className="relative w-8 h-8 rounded-md overflow-hidden flex-shrink-0 bg-gray-100">
+                          <img
+                            src={product.logo || "/logo.svg"}
+                            alt={product.name}
+                            className={clsx(
+                              "w-full h-full object-cover",
+                              !product.logo && "opacity-50",
+                            )}
                           />
-                        ) : (
-                          <span className="text-xs font-mono text-muted-foreground">
-                            #{rank}
-                          </span>
-                        )}
+                        </div>
                         <p className="font-semibold text-sm truncate">
                           {product.name}
                         </p>

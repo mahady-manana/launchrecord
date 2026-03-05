@@ -1,27 +1,27 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import { Leaderboard } from "@/components/Leaderboard";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Pagination,
   PaginationContent,
-  PaginationEllipsis,
   PaginationItem,
   PaginationLink,
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
-import { Trophy, TrendingUp, Shield, Zap, Brain } from "lucide-react";
+import { Brain, Shield, TrendingUp, Trophy } from "lucide-react";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 
 interface LeaderboardEntry {
   _id: string;
   name: string;
   tagline?: string | null;
   website?: string | null;
+  logo?: string | null;
   score?: number | null;
   rank: number;
 }
@@ -40,7 +40,9 @@ export default function LeaderboardPage() {
   const fetchLeaderboard = async (pageNum: number) => {
     setLoading(true);
     try {
-      const response = await fetch(`/api/leaderboard?limit=100&page=${pageNum}`);
+      const response = await fetch(
+        `/api/leaderboard?limit=100&page=${pageNum}`,
+      );
       const data = await response.json();
 
       if (data.success) {
@@ -92,7 +94,7 @@ export default function LeaderboardPage() {
 
       {/* Top 3 Podium */}
       {!loading && topThree.length > 0 && (
-        <section className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <section className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6">
           {/* 2nd Place */}
           {topThree[1] && (
             <Card className="border-2 border-gray-400 bg-gradient-to-b from-gray-50 to-white order-2 md:order-1">
@@ -101,6 +103,13 @@ export default function LeaderboardPage() {
                 <CardTitle className="text-gray-700">#2</CardTitle>
               </CardHeader>
               <CardContent className="text-center space-y-2">
+                <div className="relative w-16 h-16 rounded-md overflow-hidden mx-auto bg-gray-100">
+                  <img
+                    src={topThree[1].logo || "/logo.svg"}
+                    alt={topThree[1].name}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
                 <p className="font-bold text-lg">{topThree[1].name}</p>
                 {topThree[1].tagline && (
                   <p className="text-sm text-muted-foreground">
@@ -108,9 +117,7 @@ export default function LeaderboardPage() {
                   </p>
                 )}
                 {topThree[1].score !== null && (
-                  <div
-                    className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-gray-400 text-white font-bold"
-                  >
+                  <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-gray-400 text-white font-bold">
                     {topThree[1].score}
                   </div>
                 )}
@@ -126,6 +133,13 @@ export default function LeaderboardPage() {
                 <CardTitle className="text-yellow-700">#1</CardTitle>
               </CardHeader>
               <CardContent className="text-center space-y-2">
+                <div className="relative w-20 h-20 rounded-md overflow-hidden mx-auto bg-gray-100">
+                  <img
+                    src={topThree[0].logo || "/logo.svg"}
+                    alt={topThree[0].name}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
                 <p className="font-bold text-xl">{topThree[0].name}</p>
                 {topThree[0].tagline && (
                   <p className="text-sm text-muted-foreground">
@@ -133,9 +147,7 @@ export default function LeaderboardPage() {
                   </p>
                 )}
                 {topThree[0].score !== null && (
-                  <div
-                    className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-yellow-500 text-white font-bold text-lg"
-                  >
+                  <div className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-yellow-500 text-white font-bold text-lg">
                     {topThree[0].score}
                   </div>
                 )}
@@ -151,6 +163,13 @@ export default function LeaderboardPage() {
                 <CardTitle className="text-orange-700">#3</CardTitle>
               </CardHeader>
               <CardContent className="text-center space-y-2">
+                <div className="relative w-16 h-16 rounded-md overflow-hidden mx-auto bg-gray-100">
+                  <img
+                    src={topThree[2].logo || "/logo.svg"}
+                    alt={topThree[2].name}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
                 <p className="font-bold text-lg">{topThree[2].name}</p>
                 {topThree[2].tagline && (
                   <p className="text-sm text-muted-foreground">
@@ -158,9 +177,7 @@ export default function LeaderboardPage() {
                   </p>
                 )}
                 {topThree[2].score !== null && (
-                  <div
-                    className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-orange-600 text-white font-bold"
-                  >
+                  <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-orange-600 text-white font-bold">
                     {topThree[2].score}
                   </div>
                 )}
@@ -171,7 +188,7 @@ export default function LeaderboardPage() {
       )}
 
       {/* Full Leaderboard */}
-      <section className="space-y-6">
+      <section className="space-y-6 max-w-6xl mx-auto">
         <div className="flex items-center justify-between">
           <div className="space-y-1">
             <h2 className="text-2xl font-bold">Full Rankings</h2>
@@ -261,7 +278,7 @@ export default function LeaderboardPage() {
       </section>
 
       {/* Status Legend */}
-      <section className="grid grid-cols-2 md:grid-cols-5 gap-4">
+      <section className="max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-5 gap-4">
         {[
           { status: "UNTOUCHABLE", score: "90-100", color: "bg-purple-500" },
           { status: "LETHAL", score: "70-89", color: "bg-green-400" },

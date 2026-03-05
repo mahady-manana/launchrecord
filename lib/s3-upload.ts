@@ -97,3 +97,43 @@ export async function uploadToS3(file: File): Promise<UploadResponse> {
     throw new Error("Failed to upload file. Please try again later.");
   }
 }
+
+export async function uploadImageUrlToS3(
+  imageUrl: string,
+): Promise<UploadResponse> {
+  try {
+    // Download the image
+    const response = await fetch(imageUrl);
+    if (!response.ok) {
+      throw new Error("Failed to download image");
+    }
+
+    const blob = await response.blob();
+    const contentType =
+      response.headers.get("content-type") || "image/jpeg";
+    const extension = contentType.split("/")[1] || "jpg";
+
+    // Generate a filename
+    const filename = `logo-${Date.now()}.${extension}`;
+
+    // Get signed URL
+    const { key } = await getSignedUploadUrl(filename, contentType);
+    const command = new PutObjectCommand({
+      Bucket: process.env.AWS_BUCKET_NAME,
+      Key: key,
+      ContentType: contentType,
+      Body: await blob.arrayBuffer(),
+    });
+
+    await s3Client.send(command);
+
+    // Return the public URL
+    return {
+      url: getPublicFileUrl(key),
+      key,
+    };
+  } catch (error) {
+    console.error("Error uploading image URL to S3:", error);
+    throw new Error("Failed to upload image. Please try again later.");
+  }
+}

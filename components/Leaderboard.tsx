@@ -10,7 +10,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { getProductStatus, getStatusColorHex } from "@/lib/product-status";
+import { getStatusColorHex } from "@/lib/product-status";
+import clsx from "clsx";
 import { ExternalLink, TrendingUp, Trophy } from "lucide-react";
 import Link from "next/link";
 
@@ -19,6 +20,7 @@ interface LeaderboardEntry {
   name: string;
   tagline?: string | null;
   website?: string | null;
+  logo?: string | null;
   score?: number | null;
   rank: number;
 }
@@ -67,7 +69,6 @@ export function Leaderboard({ products, showFull = false }: LeaderboardProps) {
       );
     }
 
-    const status = getProductStatus(score);
     const colorHex = getStatusColorHex(score);
 
     return (
@@ -105,6 +106,16 @@ export function Leaderboard({ products, showFull = false }: LeaderboardProps) {
                 <TableCell>
                   <div className="space-y-1">
                     <div className="flex items-center gap-2">
+                      <div className="relative w-8 h-8 rounded-md overflow-hidden flex-shrink-0 bg-gray-100">
+                        <img
+                          src={product.logo || "/logo.svg"}
+                          alt={product.name}
+                          className={clsx(
+                            "w-full h-full object-cover",
+                            !product.logo && "opacity-50",
+                          )}
+                        />
+                      </div>
                       <span className="font-semibold">{product.name}</span>
                       {product.website && (
                         <a

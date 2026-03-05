@@ -10,6 +10,7 @@ import {
   BarChart3,
   CheckCircle,
   Globe,
+  Info,
   Shield,
   Target,
   TrendingUp,
@@ -103,7 +104,7 @@ export function EarlyDashboard({
             Audit Report Complete
           </Badge>
           <h1 className="text-4xl font-bold text-foreground">
-            SF-1 War Briefing
+            SIO-V5 War Briefing
           </h1>
           <p className="text-lg text-muted-foreground">
             Analysis for <strong>{saasName}</strong> • Version:{" "}
@@ -114,8 +115,17 @@ export function EarlyDashboard({
 
         {/* Overall Assessment - Hero Card */}
         <Card className="border-2 border-orange-200 bg-gradient-to-br from-orange-50 to-white shadow-lg animate-in zoom-in-95 duration-700">
-          <CardContent className="pt-8 space-y-6">
+          <CardContent className="space-y-6">
             <div className="text-center mb-6">
+              {showNavigation ? (
+                <div className="bg-yellow-200 mb-4 text-yellow-800 p-4 rounded-lg">
+                  <Info className="mx-auto" />
+                  <p className="font-bold text-xl">Important note</p>
+                  <p>Full SIO V5 Audit is not available in Whitelist</p>
+                  <p>Access Early Dashboard For Updates</p>
+                </div>
+              ) : null}
+
               <h2 className="text-2xl font-bold text-foreground">
                 Overall Assessment
               </h2>

@@ -8,18 +8,18 @@ import { WarBriefingPreview } from "@/components/WarBriefingPreview";
 import {
   AlertCircle,
   Award,
+  Brain,
   CheckCircle,
+  FileText,
+  Layers,
   PartyPopper,
   Shield,
   Target,
   TrendingUp,
   Zap,
-  Brain,
-  FileText,
-  Layers,
 } from "lucide-react";
-import { useState } from "react";
 import Link from "next/link";
+import { useState } from "react";
 
 const painkillers = [
   {
@@ -156,9 +156,9 @@ export default function LaunchRecordLandingPage() {
   };
 
   return (
-    <div className="space-y-20 py-10">
+    <div className="space-y-20 py-10 lg:px-0 px-4">
       {/* Hero Section - SF-1 War Briefing Style */}
-      <section className="relative overflow-hidden bg-slate-900 rounded-xl pb-20 pt-8 px-6 border-b border-slate-800">
+      <section className="max-w-6xl mx-auto relative overflow-hidden bg-slate-900 rounded-xl pb-20 pt-8 px-6 border-b border-slate-800">
         <div className="bg-green-300 mb-4 text-center max-w-lg mx-auto flex items-center justify-center gap-4 py-2 text-lg rounded-lg text-green-800">
           <PartyPopper></PartyPopper>
           <p className="font-bold">Whitelist is open for Sovereign Founders</p>
@@ -251,13 +251,13 @@ export default function LaunchRecordLandingPage() {
           </div>
         </div>
       </section>
-      <section>
+      <section className="max-w-6xl mx-auto">
         <LandingLeaderboard />
       </section>
-      <section>
+      <section className="max-w-6xl mx-auto">
         <WarBriefingPreview />
       </section>
-      <section className="bg-slate-950 py-24 rounded-xl text-white px-6 border-t border-slate-900">
+      <section className="max-w-6xl mx-auto bg-slate-950 py-24 rounded-xl text-white px-6 border-t border-slate-900">
         <div className="max-w-4xl mx-auto">
           <div className="space-y-2 mb-16">
             <h2 className="text-3xl font-black uppercase tracking-tighter italic">
@@ -347,7 +347,7 @@ export default function LaunchRecordLandingPage() {
         </div>
       </section>
       {/* Stats Section */}
-      <section className="grid grid-cols-3 gap-8 pt-8 border-t border-border">
+      <section className="max-w-6xl mx-auto grid grid-cols-3 gap-8 pt-8 border-t border-border">
         <div>
           <div className="text-3xl font-bold text-foreground">94.2%</div>
           <p className="text-sm text-muted-foreground font-medium">
@@ -369,7 +369,7 @@ export default function LaunchRecordLandingPage() {
       </section>
 
       {/* Pain-Killer Features */}
-      <section className="space-y-12">
+      <section className="max-w-6xl mx-auto space-y-12">
         <div className="text-center space-y-4">
           <h2 className="text-4xl font-bold text-foreground">
             What Founders Don't Know (But Should)
@@ -424,7 +424,7 @@ export default function LaunchRecordLandingPage() {
       </section>
 
       {/* Pricing Tiers */}
-      <section className="space-y-12">
+      <section className="max-w-6xl mx-auto space-y-12">
         <div className="text-center space-y-4">
           <h2 className="text-4xl font-bold text-foreground">
             The "Cash-Machine" Deployment
@@ -491,7 +491,7 @@ export default function LaunchRecordLandingPage() {
       </section>
 
       {/* How It Works */}
-      <section className="space-y-12 bg-orange-50 rounded-2xl p-12 border border-orange-100">
+      <section className="max-w-6xl mx-auto space-y-12 bg-orange-50 rounded-2xl p-12 border border-orange-100">
         <div className="text-center space-y-4">
           <h2 className="text-4xl font-bold text-foreground">
             The Pre-Audit Funnel
@@ -532,11 +532,8 @@ export default function LaunchRecordLandingPage() {
         </div>
       </section>
 
-      {/* Leaderboard Section */}
-      <LandingLeaderboard />
-
       {/* FAQ Section */}
-      <section className="space-y-12 py-16">
+      <section className="max-w-6xl mx-auto space-y-12 py-16">
         <div className="text-center space-y-4">
           <Badge
             variant="outline"
@@ -548,7 +545,8 @@ export default function LaunchRecordLandingPage() {
             Frequently Asked Questions
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Everything you need to know about LaunchRecord, SIO-V5, and the SIDL framework.
+            Everything you need to know about LaunchRecord, SIO-V5, and the SIDL
+            framework.
           </p>
         </div>
 
@@ -556,7 +554,10 @@ export default function LaunchRecordLandingPage() {
           {faqs.map((faq, idx) => {
             const Icon = faq.icon;
             return (
-              <Card key={idx} className="border-border hover:border-primary/50 transition-colors">
+              <Card
+                key={idx}
+                className="border-border hover:border-primary/50 transition-colors"
+              >
                 <CardHeader>
                   <div className="flex items-start gap-4">
                     <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
@@ -581,7 +582,7 @@ export default function LaunchRecordLandingPage() {
       </section>
 
       {/* Social Proof */}
-      <section className="text-center space-y-8 py-12 border-t border-border">
+      <section className="max-w-6xl mx-auto text-center space-y-8 py-12 border-t border-border">
         <h3 className="text-2xl font-semibold text-foreground">
           For Founders Who Refuse to Be Commoditized
         </h3>
