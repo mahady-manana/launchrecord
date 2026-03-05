@@ -224,7 +224,7 @@ export default function LaunchRecordLandingPage() {
                 className="w-full flex flex-col md:flex-row gap-2"
               >
                 <input
-                  type="url"
+                  type="text"
                   placeholder="www.website_url.com"
                   value={websiteUrl}
                   onChange={(e) => setWebsiteUrl(e.target.value)}

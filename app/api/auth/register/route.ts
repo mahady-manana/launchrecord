@@ -6,6 +6,8 @@ import { sanitizeText } from "@/utils/sanitize";
 import { getClientIp, isSameOrigin } from "@/utils/security";
 import { rateLimit } from "@/utils/rate-limit";
 import { jsonError, jsonSuccess } from "@/utils/response";
+import crypto from "crypto";
+import { sendVerificationEmail } from "@/lib/resend-email";
 
 const registerSchema = z.object({
   name: z.string().min(2).max(100),
@@ -44,12 +46,28 @@ export async function POST(request: Request) {
   }
 
   const hashedPassword = await hashPassword(parsed.data.password);
+
+  // Generate verification token
+  const verificationToken = crypto.randomBytes(32).toString("hex");
+  const verificationTokenHash = crypto
+    .createHash("sha256")
+    .update(verificationToken)
+    .digest("hex");
+  const verificationTokenExpiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
+
   const user = await User.create({
     name,
     email,
     password: hashedPassword,
     role: "user",
     provider: "credentials",
+    verificationTokenHash,
+    verificationTokenExpiresAt,
+  });
+
+  // Send verification email (don't fail registration if email fails)
+  sendVerificationEmail(user.email, verificationToken, user.name).catch((err) => {
+    console.error("Failed to send verification email:", err);
   });
 
   return jsonSuccess({

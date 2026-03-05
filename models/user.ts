@@ -14,6 +14,11 @@ export interface IUser extends Document {
   subscriptionStatus?: string | null;
   resetTokenHash?: string | null;
   resetTokenExpiresAt?: Date | null;
+  verificationTokenHash?: string | null;
+  verificationTokenExpiresAt?: Date | null;
+  claimTokenHash?: string | null;
+  claimTokenExpiresAt?: Date | null;
+  claimProductId?: string | null;
   deletedAt?: Date | null;
   // LaunchRecord whitelist fields
   whitelisted?: boolean;
@@ -84,6 +89,31 @@ const UserSchema = new Schema<IUser>(
     },
     resetTokenExpiresAt: {
       type: Date,
+      select: false,
+      default: null,
+    },
+    verificationTokenHash: {
+      type: String,
+      select: false,
+      default: null,
+    },
+    verificationTokenExpiresAt: {
+      type: Date,
+      select: false,
+      default: null,
+    },
+    claimTokenHash: {
+      type: String,
+      select: false,
+      default: null,
+    },
+    claimTokenExpiresAt: {
+      type: Date,
+      select: false,
+      default: null,
+    },
+    claimProductId: {
+      type: Schema.Types.ObjectId,
       select: false,
       default: null,
     },

@@ -14,9 +14,11 @@ function LoginContent() {
   const router = useRouter();
   const params = useSearchParams();
   const callbackUrl = params.get("callbackUrl") || "/dashboard";
+  const claimSuccess = params.get("claim-success");
+  const claimEmail = params.get("email");
   const { login, isLoading } = useAuth();
 
-  const [email, setEmail] = useState("");
+  const [email, setEmail] = useState(claimEmail || "");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
 
@@ -28,7 +30,12 @@ function LoginContent() {
       setError(result.error || "Login failed.");
       return;
     }
-    router.push(callbackUrl);
+    // If claim success, redirect to dashboard
+    if (claimSuccess) {
+      router.push("/dashboard?claimed=true");
+    } else {
+      router.push(callbackUrl);
+    }
     router.refresh();
   };
 
@@ -39,6 +46,17 @@ function LoginContent() {
           <CardTitle>Welcome back</CardTitle>
         </CardHeader>
         <CardContent>
+          {claimSuccess && (
+            <div className="mb-4 rounded-md bg-green-50 p-4 border border-green-200">
+              <p className="text-sm font-medium text-green-800">
+                🎉 Product claimed successfully!
+              </p>
+              <p className="text-xs text-green-600 mt-1">
+                Sign in with <strong>{claimEmail}</strong> to access your dashboard.
+                {claimEmail?.includes('@') && ' A password has been sent to your email.'}
+              </p>
+            </div>
+          )}
           <div className="mb-4">
             <Button
               type="button"

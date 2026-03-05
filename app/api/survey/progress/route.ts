@@ -1,6 +1,7 @@
-import { NextRequest, NextResponse } from "next/server";
 import { connectToDatabase } from "@/lib/db";
 import Product from "@/models/product";
+import { NextRequest, NextResponse } from "next/server";
+import normalizeUrl from "normalize-url";
 
 // Save survey progress
 export async function PUT(request: NextRequest) {
@@ -13,16 +14,13 @@ export async function PUT(request: NextRequest) {
     if (!productId) {
       return NextResponse.json(
         { error: "Product ID is required" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     const product = await Product.findById(productId);
     if (!product) {
-      return NextResponse.json(
-        { error: "Product not found" },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: "Product not found" }, { status: 404 });
     }
 
     // Initialize surveyData if it doesn't exist
@@ -40,7 +38,7 @@ export async function PUT(request: NextRequest) {
       product.name = answers.saasName;
     }
     if (answers.saasUrl) {
-      product.website = answers.saasUrl;
+      product.website = normalizeUrl(answers.saasUrl);
     }
     if (answers.description) {
       product.tagline = answers.description;
@@ -60,7 +58,7 @@ export async function PUT(request: NextRequest) {
     console.error("Error saving progress:", error);
     return NextResponse.json(
       { error: "Failed to save progress" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

@@ -2,12 +2,11 @@ import crypto from "crypto";
 import { z } from "zod";
 import User from "@/models/user";
 import { connectToDatabase } from "@/lib/db";
-import { sendPasswordResetEmail } from "@/utils/email";
+import { sendPasswordResetEmail } from "@/lib/resend-email";
 import { sanitizeText } from "@/utils/sanitize";
 import { getClientIp, isSameOrigin } from "@/utils/security";
 import { rateLimit } from "@/utils/rate-limit";
 import { jsonError, jsonSuccess } from "@/utils/response";
-import { env } from "@/utils/env";
 
 const forgotSchema = z.object({
   email: z.string().email(),
@@ -50,15 +49,11 @@ export async function POST(request: Request) {
     user.resetTokenExpiresAt = expiresAt;
     await user.save();
 
-    const resetUrl = `${env.NEXT_PUBLIC_APP_URL}/reset-password?token=${token}&email=${encodeURIComponent(
+    const resetUrl = `${process.env.NEXT_PUBLIC_APP_URL}/reset-password?token=${token}&email=${encodeURIComponent(
       email,
     )}`;
 
-    await sendPasswordResetEmail({
-      to: email,
-      name: user.name,
-      resetUrl,
-    });
+    await sendPasswordResetEmail(user.email, token, user.name);
   }
 
   return jsonSuccess({

@@ -66,6 +66,7 @@ const ProductSchema = new Schema<IProduct>(
       default: null,
       trim: true,
       lowercase: true,
+      unique: true,
     },
     user: {
       type: Schema.Types.ObjectId,

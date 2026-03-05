@@ -36,6 +36,11 @@ const providers: NextAuthOptions["providers"] = [
         throw new Error("Invalid email or password");
       }
 
+      // Check if email is verified (skip for admin users)
+      if (!user.emailVerified && user.role !== "admin") {
+        throw new Error("Please verify your email before signing in. Check your inbox for the verification link.");
+      }
+
       return {
         id: user._id.toString(),
         name: user.name,

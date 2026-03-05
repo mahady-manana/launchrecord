@@ -109,8 +109,7 @@ export async function uploadImageUrlToS3(
     }
 
     const blob = await response.blob();
-    const contentType =
-      response.headers.get("content-type") || "image/jpeg";
+    const contentType = response.headers.get("content-type") || "image/jpeg";
     const extension = contentType.split("/")[1] || "jpg";
 
     // Generate a filename
@@ -122,7 +121,7 @@ export async function uploadImageUrlToS3(
       Bucket: process.env.AWS_BUCKET_NAME,
       Key: key,
       ContentType: contentType,
-      Body: await blob.arrayBuffer(),
+      Body: (await blob.arrayBuffer()) as any,
     });
 
     await s3Client.send(command);
