@@ -10,15 +10,21 @@ export function Footer() {
     { href: "/how-score-works", label: "How the Score Works" },
   ];
 
-  const legalLinks = [
+  const accountLinks = [
     { href: "/login", label: "Login" },
     { href: "/register", label: "Sign Up" },
+  ];
+
+  const legalLinks = [
+    { href: "/terms", label: "Terms of Service" },
+    { href: "/privacy", label: "Privacy Policy" },
+    { href: "/cookies", label: "Cookie Policy" },
   ];
 
   return (
     <footer className="border-t border-border bg-card mt-auto">
       <div className="mx-auto w-full max-w-6xl px-6 py-12">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-8">
           {/* Brand Column */}
           <div className="col-span-2 md:col-span-1 space-y-4">
             <div className="flex items-center gap-2">
@@ -56,10 +62,29 @@ export function Footer() {
             </ul>
           </div>
 
-          {/* Legal Column */}
+          {/* Account Column */}
           <div className="space-y-3">
             <h3 className="font-semibold text-sm uppercase tracking-wider">
               Account
+            </h3>
+            <ul className="space-y-2">
+              {accountLinks.map((link) => (
+                <li key={link.href}>
+                  <Link
+                    href={link.href}
+                    className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                  >
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Legal Column */}
+          <div className="space-y-3">
+            <h3 className="font-semibold text-sm uppercase tracking-wider">
+              Legal
             </h3>
             <ul className="space-y-2">
               {legalLinks.map((link) => (
