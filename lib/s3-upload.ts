@@ -121,7 +121,7 @@ export async function uploadImageUrlToS3(
       Bucket: process.env.AWS_BUCKET_NAME,
       Key: key,
       ContentType: contentType,
-      Body: (await blob.arrayBuffer()) as any,
+      Body: (await blob.arrayBuffer()) as unknown as any,
     });
 
     await s3Client.send(command);

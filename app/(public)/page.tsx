@@ -177,7 +177,7 @@ export default function LaunchRecordLandingPage() {
               </Badge>
 
               {/* The Pain-Inflicting Headline */}
-              <h1 className="text-5xl md:text-7xl font-black tracking-tighter text-slate-200 leading-[0.9]">
+              <h1 className="text-5xl md:text-6xl font-black tracking-tighter text-slate-200 leading-[0.9]">
                 Growth Hacking <br />
                 <span className="text-red-600">Will Not Save You.</span>
                 <span className="block text-2xl md:text-3xl font-mono mt-4 tracking-normal normal-case text-slate-200">
