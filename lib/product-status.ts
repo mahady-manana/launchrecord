@@ -25,7 +25,7 @@ export const PRODUCT_STATUS_CONFIG: ProductStatusConfig[] = [
     minScore: 90,
     maxScore: 100,
     color: "text-purple-500",
-    colorHex: "#972ff8",
+    colorHex: "#7c14dd",
     description:
       "They aren't just in a category; they are the category. Copying them feels like a crime.",
   },
@@ -34,7 +34,7 @@ export const PRODUCT_STATUS_CONFIG: ProductStatusConfig[] = [
     minScore: 70,
     maxScore: 89,
     color: "text-green-400",
-    colorHex: "#43c472",
+    colorHex: "#099e40",
     description:
       "Sharp, precise positioning. They cut through the noise and leave a mark on the user's brain.",
   },
@@ -43,7 +43,7 @@ export const PRODUCT_STATUS_CONFIG: ProductStatusConfig[] = [
     minScore: 40,
     maxScore: 69,
     color: "text-blue-400",
-    colorHex: "#8c9eb4",
+    colorHex: "#e0b21d",
     description:
       "Looks good at first glance, but it's a mold. High polish, low soul. Standard industry filler.",
   },

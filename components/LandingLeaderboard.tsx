@@ -114,13 +114,13 @@ export function LandingLeaderboard() {
                         {product.score !== null &&
                         product.score !== undefined ? (
                           <div
-                            className={`inline-flex items-center justify-center w-6 h-6 rounded-full text-white font-bold text-xs`}
-                            style={{ background: colorHex }}
+                            className={`inline-flex border-2 items-center justify-center w-6 h-6 rounded-full text-white font-bold text-xs`}
+                            style={{ borderColor: colorHex, color: colorHex }}
                           >
                             {product.score}
                           </div>
                         ) : (
-                          <Badge variant="secondary" className="text-xs">
+                          <Badge variant="outline" className="text-xs">
                             Not Ranked
                           </Badge>
                         )}

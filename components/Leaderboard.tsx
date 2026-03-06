@@ -74,8 +74,8 @@ export function Leaderboard({ products, showFull = false }: LeaderboardProps) {
     return (
       <div className="flex items-center gap-3">
         <div
-          className="w-10 h-10 rounded-full flex items-center justify-center font-bold text-white text-sm"
-          style={{ backgroundColor: colorHex }}
+          className="w-10 h-10 rounded-full flex border-2 items-center justify-center font-bold text-white text-sm"
+          style={{ borderColor: colorHex, color: colorHex }}
         >
           {score}
         </div>
