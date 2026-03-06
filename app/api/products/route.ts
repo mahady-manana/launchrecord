@@ -2,6 +2,7 @@ import { connectToDatabase } from "@/lib/db";
 import { getUserSession } from "@/lib/session";
 import Product from "@/models/product";
 import { NextRequest, NextResponse } from "next/server";
+import normalizeUrl from "normalize-url";
 
 // GET - Fetch all products for the current user
 export async function GET(request: NextRequest) {
@@ -69,9 +70,27 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Check if product already exists with this normalized URL
+    const normalizedUrl = normalizeUrl(website);
+    const existingProduct = await Product.findOne({
+      website: normalizedUrl,
+    });
+
+    if (existingProduct) {
+      // Product already exists, don't create duplicate
+      return NextResponse.json(
+        { 
+          error: "Product with this URL already exists",
+          existingProductId: existingProduct._id.toString(),
+          existingProductName: existingProduct.name,
+        },
+        { status: 409 },
+      );
+    }
+
     const product = await Product.create({
       name,
-      website,
+      website: normalizedUrl,
       description: description || null,
       tagline: tagline || null,
       logo: null,

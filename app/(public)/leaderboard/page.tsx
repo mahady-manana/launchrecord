@@ -12,7 +12,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
-import { Brain, Shield, TrendingUp, Trophy } from "lucide-react";
+import { Brain, Shield, TrendingUp, Trophy, HelpCircle } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
@@ -101,10 +101,10 @@ export default function LeaderboardPage() {
               Showing {products.length} of {totalProducts} products
             </p>
           </div>
-          <Link href="/survey">
-            <Button className="gap-2">
-              <Brain className="h-4 w-4" />
-              Get Audited
+          <Link href="/how-score-works">
+            <Button variant="outline" className="gap-2">
+              <HelpCircle className="h-4 w-4" />
+              How the Score Works
             </Button>
           </Link>
         </div>

@@ -40,7 +40,7 @@ async function processLogo(logoUrl: string | null): Promise<string | null> {
   }
 }
 
-// POST - Bulk import products (create/update only, no audit)
+// POST - Bulk import products (create only, no update, no audit)
 export async function POST(request: NextRequest) {
   try {
     await connectToDatabase();
@@ -77,94 +77,66 @@ export async function POST(request: NextRequest) {
       }
 
       try {
+        // Check for duplicate based on normalized URL
         let product = await Product.findOne({
           website: normalizedWebsite,
         });
 
         if (product) {
-          // Update existing product
-          product.name = name;
-          product.tagline = tagline || product.tagline;
-          product.description = tagline || product.description;
-          product.addedByAdmin = true;
-
-          if (topics && Array.isArray(topics) && topics.length > 0) {
-            const topicIds = await processTopics(topics);
-            product.topics = topicIds as any;
-          }
-
-          if (metadata) {
-            product.metadata = metadata;
-          }
-
-          // Process logo if provided
-          if (logo) {
-            const uploadedLogoUrl = await processLogo(logo);
-            if (uploadedLogoUrl) {
-              product.logo = uploadedLogoUrl;
-            }
-          }
-
-          product.markModified("surveyData");
-          if (!product.surveyData) {
-            product.surveyData = {};
-          }
-          product.surveyData.adminAudit = true;
-          product.surveyData.adminAuditAt = new Date();
-          await product.save();
-
+          // Product already exists with this normalized URL, skip it
           results.push({
             name,
             website: normalizedWebsite,
-            success: true,
+            success: false,
             existing: true,
             productId: product._id,
-            message: "Product updated",
+            message: "Product already exists (skipped - duplicate URL)",
           });
-        } else {
-          // Create new product
-          const productData: any = {
-            name,
-            website: normalizedWebsite,
-            tagline: tagline || null,
-            description: tagline || null,
-            addedByAdmin: true,
-            surveyData: {
-              adminAudit: true,
-              adminAuditAt: new Date(),
-            },
-          };
-
-          // Process logo if provided
-          if (logo) {
-            const uploadedLogoUrl = await processLogo(logo);
-            if (uploadedLogoUrl) {
-              productData.logo = uploadedLogoUrl;
-            }
-          } else {
-            productData.logo = `http://www.google.com/s2/favicons?domain=${normalizedWebsite}`;
-          }
-
-          if (topics && Array.isArray(topics) && topics.length > 0) {
-            const topicIds = await processTopics(topics);
-            productData.topics = topicIds;
-          }
-
-          if (metadata) {
-            productData.metadata = metadata;
-          }
-
-          product = await Product.create(productData);
-
-          results.push({
-            name,
-            website: normalizedWebsite,
-            success: true,
-            existing: false,
-            productId: product._id,
-            message: "Product created",
-          });
+          continue;
         }
+
+        // Create new product
+        const productData: any = {
+          name,
+          website: normalizedWebsite,
+          tagline: tagline || null,
+          description: tagline || null,
+          addedByAdmin: true,
+          surveyData: {
+            adminAudit: true,
+            adminAuditAt: new Date(),
+          },
+        };
+
+        // Process logo if provided
+        if (logo) {
+          const uploadedLogoUrl = await processLogo(logo);
+          if (uploadedLogoUrl) {
+            productData.logo = uploadedLogoUrl;
+          }
+        } else {
+          productData.logo = `http://www.google.com/s2/favicons?domain=${normalizedWebsite}`;
+        }
+
+        if (topics && Array.isArray(topics) && topics.length > 0) {
+          const topicIds = await processTopics(topics);
+          productData.topics = topicIds;
+        }
+
+        if (metadata) {
+          productData.metadata = metadata;
+        }
+
+        product = await Product.create(productData);
+
+        results.push({
+          name,
+          website: normalizedWebsite,
+          success: true,
+          existing: false,
+          productId: product._id,
+          message: "Product created",
+        });
       } catch (error: any) {
         results.push({
           name,

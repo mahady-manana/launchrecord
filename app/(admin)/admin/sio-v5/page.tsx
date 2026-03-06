@@ -12,6 +12,7 @@ import {
   RefreshCw,
 } from "lucide-react";
 import { BulkImportDialog } from "@/components/admin/BulkImportDialog";
+import { BulkSaveDialog } from "@/components/admin/BulkSaveDialog";
 import { ActiveAuditsCard } from "@/components/admin/ActiveAuditsCard";
 import { ProductsList } from "@/components/admin/ProductsList";
 import { AddAuditDialog } from "@/components/admin/AddAuditDialog";
@@ -53,6 +54,8 @@ export default function SIOV5AdminPage() {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [totalProducts, setTotalProducts] = useState(0);
+  const [showNotAuditedOnly, setShowNotAuditedOnly] = useState(false);
+  const [selectedProducts, setSelectedProducts] = useState<Set<string>>(new Set());
 
   const [activeAudits, setActiveAudits] = useState<AuditTask[]>([]);
   const [bulkImportQueue, setBulkImportQueue] = useState<AuditTask[]>([]);
@@ -66,6 +69,7 @@ export default function SIOV5AdminPage() {
         page: page.toString(),
         limit: "20",
         ...(searchTerm ? { search: searchTerm } : {}),
+        ...(showNotAuditedOnly ? { notAudited: "true" } : {}),
       });
 
       const response = await fetch(`/api/admin/products?${params}`);
@@ -81,7 +85,7 @@ export default function SIOV5AdminPage() {
     } finally {
       setLoading(false);
     }
-  }, [page, searchTerm]);
+  }, [page, searchTerm, showNotAuditedOnly]);
 
   useEffect(() => {
     fetchProducts();
@@ -138,6 +142,28 @@ export default function SIOV5AdminPage() {
     } catch (error: any) {
       console.error("Bulk import error:", error);
       alert(error.message || "Failed to import products");
+    }
+  };
+
+  const handleBulkSave = async (data: any[]) => {
+    try {
+      const response = await fetch("/api/admin/products/bulk-save", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+
+      const result = await response.json();
+
+      if (!result.success) {
+        throw new Error(result.error || "Bulk save failed");
+      }
+
+      alert(`Successfully saved ${result.savedCount || data.length} products`);
+      fetchProducts();
+    } catch (error: any) {
+      console.error("Bulk save error:", error);
+      alert(error.message || "Failed to save products");
     }
   };
 
@@ -477,6 +503,41 @@ export default function SIOV5AdminPage() {
     processQueue(queue, 0);
   };
 
+  const auditSelected = async () => {
+    const selectedCount = selectedProducts.size;
+    
+    if (selectedCount === 0) {
+      alert("Please select at least one product");
+      return;
+    }
+
+    if (
+      !confirm(
+        `Run audits on ${selectedCount} selected products? This will process them one by one.`,
+      )
+    ) {
+      return;
+    }
+
+    const selectedProductsList = products.filter(p => selectedProducts.has(p._id));
+    const queue: AuditTask[] = selectedProductsList.map((p) => ({
+      id: crypto.randomUUID(),
+      name: p.name,
+      website: p.website,
+      tagline: p.tagline || "",
+      description: "",
+      status: "pending" as const,
+      progress: 0,
+      productId: p._id,
+    }));
+
+    setBulkImportQueue(queue);
+    setCurrentQueueIndex(0);
+    setIsProcessingQueue(true);
+    setSelectedProducts(new Set());
+    processQueue(queue, 0);
+  };
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -488,11 +549,25 @@ export default function SIOV5AdminPage() {
           </p>
         </div>
         <div className="flex gap-2">
-          <Button variant="outline" className="gap-2" onClick={auditAllUnaudited}>
-            <RefreshCw className="h-4 w-4" />
-            Audit All
+          <Button 
+            variant={showNotAuditedOnly ? "default" : "outline"} 
+            className="gap-2" 
+            onClick={() => {
+              setShowNotAuditedOnly(!showNotAuditedOnly);
+              setPage(1);
+            }}
+          >
+            <FileText className="h-4 w-4" />
+            {showNotAuditedOnly ? "Showing Not Audited" : "Show Not Audited"}
           </Button>
+          {selectedProducts.size > 0 && (
+            <Button variant="default" className="gap-2 bg-green-600 hover:bg-green-700" onClick={auditSelected}>
+              <RefreshCw className="h-4 w-4" />
+              Audit Selected ({selectedProducts.size})
+            </Button>
+          )}
           <BulkImportDialog onImport={handleBulkImport} />
+          <BulkSaveDialog onSave={handleBulkSave} />
           <AddAuditDialog onAdd={handleAddAudit} />
         </div>
       </div>
@@ -546,7 +621,28 @@ export default function SIOV5AdminPage() {
               <p>No products found. Start by adding an audit.</p>
             </div>
           ) : (
-            <ProductsList products={products} loading={loading} onAudit={runSingleAudit} />
+            <ProductsList 
+              products={products} 
+              loading={loading} 
+              onAudit={runSingleAudit}
+              selectedProducts={selectedProducts}
+              onToggleSelect={(id) => {
+                const newSelected = new Set(selectedProducts);
+                if (newSelected.has(id)) {
+                  newSelected.delete(id);
+                } else {
+                  newSelected.add(id);
+                }
+                setSelectedProducts(newSelected);
+              }}
+              onSelectAll={() => {
+                if (selectedProducts.size === products.length) {
+                  setSelectedProducts(new Set());
+                } else {
+                  setSelectedProducts(new Set(products.map(p => p._id)));
+                }
+              }}
+            />
           )}
 
           {/* Pagination */}

@@ -8,7 +8,6 @@ import {
   Brain,
   CheckCircle,
   Eye,
-  FileText,
   Filter,
   Lock,
   Scale,
@@ -348,36 +347,6 @@ export default function SIOV5EnginePage() {
         </div>
 
         {/* War Briefing Code Example */}
-        <div className="bg-slate-900 border border-slate-700 rounded-lg p-6 max-w-4xl mx-auto">
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-2">
-              <FileText className="h-4 w-4 text-slate-400" />
-              <span className="text-xs font-mono text-slate-400">
-                war-briefing.json
-              </span>
-            </div>
-            <Badge
-              variant="outline"
-              className="text-[10px] border-slate-600 text-slate-300"
-            >
-              JSON_OUTPUT
-            </Badge>
-          </div>
-          <pre className="text-xs font-mono text-slate-300 overflow-x-auto">
-            <code>{`{
-  "global_score": 67,
-  "ego_stab": "Feature-heavy copy. Invisible to LLMs. Clarity fails at 200ms scan.",
-  "survival_probability": 0.42,
-  "engines": {
-    "aeo": { "score": 34, "status": "INVISIBLE" },
-    "positioning": { "score": 52, "status": "GENERIC" },
-    "clarity": { "score": 61, "status": "MARGINAL" },
-    "momentum": { "score": 78, "status": "STRONG" },
-    "proof": { "score": 45, "status": "UNVERIFIED" }
-  }
-}`}</code>
-          </pre>
-        </div>
       </section>
 
       {/* Comparison Section */}
