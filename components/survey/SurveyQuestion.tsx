@@ -20,18 +20,12 @@ interface Question {
   options?: { value: string; label: string }[];
 }
 
-interface SurveyAnswers {
-  [key: string]: string;
-}
-
 interface SurveyQuestionProps {
   question: Question;
   answer: string;
   onAnswer: (value: string) => void;
   onNext: () => void;
   onPrev: () => void;
-  onTextChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
-  onKeyDown: (e: React.KeyboardEvent, value: string) => void;
   step: number;
   totalSteps: number;
   canContinue: boolean;
@@ -45,8 +39,6 @@ export function SurveyQuestion({
   onAnswer,
   onNext,
   onPrev,
-  onTextChange,
-  onKeyDown,
   step,
   totalSteps,
   canContinue,
@@ -54,6 +46,21 @@ export function SurveyQuestion({
   isLastQuestion,
 }: SurveyQuestionProps) {
   const progress = ((step + 1) / totalSteps) * 100;
+
+  const handleTextChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
+    onAnswer(e.target.value);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter" && !e.shiftKey && question.type !== "textarea") {
+      e.preventDefault();
+      if (answer.trim() && canContinue) {
+        onNext();
+      }
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-orange-50 to-white py-12 px-4">
@@ -93,8 +100,8 @@ export function SurveyQuestion({
               <textarea
                 placeholder={question.placeholder || "Enter your answer"}
                 value={answer}
-                onChange={onTextChange}
-                onKeyDown={(e) => onKeyDown(e, answer)}
+                onChange={handleTextChange}
+                onKeyDown={handleKeyDown}
                 className="w-full px-4 py-3 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-600 text-base"
                 autoFocus
                 rows={5}
@@ -106,8 +113,8 @@ export function SurveyQuestion({
                 type={question.type}
                 placeholder={question.placeholder || "Enter your answer"}
                 value={answer}
-                onChange={onTextChange}
-                onKeyDown={(e) => onKeyDown(e, answer)}
+                onChange={handleTextChange}
+                onKeyDown={handleKeyDown}
                 className="w-full px-4 py-3 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-600 text-base"
                 autoFocus
               />

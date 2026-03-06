@@ -41,8 +41,8 @@ const ProductSchema = new Schema<IProduct>(
       type: String,
       required: [true, "Product name is required"],
       trim: true,
-      minlength: [2, "Product name must be at least 2 characters"],
-      maxlength: [200, "Product name must be less than 200 characters"],
+      minlength: [1, "Product name must be at least 1 characters"],
+      maxlength: [100, "Product name must be less than 200 characters"],
     },
     description: {
       type: String,
@@ -54,7 +54,7 @@ const ProductSchema = new Schema<IProduct>(
       type: String,
       default: null,
       trim: true,
-      maxlength: [200, "Tagline must be less than 200 characters"],
+      maxlength: [80, "Tagline must be less than 80 characters"],
     },
     logo: {
       type: String,

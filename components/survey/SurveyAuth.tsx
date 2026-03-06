@@ -32,9 +32,10 @@ interface SurveyAuthProps {
   productId: string | null;
   onBack: () => void;
   onAuthComplete: () => void;
+  isClaimFlow?: boolean;
 }
 
-export function SurveyAuth({ answers, productId, onBack }: SurveyAuthProps) {
+export function SurveyAuth({ answers, productId, onBack, isClaimFlow = false }: SurveyAuthProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [authMode, setAuthMode] = useState<"signup" | "login">("signup");
@@ -111,12 +112,24 @@ export function SurveyAuth({ answers, productId, onBack }: SurveyAuthProps) {
         <Card className="border-2 border-orange-200 mb-8 shadow-lg">
           <CardHeader>
             <CardTitle className="text-2xl text-center">
-              <span>
-                Generate SIO V5 Audit & <br /> Create Your Account
-              </span>
+              {isClaimFlow ? (
+                <>
+                  <span>
+                    Complete Your Claim & <br /> Create Your Account
+                  </span>
+                </>
+              ) : (
+                <>
+                  <span>
+                    Generate SIO V5 Audit & <br /> Create Your Account
+                  </span>
+                </>
+              )}
             </CardTitle>
             <CardDescription className="text-center">
-              Sign up to save your survey and generate your audit report
+              {isClaimFlow
+                ? "Sign in to verify ownership and complete your product information in the dashboard"
+                : "Sign up to save your survey and generate your audit report"}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">

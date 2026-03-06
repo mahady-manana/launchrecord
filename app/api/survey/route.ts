@@ -20,53 +20,20 @@ export async function POST(request: NextRequest) {
 
     const normalizedUrl = normalizeUrl(saasUrl);
 
-    // If productId is provided (from claim flow), use that product
-    if (productId) {
-      const existingProduct = await Product.findById(productId);
-      if (existingProduct) {
-        // Check if product is already claimed by another user
-        if (existingProduct.user && !existingProduct.addedByAdmin) {
-          return NextResponse.json(
-            { 
-              error: "This product has already been claimed by another user",
-              alreadyClaimed: true,
-            },
-            { status: 400 },
-          );
-        }
-
-        // Update product with survey data
-        existingProduct.surveyData = {
-          ...(existingProduct.surveyData || {}),
-          founderName: founderName || existingProduct.surveyData?.founderName,
-          saasName: saasName || existingProduct.name,
-          saasUrl: normalizedUrl,
-          ...body,
-        };
-        existingProduct.markModified("surveyData");
-        await existingProduct.save();
-
-        return NextResponse.json({
-          message: "Survey started successfully",
-          productId: existingProduct._id,
-          existing: true,
-          requiresClaim: false,
-        });
-      }
-    }
-
     // Check if product with this domain already exists
     const existingProduct = await Product.findOne({
       website: normalizedUrl,
     });
 
     if (existingProduct) {
-      // Check if it's already claimed by a user
+      // Check if it's already claimed by a user (not admin)
       if (existingProduct.user && !existingProduct.addedByAdmin) {
         return NextResponse.json(
-          { 
-            error: "This product has already been claimed by another user. You cannot continue with this product URL.",
+          {
+            error:
+              "This product has already been claimed by another user. You cannot continue with this product URL.",
             alreadyClaimed: true,
+            productId: existingProduct._id,
             productName: existingProduct.name,
           },
           { status: 400 },
@@ -85,9 +52,10 @@ export async function POST(request: NextRequest) {
         });
       }
 
-      // Return existing product (already claimed by user)
+      // Product exists but not claimed (no user, not added by admin) - let them cook
+      // Or product exists with user but also added by admin (edge case)
       return NextResponse.json({
-        message: "Audit already exists for this product",
+        message: "Survey already exists for this product",
         productId: existingProduct._id,
         existing: true,
         requiresClaim: false,

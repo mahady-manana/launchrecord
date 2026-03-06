@@ -46,9 +46,13 @@ export default function VerifyClaimPage() {
         if (data.success) {
           setStatus("success");
           setEmail(data.email);
-          // Redirect to login after short delay
+          // Save product ID and redirect to survey auth
+          if (data.productId) {
+            localStorage.setItem("survey_product_id", data.productId);
+          }
+          // Redirect to survey auth to complete account setup
           setTimeout(() => {
-            router.push(`/login?claim-success=true&email=${encodeURIComponent(data.email)}`);
+            router.push("/survey/auth");
           }, 2000);
         } else {
           setStatus("error");
@@ -81,7 +85,7 @@ export default function VerifyClaimPage() {
               <CardDescription>
                 {email && (
                   <p className="mt-2 text-sm">
-                    Redirecting to sign in with <strong>{email}</strong>...
+                    Redirecting to complete your account setup...
                   </p>
                 )}
               </CardDescription>
