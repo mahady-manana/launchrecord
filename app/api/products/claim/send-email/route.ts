@@ -83,12 +83,12 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // if (!emailDomain || !productDomain.includes(emailDomain)) {
-    //   return NextResponse.json(
-    //     { error: "Email domain must match the product website domain" },
-    //     { status: 400 },
-    //   );
-    // }
+    if (!emailDomain || !productDomain.includes(emailDomain)) {
+      return NextResponse.json(
+        { error: "Email domain must match the product website domain" },
+        { status: 400 },
+      );
+    }
 
     // Generate verification token
     const claimToken = crypto.randomBytes(32).toString("hex");

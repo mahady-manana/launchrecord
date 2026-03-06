@@ -1,25 +1,34 @@
 "use client";
 
-import { SurveyHero, SurveyQuestion, SurveySummary } from "@/components/survey";
+import { SurveyHero, SurveyQuestion } from "@/components/survey";
 import { questions, type SurveyAnswers } from "@/lib/survey-constants";
 import { useSession } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
+
+type SurveyStatus = 
+  | "idle"
+  | "checking"
+  | "ready"
+  | "requires-claim"
+  | "already-claimed"
+  | "complete";
 
 function DashboardSurveyContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { data: session, status } = useSession();
 
-  const [step, setStep] = useState(-1);
-  const [isInitialized, setIsInitialized] = useState(false);
+  const [surveyStatus, setSurveyStatus] = useState<SurveyStatus>("checking");
   const [productId, setProductId] = useState<string | null>(null);
+  const [productName, setProductName] = useState("");
+  const [productWebsite, setProductWebsite] = useState("");
   const [checkingProduct, setCheckingProduct] = useState(false);
-  const [claimError, setClaimError] = useState<string | null>(null);
 
   const initialURL = searchParams.get("url");
   const [saasUrl, setSaasUrl] = useState(initialURL || "");
 
+  const [step, setStep] = useState(-1);
   const [answers, setAnswers] = useState<SurveyAnswers>({
     founderName: "",
     saasName: "",
@@ -42,13 +51,17 @@ function DashboardSurveyContent() {
       return;
     }
 
-    setIsInitialized(true);
-  }, [status]);
+    if (initialURL && surveyStatus === "checking") {
+      initializeSurvey(initialURL);
+    } else if (!initialURL && surveyStatus === "checking") {
+      setSurveyStatus("ready");
+      setStep(-1);
+    }
+  }, [status, initialURL]);
 
   const initializeSurvey = async (url: string) => {
     setCheckingProduct(true);
-    setClaimError(null);
-
+    
     try {
       const response = await fetch("/api/survey", {
         method: "POST",
@@ -64,7 +77,8 @@ function DashboardSurveyContent() {
 
       if (!response.ok) {
         if (data.alreadyClaimed) {
-          setClaimError(data.error || "This product has already been claimed");
+          // Product is owned by other users - cannot access
+          setSurveyStatus("already-claimed");
           return;
         }
         throw new Error(data.error || "Failed to initialize survey");
@@ -75,7 +89,19 @@ function DashboardSurveyContent() {
         setProductId(data.productId);
         localStorage.setItem("survey_product_id", data.productId);
 
-        // If existing product with audit, redirect
+        // REQUIRES CLAIM - Product exists but user hasn't claimed it yet
+        // DO NOT allow access to audit, redirect to claim flow
+        if (data.requiresClaim && data.existing) {
+          setProductName(data.productName || "Unknown");
+          setProductWebsite(data.productWebsite || url);
+          setSurveyStatus("requires-claim");
+          return;
+        }
+
+        // User owns this product (either new or existing with access)
+        setSurveyStatus("ready");
+        
+        // If existing product with completed survey, redirect to audit
         if (data.existing) {
           const auditResponse = await fetch(
             `/api/audit?productId=${data.productId}`,
@@ -88,11 +114,12 @@ function DashboardSurveyContent() {
           }
         }
 
-        // Move to first question
+        // Start survey
         setStep(0);
       }
     } catch (error) {
       console.error("Error initializing survey:", error);
+      setSurveyStatus("ready");
       setStep(0);
     } finally {
       setCheckingProduct(false);
@@ -149,7 +176,7 @@ function DashboardSurveyContent() {
   const handleInitialSubmit = async () => {
     if (!saasUrl) return;
 
-    if (productId) {
+    if (productId && surveyStatus === "ready") {
       setAnswers((prev) => ({ ...prev, saasUrl }));
       saveProgress({ ...answers, saasUrl });
       setStep(0);
@@ -159,20 +186,79 @@ function DashboardSurveyContent() {
     await initializeSurvey(saasUrl);
   };
 
-  // Show loading while checking session
-  if (status === "loading" || !isInitialized) {
+  // Show loading while checking session/product
+  if (status === "loading" || surveyStatus === "checking") {
     return (
       <div className="min-h-screen bg-gradient-to-b from-orange-50 to-white flex items-center justify-center">
         <div className="text-center space-y-4">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-600 mx-auto" />
-          <p className="text-muted-foreground">Loading survey...</p>
+          <p className="text-muted-foreground">
+            {surveyStatus === "checking" ? "Checking product..." : "Loading survey..."}
+          </p>
         </div>
       </div>
     );
   }
 
-  // Show error if product is already claimed
-  if (claimError) {
+  // REQUIRES CLAIM - User must claim product before accessing
+  if (surveyStatus === "requires-claim") {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-orange-50 to-white flex items-center justify-center p-4">
+        <div className="max-w-md w-full text-center space-y-6">
+          <div className="bg-white rounded-lg shadow-lg p-8 space-y-4">
+            <div className="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto">
+              <svg
+                className="w-8 h-8 text-orange-600"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+                />
+              </svg>
+            </div>
+            <h2 className="text-2xl font-bold text-foreground">
+              Claim This Product
+            </h2>
+            <p className="text-muted-foreground">
+              <strong>{productName}</strong> exists in our database but hasn&apos;t been claimed yet.
+            </p>
+            <p className="text-sm text-muted-foreground">
+              To access the survey and audit, you need to verify ownership of this product.
+            </p>
+            <div className="space-y-2">
+              <button
+                onClick={() => {
+                  router.push(
+                    `/survey/claim?product=${productId}&name=${encodeURIComponent(productName)}&website=${encodeURIComponent(productWebsite)}`
+                  );
+                }}
+                className="w-full bg-orange-600 hover:bg-orange-700 text-white font-medium py-2 px-4 rounded-lg transition-colors"
+              >
+                Claim Product
+              </button>
+              <button
+                onClick={() => {
+                  setSurveyStatus("ready");
+                  setStep(-1);
+                }}
+                className="w-full bg-white hover:bg-gray-50 text-gray-700 font-medium py-2 px-4 rounded-lg border border-gray-300 transition-colors"
+              >
+                Try Another Product
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // ALREADY CLAIMED - Product owned by another user
+  if (surveyStatus === "already-claimed") {
     return (
       <div className="min-h-screen bg-gradient-to-b from-orange-50 to-white flex items-center justify-center p-4">
         <div className="max-w-md w-full text-center space-y-6">
@@ -188,43 +274,33 @@ function DashboardSurveyContent() {
                   strokeLinecap="round"
                   strokeLinejoin="round"
                   strokeWidth={2}
-                  d="M6 18L18 6M6 6l12 12"
+                  d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
                 />
               </svg>
             </div>
             <h2 className="text-2xl font-bold text-foreground">
-              Product Already Claimed
+              Access Denied
             </h2>
-            <p className="text-muted-foreground">{claimError}</p>
+            <p className="text-muted-foreground">
+              This product has already been claimed by another user.
+            </p>
             <p className="text-sm text-muted-foreground">
-              If you believe this is an error, please contact{" "}
-              <a
-                href="mailto:hello@launchrecord.com"
-                className="text-orange-600 hover:underline"
-              >
-                hello@launchrecord.com
-              </a>
+              You cannot access this product&apos;s survey or audit. 
+              If you believe this is an error, please contact support.
             </p>
             <button
-              onClick={() => router.push("/dashboard")}
+              onClick={() => {
+                setSurveyStatus("ready");
+                setStep(-1);
+                setSaasUrl("");
+              }}
               className="w-full bg-orange-600 hover:bg-orange-700 text-white font-medium py-2 px-4 rounded-lg transition-colors"
             >
-              Back to Dashboard
+              Try Another Product
             </button>
           </div>
         </div>
       </div>
-    );
-  }
-
-  // Show summary step after all questions
-  if (step === questions.length) {
-    return (
-      <SurveySummary
-        answers={answers}
-        onBack={handlePrev}
-        onNext={handleNext}
-      />
     );
   }
 

@@ -1,6 +1,12 @@
 "use client";
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { CheckCircle2, Loader2, XCircle } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -8,7 +14,9 @@ import { useEffect, useState } from "react";
 export default function VerifyClaimPage() {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const [status, setStatus] = useState<"verifying" | "success" | "error">("verifying");
+  const [status, setStatus] = useState<"verifying" | "success" | "error">(
+    "verifying",
+  );
   const [errorMessage, setErrorMessage] = useState("");
   const [email, setEmail] = useState("");
 
@@ -49,7 +57,7 @@ export default function VerifyClaimPage() {
           // Redirect to dashboard survey after short delay
           // The claim is already processed on the server
           setTimeout(() => {
-            router.push("/dashboard/survey");
+            router.push("/dashboard/audit?product=" + data.productId);
           }, 2000);
         } else {
           setStatus("error");
@@ -91,7 +99,8 @@ export default function VerifyClaimPage() {
               <XCircle className="h-12 w-12 text-red-500 mx-auto mb-4" />
               <CardTitle>Claim Failed</CardTitle>
               <CardDescription>
-                {errorMessage || "Unable to verify your claim. Please try again."}
+                {errorMessage ||
+                  "Unable to verify your claim. Please try again."}
               </CardDescription>
             </>
           )}
@@ -101,7 +110,10 @@ export default function VerifyClaimPage() {
             <>
               <p className="text-sm text-muted-foreground text-center">
                 If you believe this is an error, please contact{" "}
-                <a href="mailto:hello@launchrecord.com" className="text-orange-600 hover:underline">
+                <a
+                  href="mailto:hello@launchrecord.com"
+                  className="text-orange-600 hover:underline"
+                >
                   hello@launchrecord.com
                 </a>
               </p>

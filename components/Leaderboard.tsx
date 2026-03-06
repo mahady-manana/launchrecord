@@ -106,13 +106,18 @@ export function Leaderboard({ products, showFull = false }: LeaderboardProps) {
                 <TableCell>
                   <div className="space-y-1">
                     <div className="flex items-center gap-2">
-                      <div className="relative w-8 h-8 rounded-md overflow-hidden flex-shrink-0 bg-gray-100">
+                      <div className="relative w-8 h-8 rounded-md overflow-hidden flex-shrink-0 flex items-center justify-center">
                         <img
                           src={product.logo || "/logo.svg"}
                           alt={product.name}
+                          height={40}
+                          width={40}
                           className={clsx(
-                            "w-full h-full object-cover",
+                            "object-contain",
                             !product.logo && "opacity-50",
+                            product.logo?.includes("google.com")
+                              ? "h-6 w-6"
+                              : "",
                           )}
                         />
                       </div>

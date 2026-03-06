@@ -1,6 +1,6 @@
 import { connectToDatabase } from "@/lib/db";
+import { getUserSession } from "@/lib/session";
 import Product from "@/models/product";
-import User from "@/models/user";
 import crypto from "crypto";
 import mongoose from "mongoose";
 import { NextRequest, NextResponse } from "next/server";
@@ -24,6 +24,14 @@ const Claim = mongoose.models.Claim || mongoose.model("Claim", ClaimSchema);
 export async function POST(request: NextRequest) {
   try {
     await connectToDatabase();
+
+    // Get the logged-in user from session
+    const { user: sessionUser, response } = await getUserSession({
+      required: true,
+    });
+    if (response) {
+      return response;
+    }
 
     const body = await request.json();
     const { token } = body;
@@ -72,29 +80,25 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Product not found" }, { status: 404 });
     }
 
-    // Find or create user with this email
-    let user = await User.findOne({ email: claim.email.toLowerCase() });
-    let isNewUser = false;
-
-    if (!user) {
-      user = await User.create({
-        name: claim.email.split("@")[0],
-        email: claim.email.toLowerCase(),
-        role: "user",
-        provider: "credentials",
-        emailVerified: new Date(),
-      });
-      isNewUser = true;
+    // Use the logged-in user's ID (already authenticated)
+    // No need to create/find user from claim email
+    const userId = sessionUser?._id;
+    if (!userId) {
+      return NextResponse.json(
+        { error: "User not found in session" },
+        { status: 401 },
+      );
     }
 
-    // Add user to product owners (many-to-many)
-    const userId = user._id;
+    // Add logged-in user to product owners (many-to-many)
     if (!product.users) {
       product.users = [];
     }
-    
+
     // Check if user is already in the array
-    const isAlreadyOwner = product.users.some((u: any) => u.toString() === userId.toString());
+    const isAlreadyOwner = product.users.some(
+      (u: any) => u.toString() === userId,
+    );
     if (!isAlreadyOwner) {
       product.users.push(userId as any);
     }
@@ -109,8 +113,6 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       success: true,
       message: "Claim verified successfully",
-      email: claim.email,
-      isNewUser,
       productId: product._id.toString(),
     });
   } catch (error) {

@@ -1,18 +1,10 @@
 "use client";
 
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import {
-  Shield,
-  LayoutDashboard,
-  FileText,
-  LogOut,
-  Menu,
-  X,
-} from "lucide-react";
+import { FileText, LogOut, Menu, Shield, X } from "lucide-react";
+import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 interface AdminLayoutProps {
   children: React.ReactNode;
@@ -28,14 +20,11 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
   useEffect(() => {
     const auth = sessionStorage.getItem("admin_auth");
     setIsAuthenticated(auth === "true");
-    setIsLoading(false);
-  }, []);
-
-  useEffect(() => {
-    if (!isLoading && !isAuthenticated && !pathname.includes("/admin/login")) {
+    if (auth !== "true") {
       router.push("/admin/login");
     }
-  }, [isAuthenticated, isLoading, pathname, router]);
+    setIsLoading(false);
+  }, []);
 
   const handleLogout = () => {
     sessionStorage.removeItem("admin_auth");

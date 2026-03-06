@@ -57,7 +57,7 @@ export async function POST(request: NextRequest) {
     const results = [];
 
     for (const item of body) {
-      const { name, website, tagline, topics, metadata, logo } = item;
+      const { name, website, tagline, topics, metadata, logo, id } = item;
       let normalizedWebsite = normalizeUrl(website, { forceHttps: true });
 
       if (!name || !website) {
@@ -67,7 +67,11 @@ export async function POST(request: NextRequest) {
           success: false,
           error: "Name and website are required",
           logo,
-          metadata,
+          metadata: {
+            source: "ph",
+            sourceId: id,
+            ...metadata,
+          },
         });
         continue;
       }

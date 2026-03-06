@@ -54,9 +54,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Find the product
-    const product = await Product.findByIdAndUpdate(productId, {
-      user: user?._id,
-    });
+    const product = await Product.findById(productId);
     if (!product) {
       return NextResponse.json({ error: "Product not found" }, { status: 404 });
     }
@@ -189,7 +187,9 @@ export async function POST(request: NextRequest) {
         }
         if (user?._id) {
           const userId = user._id;
-          const isAlreadyOwner = product.users.some((u: any) => u.toString() === userId.toString());
+          const isAlreadyOwner = product.users.some(
+            (u: any) => u.toString() === userId.toString(),
+          );
           if (!isAlreadyOwner) {
             product.users.push(userId as any);
           }
