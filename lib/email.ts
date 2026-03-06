@@ -1,8 +1,8 @@
 import { SES } from "@aws-sdk/client-ses";
 
 export const ses = new SES({
-  accessKeyId: process.env.AWS_ACCESS_ID_EMAIL as string,
-  secretAccessKey: process.env.AWS_SECRET_KEY_EMAIL,
+  // accessKeyId: process.env.AWS_ACCESS_ID_EMAIL as string,
+  // secretAccessKey: process.env.AWS_SECRET_KEY_EMAIL,
   region: "us-east-1",
 });
 

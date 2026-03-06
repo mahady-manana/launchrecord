@@ -180,8 +180,8 @@ export default function LaunchRecordLandingPage() {
               <h1 className="text-5xl md:text-7xl font-black tracking-tighter text-slate-200 leading-[0.9]">
                 Growth Hacking <br />
                 <span className="text-red-600">Will Not Save You.</span>
-                <span className="block text-2xl md:text-3xl font-mono mt-4 tracking-normal normal-case text-slate-300">
-                  Most SaaS are just features waiting to be deleted.
+                <span className="block text-2xl md:text-3xl font-mono mt-4 tracking-normal normal-case text-slate-200">
+                  Audits your startup's sovereignty and defensibility.
                 </span>
               </h1>
 

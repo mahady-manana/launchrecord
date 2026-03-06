@@ -1,11 +1,11 @@
-import { z } from "zod";
-import User from "@/models/user";
 import { connectToDatabase } from "@/lib/db";
 import { getUserSession } from "@/lib/session";
+import User from "@/models/user";
 import { hashPassword } from "@/utils/password";
 import { jsonError, jsonSuccess } from "@/utils/response";
 import { sanitizeText } from "@/utils/sanitize";
 import { isSameOrigin } from "@/utils/security";
+import { z } from "zod";
 
 const createSchema = z.object({
   name: z.string().min(2).max(100),
@@ -26,20 +26,6 @@ export async function GET() {
   }
 
   await connectToDatabase();
-
-  if (sessionUser.role === "admin") {
-    const users = await User.find({ deletedAt: null }).sort({ createdAt: -1 });
-    return jsonSuccess({
-      data: {
-        users: users.map((user) => ({
-          id: user._id.toString(),
-          name: user.name,
-          email: user.email,
-          role: user.role,
-        })),
-      },
-    });
-  }
 
   const user = await User.findOne({
     _id: sessionUser.id,
@@ -77,10 +63,6 @@ export async function POST(request: Request) {
 
   if (!sessionUser) {
     return jsonError("Unauthorized", 401);
-  }
-
-  if (sessionUser.role !== "admin") {
-    return jsonError("Forbidden", 403);
   }
 
   const body = await request.json();

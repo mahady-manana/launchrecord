@@ -1,11 +1,11 @@
-import { z } from "zod";
-import User from "@/models/user";
 import { connectToDatabase } from "@/lib/db";
 import { getUserSession } from "@/lib/session";
+import User from "@/models/user";
 import { jsonError, jsonSuccess } from "@/utils/response";
 import { sanitizeText } from "@/utils/sanitize";
 import { isSameOrigin } from "@/utils/security";
 import { NextRequest } from "next/server";
+import { z } from "zod";
 
 const updateSchema = z.object({
   name: z.string().min(2).max(100).optional(),
@@ -13,7 +13,10 @@ const updateSchema = z.object({
   role: z.enum(["user", "admin"]).optional(),
 });
 
-export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+export async function GET(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> },
+) {
   const session = await getUserSession({ required: true });
   if (session.response) {
     return session.response;
@@ -25,9 +28,6 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
   }
 
   const { id: userId } = await params;
-  if (sessionUser.role !== "admin" && sessionUser.id !== userId) {
-    return jsonError("Forbidden", 403);
-  }
 
   await connectToDatabase();
   const user = await User.findOne({ _id: userId, deletedAt: null });
@@ -47,7 +47,10 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
   });
 }
 
-export async function PUT(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+export async function PUT(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> },
+) {
   if (!isSameOrigin(request)) {
     return jsonError("Invalid origin", 403);
   }
@@ -63,9 +66,6 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
   }
 
   const { id: userId } = await params;
-  if (sessionUser.role !== "admin" && sessionUser.id !== userId) {
-    return jsonError("Forbidden", 403);
-  }
 
   const body = await request.json();
   const parsed = updateSchema.safeParse(body);
@@ -79,12 +79,6 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
   }
   if (parsed.data.email) {
     updateData.email = sanitizeText(parsed.data.email).toLowerCase();
-  }
-  if (parsed.data.role) {
-    if (sessionUser.role !== "admin") {
-      return jsonError("Forbidden", 403);
-    }
-    updateData.role = parsed.data.role;
   }
 
   if (Object.keys(updateData).length === 0) {
@@ -126,7 +120,10 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
   });
 }
 
-export async function DELETE(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> },
+) {
   if (!isSameOrigin(request)) {
     return jsonError("Invalid origin", 403);
   }
@@ -142,9 +139,6 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
   }
 
   const { id: userId } = await params;
-  if (sessionUser.role !== "admin" && sessionUser.id !== userId) {
-    return jsonError("Forbidden", 403);
-  }
 
   await connectToDatabase();
   const user = await User.findOneAndUpdate(

@@ -48,7 +48,7 @@ const providers: NextAuthOptions["providers"] = [
           id: newuser._id.toString(),
           name: newuser.name,
           email: newuser.email,
-          role: "user",
+          role: "user" as any,
         };
       } else {
         await connectToDatabase();
