@@ -1,20 +1,50 @@
-"use client";
+import { Metadata } from "next";
+import LeaderboardPageClient from "./PageClient";
 
-import { Leaderboard } from "@/components/Leaderboard";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from "@/components/ui/pagination";
-import { Brain, Shield, TrendingUp, Trophy, HelpCircle } from "lucide-react";
-import Link from "next/link";
-import { useEffect, useState } from "react";
+const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+
+export const metadata: Metadata = {
+  title: "Sovereign 100 Leaderboard | LaunchRecord",
+  description:
+    "The definitive ranking of SaaS products by defensibility. See which products are untouchable and which are just another ghost. Real-time SIO-V5 scores.",
+  metadataBase: new URL(appUrl),
+  openGraph: {
+    title: "Sovereign 100 Leaderboard | LaunchRecord",
+    description:
+      "The definitive ranking of SaaS products by defensibility. See who's untouchable and who's just another ghost.",
+    url: `${appUrl}/leaderboard`,
+    siteName: "LaunchRecord",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "LaunchRecord Sovereign 100 Leaderboard",
+      },
+    ],
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Sovereign 100 Leaderboard | LaunchRecord",
+    description:
+      "The definitive ranking of SaaS products by defensibility.",
+    images: ["/og-image.png"],
+  },
+  keywords: [
+    "SaaS leaderboard",
+    "product defensibility",
+    "SIO-V5 score",
+    "AEO ranking",
+    "positioning score",
+    "SaaS rankings",
+    "AI visibility",
+    "LaunchRecord",
+  ],
+  alternates: {
+    canonical: `${appUrl}/leaderboard`,
+  },
+};
 
 interface LeaderboardEntry {
   _id: string;
@@ -26,180 +56,58 @@ interface LeaderboardEntry {
   rank: number;
 }
 
-export default function LeaderboardPage() {
-  const [products, setProducts] = useState<LeaderboardEntry[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [page, setPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const [totalProducts, setTotalProducts] = useState(0);
+async function fetchLeaderboard(pageNum: number): Promise<{
+  products: LeaderboardEntry[];
+  totalPages: number;
+  totalProducts: number;
+} | null> {
+  try {
+    const response = await fetch(
+      `${appUrl}/api/leaderboard?limit=100&page=${pageNum}`,
+      {
+        cache: "no-store",
+      },
+    );
 
-  useEffect(() => {
-    fetchLeaderboard(page);
-  }, [page]);
-
-  const fetchLeaderboard = async (pageNum: number) => {
-    setLoading(true);
-    try {
-      const response = await fetch(
-        `/api/leaderboard?limit=100&page=${pageNum}`,
-      );
-      const data = await response.json();
-
-      if (data.success) {
-        setProducts(data.data.products);
-        setTotalPages(data.data.pagination.pages);
-        setTotalProducts(data.data.pagination.total);
-      }
-    } catch (error) {
-      console.error("Failed to fetch leaderboard:", error);
-    } finally {
-      setLoading(false);
+    if (!response.ok) {
+      return null;
     }
-  };
 
-  const topThree = products.slice(0, 3);
-  const restProducts = products.slice(3);
+    const data = await response.json();
+
+    if (data.success) {
+      return {
+        products: data.data.products,
+        totalPages: data.data.pagination.pages,
+        totalProducts: data.data.pagination.total,
+      };
+    }
+
+    return null;
+  } catch (error) {
+    console.error("Failed to fetch leaderboard:", error);
+    return null;
+  }
+}
+
+export default async function LeaderboardPage({
+  searchParams,
+}: {
+  searchParams: { page?: string };
+}) {
+  const page = parseInt(searchParams.page || "1", 10);
+  const leaderboardData = await fetchLeaderboard(page);
+
+  const initialProducts = leaderboardData?.products || [];
+  const initialTotalPages = leaderboardData?.totalPages || 1;
+  const initialTotalProducts = leaderboardData?.totalProducts || 0;
 
   return (
-    <div className="space-y-12 py-10">
-      {/* Hero Section */}
-      <section className="space-y-6 text-center">
-        <Badge
-          variant="outline"
-          className="font-mono text-xs tracking-[0.2em] uppercase py-1.5 px-6 border-primary/50 text-primary bg-primary/5"
-        >
-          SOVEREIGN 100
-        </Badge>
-
-        <h1 className="text-5xl md:text-6xl font-black tracking-tighter">
-          Sovereign Leaderboard
-        </h1>
-
-        <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-          The definitive ranking of SaaS products by defensibility. See who's
-          untouchable and who's just another ghost.
-        </p>
-
-        <div className="flex justify-center gap-4 pt-4">
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <Shield className="h-4 w-4" />
-            <span>{totalProducts} Products Audited</span>
-          </div>
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <TrendingUp className="h-4 w-4" />
-            <span>Updated Real-time</span>
-          </div>
-        </div>
-      </section>
-
-      {/* Full Leaderboard */}
-      <section className="space-y-6 max-w-6xl mx-auto">
-        <div className="flex items-center justify-between">
-          <div className="space-y-1">
-            <h2 className="text-2xl font-bold">Full Rankings</h2>
-            <p className="text-muted-foreground">
-              Showing {products.length} of {totalProducts} products
-            </p>
-          </div>
-          <Link href="/how-score-works">
-            <Button variant="outline" className="gap-2">
-              <HelpCircle className="h-4 w-4" />
-              How the Score Works
-            </Button>
-          </Link>
-        </div>
-
-        {loading ? (
-          <Card>
-            <CardContent className="py-12 text-center">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto" />
-            </CardContent>
-          </Card>
-        ) : restProducts.length > 0 ? (
-          <Leaderboard products={products} showFull />
-        ) : (
-          <Card>
-            <CardContent className="py-12 text-center text-muted-foreground">
-              <Trophy className="h-12 w-12 mx-auto mb-4 opacity-50" />
-              <p>No products ranked yet. Be the first to get audited.</p>
-            </CardContent>
-          </Card>
-        )}
-
-        {/* Pagination */}
-        {!loading && totalPages > 1 && (
-          <Pagination>
-            <PaginationContent>
-              <PaginationItem>
-                <PaginationPrevious
-                  href="#"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    setPage((p) => Math.max(1, p - 1));
-                  }}
-                  className={page === 1 ? "pointer-events-none opacity-50" : ""}
-                />
-              </PaginationItem>
-              {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
-                let pageNum = i + 1;
-                if (totalPages > 5) {
-                  if (page > 3) {
-                    pageNum = page - 2 + i;
-                  }
-                  if (pageNum > totalPages) {
-                    pageNum = totalPages - 4 + i;
-                  }
-                }
-                return (
-                  <PaginationItem key={pageNum}>
-                    <PaginationLink
-                      href="#"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        setPage(pageNum);
-                      }}
-                      isActive={page === pageNum}
-                    >
-                      {pageNum}
-                    </PaginationLink>
-                  </PaginationItem>
-                );
-              })}
-              <PaginationItem>
-                <PaginationNext
-                  href="#"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    setPage((p) => Math.min(totalPages, p + 1));
-                  }}
-                  className={
-                    page === totalPages ? "pointer-events-none opacity-50" : ""
-                  }
-                />
-              </PaginationItem>
-            </PaginationContent>
-          </Pagination>
-        )}
-      </section>
-
-      {/* Status Legend */}
-      <section className="max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-5 gap-4">
-        {[
-          { status: "UNTOUCHABLE", score: "90-100", color: "bg-purple-500" },
-          { status: "LETHAL", score: "70-89", color: "bg-green-400" },
-          { status: "PLASTIC", score: "40-69", color: "bg-blue-400" },
-          { status: "ZOMBIE", score: "20-39", color: "bg-orange-600" },
-          { status: "GHOST", score: "1-19", color: "bg-red-600" },
-        ].map((item) => (
-          <Card key={item.status}>
-            <CardContent className="py-4 text-center space-y-2">
-              <div className={`w-8 h-8 rounded-full ${item.color} mx-auto`} />
-              <p className="font-bold text-sm">{item.status}</p>
-              <p className="text-xs text-muted-foreground">{item.score}</p>
-            </CardContent>
-          </Card>
-        ))}
-      </section>
-    </div>
+    <LeaderboardPageClient
+      initialProducts={initialProducts}
+      initialPage={page}
+      initialTotalPages={initialTotalPages}
+      initialTotalProducts={initialTotalProducts}
+    />
   );
 }
