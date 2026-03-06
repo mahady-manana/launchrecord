@@ -183,7 +183,17 @@ export async function POST(request: NextRequest) {
         product.surveyData.retryAudit = true;
         product.surveyData.retryReason = "capacity_error";
         product.surveyData.retryAt = new Date(Date.now() + 5 * 60 * 1000); // Retry in 5 minutes
-        product.user = user._id as any;
+        // Add user to owners array if not already present
+        if (!product.users) {
+          product.users = [];
+        }
+        if (user?._id) {
+          const userId = user._id;
+          const isAlreadyOwner = product.users.some((u: any) => u.toString() === userId.toString());
+          if (!isAlreadyOwner) {
+            product.users.push(userId as any);
+          }
+        }
         await product.save();
 
         return NextResponse.json(

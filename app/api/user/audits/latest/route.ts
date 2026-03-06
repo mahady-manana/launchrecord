@@ -1,6 +1,8 @@
-import { NextRequest, NextResponse } from "next/server";
 import { connectToDatabase } from "@/lib/db";
+import { getUserSession } from "@/lib/session";
+import Product from "@/models/product";
 import Report from "@/models/report";
+import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest) {
   try {
@@ -8,14 +10,22 @@ export async function GET(request: NextRequest) {
 
     // In production, get userId from session/auth
     // For now, we'll fetch the most recent report
-    const latestReport = await Report.findOne()
+    const { response, user } = await getUserSession({ required: true });
+    if (response) {
+      return response;
+    }
+    const userProduct = await Product.findOne({ users: user?._id });
+    if (!userProduct) {
+      return NextResponse.json({ error: "No product found" }, { status: 404 });
+    }
+    const latestReport = await Report.findOne({ product: userProduct._id })
       .sort({ createdAt: -1 })
       .populate("product");
 
     if (!latestReport) {
       return NextResponse.json(
         { error: "No audit reports found" },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -38,7 +48,7 @@ export async function GET(request: NextRequest) {
     console.error("Error fetching latest audit:", error);
     return NextResponse.json(
       { error: "Failed to fetch audit report" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

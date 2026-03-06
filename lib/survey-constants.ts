@@ -22,13 +22,6 @@ export interface Question {
 
 export const questions: Question[] = [
   {
-    title: "Who are you ?",
-    key: "founderName",
-    type: "text",
-    description: "Your name for the War Briefing",
-    placeholder: "e.g., John Smith",
-  },
-  {
     title: "Startup / SaaS Name",
     key: "saasName",
     type: "text",

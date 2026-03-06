@@ -27,12 +27,14 @@ const providers: NextAuthOptions["providers"] = [
         throw new Error("Missing email or password");
       }
 
+      let user;
+
       if (credentials?.signup === "true" && credentials.email) {
-        const user = await User.findOne({
+        const existingUser = await User.findOne({
           email: credentials.email,
           deletedAt: null,
         });
-        if (user?._id) {
+        if (existingUser?._id) {
           throw new Error("Email already used");
         }
         const newuser = new User({
@@ -42,41 +44,43 @@ const providers: NextAuthOptions["providers"] = [
         });
         await newuser.save();
 
-        return {
+        user = {
           id: newuser._id.toString(),
           name: newuser.name,
           email: newuser.email,
           role: "user",
         };
-      }
-
-      await connectToDatabase();
-      const user = await User.findOne({ email, deletedAt: null }).select(
-        "+password",
-      );
-
-      if (!user || !user.password) {
-        throw new Error("Invalid email or password");
-      }
-
-      const isValid = await verifyPassword(password, user.password);
-      if (!isValid) {
-        throw new Error("Invalid email or password");
-      }
-
-      // Check if email is verified (skip for admin users)
-      if (!user.emailVerified && user.role !== "admin") {
-        throw new Error(
-          "Please verify your email before signing in. Check your inbox for the verification link.",
+      } else {
+        await connectToDatabase();
+        const dbUser = await User.findOne({ email, deletedAt: null }).select(
+          "+password",
         );
+
+        if (!dbUser || !dbUser.password) {
+          throw new Error("Invalid email or password");
+        }
+
+        const isValid = await verifyPassword(password, dbUser.password);
+        if (!isValid) {
+          throw new Error("Invalid email or password");
+        }
+
+        // Check if email is verified (skip for admin users)
+        if (!dbUser.emailVerified && dbUser.role !== "admin") {
+          throw new Error(
+            "Please verify your email before signing in. Check your inbox for the verification link.",
+          );
+        }
+
+        user = {
+          id: dbUser._id.toString(),
+          name: dbUser.name,
+          email: dbUser.email,
+          role: dbUser.role,
+        };
       }
 
-      return {
-        id: user._id.toString(),
-        name: user.name,
-        email: user.email,
-        role: user.role,
-      };
+      return user;
     },
   }),
 ];

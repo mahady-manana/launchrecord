@@ -46,13 +46,10 @@ export default function VerifyClaimPage() {
         if (data.success) {
           setStatus("success");
           setEmail(data.email);
-          // Save product ID and redirect to survey auth
-          if (data.productId) {
-            localStorage.setItem("survey_product_id", data.productId);
-          }
-          // Redirect to survey auth to complete account setup
+          // Redirect to dashboard survey after short delay
+          // The claim is already processed on the server
           setTimeout(() => {
-            router.push("/survey/auth");
+            router.push("/dashboard/survey");
           }, 2000);
         } else {
           setStatus("error");
@@ -83,11 +80,9 @@ export default function VerifyClaimPage() {
               <CheckCircle2 className="h-12 w-12 text-green-500 mx-auto mb-4" />
               <CardTitle>Claim Successful!</CardTitle>
               <CardDescription>
-                {email && (
-                  <p className="mt-2 text-sm">
-                    Redirecting to complete your account setup...
-                  </p>
-                )}
+                <p className="mt-2 text-sm">
+                  Product ownership verified. Redirecting to survey...
+                </p>
               </CardDescription>
             </>
           )}
@@ -104,11 +99,17 @@ export default function VerifyClaimPage() {
         <CardContent className="flex flex-col gap-4">
           {status === "error" && (
             <>
+              <p className="text-sm text-muted-foreground text-center">
+                If you believe this is an error, please contact{" "}
+                <a href="mailto:hello@launchrecord.com" className="text-orange-600 hover:underline">
+                  hello@launchrecord.com
+                </a>
+              </p>
               <button
-                onClick={() => router.push("/survey")}
+                onClick={() => router.push("/dashboard")}
                 className="w-full px-4 py-2 bg-orange-600 text-white rounded-md hover:bg-orange-700 transition-colors"
               >
-                Back to Survey
+                Back to Dashboard
               </button>
               <button
                 onClick={() => router.push("/")}

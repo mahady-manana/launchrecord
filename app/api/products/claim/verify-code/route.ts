@@ -105,8 +105,14 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Transfer ownership to the user
-    product.user = user._id;
+    // Add user to owners array (many-to-many)
+    if (!product.users) {
+      product.users = [];
+    }
+    const isAlreadyOwner = product.users.some((u: any) => u.toString() === user._id.toString());
+    if (!isAlreadyOwner) {
+      product.users.push(user._id as any);
+    }
     product.addedByAdmin = false;
     await product.save();
 

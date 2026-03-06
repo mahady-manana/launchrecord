@@ -41,8 +41,14 @@ export async function POST(request: NextRequest) {
     // Get survey data from product
     const surveyData = product.surveyData || {};
 
-    // Update product with user reference and email
-    product.user = user?.id as any;
+    // Add user to owners array if not already present
+    if (!product.users) {
+      product.users = [];
+    }
+    const isAlreadyOwner = product.users.some((u: any) => u.toString() === user?.id);
+    if (!isAlreadyOwner) {
+      product.users.push(user?.id as any);
+    }
     product.surveyData = {
       ...surveyData,
       email: finalEmail,

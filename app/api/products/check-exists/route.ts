@@ -22,7 +22,7 @@ export async function GET(request: NextRequest) {
       const normalizedWebsite = normalizeUrl(website);
       const product = await Product.findOne({
         website: normalizedWebsite,
-      }).populate("user", "name email");
+      }).populate("users", "name email");
 
       if (!product) {
         return NextResponse.json({
@@ -30,7 +30,8 @@ export async function GET(request: NextRequest) {
         });
       }
 
-      const user = product.user as unknown as IUser | null;
+      const users = product.users as unknown as IUser[] | [];
+      const primaryUser = users.length > 0 ? users[0] : null;
 
       return NextResponse.json({
         exists: true,
@@ -42,11 +43,12 @@ export async function GET(request: NextRequest) {
           description: product.description,
           logo: product.logo,
           addedByAdmin: product.addedByAdmin,
-          addedByUser: user
+          ownersCount: users.length,
+          addedByUser: primaryUser
             ? {
-                id: user._id,
-                name: user.name,
-                email: user.email,
+                id: primaryUser._id,
+                name: primaryUser.name,
+                email: primaryUser.email,
               }
             : null,
         },
@@ -55,7 +57,7 @@ export async function GET(request: NextRequest) {
       // If normalization fails, try direct search
       const product = await Product.findOne({
         website: { $regex: website, $options: "i" },
-      }).populate("user", "name email");
+      }).populate("users", "name email");
 
       if (!product) {
         return NextResponse.json({
@@ -63,7 +65,8 @@ export async function GET(request: NextRequest) {
         });
       }
 
-      const user = product.user as unknown as IUser | null;
+      const users = product.users as unknown as IUser[] | [];
+      const primaryUser = users.length > 0 ? users[0] : null;
 
       return NextResponse.json({
         exists: true,
@@ -75,11 +78,12 @@ export async function GET(request: NextRequest) {
           description: product.description,
           logo: product.logo,
           addedByAdmin: product.addedByAdmin,
-          addedByUser: user
+          ownersCount: users.length,
+          addedByUser: primaryUser
             ? {
-                id: user._id,
-                name: user.name,
-                email: user.email,
+                id: primaryUser._id,
+                name: primaryUser.name,
+                email: primaryUser.email,
               }
             : null,
         },

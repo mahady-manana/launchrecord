@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Globe, Loader2, CheckCircle } from "lucide-react";
+import { CheckCircle, Globe, Loader2 } from "lucide-react";
 
 interface ExistingProduct {
   id: string;
@@ -43,7 +43,6 @@ export function SurveyHero({
   return (
     <div className="min-h-screen bg-gradient-to-b from-orange-50 to-white py-12 px-4">
       <div className="max-w-2xl mx-auto text-center space-y-8">
-
         <div className="space-y-4">
           <h1 className="text-4xl font-bold text-foreground">
             Get your SIO-V5 Audit Report
@@ -56,7 +55,9 @@ export function SurveyHero({
 
         <Card className="border-2 border-orange-200 shadow-xl">
           <CardHeader>
-            <CardTitle className="text-2xl">Start with your product URL</CardTitle>
+            <CardTitle className="text-2xl">
+              Start with your product URL
+            </CardTitle>
             <CardDescription className="text-base">
               We&apos;ll analyze your website and generate a comprehensive audit
             </CardDescription>
@@ -67,7 +68,15 @@ export function SurveyHero({
                 Product Website
               </Label>
               <div className="relative">
-                <Globe className="absolute left-3 top-3 h-5 w-5 text-muted-foreground" />
+                {saasUrl ? (
+                  <img
+                    className="absolute left-3 top-3 h-5 w-5 text-muted-foreground"
+                    src={`http://www.google.com/s2/favicons?domain=${saasUrl}`}
+                    alt=""
+                  />
+                ) : (
+                  <Globe className="absolute left-3 top-3 h-5 w-5 text-muted-foreground" />
+                )}
                 <Input
                   id="saasUrl"
                   type="url"

@@ -22,7 +22,7 @@ export interface IProduct extends Document {
   tagline?: string | null;
   logo?: string | null;
   website?: string | null;
-  user?: Types.ObjectId | IUser | null;
+  users?: Types.ObjectId[] | IUser[];
   topics?: ITopic[];
   reports?: Types.ObjectId[] | IReport[];
   score?: number | null;
@@ -68,11 +68,11 @@ const ProductSchema = new Schema<IProduct>(
       lowercase: true,
       unique: true,
     },
-    user: {
+    users: [{
       type: Schema.Types.ObjectId,
       ref: "User",
-      default: null,
-    },
+      default: [],
+    }],
     topics: [
       {
         type: Schema.Types.ObjectId,

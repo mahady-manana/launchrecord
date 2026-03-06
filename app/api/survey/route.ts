@@ -1,4 +1,5 @@
 import { connectToDatabase } from "@/lib/db";
+import { getUserSession } from "@/lib/session";
 import Product from "@/models/product";
 import { NextRequest, NextResponse } from "next/server";
 import normalizeUrl from "normalize-url";
@@ -8,9 +9,14 @@ export async function POST(request: NextRequest) {
     await connectToDatabase();
 
     const body = await request.json();
-    let { saasName, saasUrl, founderName, productId } = body;
+    let { saasName, saasUrl, founderName } = body;
+    const { response, user } = await getUserSession({ required: true });
 
     // Validate required fields
+    if (response) {
+      return response;
+    }
+
     if (!saasUrl) {
       return NextResponse.json(
         { error: "Product URL is required" },
@@ -18,7 +24,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const normalizedUrl = normalizeUrl(saasUrl);
+    const normalizedUrl = normalizeUrl(saasUrl, { forceHttps: true });
 
     // Check if product with this domain already exists
     const existingProduct = await Product.findOne({
@@ -26,8 +32,30 @@ export async function POST(request: NextRequest) {
     });
 
     if (existingProduct) {
-      // Check if it's already claimed by a user (not admin)
-      if (existingProduct.user && !existingProduct.addedByAdmin) {
+      // Check if current user is already an owner
+      if (existingProduct.users) {
+        const isOwner = existingProduct.users.some(
+          (u: any) => u.toString() === user?.id,
+        );
+
+        if (isOwner) {
+          // User is already an owner, return product
+          return NextResponse.json({
+            message: "Survey already exists for this product",
+            productId: existingProduct._id,
+            existing: true,
+            requiresClaim: false,
+          });
+        }
+      }
+
+      // Product exists but user is not an owner
+      // Check if it's already claimed by other users (has users and not added by admin)
+      if (
+        existingProduct.users &&
+        existingProduct.users.length > 0 &&
+        !existingProduct.addedByAdmin
+      ) {
         return NextResponse.json(
           {
             error:
@@ -41,7 +69,10 @@ export async function POST(request: NextRequest) {
       }
 
       // Check if it's admin-owned and needs claim
-      if (existingProduct.addedByAdmin && !existingProduct.user) {
+      if (
+        existingProduct.addedByAdmin &&
+        (!existingProduct.users || existingProduct.users.length === 0)
+      ) {
         return NextResponse.json({
           message: "Product exists and requires claim",
           productId: existingProduct._id,
@@ -52,13 +83,12 @@ export async function POST(request: NextRequest) {
         });
       }
 
-      // Product exists but not claimed (no user, not added by admin) - let them cook
-      // Or product exists with user but also added by admin (edge case)
+      // Product exists but no owners - let them claim
       return NextResponse.json({
         message: "Survey already exists for this product",
         productId: existingProduct._id,
         existing: true,
-        requiresClaim: false,
+        requiresClaim: true,
       });
     }
 
@@ -68,8 +98,8 @@ export async function POST(request: NextRequest) {
       website: normalizedUrl,
       description: null,
       tagline: null,
-      logo: null,
-      user: null,
+      logo: `http://www.google.com/s2/favicons?domain=${normalizedUrl}`,
+      users: user?._id ? [user._id] : [],
       score: null,
       earlyAccess: true,
       earlyAccessGrantedAt: new Date(),

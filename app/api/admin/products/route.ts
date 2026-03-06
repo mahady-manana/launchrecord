@@ -58,11 +58,12 @@ export async function POST(request: NextRequest) {
 
     for (const item of body) {
       const { name, website, tagline, topics, metadata, logo } = item;
+      let normalizedWebsite = normalizeUrl(website, { forceHttps: true });
 
       if (!name || !website) {
         results.push({
           name: name || "Unknown",
-          website: website || "Unknown",
+          website: normalizedWebsite || "Unknown",
           success: false,
           error: "Name and website are required",
           logo,
@@ -72,13 +73,8 @@ export async function POST(request: NextRequest) {
       }
 
       try {
-        let normalizedWebsite = website;
-        if (!website.startsWith("http://") && !website.startsWith("https://")) {
-          normalizedWebsite = `https://${website}`;
-        }
-
         let product = await Product.findOne({
-          website: normalizeUrl(normalizedWebsite),
+          website: normalizedWebsite,
         });
 
         if (product) {
@@ -115,7 +111,7 @@ export async function POST(request: NextRequest) {
 
           results.push({
             name,
-            website,
+            website: normalizedWebsite,
             success: true,
             existing: true,
             productId: product._id,
@@ -141,6 +137,8 @@ export async function POST(request: NextRequest) {
             if (uploadedLogoUrl) {
               productData.logo = uploadedLogoUrl;
             }
+          } else {
+            productData.logo = `http://www.google.com/s2/favicons?domain=${normalizedWebsite}`;
           }
 
           if (topics && Array.isArray(topics) && topics.length > 0) {
@@ -156,7 +154,7 @@ export async function POST(request: NextRequest) {
 
           results.push({
             name,
-            website,
+            website: normalizedWebsite,
             success: true,
             existing: false,
             productId: product._id,
@@ -166,7 +164,7 @@ export async function POST(request: NextRequest) {
       } catch (error: any) {
         results.push({
           name,
-          website,
+          website: normalizedWebsite,
           success: false,
           error: error.message || "Failed to process product",
         });
@@ -222,10 +220,7 @@ export async function GET(request: NextRequest) {
     }
 
     const [products, total] = await Promise.all([
-      Product.find(query)
-        .sort({ createdAt: -1 })
-        .skip(skip)
-        .limit(limit),
+      Product.find(query).sort({ createdAt: -1 }).skip(skip).limit(limit),
       Product.countDocuments(query),
     ]);
 

@@ -1,15 +1,17 @@
 import { useAuthStore } from "@/stores/auth-store";
 import type { SessionUser } from "@/types/user";
 import { signIn, signOut } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import { useCallback } from "react";
 
 interface RegisterInput {
   name: string;
   email: string;
   password: string;
+  callbackUrl?: string;
 }
 
-export function useAuth() {
+export function useAuth(required?: boolean) {
   const user = useAuthStore((state) => state.user);
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   const isLoading = useAuthStore((state) => state.isLoading);
@@ -17,24 +19,30 @@ export function useAuth() {
   const setIsAuthenticated = useAuthStore((state) => state.setIsAuthenticated);
   const setIsLoading = useAuthStore((state) => state.setIsLoading);
   const reset = useAuthStore((state) => state.reset);
-
+  const { push } = useRouter();
+  const logOutUser = () => {
+    reset();
+    if (required) {
+      push("/login");
+    }
+  };
   const refreshSession = useCallback(async () => {
     try {
       const response = await fetch("/api/users/me");
       if (!response.ok) {
-        reset();
+        logOutUser();
         return;
       }
       const result: { success: boolean; data?: { user: SessionUser } } =
         await response.json();
       if (!result.success || !result.data?.user) {
-        reset();
+        logOutUser();
         return;
       }
       setUser(result.data.user);
       setIsAuthenticated(true);
     } catch {
-      reset();
+      logOutUser();
     }
   }, [reset, setIsAuthenticated, setUser]);
 
@@ -60,20 +68,17 @@ export function useAuth() {
   );
 
   const register = useCallback(
-    async ({ name, email, password }: RegisterInput) => {
+    async ({ name, email, password, callbackUrl }: RegisterInput) => {
       setIsLoading(true);
       try {
-        const response = await fetch("/api/auth/register", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ name, email, password }),
+        await signIn("credentials", {
+          email,
+          password,
+          name,
+          signup: "true",
+          callbackUrl: callbackUrl || " /dashboard",
         });
-        const result: { success: boolean; message?: string } =
-          await response.json();
-        if (!response.ok || !result.success) {
-          setIsLoading(false);
-          return { ok: false, error: result.message || "Registration failed" };
-        }
+
         setIsLoading(false);
         return { ok: true };
       } catch {

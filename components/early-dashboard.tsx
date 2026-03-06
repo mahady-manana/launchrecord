@@ -17,7 +17,6 @@ import {
   TrendingUp,
   Zap,
 } from "lucide-react";
-import { UnlockDashboardCard } from "./unlock-dashboard-card";
 
 interface EarlyDashboardProps {
   report: AuditReportV1;
@@ -122,8 +121,9 @@ export function EarlyDashboard({
                 <div className="bg-yellow-200 mb-4 text-yellow-800 p-4 rounded-lg">
                   <Info className="mx-auto" />
                   <p className="font-bold text-xl">Important note</p>
-                  <p>Full SIO V5 Audit is not available in Whitelist</p>
-                  <p>Access Early Dashboard For Updates</p>
+                  <p>
+                    Full SIO V5 Audit is not available before official launch
+                  </p>
                 </div>
               ) : null}
 
@@ -187,14 +187,6 @@ export function EarlyDashboard({
                 </div>
               </div>
             </div>
-            {showNavigation ? (
-              <div className="text-center bg-green-200 bg-green-50 p-4 rounded-lg mt-6">
-                <UnlockDashboardCard
-                  userEmail={userEmail}
-                  onAuthComplete={() => window.location.reload()}
-                />
-              </div>
-            ) : null}
           </CardContent>
         </Card>
 
@@ -567,34 +559,6 @@ export function EarlyDashboard({
             </p>
           </CardContent>
         </Card>
-
-        {/* Whitelist Status */}
-        {showNavigation && (
-          <div className="text-center space-y-4 py-8 animate-in slide-in-from-bottom-8 duration-700 delay-900">
-            <Card className="border-2 border-green-200 bg-green-50">
-              <CardContent className="pt-6 space-y-6">
-                <div>
-                  <div className="flex items-center justify-center gap-2 mb-3">
-                    <CheckCircle className="h-5 w-5 text-green-600" />
-                    <h3 className="font-bold text-green-800">
-                      You're on the Whitelist!
-                    </h3>
-                  </div>
-                  <p className="text-sm text-green-700">
-                    As an early access member, you'll receive weekly updates,
-                    new features, and priority support. Keep up for more
-                    insights and tools to strengthen your positioning.
-                  </p>
-                </div>
-
-                <UnlockDashboardCard
-                  userEmail={userEmail}
-                  onAuthComplete={() => window.location.reload()}
-                />
-              </CardContent>
-            </Card>
-          </div>
-        )}
       </div>
     </div>
   );

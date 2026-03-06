@@ -20,7 +20,7 @@ const ClaimSchema = new mongoose.Schema({
 
 const Claim = mongoose.models.Claim || mongoose.model("Claim", ClaimSchema);
 
-// POST - Verify claim token and complete claim
+// POST - Verify claim token and complete claim (set user)
 export async function POST(request: NextRequest) {
   try {
     await connectToDatabase();
@@ -85,12 +85,19 @@ export async function POST(request: NextRequest) {
         emailVerified: new Date(),
       });
       isNewUser = true;
-
-      // Send password email to new user
     }
 
-    // Transfer product ownership
-    product.user = user._id;
+    // Add user to product owners (many-to-many)
+    const userId = user._id;
+    if (!product.users) {
+      product.users = [];
+    }
+    
+    // Check if user is already in the array
+    const isAlreadyOwner = product.users.some((u: any) => u.toString() === userId.toString());
+    if (!isAlreadyOwner) {
+      product.users.push(userId as any);
+    }
     product.addedByAdmin = false;
     await product.save();
 
@@ -104,6 +111,7 @@ export async function POST(request: NextRequest) {
       message: "Claim verified successfully",
       email: claim.email,
       isNewUser,
+      productId: product._id.toString(),
     });
   } catch (error) {
     console.error("Error verifying claim:", error);

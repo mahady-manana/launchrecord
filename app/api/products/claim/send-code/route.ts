@@ -68,7 +68,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    if (!product.addedByAdmin && product.user) {
+    if (!product.addedByAdmin && product.users && product.users.length > 0) {
       return NextResponse.json(
         { error: "This product is already claimed" },
         { status: 400 }
