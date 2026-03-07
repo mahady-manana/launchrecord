@@ -2,36 +2,41 @@ import { connectToDatabase } from "@/lib/db";
 import { getUserSession } from "@/lib/session";
 import Product from "@/models/product";
 import Report from "@/models/report";
+import mongoose from "mongoose";
 import { NextRequest, NextResponse } from "next/server";
 
-// GET /api/user/audits/latest - Fetch the latest audit report for the current user
-export async function GET(request: NextRequest) {
+// GET - Fetch latest audit for a specific product
+export async function GET(
+  request: NextRequest,
+  { params }: { params: Promise<{ productId: string }> }
+) {
   try {
     await connectToDatabase();
-
     const { user, response } = await getUserSession({ required: true });
     if (response) {
       return response;
     }
 
-    // Find all products for this user
-    const products = await Product.find({
-      users: user?.id,
-    })
-      .sort({ updatedAt: -1 })
-      .limit(10)
-      .lean();
+    const { productId } = await params;
 
-    if (products.length === 0) {
+    // Find the product
+    const product = await Product.findById(productId);
+    if (!product) {
+      return NextResponse.json({ error: "Product not found" }, { status: 404 });
+    }
+
+    // Verify user has access to this product
+    const userId = new mongoose.Types.ObjectId(user?.id);
+    if (!product.users?.some(u => u.toString() === userId.toString())) {
       return NextResponse.json(
-        { success: true, report: null, message: "No products found" },
-        { status: 404 },
+        { error: "Unauthorized access to product" },
+        { status: 403 },
       );
     }
 
-    // Find the latest report across all user products
+    // Find latest audit report for this product
     const latestReport = await Report.findOne({
-      product: { $in: products.map((p) => p._id) },
+      product: productId,
       "overall_assessment.composite_score": { $exists: true },
     })
       .sort({ createdAt: -1 })
@@ -40,7 +45,7 @@ export async function GET(request: NextRequest) {
 
     if (!latestReport) {
       return NextResponse.json(
-        { success: true, report: null, message: "No audits found" },
+        { success: true, report: null, message: "No audit found" },
         { status: 404 },
       );
     }
@@ -50,7 +55,7 @@ export async function GET(request: NextRequest) {
       report: latestReport,
     });
   } catch (error) {
-    console.error("Get user latest audit API error:", error);
+    console.error("Get product audit API error:", error);
     return NextResponse.json(
       { error: "Failed to retrieve audit" },
       { status: 500 },

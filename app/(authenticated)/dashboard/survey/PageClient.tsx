@@ -6,7 +6,7 @@ import { useSession } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
 
-type SurveyStatus = 
+type SurveyStatus =
   | "idle"
   | "checking"
   | "ready"
@@ -30,16 +30,13 @@ function DashboardSurveyContent() {
 
   const [step, setStep] = useState(-1);
   const [answers, setAnswers] = useState<SurveyAnswers>({
-    founderName: "",
     saasName: "",
     saasUrl: initialURL || "",
-    role: "",
-    teamSize: "",
-    revenue: "",
-    biggestChallenge: "",
-    aeoAwareness: "",
+    tagline: "",
     description: "",
-    willingToInvest: "",
+    logo: "",
+    topics: [],
+    revenue: "",
   });
 
   // Wait for session to load
@@ -49,19 +46,14 @@ function DashboardSurveyContent() {
     if (status === "unauthenticated") {
       router.push("/login");
       return;
-    }
-
-    if (initialURL && surveyStatus === "checking") {
-      initializeSurvey(initialURL);
-    } else if (!initialURL && surveyStatus === "checking") {
+    } else {
       setSurveyStatus("ready");
-      setStep(-1);
     }
-  }, [status, initialURL]);
+  }, [status]);
 
   const initializeSurvey = async (url: string) => {
     setCheckingProduct(true);
-    
+
     try {
       const response = await fetch("/api/survey", {
         method: "POST",
@@ -100,7 +92,7 @@ function DashboardSurveyContent() {
 
         // User owns this product (either new or existing with access)
         setSurveyStatus("ready");
-        
+
         // If existing product with completed survey, redirect to audit
         if (data.existing) {
           const auditResponse = await fetch(
@@ -136,7 +128,17 @@ function DashboardSurveyContent() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           productId,
-          answers: currentAnswers,
+          answers: {
+            name: currentAnswers.saasName,
+            tagline: currentAnswers.tagline,
+            description: currentAnswers.description,
+            website: currentAnswers.saasUrl,
+            logo: currentAnswers.logo,
+            topics: currentAnswers.topics,
+            surveyData: {
+              revenue: currentAnswers.revenue,
+            },
+          },
         }),
       });
     } catch (error) {
@@ -144,14 +146,15 @@ function DashboardSurveyContent() {
     }
   };
 
-  const handleAnswer = (value: string) => {
+  const handleAnswer = (value: string | string[]) => {
     if (step < 0 || step >= questions.length) return;
     const updated = {
       ...answers,
       [questions[step].key]: value,
     };
-    setAnswers(updated);
-    saveProgress(updated);
+    setAnswers(updated as SurveyAnswers);
+    // Only save when user clicks Next (committed answer)
+    saveProgress(updated as SurveyAnswers);
   };
 
   const handleNext = () => {
@@ -193,7 +196,9 @@ function DashboardSurveyContent() {
         <div className="text-center space-y-4">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-600 mx-auto" />
           <p className="text-muted-foreground">
-            {surveyStatus === "checking" ? "Checking product..." : "Loading survey..."}
+            {surveyStatus === "checking"
+              ? "Checking product..."
+              : "Loading survey..."}
           </p>
         </div>
       </div>
@@ -225,16 +230,18 @@ function DashboardSurveyContent() {
               Claim This Product
             </h2>
             <p className="text-muted-foreground">
-              <strong>{productName}</strong> exists in our database but hasn&apos;t been claimed yet.
+              <strong>{productName}</strong> exists in our database but
+              hasn&apos;t been claimed yet.
             </p>
             <p className="text-sm text-muted-foreground">
-              To access the survey and audit, you need to verify ownership of this product.
+              To access the survey and audit, you need to verify ownership of
+              this product.
             </p>
             <div className="space-y-2">
               <button
                 onClick={() => {
                   router.push(
-                    `/survey/claim?product=${productId}&name=${encodeURIComponent(productName)}&website=${encodeURIComponent(productWebsite)}`
+                    `/survey/claim?product=${productId}&name=${encodeURIComponent(productName)}&website=${encodeURIComponent(productWebsite)}`,
                   );
                 }}
                 className="w-full bg-orange-600 hover:bg-orange-700 text-white font-medium py-2 px-4 rounded-lg transition-colors"
@@ -285,8 +292,8 @@ function DashboardSurveyContent() {
               This product has already been claimed by another user.
             </p>
             <p className="text-sm text-muted-foreground">
-              You cannot access this product&apos;s survey or audit. 
-              If you believe this is an error, please contact support.
+              You cannot access this product&apos;s survey or audit. If you
+              believe this is an error, please contact support.
             </p>
             <button
               onClick={() => {
@@ -323,6 +330,7 @@ function DashboardSurveyContent() {
 
   return (
     <SurveyQuestion
+      key={currentQuestion.key}
       question={currentQuestion}
       answer={currentValue}
       onAnswer={handleAnswer}
@@ -330,7 +338,6 @@ function DashboardSurveyContent() {
       onPrev={handlePrev}
       step={step}
       totalSteps={questions.length}
-      canContinue={!!currentValue}
       isLoading={false}
       isLastQuestion={step === questions.length - 1}
     />

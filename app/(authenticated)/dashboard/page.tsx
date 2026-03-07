@@ -1,231 +1,192 @@
 "use client";
 
-import { EarlyDashboard } from "@/components/early-dashboard";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import type { AuditReportV1 } from "@/types/audit-report-v1";
-import {
-  AlertCircle,
-  ArrowRight,
-  BarChart3,
-  CheckCircle,
-  Clock,
-  FileText,
-  Loader2,
-  Rocket,
-} from "lucide-react";
+  BillingOverview,
+  KPISummary,
+  ProductSection,
+  QuickActions,
+} from "@/components/dashboard";
+import { Card, CardContent } from "@/components/ui/card";
+import { useProducts } from "@/hooks/use-products";
+import { useProductStore } from "@/stores/product-store";
+import { AuditReportV1 } from "@/types/audit-report-v1";
+import { Plus } from "lucide-react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { toast } from "sonner";
 
 export default function DashboardPage() {
-  const [report, setReport] = useState<AuditReportV1 | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const router = useRouter();
+  const { productsWithReports, isReportsLoading } = useProductStore();
+  const {
+    loadAllProductsData,
+    createProduct,
+    refreshProductsReports,
+    isMutating,
+  } = useProducts();
+  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  const [newProduct, setNewProduct] = useState({
+    name: "",
+    website: "",
+    description: "",
+    tagline: "",
+  });
 
   useEffect(() => {
-    // Fetch latest audit report for this user
-    const fetchReport = async () => {
-      try {
-        // In production, this would fetch from /api/user/audits or similar
-        // For now, we'll check localStorage or fetch from a user-specific endpoint
-        const response = await fetch("/api/user/audits/latest");
-        if (response.ok) {
-          const data = await response.json();
-          setReport(data.report);
-        }
-      } catch (error) {
-        console.error("Error fetching report:", error);
-      } finally {
-        setIsLoading(false);
+    loadAllProductsData();
+  }, [loadAllProductsData]);
+
+  const handleViewProduct = (productId: string) => {
+    router.push(`/dashboard/${productId}`);
+  };
+
+  const handleRunAudit = async (productId: string) => {
+    toast.info("Starting audit... This may take a few moments.");
+    try {
+      const response = await fetch(`/api/products/${productId}/audit`, {
+        method: "POST",
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        toast.success("Audit completed successfully!");
+        // Update cache with new report
+        await refreshProductsReports();
+      } else {
+        const data = await response.json();
+        toast.error(data.error || "Failed to run audit");
       }
-    };
+    } catch (error) {
+      toast.error("Failed to run audit");
+      console.error(error);
+    }
+  };
 
-    fetchReport();
-  }, []);
+  const handleAddProduct = async () => {
+    if (!newProduct.name || !newProduct.website) {
+      toast.error("Please fill in required fields");
+      return;
+    }
 
-  // Show full report if available
-  if (report) {
+    try {
+      await createProduct({
+        name: newProduct.name,
+        website: newProduct.website,
+        description: newProduct.description || undefined,
+        tagline: newProduct.tagline || undefined,
+      });
+
+      toast.success("Product added successfully!");
+      setIsAddDialogOpen(false);
+      setNewProduct({ name: "", website: "", description: "", tagline: "" });
+      await refreshProductsReports();
+    } catch (error) {
+      toast.error("Failed to add product");
+      console.error(error);
+    }
+  };
+
+  // Prepare billing data
+  const billingData = productsWithReports.map((p) => ({
+    productId: p.id,
+    productName: p.name,
+    plan: "free" as const,
+    status: "active" as const,
+  }));
+
+  // Prepare reports map for KPI
+  const reportsMap = productsWithReports.reduce(
+    (acc, p) => ({ ...acc, [p.id]: p.report || null }),
+    {} as Record<string, AuditReportV1 | null>,
+  );
+
+  const isLoading = isReportsLoading;
+
+  if (isLoading) {
     return (
-      <div className="space-y-8">
-        <div className="bg-blue-200 p-4 rounded-lg text-center">
-          <p className="text-xl font-bold">Launch Date</p>
-          <p className="font-bold">17th March 2026</p>
-          <p>Some features will be available before official launch date</p>
-        </div>
-        <div className="p-4 border rounded-lg">
-          <p className="text-md font-bold text-red-600">Latest update</p>
-          <p className="font-bold text-xs">5th March 2026</p>
-          <p className="text-sm">
-            - SIO V5 Engine: Improved Authority checkpoints, Clarity and
-            Positioning is expected this week
-          </p>
-          <p className="text-sm">
-            - SIDL: First version development is now started (At least a week
-            work)
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="text-center space-y-4">
+          <div className="relative inline-flex">
+            <div className="animate-spin h-10 w-10 border-4 border-orange-200 border-t-orange-500 rounded-full" />
+            <div className="absolute inset-0 animate-ping h-10 w-10 border-4 border-orange-300 border-t-transparent rounded-full opacity-20" />
+          </div>
+          <p className="text-slate-500 font-medium">
+            Loading your dashboard...
           </p>
         </div>
-        <EarlyDashboard report={report} showNavigation={false} />
       </div>
     );
   }
 
   return (
-    <div className="max-w-6xl mx-auto px-4 py-12 space-y-8">
-      {/* Hero Banner */}
-      <div className="text-center space-y-4">
-        <Badge className="bg-orange-600 hover:bg-orange-700">
-          <Rocket className="h-3 w-3 mr-1" />
-          Launching Soon
-        </Badge>
-        <h1 className="text-5xl font-bold text-foreground">
-          Early Access Dashboard
-        </h1>
-        <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-          LaunchRecord is launching soon! As an early access member, you'll get
-          exclusive access to daily news, development progress, and powerful
-          positioning tools.
-        </p>
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent">
+            Product Overview
+          </h1>
+          <p className="text-sm text-slate-500 mt-1">
+            Monitor all your products and their SIO-V5 scores
+          </p>
+        </div>
+        <QuickActions context="dashboard" />
       </div>
 
-      {/* Coming Soon Features */}
-      <div className="grid md:grid-cols-3 gap-6">
-        <Card className="border-2 border-orange-200 bg-gradient-to-br from-orange-50 to-white">
-          <CardHeader>
-            <div className="flex items-center gap-2">
-              <FileText className="h-5 w-5 text-orange-600" />
-              <CardTitle>Daily News</CardTitle>
-            </div>
-            <CardDescription>
-              Curated insights on AEO, positioning, and SaaS growth
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <Clock className="h-4 w-4" />
-              <span>Coming in 2-3 weeks</span>
-            </div>
-          </CardContent>
-        </Card>
+      {/* KPI Summary */}
+      <KPISummary products={productsWithReports} reports={reportsMap} />
 
-        <Card className="border-2 border-orange-200 bg-gradient-to-br from-orange-50 to-white">
-          <CardHeader>
-            <div className="flex items-center gap-2">
-              <Rocket className="h-5 w-5 text-orange-600" />
-              <CardTitle>Development Progress</CardTitle>
-            </div>
-            <CardDescription>
-              Track our roadmap and vote on feature priorities
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <Clock className="h-4 w-4" />
-              <span>Coming in 2-3 weeks</span>
-            </div>
-          </CardContent>
-        </Card>
+      {/* Products Sections */}
+      <div>
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-lg font-bold text-slate-900">Your Products</h2>
+          <span className="text-sm font-medium text-slate-500 bg-slate-100 px-3 py-1 rounded-full">
+            {productsWithReports.length} product
+            {productsWithReports.length !== 1 ? "s" : ""}
+          </span>
+        </div>
 
-        <Card className="border-2 border-orange-200 bg-gradient-to-br from-orange-50 to-white">
-          <CardHeader>
-            <div className="flex items-center gap-2">
-              <BarChart3 className="h-5 w-5 text-orange-600" />
-              <CardTitle>Audit History</CardTitle>
-            </div>
-            <CardDescription>
-              Track your positioning score over time
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <Clock className="h-4 w-4" />
-              <span>Coming in 2-3 weeks</span>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Your Latest Audit */}
-      {isLoading ? (
-        <Card>
-          <CardHeader>
-            <div className="flex items-center gap-2">
-              <CheckCircle className="h-5 w-5 text-green-600" />
-              <CardTitle>Your Latest Audit</CardTitle>
-            </div>
-            <CardDescription>Loading your report...</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-center justify-center p-8">
-              <Loader2 className="h-8 w-8 animate-spin text-orange-600" />
-            </div>
-          </CardContent>
-        </Card>
-      ) : (
-        <Card>
-          <CardHeader>
-            <div className="flex items-center gap-2">
-              <AlertCircle className="h-5 w-5 text-orange-600" />
-              <CardTitle>No Audit Found</CardTitle>
-            </div>
-            <CardDescription>
-              Complete the survey to generate your first audit report
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Button
-              onClick={() => (window.location.href = "/survey")}
-              className="bg-orange-600 hover:bg-orange-700"
-            >
-              Start Free Audit
-              <ArrowRight className="ml-2 h-4 w-4" />
-            </Button>
-          </CardContent>
-        </Card>
-      )}
-
-      {/* Notify on Launch */}
-      <Card className="border-2 border-green-200 bg-green-50">
-        <CardHeader>
-          <div className="flex items-center gap-2">
-            <AlertCircle className="h-5 w-5 text-green-600" />
-            <CardTitle>Get Notified on Launch</CardTitle>
+        {productsWithReports.length === 0 ? (
+          <Card className="border-2 border-dashed border-slate-300 bg-slate-50/50">
+            <CardContent className="flex flex-col items-center justify-center py-16 gap-4">
+              <div className="h-20 w-20 rounded-full bg-gradient-to-br from-orange-100 to-amber-100 flex items-center justify-center">
+                <Plus className="h-10 w-10 text-orange-600" />
+              </div>
+              <div className="text-center">
+                <h3 className="text-lg font-bold text-slate-900">
+                  No products yet
+                </h3>
+                <p className="text-slate-500 mt-1">
+                  Add your first product to start tracking SIO-V5 scores
+                </p>
+              </div>
+              <Link
+                href="/dashboard/survey"
+                className="bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600"
+              >
+                <Plus className="h-4 w-4 mr-2" />
+                Add Product
+              </Link>
+            </CardContent>
+          </Card>
+        ) : (
+          <div className="space-y-6">
+            {productsWithReports.map((product) => (
+              <ProductSection
+                key={product.id}
+                product={product}
+                report={product.report}
+                onViewProduct={() => handleViewProduct(product.id)}
+                onRunAudit={() => handleRunAudit(product.id)}
+              />
+            ))}
           </div>
-          <CardDescription>
-            Be the first to know when LaunchRecord goes live
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="flex flex-col sm:flex-row gap-4 items-center">
-            <p className="text-sm text-green-700 flex-1">
-              As an early access member, you'll get priority access and special
-              founding member pricing when we launch.
-            </p>
-            <Button className="bg-green-600 hover:bg-green-700 text-white">
-              <CheckCircle className="h-4 w-4 mr-2" />
-              You're on the list!
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Footer */}
-      <div className="text-center text-sm text-muted-foreground pt-8 border-t">
-        <p>LaunchRecord - Sovereign Defensibility for SaaS Founders</p>
-        <p className="mt-2">
-          Questions? Reach out at{" "}
-          <a
-            href="mailto:hello@launchrecord.com"
-            className="text-orange-600 hover:underline"
-          >
-            hello@launchrecord.com
-          </a>
-        </p>
+        )}
       </div>
+
+      {/* Billing Overview */}
+      <BillingOverview billings={billingData} />
     </div>
   );
 }

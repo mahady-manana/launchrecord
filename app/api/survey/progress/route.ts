@@ -28,24 +28,36 @@ export async function PUT(request: NextRequest) {
       product.surveyData = {};
     }
 
-    // Merge answers into surveyData
-    Object.keys(answers).forEach((key) => {
-      product.surveyData![key] = answers[key as keyof typeof answers];
-    });
-
     // Update product fields from survey answers
-    if (answers.saasName) {
-      product.name = answers.saasName;
+    if (answers.name) {
+      product.name = answers.name;
     }
-    if (answers.saasUrl) {
-      product.website = normalizeUrl(answers.saasUrl, {
+    if (answers.website) {
+      product.website = normalizeUrl(answers.website, {
         forceHttps: true,
         stripWWW: false,
       });
     }
+    if (answers.tagline) {
+      product.tagline = (answers.tagline as string)?.slice(0, 79);
+    }
     if (answers.description) {
-      product.tagline = answers.description;
       product.description = answers.description;
+    }
+    if (answers.logo) {
+      product.logo = answers.logo;
+    }
+
+    // Handle topics - find or create and associate
+    if (answers.topics && Array.isArray(answers.topics)) {
+      product.topics = answers.topics || [];
+    }
+
+    // Merge surveyData (founder info, etc.)
+    if (answers.surveyData) {
+      Object.keys(answers.surveyData).forEach((key) => {
+        product.surveyData![key] = answers.surveyData[key];
+      });
     }
 
     // Mark surveyData as modified to ensure Mongoose saves it

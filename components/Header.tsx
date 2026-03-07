@@ -10,7 +10,7 @@ export function Header() {
     <header
       className={clsx(
         "sticky top-0 backdrop-blur-xl z-50 w-full mx-auto",
-        "flex max-w-6xl gap-4 items-center justify-between rounded-full px-4 py-2"
+        "flex max-w-6xl gap-4 items-center justify-between rounded-full px-4 py-2",
       )}
     >
       <Link href="/" className="flex items-end gap-2">
@@ -21,7 +21,7 @@ export function Header() {
           height={40}
           priority
         />
-        <span className="text-2xl font-bold text-secondary tracking-tight">
+        <span className="text-2xl md:block hidden font-bold text-secondary tracking-tight">
           Launch <span className="text-primary">Record</span>
         </span>
       </Link>

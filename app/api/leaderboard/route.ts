@@ -15,7 +15,8 @@ export async function GET(request: NextRequest) {
       .sort({ score: -1, name: 1 })
       .skip(skip)
       .limit(limit)
-      .select("name tagline website score createdAt logo");
+      .select("name tagline website score createdAt logo")
+      .populate("topics");
 
     // Get total count for pagination
     const total = await Product.countDocuments({});
@@ -38,6 +39,7 @@ export async function GET(request: NextRequest) {
       score: product.score,
       logo: product.logo,
       rank: rankMap.get(product._id.toString()) || null,
+      topics: product.topics || [],
     }));
 
     return NextResponse.json({

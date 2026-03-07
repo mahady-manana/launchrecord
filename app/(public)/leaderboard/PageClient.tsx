@@ -12,7 +12,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
-import { HelpCircle, Shield, TrendingUp, Trophy } from "lucide-react";
+import { HelpCircle, TrendingUp, Trophy } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 
@@ -24,6 +24,7 @@ interface LeaderboardEntry {
   logo?: string | null;
   score?: number | null;
   rank: number;
+  topics?: Array<{ _id: string; name: string }>;
 }
 
 interface LeaderboardPageClientProps {
@@ -73,7 +74,7 @@ export default function LeaderboardPageClient({
   const restProducts = products.slice(3);
 
   return (
-    <div className="space-y-12 py-10">
+    <div className="space-y-12 py-10 px-4">
       {/* Hero Section */}
       <section className="space-y-6 text-center">
         <Badge
@@ -93,10 +94,6 @@ export default function LeaderboardPageClient({
         </p>
 
         <div className="flex justify-center gap-4 pt-4">
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <Shield className="h-4 w-4" />
-            <span>{totalProducts} Products Audited</span>
-          </div>
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
             <TrendingUp className="h-4 w-4" />
             <span>Updated Real-time</span>

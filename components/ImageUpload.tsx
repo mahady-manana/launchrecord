@@ -1,9 +1,7 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
 import { useFileUpload } from "@/hooks/use-file-upload";
-import { UploadCloud, X } from "lucide-react";
-import Image from "next/image";
+import { UploadCloud } from "lucide-react";
 import { useCallback, useState } from "react";
 import { useDropzone } from "react-dropzone";
 
@@ -57,38 +55,22 @@ export function ImageUpload({ value, onChange, onRemove }: ImageUploadProps) {
 
   return (
     <div className="space-y-3">
-      {value ? (
-        <div className="relative aspect-video w-full overflow-hidden rounded-2xl border border-border">
-          <Image src={value} alt="Uploaded" fill className="object-cover" />
-          <Button
-            type="button"
-            size="icon"
-            variant="secondary"
-            className="absolute right-3 top-3"
-            onClick={handleRemove}
-          >
-            <X className="size-4" />
-          </Button>
-        </div>
-      ) : (
-        <div
-          {...getRootProps()}
-          className={`flex min-h-[200px] cursor-pointer flex-col items-center justify-center gap-2 rounded-2xl border border-dashed border-border bg-muted/40 px-6 text-center transition ${
-            isDragActive ? "border-primary bg-primary/10" : ""
-          }`}
-        >
-          <input {...getInputProps()} />
-          <UploadCloud className="size-6 text-muted-foreground" />
-          <p className="text-sm text-muted-foreground">
-            Drag and drop an image here, or click to upload.
-          </p>
-          {isUploading ? (
-            <p className="text-xs text-muted-foreground">
-              Uploading {progress}%
-            </p>
-          ) : null}
-        </div>
-      )}
+      <div
+        {...getRootProps()}
+        className={`flex min-h-[200px] cursor-pointer flex-col items-center justify-center gap-2 rounded-2xl border border-dashed border-border bg-muted/40 px-6 text-center transition ${
+          isDragActive ? "border-primary bg-primary/10" : ""
+        }`}
+      >
+        <input {...getInputProps()} />
+        <UploadCloud className="size-6 text-muted-foreground" />
+        <p className="text-sm text-muted-foreground">
+          Drag and drop an image here, or click to upload.
+        </p>
+        {isUploading ? (
+          <p className="text-xs text-muted-foreground">Uploading {progress}%</p>
+        ) : null}
+      </div>
+
       {error ? <p className="text-sm text-destructive">{error}</p> : null}
     </div>
   );

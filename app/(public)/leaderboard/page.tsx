@@ -54,6 +54,7 @@ interface LeaderboardEntry {
   logo?: string | null;
   score?: number | null;
   rank: number;
+  topics?: Array<{ _id: string; name: string }>;
 }
 
 async function fetchLeaderboard(pageNum: number): Promise<{

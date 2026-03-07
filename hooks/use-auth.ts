@@ -91,7 +91,7 @@ export function useAuth(required?: boolean) {
 
   const logout = useCallback(async () => {
     setIsLoading(true);
-    await signOut({ redirect: false });
+    await signOut({ callbackUrl: "/" });
     reset();
   }, [reset, setIsLoading]);
 
