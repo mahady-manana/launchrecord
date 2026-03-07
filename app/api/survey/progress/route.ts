@@ -38,7 +38,10 @@ export async function PUT(request: NextRequest) {
       product.name = answers.saasName;
     }
     if (answers.saasUrl) {
-      product.website = normalizeUrl(answers.saasUrl, { forceHttps: true });
+      product.website = normalizeUrl(answers.saasUrl, {
+        forceHttps: true,
+        stripWWW: false,
+      });
     }
     if (answers.description) {
       product.tagline = answers.description;

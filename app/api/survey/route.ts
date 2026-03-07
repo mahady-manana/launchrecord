@@ -24,7 +24,10 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const normalizedUrl = normalizeUrl(saasUrl, { forceHttps: true });
+    const normalizedUrl = normalizeUrl(saasUrl, {
+      forceHttps: true,
+      stripWWW: false,
+    });
 
     // Check if product with this domain already exists
     const existingProduct = await Product.findOne({

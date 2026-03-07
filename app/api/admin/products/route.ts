@@ -58,7 +58,10 @@ export async function POST(request: NextRequest) {
 
     for (const item of body) {
       const { name, website, tagline, topics, metadata, logo, id } = item;
-      let normalizedWebsite = normalizeUrl(website, { forceHttps: true });
+      let normalizedWebsite = normalizeUrl(website, {
+        forceHttps: true,
+        stripWWW: false,
+      });
 
       if (!name || !website) {
         results.push({

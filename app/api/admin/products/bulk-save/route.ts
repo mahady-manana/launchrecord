@@ -30,7 +30,10 @@ export async function POST(request: NextRequest) {
           continue;
         }
 
-        const normalizedUrl = normalizeUrl(website);
+        const normalizedUrl = normalizeUrl(website, {
+          forceHttps: true,
+          stripWWW: false,
+        });
 
         // Check if product already exists with this normalized URL
         const existingProduct = await Product.findOne({
