@@ -1,5 +1,6 @@
 import { connectToDatabase } from "@/lib/db";
 import Product from "@/models/product";
+import { generateUniqueSlug } from "@/lib/utils";
 import { NextRequest, NextResponse } from "next/server";
 import normalizeUrl from "normalize-url";
 
@@ -50,12 +51,19 @@ export async function POST(request: NextRequest) {
           });
           continue;
         } else {
+          // Generate unique slug from product name
+          const slug = await generateUniqueSlug(name, async (slug) => {
+            const existing = await Product.findOne({ slug })
+            return !!existing
+          });
+
           // Create new product
           const product = await Product.create({
             name,
             website: normalizedUrl,
             tagline: tagline || null,
             description: description || null,
+            slug,
             logo: logo || null,
             users: [],
             score: null,

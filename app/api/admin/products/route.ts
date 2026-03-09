@@ -2,6 +2,7 @@ import { connectToDatabase } from "@/lib/db";
 import { uploadImageUrlToS3 } from "@/lib/s3-upload";
 import Product from "@/models/product";
 import Topic from "@/models/topic";
+import { generateUniqueSlug } from "@/lib/utils";
 import { NextRequest, NextResponse } from "next/server";
 import normalizeUrl from "normalize-url";
 
@@ -98,12 +99,19 @@ export async function POST(request: NextRequest) {
           continue;
         }
 
+        // Generate unique slug from product name
+        const slug = await generateUniqueSlug(name, async (slug) => {
+          const existing = await Product.findOne({ slug })
+          return !!existing
+        });
+
         // Create new product
         const productData: any = {
           name,
           website: normalizedWebsite,
           tagline: tagline || null,
           description: tagline || null,
+          slug,
           addedByAdmin: true,
           surveyData: {
             adminAudit: true,

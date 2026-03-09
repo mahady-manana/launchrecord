@@ -11,7 +11,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
-import { ArrowLeft, BarChart3, Crown, Medal, Trophy } from "lucide-react";
+import { ArrowLeft, BarChart3, Trophy } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
@@ -110,15 +110,11 @@ export default function CategoryPageClient({
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-primary/5">
       {/* Hero Section */}
-      <div className="bg-gradient-to-r from-primary via-primary/90 to-primary/80 text-white">
+      <div className="">
         <div className="max-w-6xl mx-auto px-4 py-12">
           <div className="flex items-center gap-4 mb-6">
             <Link href="/leaderboard">
-              <Button
-                variant="ghost"
-                size="sm"
-                className="text-white hover:bg-white/20"
-              >
+              <Button variant="ghost" size="sm" className="">
                 <ArrowLeft className="h-4 w-4 mr-2" />
                 Back to Leaderboard
               </Button>
@@ -128,20 +124,20 @@ export default function CategoryPageClient({
           <div className="flex items-start justify-between gap-8">
             <div className="flex-1">
               <div className="flex items-center gap-3 mb-4">
-                <div className="p-3 bg-white/20 rounded-xl backdrop-blur-sm">
+                <div className="p-3 bg-slate-200 rounded-xl backdrop-blur-sm">
                   <BarChart3 className="h-8 w-8" />
                 </div>
                 <div>
                   <h1 className="text-4xl font-black tracking-tight">
                     {data.topic.name}
                   </h1>
-                  <p className="text-white/80 text-lg">Category Leaderboard</p>
+                  <p className="text-slate-600 text-lg">Category Leaderboard</p>
                 </div>
               </div>
 
               {/* Top 10 Topics */}
               <div className="mt-8">
-                <h3 className="text-sm font-semibold text-white/80 mb-3 uppercase tracking-wider">
+                <h3 className="text-sm font-semibold  mb-3 uppercase tracking-wider">
                   Top 10 Categories
                 </h3>
                 <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
@@ -149,10 +145,10 @@ export default function CategoryPageClient({
                     <Link
                       key={topic._id}
                       href={`/categories/${topic.slug}`}
-                      className="group bg-white/10 backdrop-blur-sm hover:bg-white/20 transition-all rounded-xl p-3 text-center"
+                      className="group border border-slate-300 bg-slate-100 backdrop-blur-sm hover:bg-white/20 transition-all rounded-xl p-3 text-center"
                     >
                       <div className="flex items-center justify-center gap-2 mb-1">
-                        <span className="text-lg font-bold text-white">
+                        <span className="text-lg font-bold ">
                           {index === 0
                             ? "🥇"
                             : index === 1
@@ -162,10 +158,10 @@ export default function CategoryPageClient({
                                 : `#${index + 1}`}
                         </span>
                       </div>
-                      <div className="text-xs font-medium text-white/90 truncate group-hover:text-white">
+                      <div className="text-xs font-medium  truncate group-hover:text-slate-600">
                         {topic.name}
                       </div>
-                      <div className="text-[10px] text-white/60">
+                      <div className="text-[10px] ">
                         {topic.count}{" "}
                         {topic.count === 1 ? "product" : "products"}
                       </div>
@@ -176,51 +172,6 @@ export default function CategoryPageClient({
             </div>
 
             {/* Top 3 Podium */}
-            {products.length >= 3 && page === 1 && (
-              <div className="hidden lg:flex items-end gap-4">
-                {/* 2nd Place */}
-                <div className="text-center">
-                  <div className="h-24 w-24 rounded-full bg-gradient-to-br from-slate-300 to-slate-400 flex items-center justify-center mx-auto mb-2 shadow-lg">
-                    <Medal className="h-12 w-12 text-white" />
-                  </div>
-                  <div className="font-bold text-sm truncate w-24">
-                    {products[1].name}
-                  </div>
-                  <div className="text-xs text-white/70">
-                    Score: {products[1].score}
-                  </div>
-                  <div className="h-20 bg-gradient-to-t from-slate-400/50 to-transparent rounded-t w-20 mx-auto mt-2" />
-                </div>
-
-                {/* 1st Place */}
-                <div className="text-center">
-                  <div className="h-32 w-32 rounded-full bg-gradient-to-br from-yellow-400 to-amber-500 flex items-center justify-center mx-auto mb-2 shadow-xl">
-                    <Crown className="h-16 w-16 text-white" />
-                  </div>
-                  <div className="font-bold truncate w-32">
-                    {products[0].name}
-                  </div>
-                  <div className="text-xs text-white/70">
-                    Score: {products[0].score}
-                  </div>
-                  <div className="h-28 bg-gradient-to-t from-yellow-500/50 to-transparent rounded-t w-24 mx-auto mt-2" />
-                </div>
-
-                {/* 3rd Place */}
-                <div className="text-center">
-                  <div className="h-20 w-20 rounded-full bg-gradient-to-br from-amber-600 to-amber-700 flex items-center justify-center mx-auto mb-2 shadow-lg">
-                    <Trophy className="h-10 w-10 text-white" />
-                  </div>
-                  <div className="font-bold text-sm truncate w-20">
-                    {products[2].name}
-                  </div>
-                  <div className="text-xs text-white/70">
-                    Score: {products[2].score}
-                  </div>
-                  <div className="h-16 bg-gradient-to-t from-amber-700/50 to-transparent rounded-t w-16 mx-auto mt-2" />
-                </div>
-              </div>
-            )}
           </div>
         </div>
       </div>

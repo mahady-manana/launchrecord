@@ -5,14 +5,14 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import {
+  ArrowRight,
   BarChart3,
+  Crown,
+  Globe,
   Search,
+  Shield,
   TrendingUp,
   Zap,
-  Shield,
-  Globe,
-  Crown,
-  ArrowRight,
 } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
@@ -35,7 +35,7 @@ export default function CategoriesPageClient({
   const categories = initialCategories;
 
   const filteredCategories = categories.filter((cat) =>
-    cat.name.toLowerCase().includes(searchTerm.toLowerCase())
+    cat.name.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   const topCategories = filteredCategories.slice(0, 10);
@@ -50,7 +50,7 @@ export default function CategoriesPageClient({
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-primary/5">
       {/* Hero Section */}
-      <div className="bg-gradient-to-r from-primary via-primary/90 to-primary/80 text-white">
+      <div className="">
         <div className="max-w-6xl mx-auto px-4 py-16">
           <div className="text-center space-y-6">
             <Badge className="bg-white/20 text-white border-0 text-sm px-4 py-1.5">
@@ -62,7 +62,7 @@ export default function CategoriesPageClient({
               Explore Categories
             </h1>
 
-            <p className="text-xl text-white/80 max-w-3xl mx-auto">
+            <p className="text-xl text-slate-600 max-w-3xl mx-auto">
               Discover the best SaaS products in each niche, ranked by
               defensibility score.
             </p>
@@ -70,13 +70,13 @@ export default function CategoriesPageClient({
             {/* Search */}
             <div className="max-w-xl mx-auto mt-8">
               <div className="relative">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-white/60" />
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-700" />
                 <Input
                   type="text"
                   placeholder="Search categories..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-12 h-14 bg-white/10 border-white/20 text-white placeholder:text-white/60 focus:border-white/40 focus:ring-white/40 rounded-xl"
+                  className="pl-12 h-14 bg-white/10 border-slate-400 placeholder:text-slate-400 focus:border-white/40 focus:ring-white/40 rounded-xl"
                 />
               </div>
             </div>
@@ -148,10 +148,7 @@ export default function CategoriesPageClient({
 
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
               {allCategories.map((category) => (
-                <Link
-                  key={category._id}
-                  href={`/categories/${category.slug}`}
-                >
+                <Link key={category._id} href={`/categories/${category.slug}`}>
                   <Card className="group hover:shadow-md transition-all hover:-translate-y-0.5">
                     <CardContent className="p-4">
                       <div className="flex items-center justify-between mb-2">

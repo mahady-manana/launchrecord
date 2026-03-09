@@ -104,7 +104,10 @@ export function ProductCard({
   // Compact variant for dense layouts
   if (variant === "compact") {
     return (
-      <Card className={cn("hover:shadow-md transition-shadow", className)}>
+      <Link
+        href={"/products/" + product.slug}
+        className={cn("block hover:shadow-md transition-shadow", className)}
+      >
         <CardContent className="p-3">
           <div className="flex items-center gap-3">
             {showRank && rank && (
@@ -144,15 +147,16 @@ export function ProductCard({
             {getScoreDisplay()}
           </div>
         </CardContent>
-      </Card>
+      </Link>
     );
   }
 
   // Default/Desktop variant
   return (
-    <div
+    <Link
+      href={"/products/" + product.slug}
       className={cn(
-        "group hover:shadow-lg transition-all duration-300 hover:-translate-y-1 border-l-4 border-l-transparent hover:border-l-primary overflow-hidden",
+        "group block hover:shadow-lg transition-all duration-300 hover:-translate-y-1 border-l-4 border-l-transparent hover:border-l-primary overflow-hidden",
         className,
       )}
     >
@@ -230,7 +234,7 @@ export function ProductCard({
           </div>
         </div>
       </CardContent>
-    </div>
+    </Link>
   );
 }
 

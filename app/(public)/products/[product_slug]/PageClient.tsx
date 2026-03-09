@@ -82,17 +82,13 @@ export default function ProductPageClient({
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-primary/5">
+    <div className="min-h-screen bg-gradient-to-br pt-6 from-slate-50 via-white to-primary/5">
       {/* Header */}
-      <div className="bg-gradient-to-r from-primary via-primary/90 to-primary/80 text-white">
+      <div className="bg-slate-100 max-w-6xl mx-auto rounded-xl">
         <div className="max-w-6xl mx-auto px-4 py-8">
           <div className="flex items-center gap-4 mb-6">
             <Link href="/leaderboard">
-              <Button
-                variant="ghost"
-                size="sm"
-                className="text-white hover:bg-white/20"
-              >
+              <Button variant="ghost" size="sm" className="hover:bg-white/20">
                 <ArrowLeft className="h-4 w-4 mr-2" />
                 Back
               </Button>
@@ -124,9 +120,7 @@ export default function ProductPageClient({
                     {product.name}
                   </h1>
                   {product.tagline && (
-                    <p className="text-xl text-white/80 mb-4">
-                      {product.tagline}
-                    </p>
+                    <p className="text-xl  mb-4">{product.tagline}</p>
                   )}
                   <div className="flex items-center gap-4 flex-wrap">
                     {product.website && (
@@ -134,7 +128,7 @@ export default function ProductPageClient({
                         href={product.website + "?ref=launchrecord.com"}
                         target="_blank"
                         rel="noopener"
-                        className="flex items-center gap-2 text-sm text-white/80 hover:text-white transition-colors"
+                        className="flex items-center bg-secondary p-2 px-4 rounded-full text-white gap-2 text-sm hover:text-white transition-colors"
                       >
                         <ExternalLink className="h-4 w-4" />
                         <span>Visit Website</span>
@@ -147,7 +141,7 @@ export default function ProductPageClient({
                             key={topic._id}
                             href={`/categories/${topic.name.toLowerCase().replace(/\s+/g, "-")}`}
                           >
-                            <Badge className="bg-white/20 text-white hover:bg-white/30">
+                            <Badge className="bg-slate-200 text-slate-600 hover:bg-slate-300">
                               {topic.name}
                             </Badge>
                           </Link>
@@ -172,14 +166,6 @@ export default function ProductPageClient({
                     Score
                   </div>
                 </div>
-              </div>
-              <div className="mt-3">
-                <Badge className="bg-white/20 text-white border-0">
-                  {getStatusLabel(product.score)}
-                </Badge>
-              </div>
-              <div className="mt-2 text-sm text-white/70">
-                Rank #{product.rank}
               </div>
             </div>
           </div>
