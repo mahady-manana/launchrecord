@@ -9,8 +9,10 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Check, X } from "lucide-react";
+import { Check } from "lucide-react";
 import Link from "next/link";
+import { useState } from "react";
+import { useSubscribe } from "@/hooks/use-subscribe";
 
 export interface PricingTier {
   name: string;
@@ -27,18 +29,43 @@ export interface PricingTier {
   killerFeatures?: string[];
   isFeatured?: boolean;
   ctaText: string;
-  ctaLink: string;
+  ctaLink?: string;
+  onSubscribe?: () => void;
 }
 
 interface PricingCardProps {
   tier: PricingTier;
   variant?: "default" | "compact";
+  productId?: string;
 }
 
-export function PricingCard({ tier, variant = "default" }: PricingCardProps) {
+export function PricingCard({ tier, variant = "default", productId }: PricingCardProps) {
+  const [isCheckingOut, setIsCheckingOut] = useState(false);
+  const { startSubscription } = useSubscribe();
   const isCore = tier.planType === "core";
   const isSovereign = tier.planType === "sovereign";
   const isFeatured = tier.isFeatured || isSovereign;
+
+  const handleSubscribe = async () => {
+    if (tier.planType === "core") {
+      window.location.href = tier.ctaLink || "/register";
+      return;
+    }
+
+    setIsCheckingOut(true);
+    try {
+      const result = await startSubscription({
+        productId,
+        planType: tier.planType as "founder" | "growth" | "sovereign",
+      });
+
+      if (result.ok && result.url) {
+        window.location.href = result.url;
+      }
+    } finally {
+      setIsCheckingOut(false);
+    }
+  };
 
   return (
     <Card
@@ -170,14 +197,15 @@ export function PricingCard({ tier, variant = "default" }: PricingCardProps) {
 
       <CardFooter className="pt-6">
         <Button
-          asChild
+          onClick={handleSubscribe}
+          disabled={isCheckingOut}
           className={`w-full h-12 font-bold uppercase tracking-widest transition-all ${
             isFeatured
               ? "bg-primary hover:bg-primary/90 text-primary-foreground"
               : "bg-white hover:bg-slate-200 text-black"
           } ${variant === "compact" ? "text-xs" : "text-sm"}`}
         >
-          <Link href={tier.ctaLink}>{tier.ctaText}</Link>
+          {isCheckingOut ? "Processing..." : tier.ctaText}
         </Button>
       </CardFooter>
     </Card>
@@ -206,7 +234,6 @@ export const pricingTiers: PricingTier[] = [
       "Execution Timeline",
     ],
     ctaText: "Start Free Trial",
-    ctaLink: "/register?plan=founder",
   },
   {
     name: "Growth Plan",
@@ -230,7 +257,6 @@ export const pricingTiers: PricingTier[] = [
       "Market Intelligence Reports",
     ],
     ctaText: "Start Free Trial",
-    ctaLink: "/register?plan=growth",
     isFeatured: true,
   },
   {
@@ -261,7 +287,6 @@ export const pricingTiers: PricingTier[] = [
       "Sovereign Founder Profile - Public credibility score",
     ],
     ctaText: "Start Free Trial",
-    ctaLink: "/register?plan=sovereign",
   },
 ];
 

@@ -1,10 +1,8 @@
-import Stripe from "stripe";
 import { env } from "@/utils/env";
-
-const apiVersion = env.STRIPE_API_VERSION || "2024-04-10";
+import Stripe from "stripe";
 
 export const stripe = new Stripe(env.STRIPE_SECRET_KEY, {
-  apiVersion: apiVersion as Stripe.LatestApiVersion,
+  apiVersion: "2026-01-28.clover",
   typescript: true,
 });
 

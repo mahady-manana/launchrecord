@@ -10,8 +10,6 @@ export interface IUser extends Document {
   providerId?: string | null;
   emailVerified?: Date | null;
   stripeCustomerId?: string | null;
-  subscriptionId?: string | null;
-  subscriptionStatus?: string | null;
   resetTokenHash?: string | null;
   resetTokenExpiresAt?: Date | null;
   verificationTokenHash?: string | null;
@@ -71,14 +69,6 @@ const UserSchema = new Schema<IUser>(
       default: null,
     },
     stripeCustomerId: {
-      type: String,
-      default: null,
-    },
-    subscriptionId: {
-      type: String,
-      default: null,
-    },
-    subscriptionStatus: {
       type: String,
       default: null,
     },

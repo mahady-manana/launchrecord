@@ -1,11 +1,14 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/hooks/use-auth";
 import clsx from "clsx";
 import Image from "next/image";
 import Link from "next/link";
 
 export function Header() {
+  const { isAuthenticated } = useAuth();
+
   return (
     <header
       className={clsx(
@@ -38,16 +41,27 @@ export function Header() {
         >
           Sovereign 100
         </Link>
-        <Link href="/login">
-          <Button variant="ghost" size="sm">
-            Log in
-          </Button>
-        </Link>
-        <Link href="/survey">
-          <Button size="sm" className="bg-orange-600 hover:bg-orange-700">
-            Audit
-          </Button>
-        </Link>
+        
+        {isAuthenticated ? (
+          <Link href="/dashboard">
+            <Button size="sm" className="bg-orange-600 hover:bg-orange-700">
+              Dashboard
+            </Button>
+          </Link>
+        ) : (
+          <>
+            <Link href="/login">
+              <Button variant="ghost" size="sm">
+                Log in
+              </Button>
+            </Link>
+            <Link href="/survey">
+              <Button size="sm" className="bg-orange-600 hover:bg-orange-700">
+                Audit
+              </Button>
+            </Link>
+          </>
+        )}
       </nav>
     </header>
   );

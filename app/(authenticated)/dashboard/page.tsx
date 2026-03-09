@@ -63,6 +63,14 @@ export default function DashboardPage() {
     }
   };
 
+  const handleUpgrade = (productId: string) => {
+    router.push(`/dashboard/${productId}/subscription`);
+  };
+
+  const handleManageBilling = (productId: string) => {
+    router.push(`/dashboard/${productId}/subscription`);
+  };
+
   const handleAddProduct = async () => {
     if (!newProduct.name || !newProduct.website) {
       toast.error("Please fill in required fields");
@@ -186,7 +194,11 @@ export default function DashboardPage() {
       </div>
 
       {/* Billing Overview */}
-      <BillingOverview billings={billingData} />
+      <BillingOverview 
+        billings={billingData} 
+        onUpgrade={handleUpgrade}
+        onManageBilling={handleManageBilling}
+      />
     </div>
   );
 }

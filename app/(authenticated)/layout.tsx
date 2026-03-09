@@ -1,12 +1,11 @@
 import { DataInitializer } from "@/components/DataInitializer";
 import { ProductList } from "@/components/ProductList";
 import { UserActions } from "@/components/user-actions";
-import { BarChart3, LayoutDashboard, Rocket, Settings } from "lucide-react";
+import { LayoutDashboard, Rocket, Settings } from "lucide-react";
 import Link from "next/link";
 
 const navItems = [
   { href: "/dashboard", label: "Overview", icon: LayoutDashboard },
-  { href: "/dashboard/features", label: "Features", icon: BarChart3 },
   { href: "/dashboard/subscription", label: "Subscription", icon: Settings },
 ];
 

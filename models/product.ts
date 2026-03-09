@@ -2,6 +2,7 @@ import mongoose, { Document, Model, Schema, Types } from "mongoose";
 import type { IReport } from "./report";
 import type { ITopic } from "./topic";
 import type { IUser } from "./user";
+import type { ISubscription } from "./subscription";
 
 export interface IProductMetadata {
   source?: string | null;
@@ -25,6 +26,7 @@ export interface IProduct extends Document {
   users?: Types.ObjectId[] | IUser[];
   topics?: ITopic[];
   reports?: Types.ObjectId[] | IReport[];
+  subscription?: Types.ObjectId | ISubscription;
   score?: number | null;
   earlyAccess?: boolean;
   earlyAccessGrantedAt?: Date | null;
@@ -90,6 +92,11 @@ const ProductSchema = new Schema<IProduct>(
         default: [],
       },
     ],
+    subscription: {
+      type: Schema.Types.ObjectId,
+      ref: "Subscription",
+      default: null,
+    },
     score: {
       type: Number,
       default: null,

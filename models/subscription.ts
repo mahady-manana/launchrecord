@@ -1,10 +1,13 @@
 import mongoose, { Document, Model, Schema } from "mongoose";
 
 export interface ISubscription extends Document {
-  userId: mongoose.Types.ObjectId;
+  productId: mongoose.Types.ObjectId;
   stripeSubscriptionId: string;
   stripeCustomerId: string;
   status: string;
+  planType: "free" | "founder" | "growth" | "sovereign";
+  monthlyAuditLimit: number;
+  weeklyAuditLimit: number;
   currentPeriodEnd?: Date | null;
   canceledAt?: Date | null;
   deletedAt?: Date | null;
@@ -14,9 +17,9 @@ export interface ISubscription extends Document {
 
 const SubscriptionSchema = new Schema<ISubscription>(
   {
-    userId: {
+    productId: {
       type: Schema.Types.ObjectId,
-      ref: "User",
+      ref: "Product",
       required: true,
       index: true,
     },
@@ -28,6 +31,22 @@ const SubscriptionSchema = new Schema<ISubscription>(
     stripeCustomerId: {
       type: String,
       required: true,
+    },
+    planType: {
+      type: String,
+      enum: ["free", "founder", "growth", "sovereign"],
+      required: true,
+      default: "free",
+    },
+    monthlyAuditLimit: {
+      type: Number,
+      required: true,
+      default: 3, // Free: 3, Founder: 10, Growth: 30, Sovereign: unlimited
+    },
+    weeklyAuditLimit: {
+      type: Number,
+      required: true,
+      default: 0, // Free: 0, Founder: 1, Growth: 5, Sovereign: unlimited
     },
     status: {
       type: String,
@@ -49,7 +68,7 @@ const SubscriptionSchema = new Schema<ISubscription>(
   { timestamps: true },
 );
 
-SubscriptionSchema.index({ userId: 1, deletedAt: 1 });
+SubscriptionSchema.index({ productId: 1, deletedAt: 1 });
 
 const Subscription: Model<ISubscription> =
   mongoose.models.Subscription ||
