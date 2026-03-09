@@ -17,7 +17,7 @@ export async function GET(request: NextRequest) {
       .sort({ score: -1, name: 1 })
       .skip(skip)
       .limit(limit)
-      .select("name tagline website score createdAt logo")
+      .select("name tagline website score createdAt logo slug")
       .populate("topics");
 
     // Get total count for pagination
@@ -42,6 +42,7 @@ export async function GET(request: NextRequest) {
       logo: product.logo,
       rank: rankMap.get(product._id.toString()) || null,
       topics: product.topics || [],
+      slug: product.slug,
     }));
 
     return NextResponse.json({

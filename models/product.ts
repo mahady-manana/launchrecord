@@ -1,8 +1,8 @@
 import mongoose, { Document, Model, Schema, Types } from "mongoose";
 import type { IReport } from "./report";
+import type { ISubscription } from "./subscription";
 import type { ITopic } from "./topic";
 import type { IUser } from "./user";
-import type { ISubscription } from "./subscription";
 
 export interface IProductMetadata {
   source?: string | null;
@@ -29,6 +29,7 @@ export interface IProduct extends Document {
   subscription?: Types.ObjectId | ISubscription;
   score?: number | null;
   earlyAccess?: boolean;
+  slug: string;
   earlyAccessGrantedAt?: Date | null;
   addedByAdmin?: boolean;
   surveyData?: Record<string, any> | null;
@@ -59,6 +60,11 @@ const ProductSchema = new Schema<IProduct>(
       maxlength: [80, "Tagline must be less than 80 characters"],
     },
     logo: {
+      type: String,
+      default: null,
+      trim: true,
+    },
+    slug: {
       type: String,
       default: null,
       trim: true,

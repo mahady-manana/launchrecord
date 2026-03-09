@@ -2,6 +2,7 @@ import mongoose, { Document, Model, Schema } from "mongoose";
 
 export interface ITopic extends Document {
   name: string;
+  topic_slug: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -15,6 +16,15 @@ const TopicSchema = new Schema<ITopic>(
       trim: true,
       minlength: [2, "Topic name must be at least 2 characters"],
       maxlength: [100, "Topic name must be less than 100 characters"],
+    },
+
+    topic_slug: {
+      type: String,
+      unique: true,
+      trim: true,
+      minlength: [2, "Topic name must be at least 2 characters"],
+      maxlength: [100, "Topic name must be less than 100 characters"],
+      sparse: true,
     },
   },
   { timestamps: true },

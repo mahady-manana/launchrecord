@@ -27,8 +27,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Sovereign 100 Leaderboard | LaunchRecord",
-    description:
-      "The definitive ranking of SaaS products by defensibility.",
+    description: "The definitive ranking of SaaS products by defensibility.",
     images: ["/og-image.png"],
   },
   keywords: [
@@ -55,6 +54,7 @@ interface LeaderboardEntry {
   score?: number | null;
   rank: number;
   topics?: Array<{ _id: string; name: string }>;
+  slug: string;
 }
 
 async function fetchLeaderboard(pageNum: number): Promise<{
@@ -94,9 +94,9 @@ async function fetchLeaderboard(pageNum: number): Promise<{
 export default async function LeaderboardPage({
   searchParams,
 }: {
-  searchParams: { page?: string };
+  searchParams: Promise<{ page?: string }>;
 }) {
-  const page = parseInt(searchParams.page || "1", 10);
+  const page = parseInt((await searchParams).page || "1", 10);
   const leaderboardData = await fetchLeaderboard(page);
 
   const initialProducts = leaderboardData?.products || [];

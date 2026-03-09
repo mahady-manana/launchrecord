@@ -25,6 +25,7 @@ interface LeaderboardEntry {
   score?: number | null;
   rank: number;
   topics?: Array<{ _id: string; name: string }>;
+  slug: string;
 }
 
 interface LeaderboardPageClientProps {
