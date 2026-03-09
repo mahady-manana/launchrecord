@@ -1,6 +1,7 @@
 "use client";
 
 import { LandingLeaderboard } from "@/components/LandingLeaderboard";
+import { PricingCard, pricingTiers } from "@/components/pricing/pricing-card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -55,48 +56,6 @@ const painkillers = [
     killer: "Product Clarity Index",
     solution: "See your Time-to-Aha and why CFOs rate your clarity 2/10.",
     icon: Zap,
-  },
-];
-
-const tiers = [
-  {
-    name: "Tier 1: The Hook",
-    price: "$49/mo",
-    description: "For founders who want automated intelligence",
-    features: [
-      "AEO Tracker (Mention Share, Position Tracking)",
-      "Product Clarity Index (PCI)",
-      "Weekly War Briefing Email",
-      "Basic Threat Alerts",
-    ],
-    icon: TrendingUp,
-  },
-  {
-    name: "Tier 2: The Retention",
-    price: "$99/mo",
-    description: "For founders serious about differentiation",
-    features: [
-      "Everything in Tier 1",
-      "Founder Proof Vault™",
-      "Market Position Vector™",
-      "Sovereign Leaderboard Access",
-      "Priority Threat Alerts",
-    ],
-    icon: Shield,
-    featured: true,
-  },
-  {
-    name: "Tier 3: The Ego-Play",
-    price: "$299/mo",
-    description: "For founders who refuse to lose their rank",
-    features: [
-      "Everything in Tier 2",
-      "Strategy Climb Sessions",
-      "Emergency Pivot Call (if you drop Top 20)",
-      "1-on-1 Strategic Architect Session",
-      "White-Glove Proof Curation",
-    ],
-    icon: Award,
   },
 ];
 
@@ -424,69 +383,27 @@ export default function LaunchRecordLandingPage() {
       </section>
 
       {/* Pricing Tiers */}
-      <section className="max-w-6xl mx-auto space-y-12">
+      <section className="max-w-7xl mx-auto space-y-12 py-16">
         <div className="text-center space-y-4">
           <h2 className="text-4xl font-bold text-foreground">
-            The "Cash-Machine" Deployment
+            Choose Your War Room
           </h2>
-          <p className="text-lg text-muted-foreground">
-            Three tiers. One mission: Make you irreplaceable.
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+            Every plan includes the Core System. Upgrade to unlock competitive
+            intelligence and strategic warfare capabilities.
           </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {tiers.map((tier, idx) => {
-            const Icon = tier.icon;
-            return (
-              <Card
-                key={idx}
-                className={`relative ${
-                  tier.featured
-                    ? "border-2 border-orange-600 shadow-lg scale-105"
-                    : "border border-border"
-                }`}
-              >
-                <CardHeader className="pt-8">
-                  <div className="flex items-center gap-3 mb-2">
-                    <Icon className="h-6 w-6 text-orange-600" />
-                    <CardTitle className="text-xl">{tier.name}</CardTitle>
-                  </div>
-                  <div className="text-3xl font-bold text-foreground">
-                    {tier.price}
-                  </div>
-                  <p className="text-sm text-muted-foreground mt-1">
-                    {tier.description}
-                  </p>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  {tier.featured && (
-                    <Badge className="w-fit bg-orange-600 hover:bg-orange-700">
-                      Most Popular
-                    </Badge>
-                  )}
-                  <ul className="space-y-3">
-                    {tier.features.map((feature, fidx) => (
-                      <li key={fidx} className="flex items-center gap-3">
-                        <CheckCircle className="h-4 w-4 text-green-600 flex-shrink-0" />
-                        <span className="text-sm">{feature}</span>
-                      </li>
-                    ))}
-                  </ul>
-                  <Link href="/survey" className="block">
-                    <Button
-                      className={`w-full h-12 ${
-                        tier.featured
-                          ? "bg-orange-600 hover:bg-orange-700"
-                          : "bg-slate-900 hover:bg-slate-800"
-                      }`}
-                    >
-                      Get Started
-                    </Button>
-                  </Link>
-                </CardContent>
-              </Card>
-            );
-          })}
+          {pricingTiers.map((tier, idx) => (
+            <PricingCard key={idx} tier={tier} variant="compact" />
+          ))}
+        </div>
+
+        <div className="text-center mt-8">
+          <Link href="/pricing" className="text-primary hover:underline font-medium">
+            View detailed pricing comparison →
+          </Link>
         </div>
       </section>
 

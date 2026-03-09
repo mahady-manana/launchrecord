@@ -1,5 +1,6 @@
 import { connectToDatabase } from "@/lib/db";
 import Product from "@/models/product";
+import Topic from "@/models/topic";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest) {
@@ -10,6 +11,7 @@ export async function GET(request: NextRequest) {
     const page = parseInt(request.nextUrl.searchParams.get("page") || "1");
     const skip = (page - 1) * limit;
 
+    const tn = Topic.name;
     // Get products sorted by score (descending), with null scores at the end
     const products = await Product.find({})
       .sort({ score: -1, name: 1 })

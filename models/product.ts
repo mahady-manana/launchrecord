@@ -67,12 +67,15 @@ const ProductSchema = new Schema<IProduct>(
       trim: true,
       lowercase: true,
       unique: true,
+      sparse: true,
     },
-    users: [{
-      type: Schema.Types.ObjectId,
-      ref: "User",
-      default: [],
-    }],
+    users: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "User",
+        default: [],
+      },
+    ],
     topics: [
       {
         type: Schema.Types.ObjectId,
