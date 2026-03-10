@@ -1,5 +1,6 @@
 import { Metadata } from "next";
 import ProductPageClient from "./PageClient";
+import { JSONLD } from "@/components/JsonLd";
 
 const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
 
@@ -64,9 +65,38 @@ async function fetchProduct(website: string) {
   }
 }
 
+async function generateJsonLd(slug: string) {
+  const productData = await fetchProduct(slug);
+  
+  if (!productData) {
+    return null;
+  }
+
+  return {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    name: productData.name,
+    description: productData.description || productData.tagline,
+    url: `${appUrl}/products/${encodeURIComponent(slug)}`,
+    applicationCategory: "BusinessApplication",
+    aggregateRating: {
+      "@type": "AggregateRating",
+      ratingValue: productData.score || 0,
+      bestRating: 100,
+      worstRating: 0,
+    },
+    offers: {
+      "@type": "Offer",
+      price: "49.00",
+      priceCurrency: "USD",
+    },
+  };
+}
+
 export default async function ProductPage({ params }: ProductPageProps) {
   const { product_slug: slug } = await params;
   const productData = await fetchProduct(slug);
+  const jsonLd = await generateJsonLd(slug);
 
   if (!productData) {
     return (
@@ -89,5 +119,5 @@ export default async function ProductPage({ params }: ProductPageProps) {
     );
   }
 
-  return <ProductPageClient initialData={productData} />;
+  return <ProductPageClient initialData={productData} jsonLd={jsonLd} />;
 }

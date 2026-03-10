@@ -1,7 +1,7 @@
 interface FunnelStep {
   step: string;
   title: string;
-  description: string;
+  desc: string;
 }
 
 const funnelSteps: FunnelStep[] = [

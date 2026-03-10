@@ -3,6 +3,7 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { JSONLD } from "@/components/JsonLd";
 import {
   ArrowLeft,
   BarChart3,
@@ -51,12 +52,12 @@ interface ProductCardProps {
     logo?: string | null;
     website?: string | null;
     score: number;
-    slug: string;
   };
 }
 
 interface ProductPageClientProps {
   initialData: ProductData;
+  jsonLd?: Record<string, any> | null;
 }
 
 function ProductCard({ product }: ProductCardProps) {
@@ -67,8 +68,12 @@ function ProductCard({ product }: ProductCardProps) {
     return "text-red-600";
   };
 
+  const productUrl = product.website
+    ? encodeURIComponent(product.website)
+    : product.id;
+
   return (
-    <Link href={`/products/${encodeURIComponent(product.slug)}`}>
+    <Link href={`/products/${productUrl}`}>
       <Card className="hover:shadow-md transition-shadow h-full">
         <CardContent className="p-4">
           <div className="flex items-start gap-3">
@@ -113,6 +118,7 @@ function ProductCard({ product }: ProductCardProps) {
 
 export default function ProductPageClient({
   initialData,
+  jsonLd,
 }: ProductPageClientProps) {
   const product = initialData;
   const [similarProducts, setSimilarProducts] = useState<any[]>([]);
@@ -182,7 +188,9 @@ export default function ProductPageClient({
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br pt-6 from-slate-50 via-white to-primary/5">
+    <>
+      {jsonLd && <JSONLD data={jsonLd} />}
+      <div className="min-h-screen bg-gradient-to-br pt-6 from-slate-50 via-white to-primary/5">
       {/* Header */}
       <div className="relative bg-slate-100 max-w-6xl mx-auto rounded-xl">
         <div className="max-w-6xl mx-auto px-4 py-8">
@@ -455,5 +463,6 @@ export default function ProductPageClient({
         )}
       </div>
     </div>
+    </>
   );
 }
