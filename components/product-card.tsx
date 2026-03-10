@@ -132,13 +132,12 @@ export function ProductCard({
             </div>
 
             <div className="flex-1 min-w-0">
-              <Link href={"/products/" + product.slug}>
-                <h4 className="font-semibold text-sm truncate hover:text-primary transition-colors">
-                  {product.name}
-                </h4>
-              </Link>
+              <h4 className="font-semibold text-sm truncate hover:text-primary transition-colors">
+                {product.name}
+              </h4>
+
               {product.tagline && (
-                <p className="text-xs text-muted-foreground truncate">
+                <p className="text-xs text-muted-foreground">
                   {product.tagline}
                 </p>
               )}
@@ -163,9 +162,9 @@ export function ProductCard({
       <CardContent className="p-0">
         <div className="flex items-stretch">
           {/* Product Info */}
-          <div className="flex-1 p-4 flex items-center gap-4">
+          <div className="flex-1 p-4 flex gap-4">
             {/* Logo */}
-            <div className="relative h-16 w-16 rounded-xl overflow-hidden border-2 border-slate-200 flex-shrink-0 bg-white">
+            <div className="relative md:h-16 md:w-16 w-10 h-10 rounded-xl overflow-hidden border-2 border-slate-200 flex-shrink-0 bg-white">
               {product.logo ? (
                 <Image
                   src={product.logo}
@@ -182,15 +181,11 @@ export function ProductCard({
 
             {/* Details */}
             <div className="flex-1 min-w-0">
-              <Link href={"/products/" + product.slug}>
-                <h3 className="font-bold text-lg text-slate-900 truncate hover:text-primary transition-colors">
-                  {product.name}
-                </h3>
-              </Link>
+              <h3 className="font-bold text-lg text-slate-900 truncate hover:text-primary transition-colors">
+                {product.name}
+              </h3>
               {product.tagline && (
-                <p className="text-sm text-slate-500 truncate">
-                  {product.tagline}
-                </p>
+                <p className="text-sm text-slate-500">{product.tagline}</p>
               )}
               <div className="flex items-center gap-4 mt-2">
                 {product.topics && product.topics.length > 0 && (
@@ -211,26 +206,6 @@ export function ProductCard({
 
             {/* Score */}
             {getScoreDisplay()}
-
-            {/* Trend */}
-            {showTrend && (
-              <div className="hidden sm:flex flex-col items-center gap-1 px-3">
-                {getTrendIcon()}
-                <span
-                  className={cn(
-                    "text-xs font-medium",
-                    scoreDiff > 0
-                      ? "text-green-600"
-                      : scoreDiff < 0
-                        ? "text-red-600"
-                        : "text-slate-400",
-                  )}
-                >
-                  {scoreDiff > 0 ? "+" : ""}
-                  {scoreDiff.toFixed(1)}
-                </span>
-              </div>
-            )}
           </div>
         </div>
       </CardContent>

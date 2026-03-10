@@ -17,6 +17,7 @@ interface LeaderboardEntry {
   logo?: string | null;
   score?: number | null;
   rank?: number;
+  slug: string;
 }
 
 export function LandingLeaderboard() {
@@ -70,9 +71,10 @@ export function LandingLeaderboard() {
             const isTopThree = rank <= 3;
             const colorHex = getStatusColorHex(product.score || 0);
             return (
-              <Card
+              <Link
+                href={"/products/" + product.slug}
                 key={product._id}
-                className={`relative py-2 overflow-hidden ${
+                className={`relative border rounded-xl py-2 overflow-hidden ${
                   isTopThree
                     ? rank === 1
                       ? "border-yellow-500 border-2"
@@ -128,7 +130,7 @@ export function LandingLeaderboard() {
                     </div>
                   </div>
                 </CardContent>
-              </Card>
+              </Link>
             );
           })}
         </div>

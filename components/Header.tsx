@@ -228,6 +228,14 @@ export function Header() {
                   ))
                 )}
               </div>
+              <div className="mt-4">
+                <Link
+                  href="/categories"
+                  className="block text-center rounded-full w-full p-2 bg-slate-200"
+                >
+                  All categories
+                </Link>
+              </div>
             </div>
 
             <div className="border-t border-slate-200 pt-2 flex flex-col gap-2">

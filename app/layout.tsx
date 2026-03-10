@@ -4,7 +4,7 @@ import { DataInitializer } from "@/providers/data-initializer";
 import { ThemeProvider } from "@/providers/theme-provider";
 import { GoogleAnalytics } from "@next/third-parties/google";
 import type { Metadata } from "next";
-import { Belanosima, Space_Grotesk } from "next/font/google";
+import { Akshar, Space_Grotesk } from "next/font/google";
 
 import "./globals.css";
 
@@ -12,7 +12,7 @@ const spaceGrotesk = Space_Grotesk({
   subsets: ["latin"],
   variable: "--font-sans",
 });
-const belanosima = Belanosima({
+const belanosima = Akshar({
   weight: ["400", "600", "700"],
   subsets: ["latin"],
   variable: "--font-mono",

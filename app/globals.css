@@ -42,7 +42,8 @@
 
 @theme inline {
   --font-sans: "Space Grotesk", system-ui, sans-serif;
-  --font-mono: "Belanosima", ui-monospace, SFMono-Regular, monospace;
+  --font-mono:
+    var(--font-mono, ui-monospace), ui-monospace, SFMono-Regular, monospace;
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);

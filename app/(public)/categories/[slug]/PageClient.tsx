@@ -147,7 +147,7 @@ export default function CategoryPageClient({
                       href={`/categories/${topic.slug}`}
                       className="group border border-slate-300 bg-slate-100 backdrop-blur-sm hover:bg-white/20 transition-all rounded-xl p-3 text-center"
                     >
-                      <div className="flex items-center justify-center gap-2 mb-1">
+                      <div className="md:flex hidden items-center justify-center gap-2 mb-1">
                         <span className="text-lg font-bold ">
                           {index === 0
                             ? "🥇"

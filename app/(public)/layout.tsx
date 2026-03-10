@@ -1,21 +1,22 @@
-import type { Metadata } from "next";
-import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
+import { Header } from "@/components/Header";
+import type { Metadata } from "next";
 
 const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
 
 export const metadata: Metadata = {
   title: {
     default:
-      "Verified Defensibility Ledger for Sovereign Founders | LaunchRecord",
-    template: "%s | LaunchRecord",
+      "Audits your startup’s sovereignty and defensibility | LaunchRecord",
+    template: "%s",
   },
   description:
-    "The SF-1 Weekly War Briefing shows where your positioning is weak, why AI ignores you, and what to fix before competitors or LLMs commoditize your product.",
+    "Analyze your positioning, clarity, AEO presence, and strategic moat. The SIO-V5 engine analyzes your positioning against 10,000+ records to ensure you aren't just a feature waiting to be deleted.",
   metadataBase: new URL(appUrl),
   openGraph: {
-    title: "LaunchRecord",
-    description: "Stop Being a Commodity. Become a Category King.",
+    title: "Audits your startup’s sovereignty and defensibility",
+    description:
+      "Analyze your positioning, clarity, AEO presence, and strategic moat.",
     url: appUrl,
     siteName: "LaunchRecord",
     images: [
@@ -30,8 +31,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "LaunchRecord",
-    description: "Stop Being a Commodity. Become a Category King.",
+    title: "Audits your startup’s sovereignty and defensibility",
+    description:
+      "Analyze your positioning, clarity, AEO presence, and strategic moat.",
     images: ["/og-image.png"],
   },
 };
@@ -42,7 +44,7 @@ export default function PublicLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <div className="min-h-screen bg-background text-foreground flex flex-col">
+    <div className="min-h-screen bg-white text-foreground flex flex-col">
       <Header />
       <main className="flex-1">{children}</main>
       <Footer />

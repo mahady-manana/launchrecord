@@ -13,20 +13,27 @@ export async function generateMetadata({
   const { product_slug: slug } = await params;
   const decodedSlug = decodeURIComponent(slug);
 
+  const productData = await fetchProduct(slug);
+  const title = productData
+    ? `${productData.tagline} | ${productData.name}`
+    : decodedSlug.replace(/^https?:\/\//, "").split("/")[0];
+  const description = productData?.description || "View defensibility score and strategic analysis for this product.";
+
   return {
-    title: `${decodedSlug.replace(/^https?:\/\//, "").split("/")[0]} | LaunchRecord`,
-    description: `View defensibility score and strategic analysis for this product.`,
+    title,
+    description,
     metadataBase: new URL(appUrl),
     openGraph: {
-      title: `Product Analysis | LaunchRecord`,
-      description: `Strategic defensibility analysis.`,
+      title,
+      description,
       url: `${appUrl}/products/${slug}`,
       siteName: "LaunchRecord",
       type: "website",
     },
     twitter: {
       card: "summary_large_image",
-      title: `Product Analysis | LaunchRecord`,
+      title,
+      description,
     },
   };
 }

@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 
 interface Report {
   id: string;
@@ -41,14 +42,113 @@ interface ProductData {
   rank: number;
 }
 
+interface ProductCardProps {
+  product: {
+    _id: string;
+    id: string;
+    name: string;
+    tagline?: string | null;
+    logo?: string | null;
+    website?: string | null;
+    score: number;
+    slug: string;
+  };
+}
+
 interface ProductPageClientProps {
   initialData: ProductData;
+}
+
+function ProductCard({ product }: ProductCardProps) {
+  const getScoreColor = (score: number) => {
+    if (score >= 90) return "text-green-600";
+    if (score >= 70) return "text-blue-600";
+    if (score >= 40) return "text-orange-600";
+    return "text-red-600";
+  };
+
+  return (
+    <Link href={`/products/${encodeURIComponent(product.slug)}`}>
+      <Card className="hover:shadow-md transition-shadow h-full">
+        <CardContent className="p-4">
+          <div className="flex items-start gap-3">
+            <div className="relative h-12 w-12 rounded-lg overflow-hidden border bg-white flex-shrink-0">
+              {product.logo ? (
+                <Image
+                  src={product.logo}
+                  alt={product.name}
+                  fill
+                  className="object-cover p-1"
+                />
+              ) : (
+                <div className="h-full w-full flex items-center justify-center bg-slate-100">
+                  <Crown className="h-6 w-6 text-slate-400" />
+                </div>
+              )}
+            </div>
+            <div className="flex-1 min-w-0">
+              <h3 className="font-bold text-sm truncate">{product.name}</h3>
+              {product.tagline && (
+                <p className="text-xs text-muted-foreground truncate mt-1">
+                  {product.tagline}
+                </p>
+              )}
+              <div className="flex items-center gap-2 mt-2">
+                <span
+                  className={`text-sm font-black ${getScoreColor(product.score)}`}
+                >
+                  {product.score}
+                </span>
+                <Badge variant="outline" className="text-[10px] h-5 px-1.5">
+                  Score
+                </Badge>
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    </Link>
+  );
 }
 
 export default function ProductPageClient({
   initialData,
 }: ProductPageClientProps) {
   const product = initialData;
+  const [similarProducts, setSimilarProducts] = useState<any[]>([]);
+  const [newProducts, setNewProducts] = useState<any[]>([]);
+  const [topProducts, setTopProducts] = useState<any[]>([]);
+
+  useEffect(() => {
+    async function fetchRecommendations() {
+      try {
+        const currentSlug = product.id;
+
+        const [similarRes, newRes, topRes] = await Promise.all([
+          fetch(
+            `/api/products/recommendations?type=similar&slug=${currentSlug}`,
+          ),
+          fetch(`/api/products/recommendations?type=new&slug=${currentSlug}`),
+          fetch(`/api/products/recommendations?type=top&slug=${currentSlug}`),
+        ]);
+
+        const similarData = await similarRes.json();
+        const newData = await newRes.json();
+        const topData = await topRes.json();
+
+        // Shuffle and take 10
+        const shuffle = (arr: any[]) => arr.sort(() => Math.random() - 0.5);
+
+        setSimilarProducts(shuffle(similarData.products || []).slice(0, 10));
+        setNewProducts(shuffle(newData.products || []).slice(0, 10));
+        setTopProducts(shuffle(topData.products || []).slice(0, 10));
+      } catch (error) {
+        console.error("Error fetching recommendations:", error);
+      }
+    }
+
+    fetchRecommendations();
+  }, [product.id, product.website]);
 
   const getScoreColor = (score: number) => {
     if (score >= 90) return "text-green-600 bg-green-50 border-green-200";
@@ -84,7 +184,7 @@ export default function ProductPageClient({
   return (
     <div className="min-h-screen bg-gradient-to-br pt-6 from-slate-50 via-white to-primary/5">
       {/* Header */}
-      <div className="bg-slate-100 max-w-6xl mx-auto rounded-xl">
+      <div className="relative bg-slate-100 max-w-6xl mx-auto rounded-xl">
         <div className="max-w-6xl mx-auto px-4 py-8">
           <div className="flex items-center gap-4 mb-6">
             <Link href="/leaderboard">
@@ -95,17 +195,18 @@ export default function ProductPageClient({
             </Link>
           </div>
 
-          <div className="flex items-start justify-between gap-8">
+          <div className="md:flex items-start justify-between gap-8">
             <div className="flex-1">
               <div className="flex items-start gap-4">
                 {/* Logo */}
-                <div className="relative h-24 w-24 rounded-2xl overflow-hidden border-4 border-white/20 bg-white flex-shrink-0">
+                <div className="relative flex items-center justify-center md:h-18 md:w-18 w-12 h-12 rounded-2xl overflow-hidden border-4 border-white/20 bg-white flex-shrink-0">
                   {product.logo ? (
                     <Image
                       src={product.logo}
                       alt={product.name}
-                      fill
-                      className="object-cover p-2"
+                      width={40}
+                      height={40}
+                      className="object-cover  h-8 w-8 p-2"
                     />
                   ) : (
                     <div className="h-full w-full flex items-center justify-center bg-gradient-to-br from-white/20 to-white/10">
@@ -135,7 +236,7 @@ export default function ProductPageClient({
                       </a>
                     )}
                     {product.topics && product.topics.length > 0 && (
-                      <div className="flex gap-2">
+                      <div className="flex md:flex-row flex-col gap-2">
                         {product.topics.slice(0, 5).map((topic) => (
                           <Link
                             key={topic._id}
@@ -154,16 +255,18 @@ export default function ProductPageClient({
             </div>
 
             {/* Score Display */}
-            <div className="text-center">
+            <div className="text-center md:relative absolute md:top-[unset] md:right-[unset] top-5 right-5">
               <div
-                className={`w-32 h-32 rounded-full flex items-center justify-center border-4 bg-white ${getScoreColor(
+                className={`md:w-32 md:h-32 w-20 h-20 rounded-full flex items-center justify-center border-4 bg-white ${getScoreColor(
                   product.score,
                 )}`}
               >
                 <div>
-                  <div className="text-5xl font-black">{product.score}</div>
+                  <div className="md:text-5xl text-2xl font-black">
+                    {product.score || "X"}
+                  </div>
                   <div className="text-xs font-bold uppercase tracking-wider mt-1">
-                    Score
+                    {product.score ? "Score" : "No score"}
                   </div>
                 </div>
               </div>
@@ -281,7 +384,7 @@ export default function ProductPageClient({
               About
             </h2>
             <Card>
-              <CardContent className="pt-6">
+              <CardContent className="">
                 <p className="text-muted-foreground leading-relaxed">
                   {product.description}
                 </p>
@@ -305,6 +408,51 @@ export default function ProductPageClient({
             </Link>
           )}
         </section>
+
+        {/* Similar Products */}
+        {similarProducts.length > 0 && (
+          <section>
+            <h2 className="text-2xl font-bold mb-4 flex items-center gap-2">
+              <Target className="h-6 w-6" />
+              Similar Products
+            </h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+              {similarProducts.map((p) => (
+                <ProductCard key={p.id} product={p} />
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* New Products */}
+        {newProducts.length > 0 && (
+          <section>
+            <h2 className="text-2xl font-bold mb-4 flex items-center gap-2">
+              <Zap className="h-6 w-6" />
+              New Products
+            </h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+              {newProducts.map((p) => (
+                <ProductCard key={p.id} product={p} />
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* Top Products */}
+        {topProducts.length > 0 && (
+          <section>
+            <h2 className="text-2xl font-bold mb-4 flex items-center gap-2">
+              <Crown className="h-6 w-6" />
+              Top Products
+            </h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+              {topProducts.map((p) => (
+                <ProductCard key={p.id} product={p} />
+              ))}
+            </div>
+          </section>
+        )}
       </div>
     </div>
   );
