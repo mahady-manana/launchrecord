@@ -88,17 +88,17 @@ export function LandingLeaderboard() {
                   <div className="flex items-start justify-between gap-4">
                     <div className="flex-1 space-y-2 w-full">
                       <div className="flex items-center gap-2">
-                        <div className="relative w-8 h-8 flex items-center justify-center rounded-md overflow-hidden flex-shrink-0">
+                        <div className="relative w-6 h-6 flex items-center justify-center rounded-md overflow-hidden flex-shrink-0">
                           <img
                             src={product.logo || "/logo.svg"}
                             alt={product.name}
-                            height={40}
-                            width={40}
+                            height={18}
+                            width={18}
                             className={clsx(
                               "object-contain",
                               !product.logo && "opacity-50",
                               product.logo?.includes("google.com")
-                                ? "h-6 w-6"
+                                ? "h-[18px] w-[18px]"
                                 : "",
                             )}
                           />

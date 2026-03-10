@@ -116,13 +116,14 @@ export function ProductCard({
               </div>
             )}
 
-            <div className="relative w-10 h-10 rounded-lg overflow-hidden flex-shrink-0 bg-muted">
+            <div className="relative flex items-center justify-center md:h-10 md:w-10 w-6 h-6  overflow-hidden flex-shrink-0 bg-white">
               {product.logo ? (
                 <Image
                   src={product.logo}
                   alt={product.name}
-                  fill
-                  className="object-cover p-1"
+                  width={32}
+                  height={32}
+                  className="object-cover w-8 h-8 p-1"
                 />
               ) : (
                 <div className="h-full w-full flex items-center justify-center bg-gradient-to-br from-primary/10 to-primary/20">
@@ -164,13 +165,14 @@ export function ProductCard({
           {/* Product Info */}
           <div className="flex-1 p-4 flex gap-4">
             {/* Logo */}
-            <div className="relative md:h-16 md:w-16 w-10 h-10 rounded-xl overflow-hidden border-2 border-slate-200 flex-shrink-0 bg-white">
+            <div className="relative flex items-center justify-center md:h-10 md:w-10 w-6 h-6  overflow-hidden flex-shrink-0 bg-white">
               {product.logo ? (
                 <Image
                   src={product.logo}
                   alt={product.name}
-                  fill
-                  className="object-cover"
+                  width={32}
+                  height={32}
+                  className="object-cover w-8 h-8"
                 />
               ) : (
                 <div className="h-full w-full flex items-center justify-center bg-gradient-to-br from-primary/10 to-primary/20">
