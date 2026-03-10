@@ -1,11 +1,36 @@
 import { Metadata } from "next";
-import ProductPageClient from "./PageClient";
-import { JSONLD } from "@/components/JsonLd";
+import ProductPageWrapper from "./ProductPageWrapper";
 
 const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
 
 interface ProductPageProps {
   params: Promise<{ product_slug: string }>;
+}
+
+async function fetchProduct(website: string) {
+  try {
+    const response = await fetch(
+      `${appUrl}/api/product-lookup?website=${encodeURIComponent(website)}`,
+      {
+        cache: "no-store",
+      },
+    );
+
+    if (!response.ok) {
+      return null;
+    }
+
+    const data = await response.json();
+
+    if (data.success) {
+      return data.data;
+    }
+
+    return null;
+  } catch (error) {
+    console.error("Failed to fetch product:", error);
+    return null;
+  }
 }
 
 export async function generateMetadata({
@@ -39,85 +64,9 @@ export async function generateMetadata({
   };
 }
 
-async function fetchProduct(website: string) {
-  try {
-    const response = await fetch(
-      `${appUrl}/api/product-lookup?website=${encodeURIComponent(website)}`,
-      {
-        cache: "no-store",
-      },
-    );
-
-    if (!response.ok) {
-      return null;
-    }
-
-    const data = await response.json();
-
-    if (data.success) {
-      return data.data;
-    }
-
-    return null;
-  } catch (error) {
-    console.error("Failed to fetch product:", error);
-    return null;
-  }
-}
-
-async function generateJsonLd(slug: string) {
-  const productData = await fetchProduct(slug);
-  
-  if (!productData) {
-    return null;
-  }
-
-  return {
-    "@context": "https://schema.org",
-    "@type": "SoftwareApplication",
-    name: productData.name,
-    description: productData.description || productData.tagline,
-    url: `${appUrl}/products/${encodeURIComponent(slug)}`,
-    applicationCategory: "BusinessApplication",
-    aggregateRating: {
-      "@type": "AggregateRating",
-      ratingValue: productData.score || 0,
-      bestRating: 100,
-      worstRating: 0,
-    },
-    offers: {
-      "@type": "Offer",
-      price: "49.00",
-      priceCurrency: "USD",
-    },
-  };
-}
-
 export default async function ProductPage({ params }: ProductPageProps) {
   const { product_slug: slug } = await params;
   const productData = await fetchProduct(slug);
-  const jsonLd = await generateJsonLd(slug);
 
-  if (!productData) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center max-w-md mx-auto px-4">
-          <h1 className="text-2xl font-bold">Product Not Found</h1>
-          <p className="text-muted-foreground mt-2">
-            This product hasn&apos;t been audited yet or doesn&apos;t exist.
-          </p>
-          <div className="mt-6 flex gap-4 justify-center">
-            <a href="/leaderboard" className="text-primary hover:underline">
-              View Leaderboard
-            </a>
-            <a href="/survey" className="text-primary hover:underline">
-              Audit a Product
-            </a>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  return <ProductPageClient initialData={productData} jsonLd={jsonLd} />;
+  return <ProductPageWrapper slug={slug} initialData={productData} />;
 }
