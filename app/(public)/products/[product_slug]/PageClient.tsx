@@ -3,18 +3,14 @@
 import { JSONLD } from "@/components/JsonLd";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import {
   ArrowLeft,
-  BarChart3,
-  Calendar,
   Crown,
   ExternalLink,
   Globe,
   Layers,
-  Shield,
   Target,
-  TrendingUp,
   Zap,
 } from "lucide-react";
 import Image from "next/image";
@@ -163,30 +159,6 @@ export default function ProductPageClient({
     return "text-red-600 bg-red-50 border-red-200";
   };
 
-  const getStatusLabel = (score: number) => {
-    if (score >= 90) return "UNTOUCHABLE";
-    if (score >= 70) return "LETHAL";
-    if (score >= 40) return "PLASTIC";
-    if (score >= 20) return "ZOMBIE";
-    return "GHOST";
-  };
-
-  const pillarIcons: Record<string, any> = {
-    aeo_index: Globe,
-    positioning_sharpness: Target,
-    clarity_velocity: Zap,
-    momentum_signal: TrendingUp,
-    founder_proof_vault: Shield,
-  };
-
-  const pillarLabels: Record<string, string> = {
-    aeo_index: "AEO Presence",
-    positioning_sharpness: "Positioning",
-    clarity_velocity: "Product Clarity",
-    momentum_signal: "Momentum",
-    founder_proof_vault: "Proof Vault",
-  };
-
   return (
     <>
       {jsonLd && <JSONLD data={jsonLd} />}
@@ -286,103 +258,6 @@ export default function ProductPageClient({
         {/* Content */}
         <div className="max-w-6xl mx-auto px-4 py-8 space-y-8">
           {/* Pillars Grid */}
-          {product.latestReport && (
-            <section>
-              <h2 className="text-2xl font-bold mb-4 flex items-center gap-2">
-                <BarChart3 className="h-6 w-6" />
-                SIO-V5 Analysis
-              </h2>
-              <div className="grid md:grid-cols-5 gap-4">
-                {Object.entries(product.latestReport)
-                  .filter(([key]) =>
-                    [
-                      "aeo_index",
-                      "positioning_sharpness",
-                      "clarity_velocity",
-                      "momentum_signal",
-                      "founder_proof_vault",
-                    ].includes(key),
-                  )
-                  .map(([key, pillar]: [string, any]) => {
-                    const Icon = pillarIcons[key] || BarChart3;
-                    const label = pillarLabels[key] || key;
-                    const score = pillar.score || 0;
-
-                    return (
-                      <Card
-                        key={key}
-                        className="hover:shadow-md transition-shadow"
-                      >
-                        <CardHeader className="pb-3">
-                          <div className="flex items-center gap-2 mb-2">
-                            <Icon className="h-5 w-5 text-primary" />
-                            <CardTitle className="text-sm font-semibold">
-                              {label}
-                            </CardTitle>
-                          </div>
-                          <div
-                            className={`text-3xl font-black ${getScoreColor(score).split(" ")[0]}`}
-                          >
-                            {score}
-                          </div>
-                        </CardHeader>
-                        <CardContent>
-                          {pillar.critique && (
-                            <p className="text-xs text-muted-foreground line-clamp-3">
-                              {pillar.critique}
-                            </p>
-                          )}
-                        </CardContent>
-                      </Card>
-                    );
-                  })}
-              </div>
-            </section>
-          )}
-
-          {/* Historical Performance */}
-          {product.historicalReports.length > 1 && (
-            <section>
-              <h2 className="text-2xl font-bold mb-4 flex items-center gap-2">
-                <Calendar className="h-6 w-6" />
-                Historical Performance
-              </h2>
-              <Card>
-                <CardContent className="p-0">
-                  <div className="divide-y">
-                    {product.historicalReports.map((report, index) => (
-                      <div
-                        key={report.id}
-                        className="flex items-center justify-between p-4 hover:bg-muted/50 transition-colors"
-                      >
-                        <div className="flex items-center gap-4">
-                          <div className="flex items-center gap-2">
-                            {index === 0 ? (
-                              <Badge className="bg-green-100 text-green-700">
-                                Latest
-                              </Badge>
-                            ) : (
-                              <span className="text-sm text-muted-foreground">
-                                {index + 1} audits ago
-                              </span>
-                            )}
-                          </div>
-                          <span className="text-sm text-muted-foreground">
-                            {new Date(report.createdAt).toLocaleDateString()}
-                          </span>
-                        </div>
-                        <div
-                          className={`font-bold ${getScoreColor(report.score).split(" ")[0]}`}
-                        >
-                          Score: {report.score}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-            </section>
-          )}
 
           {/* Product Details */}
           {product.description && (

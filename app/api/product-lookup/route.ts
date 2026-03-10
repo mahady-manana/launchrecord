@@ -1,6 +1,5 @@
 import { connectToDatabase } from "@/lib/db";
 import Product from "@/models/product";
-import Report from "@/models/report";
 import { jsonError, jsonSuccess } from "@/utils/response";
 import { NextRequest } from "next/server";
 
@@ -29,27 +28,6 @@ export async function GET(request: NextRequest) {
     return jsonError("Product not found", 404);
   }
 
-  // Get the latest report for this product
-  const latestReport = await Report.findOne({
-    productId: product._id,
-  })
-    .sort({ createdAt: -1 })
-    .lean();
-
-  // Get all reports for historical data
-  const allReports = await Report.find({
-    productId: product._id,
-  })
-    .sort({ createdAt: -1 })
-    .limit(10)
-    .lean();
-
-  // Calculate rank in leaderboard
-  const totalProducts = await Product.countDocuments({
-    deletedAt: null,
-    score: { $gte: product.score || 0 },
-  });
-
   // Format the response
   const productData = {
     id: product._id.toString(),
@@ -62,13 +40,6 @@ export async function GET(request: NextRequest) {
     topics: product.topics || [],
     createdAt: product.createdAt,
     updatedAt: product.updatedAt,
-    latestReport: latestReport || null,
-    historicalReports: allReports.map((r: any) => ({
-      id: r._id.toString(),
-      score: r.overall_assessment?.composite_score || 0,
-      createdAt: r.createdAt,
-    })),
-    rank: totalProducts,
   };
 
   return jsonSuccess({
