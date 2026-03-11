@@ -22,6 +22,7 @@ interface Category {
   name: string;
   slug: string;
   count: number;
+  short_description: string;
 }
 
 interface CategoriesPageClientProps {
@@ -122,6 +123,9 @@ export default function CategoriesPageClient({
                         <h3 className="text-lg font-bold text-slate-900 mb-2 group-hover:text-primary transition-colors">
                           {category.name}
                         </h3>
+                        <p className="text-slate-500 mb-4">
+                          {category.short_description}
+                        </p>
 
                         <div className="flex items-center text-sm text-muted-foreground">
                           <span>View leaderboard</span>
@@ -163,6 +167,9 @@ export default function CategoriesPageClient({
                       <h3 className="font-semibold text-sm truncate group-hover:text-primary transition-colors">
                         {category.name}
                       </h3>
+                      <p className="text-slate-500">
+                        {category.short_description}
+                      </p>
                     </CardContent>
                   </Card>
                 </Link>

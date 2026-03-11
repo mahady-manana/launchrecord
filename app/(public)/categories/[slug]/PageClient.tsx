@@ -35,6 +35,8 @@ interface CategoryData {
     id: string;
     name: string;
     slug: string;
+    short_description: string;
+    description: string;
   };
   stats: {
     totalProducts: number;
@@ -59,6 +61,8 @@ interface CategoryPageClientProps {
     name: string;
     slug: string;
     count: number;
+    short_description: string;
+    description: string;
   }>;
   currentPage: number;
 }
@@ -125,14 +129,23 @@ export default function CategoryPageClient({
             <div className="flex-1">
               <div className="flex items-center gap-3 mb-4">
                 <div className="p-3 bg-slate-200 rounded-xl backdrop-blur-sm">
-                  <BarChart3 className="h-8 w-8" />
+                  <BarChart3 className="h-4 w-4" />
                 </div>
                 <div>
-                  <h1 className="text-4xl font-black tracking-tight">
+                  <h1 className="text-xl md:text-4xl font-black tracking-tight">
                     {data.topic.name}
                   </h1>
-                  <p className="text-slate-600 text-lg">Category Leaderboard</p>
                 </div>
+              </div>
+              <div>
+                <p className="text-slate-600 text-lg">
+                  {data.topic.short_description ||
+                    "Extract insights from data using statistics and machine learning"}
+                </p>
+                <p>
+                  {data.topic.description ||
+                    "Data science platforms support modeling, visualization, and deployment—enabling predictive analytics and AI applications"}
+                </p>
               </div>
 
               {/* Top 10 Topics */}

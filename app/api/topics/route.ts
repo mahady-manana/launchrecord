@@ -1,6 +1,6 @@
 import { connectToDatabase } from "@/lib/db";
-import Topic from "@/models/topic";
 import Product from "@/models/product";
+import Topic from "@/models/topic";
 import { NextRequest, NextResponse } from "next/server";
 
 // GET - Fetch all topics or search topics
@@ -16,46 +16,47 @@ export async function GET(request: NextRequest) {
     // If requesting top topics by usage
     if (top) {
       const topLimit = parseInt(top);
-      
+
       // Aggregate to get topics with most products
       const topTopics = await Product.aggregate([
         {
-          $match: { deletedAt: null }
+          $match: { deletedAt: null },
         },
         {
-          $unwind: "$topics"
+          $unwind: "$topics",
         },
         {
           $group: {
             _id: "$topics",
-            count: { $sum: 1 }
-          }
+            count: { $sum: 1 },
+          },
         },
         {
-          $sort: { count: -1 }
+          $sort: { count: -1 },
         },
         {
-          $limit: topLimit
+          $limit: topLimit,
         },
         {
           $lookup: {
             from: "topics",
             localField: "_id",
             foreignField: "_id",
-            as: "topic"
-          }
+            as: "topic",
+          },
         },
         {
-          $unwind: "$topic"
+          $unwind: "$topic",
         },
         {
           $project: {
             _id: "$topic._id",
             name: "$topic.name",
             topic_slug: "$topic.topic_slug",
-            count: 1
-          }
-        }
+            short_description: "$topic.short_description",
+            count: 1,
+          },
+        },
       ]);
 
       return NextResponse.json({
@@ -65,6 +66,7 @@ export async function GET(request: NextRequest) {
           name: t.name,
           slug: t.topic_slug,
           count: t.count,
+          short_description: t.short_description,
         })),
       });
     }

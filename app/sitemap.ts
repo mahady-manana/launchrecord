@@ -75,7 +75,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   ];
 
   // Fetch dynamic routes for categories/topics
-  const categories = await fetch(`${appUrl}/api/topics?top=100`)
+  const categories = await fetch(`${appUrl}/api/topics?top=500`)
     .then((res) => {
       if (!res.ok) return null;
       return res.json();
@@ -92,7 +92,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ) ?? [];
 
   // Fetch top 100 products based on score
-  const products = await fetch(`${appUrl}/api/leaderboard?limit=200&page=1`)
+  const products = await fetch(`${appUrl}/api/leaderboard?limit=500&page=1`)
     .then((res) => {
       if (!res.ok) return null;
       return res.json();

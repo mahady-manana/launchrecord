@@ -99,6 +99,8 @@ export async function GET(
         id: topic._id.toString(),
         name: topic.name,
         slug: topic.topic_slug,
+        short_description: topic.short_description,
+        description: topic.description,
       },
       stats: {
         totalProducts,

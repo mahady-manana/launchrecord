@@ -5,12 +5,14 @@ const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
 
 interface CategoryPageProps {
   params: Promise<{ slug: string }>;
-  searchParams: { page?: string };
+  searchParams: Promise<{ page?: string }>;
 }
 
-export async function generateMetadata({ params }: CategoryPageProps): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: CategoryPageProps): Promise<Metadata> {
   const { slug } = await params;
-  
+
   return {
     title: `${slug.charAt(0).toUpperCase() + slug.slice(1)} Category | LaunchRecord`,
     description: `Top SaaS products in ${slug}. See rankings by defensibility score.`,
@@ -57,12 +59,9 @@ async function fetchCategory(slug: string, page: number) {
 
 async function fetchTopTopics(limit: number = 10) {
   try {
-    const response = await fetch(
-      `${appUrl}/api/topics?top=${limit}`,
-      {
-        cache: "no-store",
-      },
-    );
+    const response = await fetch(`${appUrl}/api/topics?top=${limit}`, {
+      cache: "no-store",
+    });
 
     if (!response.ok) {
       return null;
@@ -81,9 +80,12 @@ async function fetchTopTopics(limit: number = 10) {
   }
 }
 
-export default async function CategoryPage({ params, searchParams }: CategoryPageProps) {
+export default async function CategoryPage({
+  params,
+  searchParams,
+}: CategoryPageProps) {
   const { slug } = await params;
-  const page = parseInt(searchParams.page || "1", 10);
+  const page = parseInt((await searchParams).page || "1", 10);
   const [categoryData, topTopics] = await Promise.all([
     fetchCategory(slug, page),
     fetchTopTopics(10),
@@ -102,5 +104,12 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
     );
   }
 
-  return <CategoryPageClient initialData={categoryData} slug={slug} topTopics={topTopics || []} currentPage={page} />;
+  return (
+    <CategoryPageClient
+      initialData={categoryData}
+      slug={slug}
+      topTopics={topTopics || []}
+      currentPage={page}
+    />
+  );
 }
