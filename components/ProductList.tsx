@@ -5,6 +5,7 @@ import { useProductStore } from "@/stores/product-store";
 import { Globe, Loader2, Plus } from "lucide-react";
 import Link from "next/link";
 import { useEffect } from "react";
+import { GradeBadge } from "./GradeBadge";
 
 export function ProductList() {
   const { products, selectedProduct, setSelectedProduct } = useProductStore();
@@ -55,19 +56,17 @@ export function ProductList() {
                   <Globe className="h-3.5 w-3.5 text-slate-400" />
                 </div>
               )}
-              <span className={`truncate flex-1 ${
-                selectedProduct?.id === product.id ? "font-semibold text-orange-700" : "text-slate-600"
-              }`}>
+              <span
+                className={`truncate flex-1 ${
+                  selectedProduct?.id === product.id
+                    ? "font-semibold text-orange-700"
+                    : "text-slate-600"
+                }`}
+              >
                 {product.name}
               </span>
-              {product.score !== null && product.score !== undefined && (
-                <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${
-                  product.score >= 70 ? "bg-green-100 text-green-700" :
-                  product.score >= 40 ? "bg-orange-100 text-orange-700" : "bg-red-100 text-red-700"
-                }`}>
-                  {product.score}
-                </span>
-              )}
+
+              <GradeBadge score={product.score}></GradeBadge>
             </Link>
           ))
         )}

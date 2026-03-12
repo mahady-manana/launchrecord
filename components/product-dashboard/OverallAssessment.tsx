@@ -1,17 +1,20 @@
 "use client";
 
+import { CircularScore } from "@/components/dashboard/sio-circular-score";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
-import { CircularScore } from "@/components/dashboard/sio-circular-score";
-import { AuditReportV1 } from "@/types/audit-report-v1";
 import { cn } from "@/lib/utils";
+import { AuditReportV1 } from "@/types/audit-report-v1";
 
 interface OverallAssessmentProps {
   report: AuditReportV1;
   productName: string;
 }
 
-export function OverallAssessment({ report, productName }: OverallAssessmentProps) {
+export function OverallAssessment({
+  report,
+  productName,
+}: OverallAssessmentProps) {
   const compositeScore = report.overall_assessment.composite_score;
   const categoryPosition = report.overall_assessment.category_position;
 
@@ -37,6 +40,7 @@ export function OverallAssessment({ report, productName }: OverallAssessmentProp
           {/* Score Display */}
           <div className="flex justify-center lg:justify-end">
             <CircularScore
+              showGrade
               score={compositeScore}
               label="SIO Score"
               size="xl"

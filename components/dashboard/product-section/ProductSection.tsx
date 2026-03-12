@@ -20,7 +20,7 @@ import { cn } from "@/lib/utils";
 import { ProductWithReport } from "@/stores/product-store";
 import { AuditReportV1 } from "@/types/audit-report-v1";
 import clsx from "clsx";
-import { AlertCircle, BarChart3, Globe, RefreshCcw, Crown } from "lucide-react";
+import { AlertCircle, BarChart3, Crown, Globe, RefreshCcw } from "lucide-react";
 import Link from "next/link";
 
 interface ProductSectionProps {
@@ -146,7 +146,7 @@ export function ProductSection({
               href={`/dashboard/${product._id}/subscription`}
               className={cn(
                 "px-4 py-2 rounded-full text-xs font-bold tracking-wide uppercase shadow-lg bg-gradient-to-r from-primary/90 to-primary hover:from-primary hover:to-primary/90 transition-all",
-                "text-white"
+                "text-white",
               )}
             >
               <Crown className="h-3 w-3 inline mr-1" />
@@ -231,7 +231,7 @@ export function ProductSection({
                   )}
                 />
                 <div className="relative">
-                  <CircularScore score={compositeScore} size="lg" />
+                  <CircularScore showGrade score={compositeScore} size="lg" />
                 </div>
               </div>
 
