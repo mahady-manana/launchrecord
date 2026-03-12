@@ -3,7 +3,7 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { getStatusColorHex } from "@/lib/product-status";
+import { GradeBadge } from "@/components/GradeBadge";
 import clsx from "clsx";
 import { TrendingUp, Trophy } from "lucide-react";
 import Link from "next/link";
@@ -16,6 +16,7 @@ interface LeaderboardEntry {
   website?: string | null;
   logo?: string | null;
   score?: number | null;
+  grade?: string;
   rank?: number;
   slug: string;
 }
@@ -69,7 +70,6 @@ export function LandingLeaderboard() {
           {leaderboardProducts.slice(0, 10).map((product, index) => {
             const rank = index + 1;
             const isTopThree = rank <= 3;
-            const colorHex = getStatusColorHex(product.score || 0);
             return (
               <Link
                 href={"/products/" + product.slug}
@@ -88,7 +88,7 @@ export function LandingLeaderboard() {
                   <div className="flex items-start justify-between gap-4">
                     <div className="flex-1 space-y-2 w-full">
                       <div className="flex items-center gap-2">
-                        <div className="relative w-6 h-6 flex items-center justify-center rounded-md overflow-hidden flex-shrink-0">
+                        <div className="relative w-6 h-6 flex items-center justify-center rounded-md overflow-hidden flex-shrink-0 bg-white">
                           <img
                             src={product.logo || "/logo.svg"}
                             alt={product.name}
@@ -113,19 +113,11 @@ export function LandingLeaderboard() {
                         </p>
                       )}
                       <div className="absolute top-0.5 right-1">
-                        {product.score !== null &&
-                        product.score !== undefined ? (
-                          <div
-                            className={`inline-flex border-2 items-center justify-center w-6 h-6 rounded-full text-white font-bold text-xs`}
-                            style={{ borderColor: colorHex, color: colorHex }}
-                          >
-                            {product.score}
-                          </div>
-                        ) : (
-                          <Badge variant="outline" className="text-xs">
-                            Not Ranked
-                          </Badge>
-                        )}
+                        <GradeBadge
+                          score={product.score}
+                          grade={product.grade}
+                          size="sm"
+                        />
                       </div>
                     </div>
                   </div>

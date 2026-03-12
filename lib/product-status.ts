@@ -25,7 +25,7 @@ export const PRODUCT_STATUS_CONFIG: ProductStatusConfig[] = [
     minScore: 90,
     maxScore: 100,
     color: "text-purple-500",
-    colorHex: "#7c14dd",
+    colorHex: "#02804b",
     description:
       "They aren't just in a category; they are the category. Copying them feels like a crime.",
   },
@@ -34,7 +34,7 @@ export const PRODUCT_STATUS_CONFIG: ProductStatusConfig[] = [
     minScore: 70,
     maxScore: 89,
     color: "text-green-400",
-    colorHex: "#099e40",
+    colorHex: "#a4c709",
     description:
       "Sharp, precise positioning. They cut through the noise and leave a mark on the user's brain.",
   },
@@ -43,7 +43,7 @@ export const PRODUCT_STATUS_CONFIG: ProductStatusConfig[] = [
     minScore: 40,
     maxScore: 69,
     color: "text-blue-400",
-    colorHex: "#e0b21d",
+    colorHex: "#d8ca08",
     description:
       "Looks good at first glance, but it's a mold. High polish, low soul. Standard industry filler.",
   },
@@ -52,7 +52,7 @@ export const PRODUCT_STATUS_CONFIG: ProductStatusConfig[] = [
     minScore: 20,
     maxScore: 39,
     color: "text-orange-600",
-    colorHex: "#ea580c",
+    colorHex: "#e0970d",
     description:
       'Just walking through the motions. Repeating "AI-powered" slogans they heard someone else say.',
   },
@@ -70,8 +70,16 @@ export const PRODUCT_STATUS_CONFIG: ProductStatusConfig[] = [
 /**
  * Get the product status configuration for a given score
  */
+export function getProductBadge(status: string): ProductStatusConfig {
+  if (status === "A") return PRODUCT_STATUS_CONFIG[0]; // UNTOUCHABLE
+  if (status === "B") return PRODUCT_STATUS_CONFIG[1]; // LETHAL
+  if (status === "C") return PRODUCT_STATUS_CONFIG[2]; // PLASTIC
+  if (status === "D") return PRODUCT_STATUS_CONFIG[3]; // ZOMBIE
+  return PRODUCT_STATUS_CONFIG[4]; // GHOST (0-19)
+}
+
 export function getProductStatus(score: number): ProductStatusConfig {
-  if (score >= 90) return PRODUCT_STATUS_CONFIG[0]; // UNTOUCHABLE
+  if (score >= 85) return PRODUCT_STATUS_CONFIG[0]; // UNTOUCHABLE
   if (score >= 70) return PRODUCT_STATUS_CONFIG[1]; // LETHAL
   if (score >= 40) return PRODUCT_STATUS_CONFIG[2]; // PLASTIC
   if (score >= 20) return PRODUCT_STATUS_CONFIG[3]; // ZOMBIE

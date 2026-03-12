@@ -23,6 +23,7 @@ interface LeaderboardEntry {
   website?: string | null;
   logo?: string | null;
   score?: number | null;
+  grade?: string;
   rank: number;
   topics?: Array<{ _id: string; name: string }>;
   slug: string;
@@ -192,20 +193,21 @@ export default function LeaderboardPageClient({
         )}
       </section>
 
-      {/* Status Legend */}
+      {/* Grade Legend */}
       <section className="max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-5 gap-4">
         {[
-          { status: "UNTOUCHABLE", score: "90-100", color: "bg-purple-500" },
-          { status: "LETHAL", score: "70-89", color: "bg-green-700" },
-          { status: "PLASTIC", score: "40-69", color: "bg-yellow-500" },
-          { status: "ZOMBIE", score: "20-39", color: "bg-orange-600" },
-          { status: "GHOST", score: "1-19", color: "bg-red-600" },
+          { grade: "A", score: "90-100", color: "bg-green-500" },
+          { grade: "B", score: "75-89", color: "bg-blue-700" },
+          { grade: "C", score: "60-74", color: "bg-orange-500" },
+          { grade: "D", score: "40-59", color: "bg-yellow-600" },
+          { grade: "E", score: "0-39", color: "bg-red-600" },
         ].map((item) => (
-          <Card key={item.status}>
+          <Card key={item.grade}>
             <CardContent className="py-4 text-center space-y-2">
-              <div className={`w-8 h-8 rounded-full ${item.color} mx-auto`} />
-              <p className="font-bold text-sm">{item.status}</p>
-              <p className="text-xs text-muted-foreground">{item.score}</p>
+              <div className={`w-10 h-10 rounded-full ${item.color} mx-auto flex items-center justify-center text-white font-black text-lg`}>
+                {item.grade}
+              </div>
+              <p className="font-bold text-sm">{item.score}</p>
             </CardContent>
           </Card>
         ))}

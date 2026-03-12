@@ -2,6 +2,7 @@ import { connectToDatabase } from "@/lib/db";
 import Product from "@/models/product";
 import Topic from "@/models/topic";
 import { NextRequest, NextResponse } from "next/server";
+import { getGrade } from "@/lib/utils";
 
 export async function GET(request: NextRequest) {
   try {
@@ -39,6 +40,7 @@ export async function GET(request: NextRequest) {
       tagline: product.tagline,
       website: product.website,
       score: product.score,
+      grade: getGrade(product.score),
       logo: product.logo,
       rank: rankMap.get(product._id.toString()) || null,
       topics: product.topics || [],

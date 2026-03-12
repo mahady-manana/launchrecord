@@ -32,7 +32,6 @@ export async function GET(request: NextRequest) {
       tagline: product.tagline,
       logo: product.logo,
       slug: product.slug,
-      score: product.score,
     }));
 
     return NextResponse.json({

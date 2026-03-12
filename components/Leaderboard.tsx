@@ -12,6 +12,7 @@ interface LeaderboardEntry {
   website?: string | null;
   logo?: string | null;
   score?: number | null;
+  grade?: string;
   rank: number;
   topics?: Array<{ _id: string; name: string }>;
   slug: string;
@@ -33,6 +34,7 @@ export function Leaderboard({ products, showFull = false }: LeaderboardProps) {
     website: product.website,
     logo: product.logo,
     score: product.score || 0,
+    grade: product.grade,
     rank: product.rank,
     topics: product.topics,
     slug: product.slug,
@@ -45,7 +47,7 @@ export function Leaderboard({ products, showFull = false }: LeaderboardProps) {
         <div className="hidden md:grid grid-cols-12 gap-4 p-4 border-b bg-muted/30 text-sm font-medium text-muted-foreground">
           <div className="col-span-1 text-center">Rank</div>
           <div className="col-span-8">Product</div>
-          <div className="col-span-3 text-right">Score</div>
+          <div className="col-span-3 text-right">Grade</div>
         </div>
 
         {/* Products List */}

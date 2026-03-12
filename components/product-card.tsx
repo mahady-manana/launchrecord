@@ -1,5 +1,6 @@
 "use client";
 
+import { GradeBadge } from "@/components/GradeBadge";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
@@ -21,6 +22,7 @@ export interface ProductItem {
   website?: string | null;
   logo?: string | null;
   score?: number | null;
+  grade?: string;
   rank?: number;
   topics?: Array<{ _id: string; name: string }>;
   scoreDiff?: number;
@@ -45,13 +47,6 @@ export function ProductCard({
   const score = product.score || 0;
   const rank = product.rank || 0;
   const scoreDiff = product.scoreDiff || 0;
-
-  const getScoreColor = (score: number) => {
-    if (score >= 90) return "text-green-600 bg-green-50 border-green-200";
-    if (score >= 70) return "text-blue-600 bg-blue-50 border-blue-200";
-    if (score >= 40) return "text-orange-600 bg-orange-50 border-orange-200";
-    return "text-red-600 bg-red-50 border-red-200";
-  };
 
   const getRankBadge = (rank: number) => {
     if (rank === 1)
@@ -82,23 +77,6 @@ export function ProductCard({
     if (scoreDiff > 0) return <TrendingUp className="h-4 w-4 text-green-600" />;
     if (scoreDiff < 0) return <TrendingDown className="h-4 w-4 text-red-600" />;
     return <Minus className="h-4 w-4 text-slate-400" />;
-  };
-
-  const getScoreDisplay = () => {
-    if (score === null || score === undefined || score === 0) {
-      return null;
-    }
-
-    return (
-      <div
-        className={cn(
-          "w-12 h-12 rounded-full flex items-center justify-center font-black text-lg border-2",
-          getScoreColor(score),
-        )}
-      >
-        {score}
-      </div>
-    );
   };
 
   // Compact variant for dense layouts
@@ -144,7 +122,7 @@ export function ProductCard({
               )}
             </div>
 
-            {getScoreDisplay()}
+            <GradeBadge score={score} grade={product.grade} size="sm" />
           </div>
         </CardContent>
       </Link>
@@ -206,8 +184,8 @@ export function ProductCard({
               </div>
             </div>
 
-            {/* Score */}
-            {getScoreDisplay()}
+            {/* Grade */}
+            <GradeBadge score={score} grade={product.grade} size="md" />
           </div>
         </div>
       </CardContent>
@@ -232,7 +210,7 @@ export function LeaderboardList({
         <div className="hidden md:grid grid-cols-12 gap-4 p-4 border-b bg-muted/30 text-sm font-medium text-muted-foreground">
           <div className="col-span-1 text-center">Rank</div>
           <div className="col-span-8">Product</div>
-          <div className="col-span-3 text-right">Score</div>
+          <div className="col-span-3 text-right">Grade</div>
         </div>
 
         {/* Products List */}

@@ -3,6 +3,7 @@ import Product from "@/models/product";
 import Topic from "@/models/topic";
 import { jsonError, jsonSuccess } from "@/utils/response";
 import { NextRequest } from "next/server";
+import { getGrade } from "@/lib/utils";
 
 export async function GET(
   request: NextRequest,
@@ -69,7 +70,7 @@ export async function GET(
   // Calculate total pages
   const totalPages = Math.ceil(totalProducts / limit);
 
-  // Add ranking to each product (global rank, not just page rank)
+  // Add ranking and grade to each product
   const rankedProducts = products.map((product: any, index: number) => ({
     id: product._id.toString(),
     name: product.name,
@@ -78,6 +79,7 @@ export async function GET(
     logo: product.logo,
     website: product.website,
     score: product.score || 0,
+    grade: getGrade(product.score),
     rank: skip + index + 1, // Global rank across all pages
     topics: product.topics,
     createdAt: product.createdAt,

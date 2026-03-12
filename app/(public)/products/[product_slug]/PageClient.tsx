@@ -1,5 +1,6 @@
 "use client";
 
+import { GradeBadge } from "@/components/GradeBadge";
 import { JSONLD } from "@/components/JsonLd";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -9,6 +10,7 @@ import {
   Crown,
   ExternalLink,
   Globe,
+  Info,
   Layers,
   Target,
   Zap,
@@ -31,6 +33,7 @@ interface ProductData {
   logo?: string | null;
   website?: string | null;
   score: number;
+  grade?: string;
   topics: Array<{ _id: string; name: string }>;
   createdAt: string;
   updatedAt: string;
@@ -48,6 +51,7 @@ interface ProductCardProps {
     logo?: string | null;
     website?: string | null;
     score: number;
+    grade?: string;
     slug: string;
   };
 }
@@ -58,19 +62,12 @@ interface ProductPageClientProps {
 }
 
 function ProductCard({ product }: ProductCardProps) {
-  const getScoreColor = (score: number) => {
-    if (score >= 90) return "text-green-600";
-    if (score >= 70) return "text-blue-600";
-    if (score >= 40) return "text-orange-600";
-    return "text-red-600";
-  };
-
   const productUrl = product.slug;
 
   return (
     <Link href={`/products/${productUrl}`}>
       <Card className="hover:shadow-md transition-shadow py-0 h-full">
-        <CardContent className="p-4">
+        <CardContent className="p-4 relative">
           <div className="flex items-start gap-3">
             <div className="relative h-8 w-8 rounded-lg overflow-hidden border bg-white flex-shrink-0">
               {product.logo ? (
@@ -88,23 +85,16 @@ function ProductCard({ product }: ProductCardProps) {
               )}
             </div>
             <div className="flex-1 min-w-0">
-              <h3 className="font-bold text-sm truncate">{product.name}</h3>
+              <h3 className="font-bold text-sm">{product.name}</h3>
               {product.tagline && (
                 <p className="text-xs text-muted-foreground mt-1">
                   {product.tagline}
                 </p>
               )}
-              <div className="flex items-center gap-2 mt-2">
-                <span
-                  className={`text-sm font-black ${getScoreColor(product.score)}`}
-                >
-                  {product.score}
-                </span>
-                <Badge variant="outline" className="text-[10px] h-5 px-1.5">
-                  Score
-                </Badge>
-              </div>
             </div>
+          </div>
+          <div className="absolute z-50 top-1 right-1 flex items-center gap-2">
+            <GradeBadge score={product.score} grade={product.grade} size="sm" />
           </div>
         </CardContent>
       </Card>
@@ -151,13 +141,7 @@ export default function ProductPageClient({
 
     fetchRecommendations();
   }, [product.id, product.website]);
-
-  const getScoreColor = (score: number) => {
-    if (score >= 90) return "text-green-600 bg-green-50 border-green-200";
-    if (score >= 70) return "text-blue-600 bg-blue-50 border-blue-200";
-    if (score >= 40) return "text-orange-600 bg-orange-50 border-orange-200";
-    return "text-red-600 bg-red-50 border-red-200";
-  };
+  const lackInfo = !product.website || !product.description;
 
   return (
     <>
@@ -234,26 +218,33 @@ export default function ProductPageClient({
                 </div>
               </div>
 
-              {/* Score Display */}
-              <div className="text-center md:relative absolute md:top-[unset] md:right-[unset] top-5 right-5">
-                <div
-                  className={`md:w-32 md:h-32 w-20 h-20 rounded-full flex items-center justify-center border-4 bg-white ${getScoreColor(
-                    product.score,
-                  )}`}
-                >
-                  <div>
-                    <div className="md:text-5xl text-2xl font-black">
-                      {product.score || "X"}
-                    </div>
-                    <div className="text-xs font-bold uppercase tracking-wider mt-1">
-                      {product.score ? "Score" : "No score"}
-                    </div>
-                  </div>
+              {/* Grade Display */}
+              <div className="text-center md:relative absolute md:top-[unset] md:right-[unset] top-2 right-5">
+                <GradeBadge
+                  score={product.score}
+                  grade={product.grade}
+                  size="md"
+                  className="md:w-20 w-10 h-10 md:h-20 md:text-4xl border-4 bg-white"
+                />
+                <div className="text-xs font-bold uppercase tracking-wider mt-2">
+                  <span className="md:inline hidden">Sovereignty</span> Grade
                 </div>
               </div>
             </div>
           </div>
         </div>
+
+        {lackInfo ? (
+          <div className="max-w-6xl mx-auto py-4">
+            <p className="bg-yellow-200 text-center p-4 flex items-center gap-4 rounded-lg">
+              <Info></Info>
+              <span>
+                If you're the owner of this product, please signup to complete
+                missing information
+              </span>
+            </p>
+          </div>
+        ) : null}
 
         {/* Content */}
         <div className="max-w-6xl mx-auto px-4 py-8 space-y-8">
