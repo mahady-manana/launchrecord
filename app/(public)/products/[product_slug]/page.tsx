@@ -1,8 +1,8 @@
 import { Metadata } from "next";
 import ProductPageWrapper from "./ProductPageWrapper";
 
+export const dynamicParams = true;
 const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
-
 interface ProductPageProps {
   params: Promise<{ product_slug: string }>;
 }
@@ -43,7 +43,9 @@ export async function generateMetadata({
   const title = productData
     ? `${productData.tagline} | ${productData.name}`
     : decodedSlug.replace(/^https?:\/\//, "").split("/")[0];
-  const description = productData?.description || "View defensibility score and strategic analysis for this product.";
+  const description =
+    productData?.description ||
+    "View defensibility score and strategic analysis for this product.";
 
   return {
     title,

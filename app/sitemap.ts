@@ -1,115 +1,191 @@
-import { MetadataRoute } from "next";
+import { BASE_URL } from "@/lib/constants";
+import type { MetadataRoute } from "next";
+export const dynamicParams = true;
 
-const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+// Number of URLs per sitemap file (well under Google's 50k limit)
+const URLS_PER_SITEMAP = 10000;
 
-export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const staticPages = [
-    {
-      url: appUrl,
-      lastModified: new Date(),
+/**
+ * Get total counts for sitemap calculation
+ */
+async function getCounts() {
+  try {
+    const [productsRes, topicsRes] = await Promise.all([
+      fetch(`${BASE_URL}/api/sitemap/products?limit=1`).catch(() => null),
+      fetch(`${BASE_URL}/api/sitemap/topics?limit=1`).catch(() => null),
+    ]);
+
+    const productsData = await productsRes?.json().catch(() => null);
+    const topicsData = await topicsRes?.json().catch(() => null);
+
+    // Estimate based on pagination info
+    const productsHasMore = productsData?.pagination?.hasMore ?? false;
+    const topicsHasMore = topicsData?.pagination?.hasMore ?? false;
+
+    // Conservative estimate
+    const estimatedProducts = productsHasMore ? 2000 : 1;
+    const estimatedTopics = topicsHasMore ? 500 : 0;
+
+    return {
+      products: estimatedProducts,
+      topics: estimatedTopics,
+    };
+  } catch {
+    return { products: 1, topics: 0 };
+  }
+}
+
+/**
+ * Generate sitemap indices for splitting large datasets
+ * This allows us to handle 10k+ products efficiently
+ */
+export async function generateSitemaps() {
+  const { products, topics } = await getCounts();
+  const estimatedTotal = products + topics;
+  const sitemapCount = Math.max(
+    1,
+    Math.ceil(estimatedTotal / URLS_PER_SITEMAP),
+  );
+
+  // Return array of sitemap objects with ids as strings
+  return Array.from({ length: sitemapCount }, (_, i) => ({
+    id: i.toString(),
+  }));
+}
+
+/**
+ * Generate individual sitemap entries
+ * Each sitemap handles a chunk of URLs to stay under Google's limits
+ */
+export default async function sitemap(props: {
+  id: Promise<string>;
+}): Promise<MetadataRoute.Sitemap> {
+  const id = (await props?.id) as string | undefined;
+
+  if (!id) {
+    return [];
+  }
+
+  const sitemapId = parseInt(id, 10);
+
+  // Static pages always go in first sitemap
+  const staticPages: MetadataRoute.Sitemap =
+    sitemapId === 0
+      ? [
+          {
+            url: BASE_URL,
+            lastModified: new Date(),
+            changeFrequency: "weekly",
+            priority: 1,
+          },
+          {
+            url: `${BASE_URL}/leaderboard`,
+            lastModified: new Date(),
+            changeFrequency: "daily",
+            priority: 0.9,
+          },
+          {
+            url: `${BASE_URL}/pricing`,
+            lastModified: new Date(),
+            changeFrequency: "weekly",
+            priority: 0.8,
+          },
+          {
+            url: `${BASE_URL}/categories`,
+            lastModified: new Date(),
+            changeFrequency: "weekly",
+            priority: 0.8,
+          },
+          {
+            url: `${BASE_URL}/sio-v5-engine`,
+            lastModified: new Date(),
+            changeFrequency: "monthly",
+            priority: 0.7,
+          },
+          {
+            url: `${BASE_URL}/how-score-works`,
+            lastModified: new Date(),
+            changeFrequency: "monthly",
+            priority: 0.7,
+          },
+          {
+            url: `${BASE_URL}/login`,
+            lastModified: new Date(),
+            changeFrequency: "monthly",
+            priority: 0.5,
+          },
+          {
+            url: `${BASE_URL}/register`,
+            lastModified: new Date(),
+            changeFrequency: "monthly",
+            priority: 0.5,
+          },
+          {
+            url: `${BASE_URL}/privacy`,
+            lastModified: new Date(),
+            changeFrequency: "monthly",
+            priority: 0.3,
+          },
+          {
+            url: `${BASE_URL}/terms`,
+            lastModified: new Date(),
+            changeFrequency: "monthly",
+            priority: 0.3,
+          },
+          {
+            url: `${BASE_URL}/cookies`,
+            lastModified: new Date(),
+            changeFrequency: "monthly",
+            priority: 0.3,
+          },
+        ]
+      : [];
+
+  // Fetch topics for sitemap
+  const topicsRes = await fetch(
+    `${BASE_URL}/api/sitemap/topics?limit=${URLS_PER_SITEMAP}`,
+  ).catch(() => null);
+
+  const topicsData = await topicsRes?.json().catch(() => null);
+
+  const topicRoutes: MetadataRoute.Sitemap =
+    topicsData?.data?.map((t: { topic_slug: string; updatedAt: string }) => ({
+      url: `${BASE_URL}/categories/${t.topic_slug}`,
+      lastModified: new Date(t.updatedAt),
       changeFrequency: "weekly" as const,
-      priority: 1,
-    },
-    {
-      url: `${appUrl}/leaderboard`,
-      lastModified: new Date(),
-      changeFrequency: "daily" as const,
-      priority: 0.9,
-    },
-    {
-      url: `${appUrl}/pricing`,
-      lastModified: new Date(),
+      priority: 0.7,
+    })) ?? [];
+
+  // Fetch products for sitemap - use cursor-based pagination for large datasets
+  const allProducts: Array<{ slug: string; updatedAt: string }> = [];
+  let cursor: string | null = null;
+  let hasMore = true;
+
+  while (hasMore && allProducts.length < URLS_PER_SITEMAP) {
+    const cursorParam: string = cursor ? `&cursor=${cursor}` : "";
+    const productsRes = await fetch(
+      `${BASE_URL}/api/sitemap/products?limit=${Math.min(URLS_PER_SITEMAP - allProducts.length, 1000)}${cursorParam}`,
+    ).catch(() => null);
+
+    const productsData = await productsRes?.json().catch(() => null);
+
+    if (!productsData?.data) {
+      break;
+    }
+
+    allProducts.push(...productsData.data);
+    cursor = productsData.pagination?.nextCursor ?? null;
+    hasMore = productsData.pagination?.hasMore ?? false;
+  }
+
+  const productRoutes: MetadataRoute.Sitemap = allProducts.map(
+    (p: { slug: string; updatedAt: string }) => ({
+      url: `${BASE_URL}/products/${p.slug}`,
+      lastModified: new Date(p.updatedAt),
       changeFrequency: "weekly" as const,
       priority: 0.8,
-    },
-    {
-      url: `${appUrl}/categories`,
-      lastModified: new Date(),
-      changeFrequency: "weekly" as const,
-      priority: 0.8,
-    },
-    {
-      url: `${appUrl}/sio-v5-engine`,
-      lastModified: new Date(),
-      changeFrequency: "monthly" as const,
-      priority: 0.7,
-    },
-    {
-      url: `${appUrl}/how-score-works`,
-      lastModified: new Date(),
-      changeFrequency: "monthly" as const,
-      priority: 0.7,
-    },
+    }),
+  );
 
-    {
-      url: `${appUrl}/login`,
-      lastModified: new Date(),
-      changeFrequency: "monthly" as const,
-      priority: 0.5,
-    },
-    {
-      url: `${appUrl}/register`,
-      lastModified: new Date(),
-      changeFrequency: "monthly" as const,
-      priority: 0.5,
-    },
-
-    {
-      url: `${appUrl}/privacy`,
-      lastModified: new Date(),
-      changeFrequency: "monthly" as const,
-      priority: 0.3,
-    },
-    {
-      url: `${appUrl}/terms`,
-      lastModified: new Date(),
-      changeFrequency: "monthly" as const,
-      priority: 0.3,
-    },
-    {
-      url: `${appUrl}/cookies`,
-      lastModified: new Date(),
-      changeFrequency: "monthly" as const,
-      priority: 0.3,
-    },
-  ];
-
-  // Fetch dynamic routes for categories/topics
-  const categories = await fetch(`${appUrl}/api/topics?top=500`)
-    .then((res) => {
-      if (!res.ok) return null;
-      return res.json();
-    })
-    .catch(() => null);
-  const categoryRoutes =
-    categories?.topics?.map(
-      (category: { slug: string; updatedAt?: string }) => ({
-        url: `${appUrl}/categories/${category.slug}`,
-        lastModified: new Date(category.updatedAt ?? Date.now()),
-        changeFrequency: "weekly" as const,
-        priority: 0.7,
-      }),
-    ) ?? [];
-
-  // Fetch top 100 products based on score
-  const products = await fetch(`${appUrl}/api/leaderboard?limit=500&page=1`)
-    .then((res) => {
-      if (!res.ok) return null;
-      return res.json();
-    })
-    .catch(() => null);
-  const productRoutes =
-    products?.data?.products
-      ?.filter(
-        (p: { slug: string; score: number | null }) =>
-          p.score != null && p.slug,
-      )
-      .map((product: { slug: string; updatedAt?: string }) => ({
-        url: `${appUrl}/products/${product.slug}`,
-        lastModified: new Date(product.updatedAt ?? Date.now()),
-        changeFrequency: "weekly" as const,
-        priority: 0.8,
-      })) ?? [];
-
-  return [...staticPages, ...categoryRoutes, ...productRoutes];
+  return [...staticPages, ...topicRoutes, ...productRoutes];
 }
