@@ -1,6 +1,5 @@
 import { BASE_URL } from "@/lib/constants";
 import type { MetadataRoute } from "next";
-export const dynamicParams = true;
 
 // Number of URLs per sitemap file (well under Google's 50k limit)
 const URLS_PER_SITEMAP = 10000;
@@ -17,18 +16,9 @@ async function getCounts() {
 
     const productsData = await productsRes?.json().catch(() => null);
     const topicsData = await topicsRes?.json().catch(() => null);
-
-    // Estimate based on pagination info
-    const productsHasMore = productsData?.pagination?.hasMore ?? false;
-    const topicsHasMore = topicsData?.pagination?.hasMore ?? false;
-
-    // Conservative estimate
-    const estimatedProducts = productsHasMore ? 2000 : 1;
-    const estimatedTopics = topicsHasMore ? 500 : 0;
-
     return {
-      products: estimatedProducts,
-      topics: estimatedTopics,
+      products: productsData?.pagination?.total ?? 0,
+      topics: topicsData?.pagination?.total ?? 0,
     };
   } catch {
     return { products: 1, topics: 0 };
@@ -147,7 +137,6 @@ export default async function sitemap(props: {
   ).catch(() => null);
 
   const topicsData = await topicsRes?.json().catch(() => null);
-
   const topicRoutes: MetadataRoute.Sitemap =
     topicsData?.data?.map((t: { topic_slug: string; updatedAt: string }) => ({
       url: `${BASE_URL}/categories/${t.topic_slug}`,
@@ -156,36 +145,19 @@ export default async function sitemap(props: {
       priority: 0.7,
     })) ?? [];
 
-  // Fetch products for sitemap - use cursor-based pagination for large datasets
-  const allProducts: Array<{ slug: string; updatedAt: string }> = [];
-  let cursor: string | null = null;
-  let hasMore = true;
+  // Fetch products for sitemap using page-based pagination
+  const productsRes = await fetch(
+    `${BASE_URL}/api/sitemap/products?limit=${URLS_PER_SITEMAP}&page=${sitemapId}`,
+  ).catch(() => null);
 
-  while (hasMore && allProducts.length < URLS_PER_SITEMAP) {
-    const cursorParam: string = cursor ? `&cursor=${cursor}` : "";
-    const productsRes = await fetch(
-      `${BASE_URL}/api/sitemap/products?limit=${Math.min(URLS_PER_SITEMAP - allProducts.length, 1000)}${cursorParam}`,
-    ).catch(() => null);
-
-    const productsData = await productsRes?.json().catch(() => null);
-
-    if (!productsData?.data) {
-      break;
-    }
-
-    allProducts.push(...productsData.data);
-    cursor = productsData.pagination?.nextCursor ?? null;
-    hasMore = productsData.pagination?.hasMore ?? false;
-  }
-
-  const productRoutes: MetadataRoute.Sitemap = allProducts.map(
-    (p: { slug: string; updatedAt: string }) => ({
+  const productsData = await productsRes?.json().catch(() => null);
+  const productRoutes: MetadataRoute.Sitemap =
+    productsData?.data?.map((p: { slug: string; updatedAt: string }) => ({
       url: `${BASE_URL}/products/${p.slug}`,
       lastModified: new Date(p.updatedAt),
       changeFrequency: "weekly" as const,
       priority: 0.8,
-    }),
-  );
+    })) ?? [];
 
   return [...staticPages, ...topicRoutes, ...productRoutes];
 }

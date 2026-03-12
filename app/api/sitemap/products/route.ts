@@ -6,6 +6,7 @@ import { NextRequest, NextResponse } from "next/server";
  * API endpoint for sitemap product data
  * Optimized for fetching large datasets (10k+ products)
  * Returns only slug and updatedAt for sitemap generation
+ * Uses cursor-based pagination for optimal performance
  */
 export async function GET(request: NextRequest) {
   try {
@@ -24,20 +25,29 @@ export async function GET(request: NextRequest) {
       slug: { $ne: null },
     };
 
-    // Cursor-based pagination for better performance with large datasets
+    // Cursor-based pagination (recommended for large datasets)
     if (cursor) {
       query.slug = { $gt: decodeURIComponent(cursor) };
     }
 
+    // Get total count for pagination info (optimized with index)
+    const total = await Product.countDocuments(query);
+
+    // Calculate skip value based on page
+    const skipValue = page * validatedLimit;
+
+    // Build query with proper pagination: sort -> skip -> limit
     const products = await Product.find(query)
       .select("slug updatedAt")
       .sort({ slug: 1 })
+      .skip(skipValue)
       .limit(validatedLimit)
       .lean()
       .maxTimeMS(30000); // 30 second timeout
 
     const hasMore = products.length === validatedLimit;
     const nextCursor = hasMore ? products[products.length - 1].slug : null;
+    const nextPage = hasMore ? page + 1 : null;
 
     return NextResponse.json({
       success: true,
@@ -48,8 +58,10 @@ export async function GET(request: NextRequest) {
       pagination: {
         page,
         limit: validatedLimit,
+        total,
         hasMore,
         nextCursor: nextCursor ? encodeURIComponent(nextCursor) : null,
+        nextPage,
       },
     });
   } catch (error) {

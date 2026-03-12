@@ -6,6 +6,7 @@ import { NextRequest, NextResponse } from "next/server";
  * API endpoint for sitemap topic data
  * Optimized for fetching large datasets
  * Returns only topic_slug and updatedAt for sitemap generation
+ * Uses cursor-based pagination for optimal performance
  */
 export async function GET(request: NextRequest) {
   try {
@@ -23,20 +24,29 @@ export async function GET(request: NextRequest) {
       topic_slug: { $ne: null },
     };
 
-    // Cursor-based pagination for better performance
+    // Cursor-based pagination (recommended for large datasets)
     if (cursor) {
       query.topic_slug = { $gt: decodeURIComponent(cursor) };
     }
 
+    // Get total count for pagination info (optimized with index)
+    const total = await Topic.countDocuments(query);
+
+    // Calculate skip value based on page
+    const skipValue = page * validatedLimit;
+
+    // Build query with proper pagination: sort -> skip -> limit
     const topics = await Topic.find(query)
       .select("topic_slug updatedAt")
       .sort({ topic_slug: 1 })
+      .skip(skipValue)
       .limit(validatedLimit)
       .lean()
       .maxTimeMS(30000); // 30 second timeout
 
     const hasMore = topics.length === validatedLimit;
     const nextCursor = hasMore ? topics[topics.length - 1].topic_slug : null;
+    const nextPage = hasMore ? page + 1 : null;
 
     return NextResponse.json({
       success: true,
@@ -47,8 +57,10 @@ export async function GET(request: NextRequest) {
       pagination: {
         page,
         limit: validatedLimit,
+        total,
         hasMore,
         nextCursor: nextCursor ? encodeURIComponent(nextCursor) : null,
+        nextPage,
       },
     });
   } catch (error) {

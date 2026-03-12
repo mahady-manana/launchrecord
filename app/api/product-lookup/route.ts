@@ -1,5 +1,6 @@
 import { connectToDatabase } from "@/lib/db";
 import Product from "@/models/product";
+import Topic from "@/models/topic";
 import { jsonError, jsonSuccess } from "@/utils/response";
 import { NextRequest } from "next/server";
 
@@ -16,6 +17,8 @@ export async function GET(request: NextRequest) {
   // Decode the website URL
   const decodedWebsite = decodeURIComponent(website);
 
+  const topic = Topic.name;
+  console.log(topic);
   // Find product by website URL
   const product = await Product.findOne({
     slug: decodedWebsite,
