@@ -1,5 +1,6 @@
 import { BASE_URL } from "@/lib/constants";
 import type { MetadataRoute } from "next";
+export const dynamicParams = true;
 
 // Number of URLs per sitemap file (well under Google's 50k limit)
 const URLS_PER_SITEMAP = 10000;
