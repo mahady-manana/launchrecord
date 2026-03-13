@@ -143,6 +143,12 @@ export function Header() {
             AEO Audit<span className="md:inline hidden"></span>
           </Link>
           <Link
+            href="/aeo-vs-seo"
+            className="font-bold text-sm p-1 text-slate-800 rounded-xl px-1 hover:bg-slate-100 hover:underline"
+          >
+            AEO vs SEO<span className="md:inline hidden"></span>
+          </Link>
+          <Link
             href="/sio-v5-engine"
             className="font-bold text-sm p-1 text-slate-800 rounded-xl px-1 hover:bg-slate-100 hover:underline"
           >
@@ -232,6 +238,12 @@ export function Header() {
                 className="font-bold text-sm p-1 text-slate-800 rounded-xl px-1 hover:bg-slate-100 hover:underline"
               >
                 AEO Audit<span className="md:inline hidden"></span>
+              </Link>
+              <Link
+                href="/aeo-vs-seo"
+                className="font-bold text-sm p-1 text-slate-800 rounded-xl px-1 hover:bg-slate-100 hover:underline"
+              >
+                AEO vs SEO<span className="md:inline hidden"></span>
               </Link>
               {/* Mobile Categories Dropdown */}
               <div className="border-t border-slate-200 pt-2">
