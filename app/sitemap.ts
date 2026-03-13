@@ -82,6 +82,12 @@ export default async function sitemap(props: {
             priority: 1,
           },
           {
+            url: `${BASE_URL}/aeo-vs-seo`,
+            lastModified: new Date(),
+            changeFrequency: "weekly",
+            priority: 0.9,
+          },
+          {
             url: `${BASE_URL}/pricing`,
             lastModified: new Date(),
             changeFrequency: "weekly",
