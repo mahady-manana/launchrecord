@@ -1,9 +1,9 @@
 "use client";
 
-import { Badge } from "@/components/ui/badge";
+import { GradeBadge } from "@/components/GradeBadge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { GradeBadge } from "@/components/GradeBadge";
+import { appLogo } from "@/lib/logo";
 import clsx from "clsx";
 import { TrendingUp, Trophy } from "lucide-react";
 import Link from "next/link";
@@ -90,7 +90,7 @@ export function LandingLeaderboard() {
                       <div className="flex items-center gap-2">
                         <div className="relative w-6 h-6 flex items-center justify-center rounded-md overflow-hidden flex-shrink-0 bg-white">
                           <img
-                            src={product.logo || "/logo.svg"}
+                            src={appLogo({ logo: product.logo || "/logo.svg" })}
                             alt={product.name}
                             height={18}
                             width={18}

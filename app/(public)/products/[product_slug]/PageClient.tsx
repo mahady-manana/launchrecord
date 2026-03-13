@@ -5,6 +5,7 @@ import { JSONLD } from "@/components/JsonLd";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { appLogo } from "@/lib/logo";
 import {
   ArrowLeft,
   Crown,
@@ -72,7 +73,7 @@ function ProductCard({ product }: ProductCardProps) {
             <div className="relative h-8 w-8 rounded-lg overflow-hidden border bg-white flex-shrink-0">
               {product.logo ? (
                 <Image
-                  src={product.logo}
+                  src={appLogo({ logo: product.logo || "/logo.svg" })}
                   alt={product.name}
                   height={32}
                   width={32}

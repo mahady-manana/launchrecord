@@ -3,6 +3,7 @@
 import { GradeBadge } from "@/components/GradeBadge";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
+import { appLogo } from "@/lib/logo";
 import { cn } from "@/lib/utils";
 import {
   Crown,
@@ -146,7 +147,7 @@ export function ProductCard({
             <div className="relative flex items-center justify-center md:h-10 md:w-10 w-6 h-6  overflow-hidden flex-shrink-0 bg-white">
               {product.logo ? (
                 <Image
-                  src={product.logo}
+                  src={appLogo({ logo: product.logo || "/logo.svg" })}
                   alt={product.name}
                   width={32}
                   height={32}
