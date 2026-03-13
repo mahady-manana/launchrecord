@@ -137,6 +137,12 @@ export function Header() {
             Sovereign 100
           </Link>
           <Link
+            href="/aeo-audit"
+            className="font-bold text-sm p-1 text-slate-800 rounded-xl px-1 hover:bg-slate-100 hover:underline"
+          >
+            AEO Audit<span className="md:inline hidden"></span>
+          </Link>
+          <Link
             href="/sio-v5-engine"
             className="font-bold text-sm p-1 text-slate-800 rounded-xl px-1 hover:bg-slate-100 hover:underline"
           >
@@ -221,7 +227,12 @@ export function Header() {
               >
                 Sovereign 100
               </Link>
-
+              <Link
+                href="/aeo-audit"
+                className="font-bold text-sm p-1 text-slate-800 rounded-xl px-1 hover:bg-slate-100 hover:underline"
+              >
+                AEO Audit<span className="md:inline hidden"></span>
+              </Link>
               {/* Mobile Categories Dropdown */}
               <div className="border-t border-slate-200 pt-2">
                 <div className="font-bold text-sm text-slate-800 px-3 py-2">
