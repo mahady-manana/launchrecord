@@ -1,7 +1,6 @@
 import { Footer } from "@/components/Footer";
 import { Header } from "@/components/Header";
 import type { Metadata } from "next";
-import { JSONLD } from "@/components/JsonLd";
 
 const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
 
@@ -54,28 +53,8 @@ export default function PublicLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@type": "Organization",
-    name: "LaunchRecord",
-    url: appUrl,
-    logo: `${appUrl}/favicon.svg`,
-    description:
-      "The Strategic Architect's weapon against AI-driven commoditization. Audit your SaaS product's defensibility.",
-    sameAs: [
-      "https://twitter.com/launchrecord",
-      "https://linkedin.com/company/launchrecord",
-    ],
-    contactPoint: {
-      "@type": "ContactPoint",
-      contactType: "customer support",
-      email: "support@launchrecord.com",
-    },
-  };
-
   return (
     <div className="min-h-screen bg-white text-foreground flex flex-col">
-      <JSONLD data={jsonLd} />
       <Header />
       <main className="flex-1">{children}</main>
       <Footer />

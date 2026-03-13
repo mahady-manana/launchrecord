@@ -1,31 +1,31 @@
 import { JSONLD } from "@/components/JsonLd";
+import AeoAuditPageClient from "./AeoAuditPageClient";
 import type { Metadata } from "next";
-import LaunchRecordLandingPageClient from "./LaunchRecordLandingPageClient";
 
 const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
-const pageUrl = appUrl;
+const pageUrl = `${appUrl}/aeo-audit`;
 
 export const metadata: Metadata = {
   title: {
-    default: "LaunchRecord - Audit Your Startup's Sovereignty & Defensibility",
+    default:
+      "AEO Audit - Check If AI Recommends Your Startup | LaunchRecord",
     template: "%s | LaunchRecord",
   },
   description:
-    "Analyze your positioning, clarity, AEO presence, and strategic moat. The SIO-V5 engine analyzes your positioning against 10,000+ records to ensure you aren't just a feature waiting to be deleted.",
+    "Free AEO (Answer Engine Optimization) audit. Analyze your startup's visibility in ChatGPT, Claude, and Gemini. Get your AI visibility score and defensibility report in 2-3 minutes.",
   keywords: [
-    "SaaS audit",
-    "positioning analysis",
-    "AEO",
-    "AI visibility",
+    "AEO audit",
+    "Answer Engine Optimization",
+    "AI visibility audit",
+    "ChatGPT optimization",
+    "AI SEO tool",
+    "LLM visibility",
     "startup defensibility",
-    "product score",
-    "SIO-V5",
-    "LaunchRecord",
-    "startup sovereignty",
-    "competitive intelligence",
-    "strategic moat",
-    "AI-powered audit",
-    "startup analysis tool",
+    "AI search optimization",
+    "SIO-V5 engine",
+    "semantic authority",
+    "entity recognition",
+    "AI recommendation engine",
   ],
   authors: [{ name: "LaunchRecord", url: appUrl }],
   creator: "LaunchRecord",
@@ -35,9 +35,9 @@ export const metadata: Metadata = {
     canonical: pageUrl,
   },
   openGraph: {
-    title: "LaunchRecord - Audit Your Startup's Sovereignty & Defensibility",
+    title: "AEO Audit - Check If AI Recommends Your Startup",
     description:
-      "Analyze your positioning, clarity, AEO presence, and strategic moat with AI-powered SIO-V5 engine.",
+      "Free AEO audit for startups. Analyze your visibility in ChatGPT, Claude, and Gemini. Get your AI visibility score and action plan in minutes.",
     url: pageUrl,
     siteName: "LaunchRecord",
     locale: "en_US",
@@ -47,16 +47,16 @@ export const metadata: Metadata = {
         url: "/og-image.png",
         width: 1200,
         height: 630,
-        alt: "LaunchRecord - SF-1 War Briefing Preview",
+        alt: "LaunchRecord AEO Audit - AI Visibility Score Dashboard",
         type: "image/png",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "LaunchRecord - Audit Your Startup's Sovereignty & Defensibility",
+    title: "AEO Audit - Check If AI Recommends Your Startup",
     description:
-      "Analyze your positioning, clarity, AEO presence, and strategic moat.",
+      "Free AEO audit for startups. Analyze your visibility in ChatGPT, Claude, and Gemini.",
     images: ["/og-image.png"],
     creator: "@launchrecord",
   },
@@ -73,7 +73,7 @@ export const metadata: Metadata = {
   },
 };
 
-export default function LaunchRecordLandingPage() {
+export default function AeoAuditPage() {
   const jsonLd = {
     "@context": "https://schema.org",
     "@graph": [
@@ -89,7 +89,7 @@ export default function LaunchRecordLandingPage() {
           height: 512,
         },
         description:
-          "The #1 Platform For Verified Sovereignty & Defensibility Ledger for Startups. The Strategic Architect's weapon against AI-driven commoditization.",
+          "The #1 Platform For Verified Sovereignty & Defensibility Ledger for Startups",
         sameAs: [
           "https://twitter.com/launchrecord",
           "https://linkedin.com/company/launchrecord",
@@ -99,11 +99,6 @@ export default function LaunchRecordLandingPage() {
           contactType: "customer support",
           email: "support@launchrecord.com",
           availableLanguage: "English",
-        },
-        foundingDate: "2024",
-        areaServed: {
-          "@type": "Country",
-          name: "Worldwide",
         },
       },
       {
@@ -130,17 +125,17 @@ export default function LaunchRecordLandingPage() {
         "@type": "WebPage",
         "@id": pageUrl,
         url: pageUrl,
-        name: "LaunchRecord - Audit Your Startup's Sovereignty & Defensibility",
+        name: "AEO Audit - Check If AI Recommends Your Startup | LaunchRecord",
         description:
-          "Analyze your positioning, clarity, AEO presence, and strategic moat. The SIO-V5 engine analyzes your positioning against 10,000+ records.",
+          "Free AEO (Answer Engine Optimization) audit. Analyze your startup's visibility in ChatGPT, Claude, and Gemini. Get your AI visibility score in 2-3 minutes.",
         isPartOf: {
           "@id": `${appUrl}/#website`,
         },
         about: {
           "@type": "Thing",
-          name: "Startup Defensibility Audit",
+          name: "Answer Engine Optimization",
           description:
-            "Comprehensive analysis of startup positioning, sovereignty, and defensibility using AI-powered SIO-V5 engine.",
+            "AEO is the practice of optimizing content to appear in AI-generated answers from ChatGPT, Claude, Gemini, and other LLMs.",
         },
         primaryImageOfPage: {
           "@type": "ImageObject",
@@ -163,17 +158,23 @@ export default function LaunchRecordLandingPage() {
             name: "Home",
             item: appUrl,
           },
+          {
+            "@type": "ListItem",
+            position: 2,
+            name: "AEO Audit",
+            item: pageUrl,
+          },
         ],
       },
       {
         "@type": "SoftwareApplication",
         "@id": `${pageUrl}#software`,
-        name: "SIO-V5 Engine",
+        name: "SIO-V5 AEO Audit Engine",
         applicationCategory: "BusinessApplication",
         operatingSystem: "Web",
         url: pageUrl,
         description:
-          "AI-powered strategic intelligence engine that analyzes startup positioning against 10,000+ records to measure sovereignty and defensibility.",
+          "AI-powered audit engine that analyzes startup visibility across major language models and answer engines including ChatGPT, Claude, and Gemini.",
         offers: {
           "@type": "Offer",
           price: "0",
@@ -188,20 +189,17 @@ export default function LaunchRecordLandingPage() {
           worstRating: "1",
         },
         featureList:
-          "Positioning Analysis, Clarity Assessment, AEO Presence Check, Strategic Moat Analysis, Sovereignty Score, Defensibility Ledger, Competitive Intelligence",
+          "AI Engine Optimization, Answer Engine Visibility, Semantic Authority, Entity Recognition, Defensibility Score, Competitive Gap Analysis",
         softwareVersion: "5.0",
-        applicationSubCategory: "Startup Audit Platform",
+        applicationSubCategory: "AEO Audit Tool",
         screenshot: `${appUrl}/og-image.png`,
         downloadUrl: pageUrl,
         installUrl: pageUrl,
-        producer: {
-          "@id": `${appUrl}/#organization`,
-        },
       },
       {
         "@type": "Service",
         "@id": `${pageUrl}#service`,
-        serviceType: "Startup Defensibility Audit",
+        serviceType: "AEO Audit",
         provider: {
           "@id": `${appUrl}/#organization`,
         },
@@ -211,103 +209,48 @@ export default function LaunchRecordLandingPage() {
         },
         audience: {
           "@type": "Audience",
-          audienceType:
-            "Startup Founders, SaaS Companies, Entrepreneurs, Product Leaders, Strategic Planners",
+          audienceType: "Startup Founders, SaaS Companies, Digital Marketers, SEO Professionals",
         },
         description:
-          "Comprehensive startup audit service that analyzes positioning, clarity, AEO presence, and strategic moat using the SIO-V5 engine against 10,000+ records.",
+          "Comprehensive Answer Engine Optimization audit that analyzes your startup's visibility across AI engines like ChatGPT, Claude, and Gemini. Get actionable insights to improve AI recommendation rates.",
         offers: {
           "@type": "Offer",
           price: "0",
           priceCurrency: "USD",
           availability: "https://schema.org/InStock",
           description:
-            "Free initial audit with sovereignty and defensibility scores",
+            "Free initial AEO audit with visibility score and action items",
         },
         hasOfferCatalog: {
           "@type": "OfferCatalog",
-          name: "LaunchRecord Plans",
+          name: "AEO Audit Plans",
           itemListElement: [
             {
               "@type": "Offer",
               itemOffered: {
                 "@type": "Service",
-                name: "Core System",
+                name: "Free AEO Audit",
                 description:
-                  "Basic sovereignty and defensibility audit with SIO-V5 analysis",
+                  "Basic visibility score and 3 prioritized action items",
               },
             },
             {
               "@type": "Offer",
               itemOffered: {
                 "@type": "Service",
-                name: "Competitive Intelligence",
+                name: "War Briefing Report",
                 description:
-                  "Advanced competitive analysis and strategic warfare capabilities",
-              },
-            },
-            {
-              "@type": "Offer",
-              itemOffered: {
-                "@type": "Service",
-                name: "War Briefing",
-                description:
-                  "Comprehensive strategic report with actionable intelligence",
+                  "Comprehensive AEO analysis with competitive intelligence",
               },
             },
           ],
         },
         serviceOutput: {
           "@type": "PropertyValue",
-          name: "Sovereignty & Defensibility Score",
+          name: "AEO Visibility Score",
           description:
-            "Comprehensive score measuring your startup's market position and AI-era defensibility",
+            "Comprehensive score measuring your startup's AI engine visibility",
         },
-      },
-      {
-        "@type": "Product",
-        "@id": `${pageUrl}#product`,
-        name: "LaunchRecord Platform",
-        description:
-          "The #1 Platform For Verified Sovereignty & Defensibility Ledger for Startups",
-        brand: {
-          "@id": `${appUrl}/#organization`,
-        },
-        category: "Business Intelligence Software",
-        features: [
-          "SIO-V5 Engine Analysis",
-          "Positioning Audit",
-          "AEO Visibility Check",
-          "Competitive Intelligence",
-          "War Briefing Reports",
-          "Defensibility Scoring",
-        ],
-        offers: {
-          "@type": "AggregateOffer",
-          lowPrice: "0",
-          highPrice: "99",
-          priceCurrency: "USD",
-          offerCount: "3",
-        },
-        aggregateRating: {
-          "@type": "AggregateRating",
-          ratingValue: "4.9",
-          ratingCount: "500",
-          bestRating: "5",
-          worstRating: "1",
-        },
-        additionalProperty: [
-          {
-            "@type": "PropertyValue",
-            name: "Database Size",
-            value: "10,000+ records",
-          },
-          {
-            "@type": "PropertyValue",
-            name: "Analysis Type",
-            value: "AI-Powered",
-          },
-        ],
       },
       {
         "@type": "FAQPage",
@@ -315,42 +258,42 @@ export default function LaunchRecordLandingPage() {
         mainEntity: [
           {
             "@type": "Question",
-            name: "What is LaunchRecord?",
+            name: "What exactly does the AEO audit measure?",
             acceptedAnswer: {
               "@type": "Answer",
-              text: "LaunchRecord is the #1 platform for verified sovereignty and defensibility ledger for startups. Our SIO-V5 engine analyzes your positioning against 10,000+ records to ensure you aren't just a feature waiting to be deleted.",
+              text: "Our audit measures your startup's visibility across major AI engines (ChatGPT, Claude, Gemini), semantic authority in your category, entity recognition strength, and overall defensibility score based on how difficult it would be for AI to replace your value proposition.",
             },
           },
           {
             "@type": "Question",
-            name: "What does the SIO-V5 engine analyze?",
+            name: "How long does the audit take?",
             acceptedAnswer: {
               "@type": "Answer",
-              text: "The SIO-V5 engine analyzes your positioning, clarity, AEO (Answer Engine Optimization) presence, and strategic moat. It compares your startup against 10,000+ records to measure sovereignty and defensibility.",
+              text: "The initial scan takes 2-3 minutes. You'll receive immediate scores and a high-level overview. A comprehensive War Briefing report with detailed recommendations is generated within 24 hours.",
             },
           },
           {
             "@type": "Question",
-            name: "How long does an audit take?",
+            name: "Is this different from SEO tools?",
             acceptedAnswer: {
               "@type": "Answer",
-              text: "The initial audit takes 2-3 minutes. You'll receive immediate scores and insights. Comprehensive War Briefing reports with detailed recommendations are generated within 24 hours.",
+              text: "Yes. Traditional SEO tools analyze Google rankings and keyword performance. Our AEO audit focuses specifically on AI engine visibility—whether LLMs can find, understand, and recommend your startup when users ask relevant questions.",
             },
           },
           {
             "@type": "Question",
-            name: "Is there a free tier?",
+            name: "What do I get from the free audit?",
             acceptedAnswer: {
               "@type": "Answer",
-              text: "Yes, LaunchRecord offers a free Core System tier that includes basic sovereignty and defensibility audits. Upgrade to unlock competitive intelligence and strategic warfare capabilities.",
+              text: "The free audit provides your AEO visibility score, AI engine presence breakdown, semantic authority assessment, and 3 prioritized action items. Upgrade to unlock the full War Briefing with competitive analysis and comprehensive recommendations.",
             },
           },
           {
             "@type": "Question",
-            name: "Who should use LaunchRecord?",
+            name: "Can I audit multiple startups?",
             acceptedAnswer: {
               "@type": "Answer",
-              text: "LaunchRecord is designed for startup founders, SaaS companies, entrepreneurs, product leaders, and strategic planners who want to ensure their startup has defensible positioning in the AI era.",
+              text: "Yes. Each URL submission counts as one audit. Pro and Enterprise plans include multiple audit credits per month, perfect for agencies and serial founders managing multiple ventures.",
             },
           },
         ],
@@ -358,10 +301,9 @@ export default function LaunchRecordLandingPage() {
       {
         "@type": "Article",
         "@id": `${pageUrl}#article`,
-        headline:
-          "LaunchRecord - The Sovereignty & Defensibility Platform for Startups",
+        headline: "AEO Audit - Answer Engine Optimization for Startups",
         description:
-          "Analyze your startup's positioning, clarity, AEO presence, and strategic moat with the AI-powered SIO-V5 engine.",
+          "Learn how to optimize your startup for AI engines. Our free AEO audit analyzes your visibility in ChatGPT, Claude, and Gemini.",
         image: [
           {
             "@type": "ImageObject",
@@ -370,7 +312,7 @@ export default function LaunchRecordLandingPage() {
             height: 630,
           },
         ],
-        datePublished: "2024-01-01",
+        datePublished: "2026-03-01",
         dateModified: "2026-03-13",
         author: {
           "@id": `${appUrl}/#organization`,
@@ -382,8 +324,8 @@ export default function LaunchRecordLandingPage() {
           "@id": pageUrl,
         },
         inLanguage: "en-US",
-        articleSection: "Startup Analysis & Strategic Intelligence",
-        wordCount: "2000",
+        articleSection: "Answer Engine Optimization",
+        wordCount: "1500",
       },
     ],
   };
@@ -391,7 +333,7 @@ export default function LaunchRecordLandingPage() {
   return (
     <>
       <JSONLD data={jsonLd} />
-      <LaunchRecordLandingPageClient />
+      <AeoAuditPageClient />
     </>
   );
 }
