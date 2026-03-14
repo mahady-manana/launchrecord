@@ -24,8 +24,9 @@ I. AEO_INDEX:
 Probability of being a Top-1 result in a Perplexity/ChatGPT/Gemini chat.
 Use two way scoring technical/content and Brand-Authors authorities
 
+### AEO CHECKLIST
 Here is the checklist for Technical/Content scoring
-
+Add checklist to audit: [] if not completed
 ${aeo_checklist}
 
 

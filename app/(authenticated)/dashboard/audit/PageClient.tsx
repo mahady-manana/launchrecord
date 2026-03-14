@@ -18,7 +18,7 @@ import {
   Zap,
 } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Suspense, useEffect, useState } from "react";
+import { Suspense, useEffect, useRef, useState } from "react";
 
 interface AnalysisStep {
   id: number;
@@ -79,11 +79,13 @@ function DashboardAuditContent() {
   const [retryAt, setRetryAt] = useState<Date | null>(null);
   const [countdown, setCountdown] = useState<string>("");
   const [isProcessing, setIsProcessing] = useState(false);
+  const auditStartedRef = useRef(false);
 
   useEffect(() => {
-    if (productId) {
+    if (productId && !auditStartedRef.current) {
+      auditStartedRef.current = true;
       runAudit(productId);
-    } else {
+    } else if (!productId) {
       // No product, redirect to survey
     }
     const stepInterval = setInterval(() => {

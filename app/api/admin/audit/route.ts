@@ -1,30 +1,9 @@
 import { saveAnalysis } from "@/lib/analysis-service";
 import { connectToDatabase } from "@/lib/db";
-import { getOpenAIClient } from "@/lib/openai";
 import Product from "@/models/product";
-import { promptMasterGeneralAnalyze } from "@/reports/prompt";
-import { responsesFormatter } from "@/reports/responses_formatter";
+import { fullAuditWithOpenAI } from "@/services/full_audit_with_openai";
 import type { AuditReportV1 } from "@/types/audit-report-v1";
 import { NextRequest, NextResponse } from "next/server";
-
-const ANALYSIS_USER_PROMPT = (
-  data: any,
-) => `Analyze this SaaS product using the Sovereign Defensibility Framework:
-
-PRODUCT INFORMATION:
-- Name: {{name}}
-- Website: {{website}}
-- Tagline: {{tagline}}
-- Description: {{description}}
-
-VERIFIED PRODUCVT HUNT INFO (Only verified data will be presented here):
-- Votes: ${data.votes || "Not provided"}
-- Daily rank: ${data.phDayrank || "Not provided"}
-- Reviews: ${data.phReviews || "Not provided"}
-- Reviews rating: ${data.phRating || "Not provided"}
-- Comments count: ${data.phComments || "Not provided"}
-
-Analyze their Positioning, AEO visibility, Product Clarity, Momentum, Founder Proof Vault and Competitive moat. Be specific and data-driven. Don't give emotional reports.`;
 
 // POST - Run audit on existing product by ID
 export async function POST(request: NextRequest) {
@@ -47,55 +26,26 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Product not found" }, { status: 404 });
     }
 
-    // Run the audit
+    // Run the audit using fullAuditWithOpenAI service
     let auditReport: AuditReportV1 | null = null;
 
     try {
-      const client = getOpenAIClient();
-
       const surveyData = product.surveyData || {};
-      const userPrompt = ANALYSIS_USER_PROMPT(product.metadata || {})
-        .replace("{{name}}", product.name)
-        .replace("{{website}}", product.website || "")
-        .replace("{{tagline}}", product.tagline || "Not provided")
-        .replace(
-          "{{description}}",
-          product.description || surveyData.description || "Not provided",
-        );
-
-      const response = await client.chat.completions.create({
-        model: "gpt-4o-mini-search-preview",
-        messages: [
-          {
-            role: "system",
-            content: promptMasterGeneralAnalyze,
-          },
-          { role: "user", content: userPrompt },
-        ],
-      });
-      const content = response.choices[0]?.message?.content;
-      if (!content) {
-        throw new Error("No analysis content returned from OpenAI");
-      }
-
-      const formatResponse = await client.chat.completions.create({
-        model: "gpt-4.1-nano",
-        messages: [
-          {
-            role: "system",
-            content: responsesFormatter,
-          },
-          { role: "user", content: content },
-        ],
-        response_format: { type: "json_object" },
+      
+      const response = await fullAuditWithOpenAI({
+        description: surveyData.description || product.description || "Not provided",
+        tagline: surveyData.tagline || product.tagline || "Not provided",
+        name: surveyData.saasName || product.name || "Unknown",
+        website: surveyData.saasUrl || product.website || "",
+        founder: surveyData.founderName || "Unknown",
+        revenueStage: surveyData.revenue || "pre-revenue",
       });
 
-      const formattedContent = formatResponse.choices[0]?.message?.content;
-      if (!formattedContent) {
+      if (!response) {
         throw new Error("No formatted content returned from OpenAI");
       }
 
-      auditReport = JSON.parse(formattedContent) as AuditReportV1;
+      auditReport = JSON.parse(response) as AuditReportV1;
     } catch (aiError: any) {
       console.error("AI analysis error:", aiError);
 
