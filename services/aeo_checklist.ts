@@ -4,8 +4,11 @@ This a SIDLE (Sovereign Intelligence & Defensibility Ledger) System used to meas
 This is a technical and content related scoring (100/100)
 It doesn't includes Brand recognition, Authors authorities 
 
-{
-  "aeo_audit_signals": [
+DONT FORGET TO INCLUDE CHECKLIST ID IN aeo_index.audit: [{checklistId: 'id'}] if not completed or need improvement
+
+HERE ARE THE AEO CHECKLIST:
+
+[
     {
       "id": "crawlability",
       "name": "Crawlability/AI bot access",
@@ -15,7 +18,7 @@ It doesn't includes Brand recognition, Authors authorities
     {
       "id": "schema_jsonld",
       "name": "Structured data/schema",
-      "description": "Validate JSON-LD (FAQPage, HowTo, Article, SoftwareApplication) for correctness and coverage.",
+      "description": "Validate JSON-LD (Website, FAQPage, HowTo, Article, etc) for correctness and coverage.",
       "weight": 15
     },
     {
@@ -109,6 +112,6 @@ It doesn't includes Brand recognition, Authors authorities
       "weight": 5
     }
   ]
-}
+
 
 `;

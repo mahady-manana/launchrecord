@@ -16,17 +16,12 @@ export const format_audit_v1 = `{
     },
     "direct_answer_potential": "<25 words, single sentence>",
     "search_visibility_risk": "low | medium | high",
-    "audit": [ // Up to 15 follow up actions based on AEO Checklist completion, minimum 5 follow up actions
+    "audit": [ // Up to 15 follow up actions items based on AEO Checklist completion, minimum 5 actions items
       {
         "action": "<30 words>",
         "priority": "0-100",
-        checklistId: "aeo checklist id if relevant"
+        "checklistId": "<AEO Checklist ID if relevant>"
       },
-      {
-        "action": "<30 words>",
-        "priority": "0-100",
-        checklistId: "aeo checklist id if relevant"
-      }
     ]
   },
 
@@ -34,15 +29,11 @@ export const format_audit_v1 = `{
     "score": "0-100",
     "band": "dominant | strong | blended | weak | ghost",
     "critique": "<40 words",
-    "audit": [  // Up to 10 follow up actions
+    "audit": [  // Up to 10 follow up actions items, 5 items minimums
       {
         "action": "<30 words>",
         "priority": "0-100"
       },
-      {
-        "action": "<30 words>",
-        "priority": "0-100"
-      }
     ]
   },
 
@@ -50,15 +41,11 @@ export const format_audit_v1 = `{
     "score": "0-100",
     "band": "instant | clear | average | confusing | opaque",
     "critique": "<40 words",
-    "audit": [  // Up to 10 follow up actions
+    "audit": [ // Up to 10 follow up actions items, 5 items minimums
       {
         "action": "<30 words>",
         "priority": "0-100"
       },
-      {
-        "action": "<30 words>",
-        "priority": "0-100"
-      }
     ]
   },
 
@@ -66,15 +53,11 @@ export const format_audit_v1 = `{
     "score": "0-100",
     "band": "viral | rising | stable | flat | dead",
     "critique": "<40 words",
-    "audit": [// Up to 10 follow up actions
+    "audit": [ // Up to 10 follow up actions items, 5 items minimums
       {
         "action": "<30 words>",
         "priority": "0-100"
       },
-      {
-        "action": "<30 words>",
-        "priority": "0-100"
-      }
     ]
   },
 
@@ -89,15 +72,11 @@ export const format_audit_v1 = `{
       "founder_authority"
     ],
     "critique": "<40 words",
-    "audit": [// Up to 10 follow up actions
+    "audit": [ // Up to 10 follow up actions items, 5 items minimums
       {
         "action": "<30 words>",
         "priority": "0-100"
       },
-      {
-        "action": "<30 words>",
-        "priority": "0-100"
-      }
     ]
   },
 
@@ -145,15 +124,11 @@ export const format_audit_v1 = `{
     "founder_ego_bait": "<25 words>",
     "cliche_density": "0-100%",
     "founder_bias_risk": "low | medium | high",
-    "audit": [
+    "audit": [ // Up to 10 follow up actions items, 5 items minimums
       {
         "action": "<30 words>",
         "priority": "0-100"
       },
-      {
-        "action": "<30 words>",
-        "priority": "0-100"
-      }
     ]
   },
   "category_weights": {

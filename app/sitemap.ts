@@ -38,10 +38,17 @@ export async function generateSitemaps() {
     Math.ceil(estimatedTotal / URLS_PER_SITEMAP),
   );
 
-  // Return array of sitemap objects with ids as strings
-  return Array.from({ length: sitemapCount }, (_, i) => ({
-    id: i.toString(),
-  }));
+  // First entry is the index sitemap
+  const sitemaps = [{ id: "index" }];
+
+  // Then add all numbered sitemaps
+  sitemaps.push(
+    ...Array.from({ length: sitemapCount }, (_, i) => ({
+      id: i.toString(),
+    })),
+  );
+
+  return sitemaps;
 }
 
 /**
@@ -50,11 +57,26 @@ export async function generateSitemaps() {
  */
 export default async function sitemap(props: {
   id: Promise<string>;
-}): Promise<MetadataRoute.Sitemap> {
+}): Promise<MetadataRoute.Sitemap | MetadataRoute.Manifest> {
   const id = (await props?.id) as string | undefined;
 
   if (!id) {
     return [];
+  }
+
+  // Handle index sitemap - return list of all sitemap URLs
+  if (id === "index") {
+    const { products, topics } = await getCounts();
+    const estimatedTotal = products + topics;
+    const sitemapCount = Math.max(
+      1,
+      Math.ceil(estimatedTotal / URLS_PER_SITEMAP),
+    );
+
+    return Array.from({ length: sitemapCount }, (_, i) => ({
+      url: `${BASE_URL}/sitemap/${i}.xml`,
+      lastModified: new Date(),
+    }));
   }
 
   const sitemapId = parseInt(id, 10);

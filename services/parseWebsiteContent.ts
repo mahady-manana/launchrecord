@@ -1,4 +1,5 @@
 import * as cheerio from "cheerio";
+import type { FetchWebsiteContentResult } from "./fetchWebsiteContent";
 
 export interface OpenGraphMeta {
   title: string;
@@ -43,9 +44,14 @@ export interface ParsedHTML {
   meta: MetaInfo;
   simplifiedContent: string;
   ldJson: unknown[];
+  robottxts: string;
+  sitemap: "present" | "no_sitemap" | "accessible" | "not_accessible";
 }
 
-export function parseWebsiteContent(html: string): ParsedHTML {
+export function parseWebsiteContent(
+  websiteContent: FetchWebsiteContentResult,
+): ParsedHTML {
+  const html = websiteContent.html;
   const $ = cheerio.load(html);
 
   const getMetaContent = (name: string) =>
@@ -123,5 +129,11 @@ export function parseWebsiteContent(html: string): ParsedHTML {
     }
   });
 
-  return { meta, simplifiedContent, ldJson };
+  return {
+    meta,
+    simplifiedContent,
+    ldJson,
+    robottxts: websiteContent.robottxts,
+    sitemap: websiteContent.sitemap,
+  };
 }

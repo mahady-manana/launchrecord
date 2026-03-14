@@ -2,17 +2,10 @@
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { AuditAction } from "@/types/audit-report-v1";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
+import { AuditAction } from "@/types/audit-report-v1";
 import {
-  AlertTriangle,
   Award,
   CheckCircle,
   ChevronRight,
@@ -72,13 +65,6 @@ export function PillarDetailCard({
 }: PillarDetailCardProps) {
   const Icon = iconMap[icon];
 
-  const getScoreColor = (score: number) => {
-    if (score >= 90) return "text-green-600";
-    if (score >= 70) return "text-lime-600";
-    if (score >= 40) return "text-orange-600";
-    return "text-red-600";
-  };
-
   const getPriorityColor = (priority: number) => {
     if (priority >= 80) return "bg-red-100 text-red-700";
     if (priority >= 50) return "bg-orange-100 text-orange-700";
@@ -90,22 +76,37 @@ export function PillarDetailCard({
       <CardHeader className="pb-3">
         <div className="flex items-start justify-between">
           <div className="flex items-center gap-3">
-            <div className={cn(
-              "p-2 rounded-lg",
-              score >= 70 ? "bg-green-100" : score >= 40 ? "bg-orange-100" : "bg-red-100"
-            )}>
-              <Icon className={cn(
-                "h-5 w-5",
-                score >= 70 ? "text-green-600" : score >= 40 ? "text-orange-600" : "text-red-600"
-              )} />
+            <div
+              className={cn(
+                "p-2 rounded-lg",
+                score >= 70
+                  ? "bg-green-100"
+                  : score >= 40
+                    ? "bg-orange-100"
+                    : "bg-red-100",
+              )}
+            >
+              <Icon
+                className={cn(
+                  "h-5 w-5",
+                  score >= 70
+                    ? "text-green-600"
+                    : score >= 40
+                      ? "text-orange-600"
+                      : "text-red-600",
+                )}
+              />
             </div>
             <div>
               <CardTitle className="text-lg">{title}</CardTitle>
               {band && (
-                <Badge className={cn(
-                  "mt-1",
-                  bandColorMap[band.toLowerCase()] || "bg-muted text-muted-foreground"
-                )}>
+                <Badge
+                  className={cn(
+                    "mt-1",
+                    bandColorMap[band.toLowerCase()] ||
+                      "bg-muted text-muted-foreground",
+                  )}
+                >
                   {band}
                 </Badge>
               )}
@@ -124,7 +125,7 @@ export function PillarDetailCard({
             <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
               Priority Actions
             </div>
-            {audit.slice(0, 3).map((action, idx) => (
+            {audit.map((action, idx) => (
               <div
                 key={idx}
                 className="flex items-start gap-2 text-sm p-2 rounded-lg hover:bg-muted/50 transition-colors"
@@ -190,7 +191,7 @@ export function PillarOverview({
         "cursor-pointer transition-all hover:shadow-md hover:scale-[1.02]",
         "border-2",
         colorClass,
-        className
+        className,
       )}
       onClick={onClick}
     >
@@ -202,9 +203,7 @@ export function PillarOverview({
           <div className="text-sm font-medium text-muted-foreground">
             {title}
           </div>
-          <div className={cn("text-2xl font-bold", colorClass)}>
-            {score}
-          </div>
+          <div className={cn("text-2xl font-bold", colorClass)}>{score}</div>
         </div>
         <ChevronRight className="h-5 w-5 text-muted-foreground" />
       </CardContent>

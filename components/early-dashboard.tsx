@@ -275,7 +275,7 @@ export function EarlyDashboard({
                 <div className="text-xs font-semibold text-muted-foreground">
                   Priority Actions
                 </div>
-                {report.aeo_index.audit.slice(0, 2).map((action, idx) => (
+                {report.aeo_index.audit.map((action, idx) => (
                   <div key={idx} className="flex items-start gap-2 text-sm">
                     <div className="w-1.5 h-1.5 rounded-full bg-orange-600 mt-1.5 flex-shrink-0" />
                     <span>{action.action}</span>
@@ -319,17 +319,15 @@ export function EarlyDashboard({
                 <div className="text-xs font-semibold text-muted-foreground">
                   Priority Actions
                 </div>
-                {report.positioning_sharpness.audit
-                  .slice(0, 2)
-                  .map((action, idx) => (
-                    <div key={idx} className="flex items-start gap-2 text-sm">
-                      <div className="w-1.5 h-1.5 rounded-full bg-orange-600 mt-1.5 flex-shrink-0" />
-                      <span>{action.action}</span>
-                      <Badge variant="secondary" className="ml-auto text-xs">
-                        {action.priority}
-                      </Badge>
-                    </div>
-                  ))}
+                {report.positioning_sharpness.audit.map((action, idx) => (
+                  <div key={idx} className="flex items-start gap-2 text-sm">
+                    <div className="w-1.5 h-1.5 rounded-full bg-orange-600 mt-1.5 flex-shrink-0" />
+                    <span>{action.action}</span>
+                    <Badge variant="secondary" className="ml-auto text-xs">
+                      {action.priority}
+                    </Badge>
+                  </div>
+                ))}
               </div>
             </CardContent>
           </Card>
@@ -363,17 +361,15 @@ export function EarlyDashboard({
                 <div className="text-xs font-semibold text-muted-foreground">
                   Priority Actions
                 </div>
-                {report.clarity_velocity.audit
-                  .slice(0, 2)
-                  .map((action, idx) => (
-                    <div key={idx} className="flex items-start gap-2 text-sm">
-                      <div className="w-1.5 h-1.5 rounded-full bg-orange-600 mt-1.5 flex-shrink-0" />
-                      <span>{action.action}</span>
-                      <Badge variant="secondary" className="ml-auto text-xs">
-                        {action.priority}
-                      </Badge>
-                    </div>
-                  ))}
+                {report.clarity_velocity.audit.map((action, idx) => (
+                  <div key={idx} className="flex items-start gap-2 text-sm">
+                    <div className="w-1.5 h-1.5 rounded-full bg-orange-600 mt-1.5 flex-shrink-0" />
+                    <span>{action.action}</span>
+                    <Badge variant="secondary" className="ml-auto text-xs">
+                      {action.priority}
+                    </Badge>
+                  </div>
+                ))}
               </div>
             </CardContent>
           </Card>
@@ -407,7 +403,7 @@ export function EarlyDashboard({
                 <div className="text-xs font-semibold text-muted-foreground">
                   Priority Actions
                 </div>
-                {report.momentum_signal.audit.slice(0, 2).map((action, idx) => (
+                {report.momentum_signal.audit.map((action, idx) => (
                   <div key={idx} className="flex items-start gap-2 text-sm">
                     <div className="w-1.5 h-1.5 rounded-full bg-orange-600 mt-1.5 flex-shrink-0" />
                     <span>{action.action}</span>
