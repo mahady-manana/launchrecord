@@ -2,6 +2,7 @@ import { saveAnalysis } from "@/lib/analysis-service";
 import { connectToDatabase } from "@/lib/db";
 import { getUserSession } from "@/lib/session";
 import Product from "@/models/product";
+import Report from "@/models/report";
 import Subscription from "@/models/subscription";
 import Usage from "@/models/usage";
 import { fullAuditWithOpenAI } from "@/services/full_audit_with_openai";
@@ -13,7 +14,7 @@ import { NextRequest, NextResponse } from "next/server";
 // Plan limits configuration
 const PLAN_LIMITS: Record<string, { monthly: number; weekly: number }> = {
   free: { monthly: 4, weekly: 1 },
-  founder: { monthly: 15, weekly: 3 },
+  founder: { monthly: 15, weekly: 5 },
   growth: { monthly: 30, weekly: 5 },
   sovereign: { monthly: 9999, weekly: 9999 }, // Essentially unlimited
 };
@@ -104,7 +105,8 @@ export async function POST(
   if (!isSameOrigin(request)) {
     return jsonError("Invalid origin", 403);
   }
-
+  const searchParams = request.nextUrl.searchParams;
+  const isNew = searchParams.get("new");
   const session = await getUserSession({ required: true });
   if (!session.user) {
     return jsonError("Unauthorized", 401);
@@ -153,29 +155,30 @@ export async function POST(
     );
   }
 
-  // Check if product already has an audit report
-  // const existingReport = await Report.findOne({
-  //   product: productId,
-  //   "overall_assessment.composite_score": { $exists: true },
-  // }).sort({ createdAt: -1 });
+  if (!isNew) {
+    // Check if product already has an audit report
+    const existingReport = await Report.findOne({
+      product: productId,
+      "overall_assessment.composite_score": { $exists: true },
+    }).sort({ createdAt: -1 });
 
-  // if (existingReport) {
-  //   // Return existing report to prevent duplicate audits
-  //   return jsonSuccess({
-  //     message: "Audit already exists",
-  //     report: existingReport,
-  //     existing: true,
-  //     usage: {
-  //       auditsUsed: usage.auditsUsed,
-  //       auditsLimit: usage.auditsLimit,
-  //       weeklyAuditUsed: usage.weeklyAuditUsed,
-  //       weeklyAuditLimit: usage.weeklyAuditLimit,
-  //       resetsOn: usage.periodEnd.toLocaleDateString(),
-  //       weekResetsOn: usage.weekEnd.toLocaleDateString(),
-  //     },
-  //   });
-  // }
-
+    if (existingReport) {
+      // Return existing report to prevent duplicate audits
+      return jsonSuccess({
+        message: "Audit already exists",
+        report: existingReport,
+        existing: true,
+        usage: {
+          auditsUsed: usage.auditsUsed,
+          auditsLimit: usage.auditsLimit,
+          weeklyAuditUsed: usage.weeklyAuditUsed,
+          weeklyAuditLimit: usage.weeklyAuditLimit,
+          resetsOn: usage.periodEnd.toLocaleDateString(),
+          weekResetsOn: usage.weekEnd.toLocaleDateString(),
+        },
+      });
+    }
+  }
   // Get survey data from product
   const surveyData = product.surveyData || {
     email: "",

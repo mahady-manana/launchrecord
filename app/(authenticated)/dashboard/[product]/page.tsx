@@ -1,10 +1,14 @@
 "use client";
 
+import { BillingOverview, SIOFivePillars } from "@/components/dashboard";
 import {
-  BillingOverview,
-  CircularScore,
-  SIOFivePillars,
-} from "@/components/dashboard";
+  CategoryWeights,
+  EgoStab,
+  OverallAssessment,
+  PillarTabs,
+  ProductDashboardHeader,
+} from "@/components/product-dashboard";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -16,27 +20,16 @@ import {
 import { useProducts } from "@/hooks/use-products";
 import { useProductStore } from "@/stores/product-store";
 import { AuditReportV1 } from "@/types/audit-report-v1";
-import { cn } from "@/lib/utils";
 import {
-  AlertCircle,
-  ArrowLeft,
   BarChart3,
-  Globe,
+  CheckCircle,
+  Clock,
   Info,
   RefreshCcw,
   Shield,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { toast } from "sonner";
-import { Badge } from "@/components/ui/badge";
-import {
-  CategoryWeights,
-  EgoStab,
-  OverallAssessment,
-  PillarTabs,
-  ProductDashboardHeader,
-} from "@/components/product-dashboard";
 
 interface ProductDashboardProps {
   params: Promise<{ product: string }>;
@@ -48,9 +41,10 @@ export default function ProductDashboard({ params }: ProductDashboardProps) {
   const { fetchProducts, updateProduct } = useProducts();
 
   const [product, setProduct] = useState<typeof selectedProduct>(null);
-  const [report, setReport] = useState<AuditReportV1 | null>(null);
+  const [report, setReport] = useState<
+    (AuditReportV1 & { createdAt?: string }) | null
+  >(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [isRunningAudit, setIsRunningAudit] = useState(false);
 
   useEffect(() => {
     async function loadProduct() {
@@ -65,7 +59,6 @@ export default function ProductDashboard({ params }: ProductDashboardProps) {
         setSelectedProduct(foundProduct);
         await fetchReport(productId);
       } else {
-        toast.error("Product not found");
         router.push("/dashboard");
       }
     }
@@ -86,41 +79,13 @@ export default function ProductDashboard({ params }: ProductDashboardProps) {
     }
   };
 
-  const handleRunAudit = async () => {
+  const handleRunAudit = () => {
     if (!product) return;
-
-    setIsRunningAudit(true);
-    toast.info("Starting audit... This may take a few moments.");
-
-    try {
-      const response = await fetch(`/api/products/${product.id}/audit`, {
-        method: "POST",
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        setReport(data.report || null);
-        toast.success("Audit completed successfully!");
-
-        if (data.report?.overall_assessment?.composite_score) {
-          await updateProduct(product.id, {
-            score: data.report.overall_assessment.composite_score,
-          });
-        }
-      } else {
-        const data = await response.json();
-        toast.error(data.error || "Failed to run audit");
-      }
-    } catch (error) {
-      toast.error("Failed to run audit");
-      console.error(error);
-    } finally {
-      setIsRunningAudit(false);
-    }
+    router.push(`/dashboard/${product.id}/audit-page`);
   };
 
   const handleExport = () => {
-    toast.info("Export feature coming soon");
+    // Export feature coming soon
   };
 
   const handleSettings = () => {
@@ -181,25 +146,45 @@ export default function ProductDashboard({ params }: ProductDashboardProps) {
               Run an audit to generate the complete SIO-V5 intelligence report
             </CardDescription>
           </CardHeader>
-          <CardContent className="flex justify-center gap-4">
-            <Button
-              onClick={handleRunAudit}
-              disabled={isRunningAudit}
-              size="lg"
-            >
-              <RefreshCcw
-                className={cn("h-5 w-5 mr-2", isRunningAudit && "animate-spin")}
-              />
-              {isRunningAudit ? "Running Audit..." : "Run First Audit"}
+          <CardContent className="flex justify-center">
+            <Button onClick={handleRunAudit} size="lg">
+              <RefreshCcw className="h-5 w-5 mr-2" />
+              Run First Audit
             </Button>
           </CardContent>
         </Card>
       ) : (
         <>
+          {/* Audit Date Badge */}
+          <div className="flex items-center justify-between bg-slate-50 border border-slate-200 rounded-lg p-4">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-blue-100 rounded-lg">
+                <Clock className="h-5 w-5 text-blue-600" />
+              </div>
+              <div>
+                <p className="text-sm font-medium text-slate-700">
+                  Audit Report
+                </p>
+                <p className="text-xs text-slate-500">
+                  {report?.createdAt
+                    ? new Date(report.createdAt).toLocaleString()
+                    : "Date unavailable"}
+                </p>
+              </div>
+            </div>
+            <Badge
+              variant="outline"
+              className="bg-green-50 text-green-700 border-green-200"
+            >
+              <CheckCircle className="h-3 w-3 mr-1" />
+              Completed
+            </Badge>
+          </div>
+
           {/* Calculate composite score */}
           {(() => {
             const compositeScore = report.overall_assessment.composite_score;
-            
+
             return (
               <>
                 {/* Overall Assessment */}

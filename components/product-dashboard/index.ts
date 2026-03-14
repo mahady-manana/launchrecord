@@ -1,4 +1,5 @@
 export { ProductDashboardHeader } from "./ProductDashboardHeader";
+export { AuditProgressModal } from "./AuditProgressModal";
 export { OverallAssessment } from "./OverallAssessment";
 export { EgoStab } from "./EgoStab";
 export { PillarTabs } from "./PillarTabs";
