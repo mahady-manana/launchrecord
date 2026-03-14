@@ -40,10 +40,11 @@ export function HeroSection() {
           </h1>
 
           <p className="block text-xl text-slate-600 font-mono mt-4 tracking-normal normal-case">
-            Analyze your <span>positioning</span>, <span>clarity</span>,{" "}
-            <span>AEO presence</span>, and <span>strategic moat</span>. ,<br />{" "}
-            The SIO-V5 engine analyzes your positioning against 10,000+ records
-            to ensure you aren't just a feature waiting to be deleted.
+            LaunchRecord analyze your <span>positioning</span>,{" "}
+            <span>product clarity</span>, <span>AEO presence</span>, and{" "}
+            <span>strategic moat</span>.<br /> The SIO-V5 engine analyzes your
+            positioning against 10,000+ records to ensure you aren't just a
+            feature waiting to be deleted.
           </p>
         </div>
 

@@ -1,11 +1,9 @@
 import { saveAnalysis } from "@/lib/analysis-service";
 import { connectToDatabase } from "@/lib/db";
-import { getOpenAIClient } from "@/lib/openai";
 import { getUserSession } from "@/lib/session";
 import Product from "@/models/product";
 import Report from "@/models/report";
-import { promptMasterGeneralAnalyze } from "@/reports/prompt";
-import { responsesFormatter } from "@/reports/responses_formatter";
+import { fullAuditWithOpenAI } from "@/services/full_audit_with_openai";
 import type { AuditReportV1 } from "@/types/audit-report-v1";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -22,19 +20,6 @@ interface SurveyData {
   description: string;
   willingToInvest: string;
 }
-
-const ANALYSIS_USER_PROMPT = `Analyze this SaaS product using the Sovereign Defensibility Framework:
-
-FOUNDER SELF-ASSESSMENT SURVEY:
-- Name: {{name}}
-- Website: {{website}}
-- Founder: {{founder}}
-- Team Size: {{teamSize}}
-- Revenue Stage: {{revenue}}
-- Biggest Challenge: {{challenge}}
-- Product Description : {{description}}
-
-Analyze their positioning, AEO visibility, and competitive moat. Be specific and data-driven. Don't give an emotional reports.`;
 
 export async function POST(request: NextRequest) {
   try {
@@ -115,52 +100,20 @@ export async function POST(request: NextRequest) {
     let errorMessage: string | null = null;
 
     try {
-      const client = getOpenAIClient();
-
-      const userPrompt = ANALYSIS_USER_PROMPT.replace(
-        "{{name}}",
-        surveyData.saasName,
-      )
-        .replace("{{website}}", surveyData.saasUrl)
-        .replace("{{founder}}", surveyData.founderName)
-        .replace("{{teamSize}}", surveyData.teamSize)
-        .replace("{{revenue}}", surveyData.revenue)
-        .replace("{{challenge}}", surveyData.biggestChallenge)
-        .replace("{{description}}", surveyData.description);
-
-      const response = await client.chat.completions.create({
-        model: "gpt-4o-mini-search-preview",
-        messages: [
-          {
-            role: "system",
-            content: promptMasterGeneralAnalyze,
-          },
-          { role: "user", content: userPrompt },
-        ],
-      });
-      const content = response.choices[0]?.message?.content;
-      if (!content) {
-        throw new Error("No analysis content returned from OpenAI");
-      }
-
-      const formatResponse = await client.chat.completions.create({
-        model: "gpt-4.1-nano",
-        messages: [
-          {
-            role: "system",
-            content: responsesFormatter,
-          },
-          { role: "user", content: content },
-        ],
-        response_format: { type: "json_object" },
+      const response = await fullAuditWithOpenAI({
+        description: surveyData.description,
+        tagline: surveyData.tagline,
+        name: surveyData.saasName,
+        website: surveyData.saasUrl,
+        founder: surveyData.founderName,
+        revenueStage: surveyData.revenue,
       });
 
-      const formattedContent = formatResponse.choices[0]?.message?.content;
-      if (!formattedContent) {
+      if (!response) {
         throw new Error("No formatted content returned from OpenAI");
       }
 
-      auditReport = JSON.parse(formattedContent) as AuditReportV1;
+      auditReport = JSON.parse(response) as AuditReportV1;
     } catch (aiError: any) {
       console.error("AI analysis error:", aiError);
 

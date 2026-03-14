@@ -7,6 +7,7 @@ export const format_audit_v1 = `{
 
   "aeo_index": {
     "score": "0-100",
+    "technico_content": "0-100",
     "critique": "<30 words",
     "schema_markup": {
       "present": "boolean",
@@ -18,11 +19,13 @@ export const format_audit_v1 = `{
     "audit": [
       {
         "action": "<30 words>",
-        "priority": "0-100"
+        "priority": "0-100",
+        checklistId: "aeo checklist id if relevant"
       },
       {
         "action": "<30 words>",
-        "priority": "0-100"
+        "priority": "0-100",
+        checklistId: "aeo checklist id if relevant"
       }
     ]
   },
