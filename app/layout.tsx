@@ -30,17 +30,17 @@ export const metadata: Metadata = {
   metadataBase: new URL(appUrl),
   icons: {
     icon: [
-      {
-        url: "/favicon.svg",
-        type: "image/svg+xml",
-      },
+      { url: "/favicon.ico", sizes: "any", type: "image/x-icon" },
+      { url: "/favicon-16x16.png", sizes: "16x16", type: "image/png" },
+      { url: "/favicon-32x32.png", sizes: "32x32", type: "image/png" },
     ],
     apple: [
-      {
-        url: "/favicon.svg",
-        type: "image/svg+xml",
-      },
+      { url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" },
     ],
+    other: {
+      rel: "android-chrome-192x192",
+      url: "/android-chrome-192x192.png",
+    },
   },
   openGraph: {
     title: "LaunchRecord",
