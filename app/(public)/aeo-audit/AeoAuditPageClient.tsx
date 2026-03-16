@@ -111,12 +111,11 @@ export default function AeoAuditPageClient() {
             <span>AEO Audit Powered by SIO-V5 Engine</span>
           </div>
 
-          <h1 className="text-3xl md:text-5xl font-bold text-slate-800 leading-tight">
-            AEO Audit - Answer Engine Optimization,{" "}
-            <span className="text-orange-500 block">
-              Stop Optimizing for Rankings. <br />
+          <h1 className="text-4xl md:text-6xl font-bold text-secondary leading-tight">
+            AEO Website Audit, <br />{" "}
+            <span className="text-3xl md:text-5xl text-slate-700">
+              Start Optimizing for AI Answers.
             </span>
-            <span>Start Optimizing for AI Answers.</span>
           </h1>
 
           <p className="text-xl text-slate-600 max-w-3xl leading-relaxed">
