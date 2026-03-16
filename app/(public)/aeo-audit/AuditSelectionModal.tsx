@@ -73,7 +73,7 @@ export function AuditSelectionModal({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="md:max-w-5xl">
+      <DialogContent className="md:max-w-5xl max-h-[90vh] overflow-y-auto">
         {isAuditing ? (
           <div className="py-12 space-y-6">
             <div className="flex justify-center">
