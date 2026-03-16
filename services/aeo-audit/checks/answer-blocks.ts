@@ -1,12 +1,14 @@
-import type { AEOCheckResult, CheckFunction } from "../types";
-import type { WebsiteContentPayload } from "@/services/getWebsiteContent";
+import type { CheckFunction } from "../types";
 
-export const answerBlocksCheck: CheckFunction = async (item, url, pageContent) => {
+export const answerBlocksCheck: CheckFunction = async (
+  item,
+  url,
+  pageContent,
+) => {
   const evidence: string[] = [];
   const recommendations: string[] = [];
   let score = 0;
   const { simplifiedContent } = pageContent;
-
   const h1Count = (simplifiedContent.match(/<h1>/gi) || []).length;
   const h2Count = (simplifiedContent.match(/<h2>/gi) || []).length;
   const h3Count = (simplifiedContent.match(/<h3>/gi) || []).length;

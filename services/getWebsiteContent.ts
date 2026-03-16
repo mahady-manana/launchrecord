@@ -101,19 +101,25 @@ export interface WebsiteContentPayload extends ParsedHTML {
   trimmed?: boolean;
 }
 
-export const getWebsiteContent = async (url: string): Promise<WebsiteContentPayload | null> => {
+export const getWebsiteContent = async (
+  url: string,
+  limited = true,
+): Promise<WebsiteContentPayload | null> => {
   if (!url) {
     return null;
   }
   const page = await fetchWebsiteContent(url);
 
   const parse = parseWebsiteContent(page);
+
   const cleaned = pruneEmptyStrings(parse);
   const cleanedPayload =
     cleaned && typeof cleaned === "object"
       ? (cleaned as Record<string, unknown>)
       : {};
-
+  if (!limited) {
+    return parse;
+  }
   const { payload, jsonPayload, tokenEstimate, trimmed } =
     enforceTokenLimit(cleanedPayload);
 

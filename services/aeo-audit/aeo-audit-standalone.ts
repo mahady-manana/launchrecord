@@ -1,7 +1,10 @@
 import { AEO_CHECKLIST } from "../aeo_checklist";
-import { getWebsiteContent, type WebsiteContentPayload } from "../getWebsiteContent";
-import type { AEOAuditResult, StandaloneAEOAuditOptions } from "./types";
+import {
+  getWebsiteContent,
+  type WebsiteContentPayload,
+} from "../getWebsiteContent";
 import * as checks from "./checks";
+import type { AEOAuditResult, StandaloneAEOAuditOptions } from "./types";
 
 const checkFunctionMap: Record<string, typeof checks.crawlabilityCheck> = {
   crawlability: checks.crawlabilityCheck,
@@ -37,7 +40,8 @@ export async function runStandaloneAEOAudit(
   let pageContent: WebsiteContentPayload | null = null;
 
   try {
-    pageContent = await getWebsiteContent(url);
+    pageContent = await getWebsiteContent(url, false);
+
     if (!pageContent) {
       throw new Error("Failed to fetch website content");
     }
@@ -51,7 +55,9 @@ export async function runStandaloneAEOAudit(
         score: 0,
         maxScore: c.weight,
         passed: false,
-        recommendations: ["Failed to fetch the website. Please ensure it's accessible."],
+        recommendations: [
+          "Failed to fetch the website. Please ensure it's accessible.",
+        ],
       })),
       timestamp: new Date(),
     };
