@@ -1,6 +1,6 @@
 import { JSONLD } from "@/components/JsonLd";
-import AeoAuditPageClient from "./AeoAuditPageClient";
 import type { Metadata } from "next";
+import AeoAuditPageClient from "./AeoAuditPageClient";
 
 const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
 const pageUrl = `${appUrl}/aeo-audit`;
@@ -8,7 +8,7 @@ const pageUrl = `${appUrl}/aeo-audit`;
 export const metadata: Metadata = {
   title: {
     default:
-      "AEO Audit - Check If AI Recommends Your Startup | LaunchRecord",
+      "AEO Website Audit - Check If AI Recommends Your Startup | LaunchRecord",
     template: "%s | LaunchRecord",
   },
   description:
@@ -35,7 +35,7 @@ export const metadata: Metadata = {
     canonical: pageUrl,
   },
   openGraph: {
-    title: "AEO Audit - Check If AI Recommends Your Startup",
+    title: "AEO Website Audit - Check If AI Recommends Your Startup",
     description:
       "Free AEO audit for startups. Analyze your visibility in ChatGPT, Claude, and Gemini. Get your AI visibility score and action plan in minutes.",
     url: pageUrl,
@@ -209,7 +209,8 @@ export default function AeoAuditPage() {
         },
         audience: {
           "@type": "Audience",
-          audienceType: "Startup Founders, SaaS Companies, Digital Marketers, SEO Professionals",
+          audienceType:
+            "Startup Founders, SaaS Companies, Digital Marketers, SEO Professionals",
         },
         description:
           "Comprehensive Answer Engine Optimization audit that analyzes your startup's visibility across AI engines like ChatGPT, Claude, and Gemini. Get actionable insights to improve AI recommendation rates.",

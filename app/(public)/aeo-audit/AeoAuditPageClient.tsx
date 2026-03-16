@@ -15,14 +15,16 @@ import {
   Zap,
 } from "lucide-react";
 import { useState } from "react";
+import { AuditSelectionModal } from "./AuditSelectionModal";
 
 export default function AeoAuditPageClient() {
   const [websiteUrl, setWebsiteUrl] = useState("");
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleStartAudit = (e: React.FormEvent) => {
     e.preventDefault();
     if (websiteUrl) {
-      window.location.href = `/survey?url=${encodeURIComponent(websiteUrl)}`;
+      setIsModalOpen(true);
     }
   };
 
@@ -446,6 +448,12 @@ export default function AeoAuditPageClient() {
           </details>
         </div>
       </section>
+
+      <AuditSelectionModal
+        open={isModalOpen}
+        onOpenChange={setIsModalOpen}
+        websiteUrl={websiteUrl}
+      />
     </div>
   );
 }

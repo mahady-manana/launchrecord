@@ -1,5 +1,5 @@
 import { fetchWebsiteContent } from "./fetchWebsiteContent";
-import { parseWebsiteContent } from "./parseWebsiteContent";
+import { parseWebsiteContent, type ParsedHTML } from "./parseWebsiteContent";
 
 const TOKEN_LIMIT = 4000;
 
@@ -29,7 +29,6 @@ const pruneEmptyStrings = (value: unknown): unknown => {
 
 const estimateTokens = (text?: string): number => {
   if (!text) return 0;
-  // Rough heuristic: ~4 characters per token for English-like text/JSON.
   return Math.max(1, Math.ceil(text.length / 4));
 };
 
@@ -96,7 +95,13 @@ const enforceTokenLimit = (
   return { payload: nextPayload, jsonPayload, tokenEstimate, trimmed: true };
 };
 
-export const getWebsiteContent = async (url: string) => {
+export interface WebsiteContentPayload extends ParsedHTML {
+  jsonPayload?: string;
+  tokenEstimate?: number;
+  trimmed?: boolean;
+}
+
+export const getWebsiteContent = async (url: string): Promise<WebsiteContentPayload | null> => {
   if (!url) {
     return null;
   }
@@ -112,5 +117,10 @@ export const getWebsiteContent = async (url: string) => {
   const { payload, jsonPayload, tokenEstimate, trimmed } =
     enforceTokenLimit(cleanedPayload);
 
-  return payload;
+  return {
+    ...payload,
+    jsonPayload,
+    tokenEstimate,
+    trimmed,
+  } as WebsiteContentPayload;
 };

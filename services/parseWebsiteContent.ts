@@ -41,6 +41,7 @@ export interface MetaInfo {
 }
 
 export interface ParsedHTML {
+  html: string;
   meta: MetaInfo;
   simplifiedContent: string;
   ldJson: unknown[];
@@ -130,6 +131,7 @@ export function parseWebsiteContent(
   });
 
   return {
+    html,
     meta,
     simplifiedContent,
     ldJson,
