@@ -1,7 +1,10 @@
-import type { AEOCheckResult, CheckFunction } from "../types";
-import type { WebsiteContentPayload } from "@/services/getWebsiteContent";
+import type { CheckFunction } from "../types";
 
-export const aiRetrievalVectorCheck: CheckFunction = async (item, url, pageContent) => {
+export const aiRetrievalVectorCheck: CheckFunction = async (
+  item,
+  url,
+  pageContent,
+) => {
   const evidence: string[] = [];
   const recommendations: string[] = [];
   let score = 0;

@@ -86,12 +86,6 @@ const enforceTokenLimit = (
     iterations += 1;
   }
 
-  if (tokenEstimate > TOKEN_LIMIT) {
-    nextPayload = { ...payload, simplifiedContent: "" };
-    jsonPayload = JSON.stringify(nextPayload, null, 2);
-    tokenEstimate = estimateTokens(jsonPayload);
-  }
-
   return { payload: nextPayload, jsonPayload, tokenEstimate, trimmed: true };
 };
 

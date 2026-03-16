@@ -1,13 +1,56 @@
-import type { AEOCheckResult, CheckFunction } from "../types";
-import type { WebsiteContentPayload } from "@/services/getWebsiteContent";
+import { searchExternalMentions } from "@/services/tavily-search";
+import type { CheckFunction } from "../types";
 
-export const externalMentionsCheck: CheckFunction = async (item, url, pageContent) => {
+export const externalMentionsCheck: CheckFunction = async (
+  item,
+  url,
+  pageContent,
+) => {
   const evidence: string[] = [];
   const recommendations: string[] = [];
   let score = 0;
   const { simplifiedContent } = pageContent;
 
-  const platformDomains = ["reddit.com", "github.com", "twitter.com", "medium.com", "dev.to"];
+  // Extract domain from URL
+  let domain = "";
+  try {
+    const urlObj = new URL(url.startsWith("http") ? url : `https://${url}`);
+    domain = urlObj.hostname;
+  } catch {
+    domain = url;
+  }
+
+  // Search for external mentions using Tavily
+  const externalResults = await searchExternalMentions(domain, {
+    maxResults: 5,
+    searchDepth: "advanced",
+  });
+
+  // Filter out own domain mentions
+  const externalMentions = externalResults.filter((result) => {
+    try {
+      const resultUrl = new URL(result.url);
+      return resultUrl.hostname !== domain && !resultUrl.hostname.endsWith(`.${domain}`);
+    } catch {
+      return false;
+    }
+  });
+
+  if (externalMentions.length > 0) {
+    evidence.push(`Found ${externalMentions.length} external mention(s) across the web`);
+    score += Math.min(externalMentions.length * 2, 5);
+  }
+
+  // Also check for outbound links to platforms on the site
+  const platformDomains = [
+    "reddit.com",
+    "github.com",
+    "twitter.com",
+    "medium.com",
+    "dev.to",
+    "news.ycombinator.com",
+    "producthunt.com",
+  ];
   let platformLinks = 0;
   platformDomains.forEach((domain) => {
     const matches = simplifiedContent.match(new RegExp(domain, "gi"));
@@ -15,10 +58,16 @@ export const externalMentionsCheck: CheckFunction = async (item, url, pageConten
   });
 
   if (platformLinks > 0) {
-    evidence.push(`Links to ${platformLinks} external platform(s)`);
-    score += 3;
-  } else {
-    recommendations.push("Reference external platforms (Reddit, GitHub, blogs) to build credibility");
+    evidence.push(
+      `References ${platformLinks} external platform(s)`,
+    );
+    score += 2;
+  }
+
+  if (externalMentions.length === 0 && platformLinks === 0) {
+    recommendations.push(
+      "Build online presence: get mentioned on Reddit, GitHub, Twitter, Product Hunt, or tech blogs",
+    );
   }
 
   return {
