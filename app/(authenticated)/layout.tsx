@@ -5,18 +5,17 @@ import { ProductList } from "@/components/ProductList";
 import { ProductSidebar } from "@/components/ProductSidebar";
 import { UserActions } from "@/components/user-actions";
 import { useProductStore } from "@/stores/product-store";
-import { LayoutDashboard, Rocket, Settings } from "lucide-react";
+import { LayoutDashboard, Rocket } from "lucide-react";
 import Link from "next/link";
 
 const navItems = [
   { href: "/dashboard", label: "Overview", icon: LayoutDashboard },
-  { href: "/dashboard/subscription", label: "Subscription", icon: Settings },
 ];
 
 function FirstColumn({ compact }: { compact: boolean }) {
   return (
     <aside
-      className={`hidden flex-col border-r border-slate-200/60 bg-white/90 backdrop-blur-xl shadow-xl shadow-slate-200/20 lg:flex fixed left-0 top-0 h-full overflow-y-auto z-40 ${
+      className={`hidden no-scrollbar flex-col border-r border-slate-200/60 bg-white/90 backdrop-blur-xl shadow-xl shadow-slate-200/20 lg:flex fixed left-0 top-0 h-full overflow-y-auto z-40 ${
         compact ? "w-20 items-center p-4" : "w-72 p-4"
       }`}
     >

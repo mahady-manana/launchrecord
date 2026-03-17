@@ -2,12 +2,12 @@
 
 import { useProductStore } from "@/stores/product-store";
 import {
+  BadgeCheck,
   BarChart3,
   Bot,
   ChevronRight,
   Eye,
   LayoutDashboard,
-  Settings,
   Shield,
   Target,
   TrendingUp,
@@ -18,35 +18,35 @@ import { usePathname } from "next/navigation";
 const auditTools = [
   {
     name: "Positioning Audit",
-    href: "/dashboard/audit?tool=positioning",
+    href: "/audit/positioning",
     icon: Target,
     color: "text-blue-600",
     bg: "bg-blue-100",
   },
   {
     name: "Product Clarity Audit",
-    href: "/dashboard/audit?tool=clarity",
+    href: "/audit/clarity",
     icon: Eye,
     color: "text-green-600",
     bg: "bg-green-100",
   },
   {
     name: "Momentum Audit",
-    href: "/dashboard/audit?tool=momentum",
+    href: "/audit/momentum",
     icon: TrendingUp,
     color: "text-orange-600",
     bg: "bg-orange-100",
   },
   {
     name: "Founder Proof Audit",
-    href: "/dashboard/audit?tool=founder-proof",
+    href: "/audit/founder-proof",
     icon: Shield,
     color: "text-purple-600",
     bg: "bg-purple-100",
   },
   {
     name: "AEO Audit",
-    href: "/dashboard/audit?tool=aeo",
+    href: "/audit/aeo",
     icon: Bot,
     color: "text-cyan-600",
     bg: "bg-cyan-100",
@@ -129,7 +129,7 @@ export function ProductSidebar() {
             </Link>
 
             <Link
-              href={`/dashboard/${selectedProduct.id}/audit`}
+              href={`/dashboard/${selectedProduct.id}/audit-page`}
               className={`group flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm transition-all duration-200 ${
                 isAudit
                   ? "bg-gradient-to-r from-orange-50 to-amber-50 shadow-sm"
@@ -143,7 +143,7 @@ export function ProductSidebar() {
                     : "bg-slate-100 group-hover:bg-white group-hover:shadow-sm"
                 }`}
               >
-                <Settings
+                <BadgeCheck
                   className={`h-5 w-5 ${isAudit ? "text-orange-600" : "text-slate-500"}`}
                 />
               </div>
