@@ -1,12 +1,27 @@
 "use client";
 
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  ArrowLeft,
+  ArrowUpRight,
+  CheckCircle,
+  Clock,
+  Eye,
+  Layout,
+  MessageSquare,
+  Zap,
+} from "lucide-react";
+import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, Eye, Clock, MessageSquare, Layout, ArrowUpRight, Zap, CheckCircle } from "lucide-react";
-import Link from "next/link";
 
 export default function ClarityAuditPage() {
   const params = useParams();
@@ -15,8 +30,9 @@ export default function ClarityAuditPage() {
   const [isRunning, setIsRunning] = useState(false);
 
   const handleRunAudit = () => {
-    setIsRunning(true);
-    setTimeout(() => setIsRunning(false), 3000);
+    alert(
+      "Product Clarity Audit is coming soon! AEO Audit is currently available.",
+    );
   };
 
   return (
@@ -36,13 +52,15 @@ export default function ClarityAuditPage() {
                 5-Second Test
               </Badge>
             </div>
-            <p className="text-slate-500">If they don't get it in 5 seconds, they're gone</p>
+            <p className="text-slate-500">
+              If they don't get it in 5 seconds, they're gone
+            </p>
           </div>
         </div>
         <Button
           onClick={handleRunAudit}
           disabled={isRunning}
-          className="bg-gradient-to-r from-green-600 to-emerald-600 text-white hover:from-green-700 hover:to-emerald-700"
+          className="bg-gradient-to-r from-green-600 to-emerald-600 text-white hover:from-green-700 hover:to-emerald-700 relative"
         >
           {isRunning ? (
             <>
@@ -53,6 +71,9 @@ export default function ClarityAuditPage() {
             <>
               <Eye className="h-4 w-4 mr-2" />
               Test Clarity
+              <span className="ml-2 px-2 py-0.5 bg-white/20 text-white text-xs font-medium rounded-full">
+                Coming Soon
+              </span>
             </>
           )}
         </Button>
@@ -61,7 +82,7 @@ export default function ClarityAuditPage() {
       {/* Hero - 5-second countdown visual */}
       <div className="relative overflow-hidden bg-gradient-to-br from-green-500 via-emerald-500 to-teal-600 rounded-2xl p-8 text-white">
         <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl" />
-        
+
         <div className="relative z-10">
           <div className="flex items-start gap-4 mb-6">
             <div className="p-3 bg-white/20 rounded-xl">
@@ -70,19 +91,21 @@ export default function ClarityAuditPage() {
             <div className="flex-1">
               <h2 className="text-2xl font-bold mb-2">The 5-Second Rule</h2>
               <p className="text-green-100">
-                Visitors decide in seconds whether to stay or leave. 
-                Your clarity determines conversion.
+                Visitors decide in seconds whether to stay or leave. Your
+                clarity determines conversion.
               </p>
             </div>
           </div>
-          
+
           {/* Countdown visual */}
           <div className="flex items-center gap-3 mb-6">
             {[1, 2, 3, 4, 5].map((sec) => (
               <div
                 key={sec}
                 className={`h-12 w-12 rounded-full border-2 flex items-center justify-center text-lg font-bold ${
-                  sec <= 3 ? "bg-white text-green-600 border-white" : "border-white/50 text-white/70"
+                  sec <= 3
+                    ? "bg-white text-green-600 border-white"
+                    : "border-white/50 text-white/70"
                 }`}
               >
                 {sec}
@@ -90,7 +113,7 @@ export default function ClarityAuditPage() {
             ))}
             <span className="text-green-100 ml-2">seconds to impress</span>
           </div>
-          
+
           <div className="grid md:grid-cols-3 gap-4">
             <div className="bg-white/10 backdrop-blur rounded-xl p-4">
               <div className="text-3xl font-bold mb-1">6</div>
@@ -115,25 +138,59 @@ export default function ClarityAuditPage() {
             <Clock className="h-5 w-5 text-green-600" />
             Clarity Levels
           </CardTitle>
-          <CardDescription>How quickly do visitors understand your value?</CardDescription>
+          <CardDescription>
+            How quickly do visitors understand your value?
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="space-y-3">
             {[
-              { level: "Instant", time: "&lt;3 sec", desc: "Crystal clear value proposition", color: "bg-green-500" },
-              { level: "Clear", time: "3-5 sec", desc: "Value understood quickly", color: "bg-emerald-500" },
-              { level: "Average", time: "5-10 sec", desc: "Some friction exists", color: "bg-yellow-500" },
-              { level: "Confusing", time: "10-20 sec", desc: "Visitors struggle", color: "bg-orange-500" },
-              { level: "Opaque", time: "&gt;20 sec", desc: "Completely unclear", color: "bg-red-500" },
+              {
+                level: "Instant",
+                time: "&lt;3 sec",
+                desc: "Crystal clear value proposition",
+                color: "bg-green-500",
+              },
+              {
+                level: "Clear",
+                time: "3-5 sec",
+                desc: "Value understood quickly",
+                color: "bg-emerald-500",
+              },
+              {
+                level: "Average",
+                time: "5-10 sec",
+                desc: "Some friction exists",
+                color: "bg-yellow-500",
+              },
+              {
+                level: "Confusing",
+                time: "10-20 sec",
+                desc: "Visitors struggle",
+                color: "bg-orange-500",
+              },
+              {
+                level: "Opaque",
+                time: "&gt;20 sec",
+                desc: "Completely unclear",
+                color: "bg-red-500",
+              },
             ].map((item, idx) => (
-              <div key={idx} className="flex items-center gap-4 p-4 rounded-xl border border-slate-200 hover:border-green-300 transition-colors">
-                <div className={`h-12 w-12 ${item.color} rounded-lg flex items-center justify-center text-white font-bold`}>
+              <div
+                key={idx}
+                className="flex items-center gap-4 p-4 rounded-xl border border-slate-200 hover:border-green-300 transition-colors"
+              >
+                <div
+                  className={`h-12 w-12 ${item.color} rounded-lg flex items-center justify-center text-white font-bold`}
+                >
                   {idx + 1}
                 </div>
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-1">
                     <h4 className="font-semibold">{item.level}</h4>
-                    <Badge variant="outline" className="text-xs">{item.time}</Badge>
+                    <Badge variant="outline" className="text-xs">
+                      {item.time}
+                    </Badge>
                   </div>
                   <p className="text-sm text-slate-600">{item.desc}</p>
                 </div>
@@ -148,21 +205,52 @@ export default function ClarityAuditPage() {
       <Card>
         <CardHeader>
           <CardTitle>Clarity Dimensions</CardTitle>
-          <CardDescription>Six elements that determine instant understanding</CardDescription>
+          <CardDescription>
+            Six elements that determine instant understanding
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="grid md:grid-cols-3 gap-4">
             {[
-              { icon: <MessageSquare className="h-5 w-5" />, label: "Headline Clarity", desc: "Instant headline comprehension" },
-              { icon: <Eye className="h-5 w-5" />, label: "Visual Flow", desc: "Design guides attention" },
-              { icon: <Layout className="h-5 w-5" />, label: "Value Hierarchy", desc: "Most important info visible" },
-              { icon: <ArrowUpRight className="h-5 w-5" />, label: "Benefit Clarity", desc: "Outcomes clearly stated" },
-              { icon: <CheckCircle className="h-5 w-5" />, label: "CTA Clarity", desc: "Next step is obvious" },
-              { icon: <Clock className="h-5 w-5" />, label: "Speed", desc: "Fast load = clear message" },
+              {
+                icon: <MessageSquare className="h-5 w-5" />,
+                label: "Headline Clarity",
+                desc: "Instant headline comprehension",
+              },
+              {
+                icon: <Eye className="h-5 w-5" />,
+                label: "Visual Flow",
+                desc: "Design guides attention",
+              },
+              {
+                icon: <Layout className="h-5 w-5" />,
+                label: "Value Hierarchy",
+                desc: "Most important info visible",
+              },
+              {
+                icon: <ArrowUpRight className="h-5 w-5" />,
+                label: "Benefit Clarity",
+                desc: "Outcomes clearly stated",
+              },
+              {
+                icon: <CheckCircle className="h-5 w-5" />,
+                label: "CTA Clarity",
+                desc: "Next step is obvious",
+              },
+              {
+                icon: <Clock className="h-5 w-5" />,
+                label: "Speed",
+                desc: "Fast load = clear message",
+              },
             ].map((item, idx) => (
-              <div key={idx} className="p-4 rounded-xl bg-green-50 border border-green-200">
+              <div
+                key={idx}
+                className="p-4 rounded-xl bg-green-50 border border-green-200"
+              >
                 <div className="text-green-600 mb-2">{item.icon}</div>
-                <h4 className="font-semibold text-slate-900 mb-1">{item.label}</h4>
+                <h4 className="font-semibold text-slate-900 mb-1">
+                  {item.label}
+                </h4>
                 <p className="text-sm text-slate-600">{item.desc}</p>
               </div>
             ))}
@@ -206,7 +294,9 @@ export default function ClarityAuditPage() {
                 <h4 className="font-semibold">Public Version</h4>
                 <p className="text-sm text-slate-500">View public audit page</p>
               </div>
-              <Button variant="outline" size="sm">Open</Button>
+              <Button variant="outline" size="sm">
+                Open
+              </Button>
             </div>
           </Link>
         </CardContent>
@@ -217,7 +307,18 @@ export default function ClarityAuditPage() {
 
 function ExternalLink(props: React.SVGProps<SVGSVGElement>) {
   return (
-    <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <svg
+      {...props}
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
       <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
       <polyline points="15 3 21 3 21 9" />
       <line x1="10" y1="14" x2="21" y2="3" />
