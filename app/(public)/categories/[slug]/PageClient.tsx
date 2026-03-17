@@ -112,7 +112,7 @@ export default function CategoryPageClient({
   }));
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-primary/5">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-primary/5 pt-15">
       {/* Hero Section */}
       <div className="">
         <div className="max-w-6xl mx-auto px-4 py-12">

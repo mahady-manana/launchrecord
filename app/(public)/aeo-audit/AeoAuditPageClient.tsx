@@ -104,7 +104,7 @@ export default function AeoAuditPageClient() {
   ];
 
   return (
-    <div className="space-y-24 py-16">
+    <div className="space-y-24 py-20">
       {/* Hero Section */}
       <section className="px-4 max-w-6xl mx-auto space-y-8">
         <div className="space-y-6">

@@ -76,7 +76,7 @@ export default function LeaderboardPageClient({
   const restProducts = products.slice(3);
 
   return (
-    <div className="space-y-12 py-10 px-4">
+    <div className="space-y-12 py-25 px-4">
       {/* Hero Section */}
       <section className="space-y-6 text-center">
         <Badge
@@ -204,7 +204,9 @@ export default function LeaderboardPageClient({
         ].map((item) => (
           <Card key={item.grade}>
             <CardContent className="py-4 text-center space-y-2">
-              <div className={`w-10 h-10 rounded-full ${item.color} mx-auto flex items-center justify-center text-white font-black text-lg`}>
+              <div
+                className={`w-10 h-10 rounded-full ${item.color} mx-auto flex items-center justify-center text-white font-black text-lg`}
+              >
                 {item.grade}
               </div>
               <p className="font-bold text-sm">{item.score}</p>
