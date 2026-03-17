@@ -16,6 +16,53 @@ interface Category {
   count: number;
 }
 
+interface Pillar {
+  name: string;
+  href: string;
+  description: string;
+  icon: string;
+  color: string;
+}
+
+const pillars: Pillar[] = [
+  {
+    name: "AEO Audit",
+    href: "/aeo-audit",
+    description: "Audit Your Visibility in AI Generated Answers.",
+    icon: "🤖",
+    color: "cyan",
+  },
+  {
+    name: "Positioning Audit",
+    href: "/positioning-audit",
+    description: "Startup's positioning vs competitors. Market differentiation",
+    icon: "🎯",
+    color: "blue",
+  },
+  {
+    name: "Product Clarity Audit",
+    href: "/clarity-audit",
+    description:
+      "Check product clarity, titles, contents and structures. Improve Time-To-Aha",
+    icon: "👁️",
+    color: "green",
+  },
+  {
+    name: "Momentum Audit",
+    href: "/momentum-audit",
+    description: "Growth signals",
+    icon: "📈",
+    color: "orange",
+  },
+  {
+    name: "Founder Proof Audit",
+    href: "/founder-proof-audit",
+    description: "Authority & credibility",
+    icon: "🛡️",
+    color: "purple",
+  },
+];
+
 export function Header() {
   const { isAuthenticated } = useAuth();
   const [categories, setCategories] = useState<Category[]>([]);
@@ -23,6 +70,7 @@ export function Header() {
   const [isHovered, setIsHovered] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [isPillarsOpen, setIsPillarsOpen] = useState(false);
 
   useEffect(() => {
     async function fetchCategories() {
@@ -46,7 +94,7 @@ export function Header() {
     <>
       <header
         className={clsx(
-          "sticky top-2 backdrop-blur-xl z-50 w-full mx-auto",
+          "fixed left-1/2 -translate-x-1/2 top-2 backdrop-blur-xl z-50 w-full mx-auto",
           "flex max-w-6xl gap-4 items-center justify-between bg-white shadow border rounded-full px-8 py-2",
         )}
       >
@@ -74,6 +122,56 @@ export function Header() {
           >
             <Search className="h-4 w-4" />
           </Button>
+
+          {/* Pillars Dropdown */}
+          <div
+            className="relative"
+            onMouseEnter={() => setIsPillarsOpen(true)}
+            onMouseLeave={() => setIsPillarsOpen(false)}
+          >
+            <button className="font-bold text-sm text-slate-800 hover:bg-slate-100 rounded-xl px-4 py-2 transition-colors flex items-center gap-1">
+              <span>🔧</span> Audit Tools
+              <svg
+                className={`w-4 h-4 transition-transform duration-200 ${isPillarsOpen ? "rotate-180" : ""}`}
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M19 9l-7 7-7-7"
+                />
+              </svg>
+            </button>
+            {isPillarsOpen && (
+              <div className="absolute top-full left-0 mt-0 bg-white rounded-xl shadow-lg border border-slate-200 p-4 min-w-[500px] z-50">
+                <div className="grid grid-cols-2 gap-3">
+                  {pillars.map((pillar) => (
+                    <Link
+                      key={pillar.name}
+                      href={pillar.href}
+                      className="block p-3 rounded-lg hover:bg-slate-100 transition-colors"
+                    >
+                      <div className="flex items-center gap-2">
+                        <span className="text-xl">{pillar.icon}</span>
+                        <div>
+                          <div className="text-sm font-medium text-slate-800">
+                            {pillar.name}
+                          </div>
+                          <div className="text-xs text-slate-500">
+                            {pillar.description}
+                          </div>
+                        </div>
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+
           <div
             className="relative"
             onMouseEnter={() => setIsHovered(true)}
@@ -135,18 +233,6 @@ export function Header() {
             className="font-bold text-sm  text p-1 text-slate-800 rounded-xl px-1 hover:bg-slate-100 hover:underline"
           >
             Sovereign 100
-          </Link>
-          <Link
-            href="/aeo-audit"
-            className="font-bold text-sm p-1 text-slate-800 rounded-xl px-1 hover:bg-slate-100 hover:underline"
-          >
-            AEO Audit<span className="md:inline hidden"></span>
-          </Link>
-          <Link
-            href="/aeo-vs-seo"
-            className="font-bold text-sm p-1 text-slate-800 rounded-xl px-1 hover:bg-slate-100 hover:underline"
-          >
-            AEO vs SEO<span className="md:inline hidden"></span>
           </Link>
           <Link
             href="/sio-v5-engine"
@@ -219,6 +305,35 @@ export function Header() {
         {isMobileMenuOpen && (
           <div className="md:hidden absolute top-full left-0 right-0 bg-white border-b border-slate-200 rounded-b-2xl shadow-lg mx-4 p-4 z-50">
             <div className="flex flex-col gap-2">
+              {/* Audit Tools Section */}
+              <div className="border-b border-slate-200 pb-3">
+                <div className="font-bold text-sm text-slate-800 px-3 py-2 flex items-center gap-2">
+                  <span>🔧</span> Audit Tools
+                </div>
+                <div className="grid grid-cols-2 gap-2 px-2">
+                  {pillars.map((pillar) => (
+                    <Link
+                      key={pillar.name}
+                      href={pillar.href}
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className="block p-3 rounded-lg bg-slate-50 hover:bg-slate-100 transition-colors"
+                    >
+                      <div className="flex items-center gap-2">
+                        <span className="text-lg">{pillar.icon}</span>
+                        <div>
+                          <div className="text-sm font-medium text-slate-800">
+                            {pillar.name}
+                          </div>
+                          <div className="text-xs text-slate-500">
+                            {pillar.description}
+                          </div>
+                        </div>
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              </div>
+
               <Link
                 href="/sio-v5-engine"
                 onClick={() => setIsMobileMenuOpen(false)}
@@ -232,18 +347,6 @@ export function Header() {
                 className="font-bold text p-3 bg-slate-200 text-slate-800 rounded-xl"
               >
                 Sovereign 100
-              </Link>
-              <Link
-                href="/aeo-audit"
-                className="font-bold text-sm p-1 text-slate-800 rounded-xl px-1 hover:bg-slate-100 hover:underline"
-              >
-                AEO Audit<span className="md:inline hidden"></span>
-              </Link>
-              <Link
-                href="/aeo-vs-seo"
-                className="font-bold text-sm p-1 text-slate-800 rounded-xl px-1 hover:bg-slate-100 hover:underline"
-              >
-                AEO vs SEO<span className="md:inline hidden"></span>
               </Link>
               {/* Mobile Categories Dropdown */}
               <div className="border-t border-slate-200 pt-2">

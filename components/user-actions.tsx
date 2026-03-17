@@ -26,21 +26,32 @@ export function UserActions({ compact = false }: UserActionsProps) {
     await logout();
   };
 
+  if (compact) {
+    return (
+      <button
+        onClick={handleLogout}
+        disabled={isLoggingOut || isLoading}
+        className="flex items-center justify-center rounded-full p-2 text-slate-500 hover:text-red-600 hover:bg-red-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+        title="Logout"
+      >
+        <div className="flex size-8 items-center justify-center rounded-full bg-slate-100 text-xs font-semibold">
+          {initials}
+        </div>
+      </button>
+    );
+  }
+
   return (
     <div className="flex items-center gap-3 rounded-2xl border border-border bg-muted/40 px-3 py-2">
       <div className="flex size-9 items-center justify-center rounded-full bg-muted text-sm font-semibold text-foreground">
         {initials}
       </div>
-      {!compact ? (
-        <div className="min-w-0 flex-1">
-          <p className="truncate text-sm font-medium text-foreground">
-            {user?.name || "User"}
-          </p>
-          <p className="truncate text-xs text-muted-foreground">
-            {user?.email}
-          </p>
-        </div>
-      ) : null}
+      <div className="min-w-0 flex-1">
+        <p className="truncate text-sm font-medium text-foreground">
+          {user?.name || "User"}
+        </p>
+        <p className="truncate text-xs text-muted-foreground">{user?.email}</p>
+      </div>
       <button
         onClick={handleLogout}
         disabled={isLoggingOut || isLoading}
