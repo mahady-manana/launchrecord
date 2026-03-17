@@ -17,6 +17,13 @@ import { usePathname } from "next/navigation";
 
 const auditTools = [
   {
+    name: "AEO Audit",
+    href: "/audit/aeo",
+    icon: Bot,
+    color: "text-cyan-600",
+    bg: "bg-cyan-100",
+  },
+  {
     name: "Positioning Audit",
     href: "/audit/positioning",
     icon: Target,
@@ -43,13 +50,6 @@ const auditTools = [
     icon: Shield,
     color: "text-purple-600",
     bg: "bg-purple-100",
-  },
-  {
-    name: "AEO Audit",
-    href: "/audit/aeo",
-    icon: Bot,
-    color: "text-cyan-600",
-    bg: "bg-cyan-100",
   },
 ];
 
