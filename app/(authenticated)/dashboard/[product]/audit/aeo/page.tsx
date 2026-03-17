@@ -1,22 +1,90 @@
 "use client";
 
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { runStandaloneAEOAudit } from "@/services/aeo-audit/aeo-audit-standalone";
+import { useProductStore } from "@/stores/product-store";
+import {
+  ArrowLeft,
+  Bot,
+  Brain,
+  CheckCircle,
+  Cpu,
+  Eye,
+  Loader2,
+  MessageSquare,
+  Search,
+  Sparkles,
+  Zap,
+} from "lucide-react";
+import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, Bot, Brain, Search, Eye, Zap, MessageSquare, Sparkles } from "lucide-react";
-import Link from "next/link";
 
 export default function AEOAuditPage() {
   const params = useParams();
   const router = useRouter();
   const productId = params.product as string;
-  const [isRunning, setIsRunning] = useState(false);
+  const { selectedProduct } = useProductStore();
 
-  const handleRunAudit = () => {
+  const [isRunning, setIsRunning] = useState(false);
+  const [auditProgress, setAuditProgress] = useState("");
+
+  const handleRunAudit = async () => {
+    if (!selectedProduct?.website) {
+      alert("Product website URL is not available");
+      return;
+    }
+
     setIsRunning(true);
-    setTimeout(() => setIsRunning(false), 3000);
+    setAuditProgress("Initializing AEO audit...");
+
+    try {
+      const websiteUrl = selectedProduct.website.startsWith("http")
+        ? selectedProduct.website
+        : `https://${selectedProduct.website}`;
+
+      setAuditProgress("Scanning AI engine visibility...");
+
+      const result = await runStandaloneAEOAudit({
+        url: websiteUrl,
+      });
+
+      setAuditProgress("Analyzing semantic authority...");
+
+      // Store result in session storage
+      sessionStorage.setItem(
+        "aeoAuditResult",
+        JSON.stringify({
+          ...result,
+          productId: selectedProduct.id,
+          productName: selectedProduct.name,
+        }),
+      );
+
+      setAuditProgress("Complete!");
+
+      setTimeout(() => {
+        setIsRunning(false);
+        setAuditProgress("");
+        // Redirect to reports page
+        router.push(`/dashboard/${productId}/audit/aeo/reports`);
+      }, 1000);
+    } catch (error) {
+      console.error("AEO Audit failed:", error);
+      setAuditProgress("Audit failed. Please try again.");
+      setTimeout(() => {
+        setIsRunning(false);
+        setAuditProgress("");
+      }, 2000);
+    }
   };
 
   return (
@@ -36,18 +104,23 @@ export default function AEOAuditPage() {
                 AI Visibility
               </Badge>
             </div>
-            <p className="text-slate-500">Are AI engines recommending you?</p>
+            <p className="text-slate-500">
+              {selectedProduct?.website
+                ? `Analyzing: ${selectedProduct.website}`
+                : "Are AI engines recommending you?"}
+            </p>
           </div>
         </div>
         <Button
           onClick={handleRunAudit}
-          disabled={isRunning}
+          disabled={isRunning || !selectedProduct?.website}
           className="bg-gradient-to-r from-cyan-600 to-blue-600 text-white hover:from-cyan-700 hover:to-blue-700"
+          size="lg"
         >
           {isRunning ? (
             <>
-              <Brain className="h-4 w-4 mr-2 animate-spin" />
-              Scanning AI...
+              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+              {auditProgress}
             </>
           ) : (
             <>
@@ -62,21 +135,23 @@ export default function AEOAuditPage() {
       <div className="relative overflow-hidden bg-gradient-to-br from-cyan-600 via-blue-600 to-indigo-700 rounded-2xl p-8 text-white">
         <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl animate-pulse" />
         <div className="absolute bottom-0 left-0 w-64 h-64 bg-cyan-400/20 rounded-full blur-3xl animate-pulse delay-1000" />
-        
+
         <div className="relative z-10">
           <div className="flex items-start gap-4 mb-6">
             <div className="p-3 bg-white/20 rounded-xl">
               <Bot className="h-8 w-8" />
             </div>
             <div className="flex-1">
-              <h2 className="text-2xl font-bold mb-2">AI Engine Visibility</h2>
+              <h2 className="text-2xl font-bold mb-2">
+                AI Engine Visibility Audit
+              </h2>
               <p className="text-cyan-100">
-                50% of searches now end with AI answers. If ChatGPT, Claude, or Gemini 
-                can't find and recommend you, you're invisible to half the market.
+                Powered by SIO-V5 engine. Comprehensive analysis across ChatGPT,
+                Claude, Gemini, and emerging LLMs.
               </p>
             </div>
           </div>
-          
+
           {/* AI engines visual */}
           <div className="grid grid-cols-3 gap-4 mb-6">
             <div className="bg-white/10 backdrop-blur rounded-xl p-4 text-center">
@@ -101,7 +176,7 @@ export default function AEOAuditPage() {
               <div className="text-xs text-cyan-100">Google</div>
             </div>
           </div>
-          
+
           <div className="grid md:grid-cols-3 gap-4">
             <div className="bg-white/10 backdrop-blur rounded-xl p-4">
               <div className="text-3xl font-bold mb-1">5</div>
@@ -112,103 +187,162 @@ export default function AEOAuditPage() {
               <div className="text-sm text-cyan-100">AI Engines</div>
             </div>
             <div className="bg-white/10 backdrop-blur rounded-xl p-4">
-              <div className="text-3xl font-bold mb-1">50%</div>
-              <div className="text-sm text-cyan-100">AI Search Share</div>
+              <div className="text-3xl font-bold mb-1">2-3 min</div>
+              <div className="text-sm text-cyan-100">Analysis Time</div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* AEO Metrics */}
+      {/* What This Audit Measures - From public page */}
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Eye className="h-5 w-5 text-cyan-600" />
-            AI Visibility Metrics
+            What This Audit Measures
           </CardTitle>
-          <CardDescription>Five dimensions of AI engine optimization</CardDescription>
+          <CardDescription>
+            Six critical dimensions of AI visibility
+          </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="grid md:grid-cols-5 gap-3">
+          <div className="grid md:grid-cols-2 gap-4">
             {[
-              { name: "AI Presence", icon: <Bot className="h-4 w-4" />, desc: "Can AI find you?" },
-              { name: "Citations", icon: <MessageSquare className="h-4 w-4" />, desc: "How often cited?" },
-              { name: "Semantic", icon: <Brain className="h-4 w-4" />, desc: "Topic authority" },
-              { name: "Entity", icon: <Search className="h-4 w-4" />, desc: "Brand recognition" },
-              { name: "Recommendation", icon: <Zap className="h-4 w-4" />, desc: "AI suggestion rate" },
-            ].map((metric, idx) => (
-              <div key={idx} className="text-center p-4 rounded-xl bg-cyan-50 border border-cyan-200 hover:border-cyan-400 transition-colors">
-                <div className="h-10 w-10 mx-auto mb-2 rounded-lg bg-cyan-100 flex items-center justify-center text-cyan-600">
-                  {metric.icon}
+              {
+                icon: <Bot className="h-5 w-5" />,
+                title: "AI Engine Optimization",
+                desc: "Ensure your startup appears in AI-generated responses from ChatGPT, Claude, Gemini, and emerging LLMs.",
+              },
+              {
+                icon: <Search className="h-5 w-5" />,
+                title: "Answer Engine Visibility",
+                desc: "Optimize for zero-click searches and AI answer boxes that dominate modern search results.",
+              },
+              {
+                icon: <Brain className="h-5 w-5" />,
+                title: "Semantic Authority",
+                desc: "Build topical authority and semantic relevance that AI engines recognize and trust.",
+              },
+              {
+                icon: <Eye className="h-5 w-5" />,
+                title: "Entity Recognition",
+                desc: "Strengthen your brand entity signals across knowledge graphs and AI training datasets.",
+              },
+              {
+                icon: <Zap className="h-5 w-5" />,
+                title: "Defensibility Score",
+                desc: "Measure how difficult it would be for AI to replace or commoditize your value proposition.",
+              },
+              {
+                icon: <Sparkles className="h-5 w-5" />,
+                title: "Competitive Gap Analysis",
+                desc: "Identify where competitors are winning AI visibility and how to reclaim your position.",
+              },
+            ].map((item, idx) => (
+              <div
+                key={idx}
+                className="flex items-start gap-3 p-4 rounded-xl border border-slate-200 hover:border-cyan-300 transition-colors"
+              >
+                <div className="h-10 w-10 rounded-lg bg-cyan-100 flex items-center justify-center text-cyan-600 flex-shrink-0">
+                  {item.icon}
                 </div>
-                <div className="text-sm font-semibold text-slate-900">{metric.name}</div>
-                <div className="text-xs text-slate-500">{metric.desc}</div>
+                <div>
+                  <h4 className="font-semibold text-slate-900 mb-1">
+                    {item.title}
+                  </h4>
+                  <p className="text-sm text-slate-600">{item.desc}</p>
+                </div>
               </div>
             ))}
           </div>
         </CardContent>
       </Card>
 
-      {/* How AEO Works */}
+      {/* How The Audit Works - From public page */}
       <Card>
         <CardHeader>
-          <CardTitle>How AEO Works</CardTitle>
-          <CardDescription>The AI optimization process</CardDescription>
+          <CardTitle>How The Audit Works</CardTitle>
+          <CardDescription>Four-step SIO-V5 analysis process</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="grid md:grid-cols-4 gap-6">
             {[
-              { step: "01", title: "Crawl", desc: "AI bots scan your content", color: "from-cyan-500 to-blue-600" },
-              { step: "02", title: "Understand", desc: "Semantic analysis & entity mapping", color: "from-blue-500 to-indigo-600" },
-              { step: "03", title: "Index", desc: "Store in AI knowledge base", color: "from-indigo-500 to-purple-600" },
-              { step: "04", title: "Retrieve", desc: "Surface in AI responses", color: "from-purple-500 to-pink-600" },
-            ].map((item, idx) => (
+              {
+                number: "01",
+                title: "Submit Your URL",
+                desc: "Enter your startup's website and we'll begin comprehensive analysis across multiple AI engines.",
+              },
+              {
+                number: "02",
+                title: "AI Engine Scanning",
+                desc: "Our SIO-V5 engine queries major LLMs and answer engines to assess your visibility and positioning.",
+              },
+              {
+                number: "03",
+                title: "Defensibility Audit",
+                desc: "Analyze your semantic authority, entity strength, and competitive differentiation signals.",
+              },
+              {
+                number: "04",
+                title: "Strategic War Briefing",
+                desc: "Receive your AI visibility score, competitive gap analysis, and prioritized action items.",
+              },
+            ].map((step, idx) => (
               <div key={idx} className="text-center">
-                <div className={`h-16 w-16 mx-auto mb-3 rounded-2xl bg-gradient-to-br ${item.color} flex items-center justify-center text-white font-bold text-xl shadow-lg`}>
-                  {item.step}
+                <div className="h-16 w-16 mx-auto mb-3 rounded-2xl bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center text-white font-bold text-xl shadow-lg">
+                  {step.number}
                 </div>
-                <h4 className="font-semibold text-slate-900 mb-1">{item.title}</h4>
-                <p className="text-sm text-slate-600">{item.desc}</p>
+                <h4 className="font-semibold text-slate-900 mb-1">
+                  {step.title}
+                </h4>
+                <p className="text-sm text-slate-600">{step.desc}</p>
               </div>
             ))}
           </div>
         </CardContent>
       </Card>
 
-      {/* Critical Questions */}
+      {/* Key Benefits - From public page */}
       <Card className="border-cyan-200 bg-cyan-50">
         <CardHeader>
-          <CardTitle className="text-cyan-900">AI Visibility Diagnostics</CardTitle>
+          <CardTitle className="text-cyan-900 flex items-center gap-2">
+            <CheckCircle className="h-5 w-5" />
+            What You'll Get
+          </CardTitle>
         </CardHeader>
         <CardContent>
-          <ul className="space-y-3">
+          <ul className="grid md:grid-cols-2 gap-3">
             {[
-              "Does ChatGPT know your startup exists?",
-              "Are you cited when users ask about your category?",
-              "How does AI describe your value proposition?",
-              "Do you appear in comparisons with competitors?",
-            ].map((question, idx) => (
+              "Discover if AI engines can find and recommend your startup",
+              "Get actionable recommendations to improve AI visibility",
+              "Understand your semantic positioning in the AI landscape",
+              "Benchmark against 10,000+ startups in our SIO-V5 database",
+              "Receive a prioritized roadmap for AEO improvements",
+              "Future-proof your startup against AI-driven commoditization",
+            ].map((benefit, idx) => (
               <li key={idx} className="flex items-start gap-3">
-                <div className="h-6 w-6 rounded-full bg-cyan-200 text-cyan-700 flex items-center justify-center text-sm font-bold flex-shrink-0">
-                  {idx + 1}
-                </div>
-                <span className="text-cyan-800">{question}</span>
+                <CheckCircle className="h-5 w-5 text-cyan-600 mt-0.5 flex-shrink-0" />
+                <span className="text-cyan-800">{benefit}</span>
               </li>
             ))}
           </ul>
         </CardContent>
       </Card>
 
-      {/* Stats Banner */}
+      {/* Stats Banner - From public page */}
       <div className="bg-gradient-to-r from-slate-900 to-slate-800 rounded-2xl p-6 text-white">
         <div className="grid md:grid-cols-4 gap-6 text-center">
           <div>
             <div className="text-4xl font-bold text-cyan-400 mb-1">50%</div>
-            <div className="text-sm text-slate-300">Searches end with AI answers</div>
+            <div className="text-sm text-slate-300">
+              Searches end with AI answers
+            </div>
           </div>
           <div>
             <div className="text-4xl font-bold text-blue-400 mb-1">74%</div>
-            <div className="text-sm text-slate-300">Trust AI recommendations</div>
+            <div className="text-sm text-slate-300">
+              Trust AI recommendations
+            </div>
           </div>
           <div>
             <div className="text-4xl font-bold text-indigo-400 mb-1">3x</div>
@@ -221,33 +355,45 @@ export default function AEOAuditPage() {
         </div>
       </div>
 
-      {/* Quick Link */}
-      <Card>
-        <CardContent className="pt-6">
-          <Link href="/aeo-audit" target="_blank">
-            <div className="flex items-center gap-4">
-              <div className="h-12 w-12 rounded-xl bg-cyan-100 flex items-center justify-center text-cyan-600">
-                <ExternalLink className="h-5 w-5" />
+      {/* Quick Links */}
+      <div className="grid md:grid-cols-2 gap-4">
+        <Card>
+          <CardContent className="pt-6">
+            <Link href="/aeo-audit" target="_blank">
+              <div className="flex items-center gap-4">
+                <div className="h-12 w-12 rounded-xl bg-cyan-100 flex items-center justify-center text-cyan-600">
+                  <Bot className="h-5 w-5" />
+                </div>
+                <div className="flex-1">
+                  <h4 className="font-semibold">Public AEO Audit</h4>
+                  <p className="text-sm text-slate-500">View public version</p>
+                </div>
+                <Button variant="outline" size="sm">
+                  Open
+                </Button>
               </div>
-              <div className="flex-1">
-                <h4 className="font-semibold">Public Version</h4>
-                <p className="text-sm text-slate-500">View public audit page</p>
+            </Link>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="pt-6">
+            <Link href="/sio-v5-engine">
+              <div className="flex items-center gap-4">
+                <div className="h-12 w-12 rounded-xl bg-purple-100 flex items-center justify-center text-purple-600">
+                  <Cpu className="h-5 w-5" />
+                </div>
+                <div className="flex-1">
+                  <h4 className="font-semibold">SIO-V5 Engine</h4>
+                  <p className="text-sm text-slate-500">Learn about our AI</p>
+                </div>
+                <Button variant="outline" size="sm">
+                  Learn
+                </Button>
               </div>
-              <Button variant="outline" size="sm">Open</Button>
-            </div>
-          </Link>
-        </CardContent>
-      </Card>
+            </Link>
+          </CardContent>
+        </Card>
+      </div>
     </div>
-  );
-}
-
-function ExternalLink(props: React.SVGProps<SVGSVGElement>) {
-  return (
-    <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
-      <polyline points="15 3 21 3 21 9" />
-      <line x1="10" y1="14" x2="21" y2="3" />
-    </svg>
   );
 }

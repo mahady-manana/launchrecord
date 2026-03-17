@@ -31,57 +31,41 @@ import {
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
-interface ProductDashboardProps {
-  params: Promise<{ product: string }>;
-}
-
-export default function ProductDashboard({ params }: ProductDashboardProps) {
+export default function ProductDashboard() {
   const router = useRouter();
-  const { products, selectedProduct, setSelectedProduct } = useProductStore();
+  const { selectedProduct } = useProductStore();
   const { fetchProducts, updateProduct } = useProducts();
 
-  const [product, setProduct] = useState<typeof selectedProduct>(null);
   const [report, setReport] = useState<
     (AuditReportV1 & { createdAt?: string }) | null
   >(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    async function loadProduct() {
-      const { product: productId } = await params;
-      await fetchProducts();
+    if (!selectedProduct) return;
 
-      const foundProduct = products.find(
-        (p) => p.id === productId || p._id === productId,
-      );
-      if (foundProduct) {
-        setProduct(foundProduct);
-        setSelectedProduct(foundProduct);
-        await fetchReport(productId);
-      } else {
-        router.push("/dashboard");
+    const fetchReport = async () => {
+      try {
+        const response = await fetch(
+          `/api/products/${selectedProduct.id}/audit/latest`,
+        );
+        if (response.ok) {
+          const data = await response.json();
+          setReport(data.report || null);
+        }
+      } catch (error) {
+        console.error("Error fetching report:", error);
+      } finally {
+        setIsLoading(false);
       }
-    }
-    loadProduct();
-  }, [params]);
+    };
 
-  const fetchReport = async (productId: string) => {
-    try {
-      const response = await fetch(`/api/products/${productId}/audit/latest`);
-      if (response.ok) {
-        const data = await response.json();
-        setReport(data.report || null);
-      }
-    } catch (error) {
-      console.error("Error fetching report:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+    fetchReport();
+  }, [selectedProduct]);
 
   const handleRunAudit = () => {
-    if (!product) return;
-    router.push(`/dashboard/${product.id}/audit-page`);
+    if (!selectedProduct) return;
+    router.push(`/dashboard/${selectedProduct.id}/audit-page`);
   };
 
   const handleExport = () => {
@@ -89,12 +73,12 @@ export default function ProductDashboard({ params }: ProductDashboardProps) {
   };
 
   const handleSettings = () => {
-    if (product) {
-      router.push(`/dashboard/${product.id}/settings`);
+    if (selectedProduct) {
+      router.push(`/dashboard/${selectedProduct.id}/settings`);
     }
   };
 
-  if (isLoading || !product) {
+  if (isLoading || !selectedProduct) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
         <div className="text-center space-y-4">
@@ -125,8 +109,8 @@ export default function ProductDashboard({ params }: ProductDashboardProps) {
               Intelligence Command Center
             </h3>
             <p className="text-sm text-blue-700 mt-1">
-              Complete SIO-V5 analysis for {product.name}. Track defensibility
-              across 5 key pillars.
+              Complete SIO-V5 analysis for {selectedProduct.name}. Track
+              defensibility across 5 key pillars.
             </p>
           </div>
         </div>
@@ -188,7 +172,10 @@ export default function ProductDashboard({ params }: ProductDashboardProps) {
             return (
               <>
                 {/* Overall Assessment */}
-                <OverallAssessment report={report} productName={product.name} />
+                <OverallAssessment
+                  report={report}
+                  productName={selectedProduct.name}
+                />
 
                 {/* Ego Stab - Score-based insights card */}
                 <EgoStab report={report} compositeScore={compositeScore} />
@@ -257,8 +244,8 @@ export default function ProductDashboard({ params }: ProductDashboardProps) {
           <BillingOverview
             billings={[
               {
-                productId: product.id,
-                productName: product.name,
+                productId: selectedProduct.id,
+                productName: selectedProduct.name,
                 plan: "free",
                 status: "active",
               },
