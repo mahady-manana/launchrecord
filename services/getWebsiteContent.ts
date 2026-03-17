@@ -65,28 +65,40 @@ const enforceTokenLimit = (
     return { payload, jsonPayload, tokenEstimate, trimmed: false };
   }
 
-  let trimmedContent = simplified;
-  let iterations = 0;
+  // Split into lines and remove line by line until within limit
+  const lines = simplified.split("\n");
+  let trimmedLines = [...lines];
   let nextPayload = payload;
+  let jsonPayloadTemp = jsonPayload;
+  let tokenEstimateTemp = tokenEstimate;
 
+  // Remove lines one by one from the end until within limit
   while (
-    tokenEstimate > TOKEN_LIMIT &&
-    trimmedContent.length > 0 &&
-    iterations < 6
+    tokenEstimateTemp > TOKEN_LIMIT &&
+    trimmedLines.length > 1 // Keep at least one line
   ) {
-    const ratio = TOKEN_LIMIT / tokenEstimate;
-    const targetChars = Math.max(
-      0,
-      Math.floor(trimmedContent.length * ratio) - 16,
-    );
-    trimmedContent = trimSimplifiedContent(trimmedContent, targetChars);
+    trimmedLines.pop(); // Remove last line
+    const trimmedContent = trimmedLines.join("\n");
     nextPayload = { ...payload, simplifiedContent: trimmedContent };
-    jsonPayload = JSON.stringify(nextPayload, null, 2);
-    tokenEstimate = estimateTokens(jsonPayload);
-    iterations += 1;
+    jsonPayloadTemp = JSON.stringify(nextPayload, null, 2);
+    tokenEstimateTemp = estimateTokens(jsonPayloadTemp);
   }
 
-  return { payload: nextPayload, jsonPayload, tokenEstimate, trimmed: true };
+  // If still over limit after removing all but one line, truncate the last line
+  if (tokenEstimateTemp > TOKEN_LIMIT && trimmedLines.length === 1) {
+    const maxChars = Math.max(0, TOKEN_LIMIT * 4 - 200); // Reserve some tokens for JSON structure
+    const truncatedLine = trimSimplifiedContent(trimmedLines[0], maxChars);
+    nextPayload = { ...payload, simplifiedContent: truncatedLine };
+    jsonPayloadTemp = JSON.stringify(nextPayload, null, 2);
+    tokenEstimateTemp = estimateTokens(jsonPayloadTemp);
+  }
+
+  return {
+    payload: nextPayload,
+    jsonPayload: jsonPayloadTemp,
+    tokenEstimate: tokenEstimateTemp,
+    trimmed: tokenEstimateTemp < tokenEstimate,
+  };
 };
 
 export interface WebsiteContentPayload extends ParsedHTML {
