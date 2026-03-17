@@ -10,9 +10,16 @@ export const fullAuditWithOpenAI = async (
   const client = getOpenAIClient();
 
   const webContent = await getWebsiteContent(data.website);
+  const cleanContent = {
+    webcontent: webContent?.simplifiedContent,
+    jsonLd: webContent?.ldJson,
+    metadata: webContent?.meta,
+    robotstxt: webContent?.robottxts,
+    sitemap: webContent?.sitemap,
+  };
   const userContent = user_prompt({
     ...data,
-    websiteContent: JSON.stringify(webContent, null, 2),
+    websiteContent: JSON.stringify(cleanContent, null, 2),
   });
   const auditResponse = await client.chat.completions.create({
     model: "gpt-4o-mini-search-preview",
