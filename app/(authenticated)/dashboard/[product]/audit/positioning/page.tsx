@@ -9,15 +9,19 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { runStandalonePositioningAudit } from "@/services/positioning-audit";
+import { useProductStore } from "@/stores/product-store";
 import {
   ArrowLeft,
   Brain,
+  CheckCircle,
   ExternalLink,
   Layers,
+  Loader2,
+  Search,
   Shield,
   Target,
   Trophy,
-  Zap,
 } from "lucide-react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
@@ -27,57 +31,149 @@ export default function PositioningAuditPage() {
   const params = useParams();
   const router = useRouter();
   const productId = params.product as string;
-  const [isRunning, setIsRunning] = useState(false);
+  const { selectedProduct } = useProductStore();
 
-  const handleRunAudit = () => {
-    alert(
-      "Positioning Audit is coming soon! AEO Audit is currently available.",
-    );
+  const [url, setUrl] = useState(selectedProduct?.website || "");
+  const [isRunning, setIsRunning] = useState(false);
+  const [auditProgress, setAuditProgress] = useState("");
+
+  const handleRunAudit = async () => {
+    if (!url.trim()) {
+      alert("Please enter a URL to audit");
+      return;
+    }
+
+    setIsRunning(true);
+    setAuditProgress("Analyzing category ownership...");
+
+    try {
+      const websiteUrl = url.startsWith("http") ? url : `https://${url}`;
+
+      setAuditProgress("Fetching website content...");
+
+      const result = await runStandalonePositioningAudit({
+        url: websiteUrl,
+        timeout: 60000,
+      });
+
+      setAuditProgress("Saving results...");
+
+      // Store result in session storage
+      sessionStorage.setItem(
+        "positioningAuditResult",
+        JSON.stringify({
+          ...result,
+          productId: selectedProduct?.id,
+          productName: selectedProduct?.name,
+        }),
+      );
+
+      setAuditProgress("Complete!");
+
+      setTimeout(() => {
+        setIsRunning(false);
+        setAuditProgress("");
+        // Redirect to reports page
+        router.push(`/dashboard/${productId}/audit/positioning/reports`);
+      }, 1000);
+    } catch (error) {
+      console.error("Positioning Audit failed:", error);
+      setAuditProgress("Audit failed. Please try again.");
+      setTimeout(() => {
+        setIsRunning(false);
+        setAuditProgress("");
+      }, 2000);
+    }
   };
 
   return (
     <div className="space-y-8">
       {/* Header - Blue gradient theme */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <Button variant="ghost" onClick={() => router.back()}>
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Back
-          </Button>
-          <div>
-            <div className="flex items-center gap-3 mb-1">
-              <h1 className="text-3xl font-bold">Positioning Audit</h1>
-              <Badge className="bg-blue-100 text-blue-700 border-blue-200">
-                <Target className="h-3 w-3 mr-1" />
-                Category Defense
-              </Badge>
-            </div>
-            <p className="text-slate-500">
-              Own your category or become a feature
-            </p>
-          </div>
-        </div>
-        <Button
-          onClick={handleRunAudit}
-          disabled={isRunning}
-          className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:from-blue-700 hover:to-indigo-700 relative"
-        >
-          {isRunning ? (
-            <>
-              <Zap className="h-4 w-4 mr-2 animate-spin" />
-              Analyzing...
-            </>
-          ) : (
-            <>
-              <Target className="h-4 w-4 mr-2" />
-              Run Positioning Audit
-              <span className="ml-2 px-2 py-0.5 bg-white/20 text-white text-xs font-medium rounded-full">
-                Coming Soon
-              </span>
-            </>
-          )}
+      <div className="flex items-center gap-4">
+        <Button variant="ghost" onClick={() => router.back()}>
+          <ArrowLeft className="h-4 w-4 mr-2" />
+          Back
         </Button>
+        <div>
+          <div className="flex items-center gap-3 mb-1">
+            <h1 className="text-3xl font-bold">Positioning Audit</h1>
+            <Badge className="bg-blue-100 text-blue-700 border-blue-200">
+              <Target className="h-3 w-3 mr-1" />
+              Category Defense
+            </Badge>
+          </div>
+          <p className="text-slate-500">
+            Own your category or become a feature
+          </p>
+        </div>
       </div>
+
+      {/* URL Input Section */}
+      <Card className="border-blue-200 bg-blue-50/50">
+        <CardContent className="pt-6">
+          <div className="space-y-4">
+            <div className="flex items-start gap-3">
+              <Search className="h-5 w-5 text-blue-600 mt-0.5" />
+              <div className="flex-1">
+                <h3 className="font-semibold text-blue-900">
+                  Audit Any Page on Your Website
+                </h3>
+                <p className="text-sm text-blue-700">
+                  Enter any URL from your website to analyze your positioning.
+                  Leave as-is to audit your homepage, or enter a specific page
+                  URL to check product pages, landing pages, or about pages.
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center gap-3">
+              <input
+                type="text"
+                value={url}
+                onChange={(e) => setUrl(e.target.value)}
+                placeholder="Enter URL to audit (e.g., https://example.com)"
+                className="flex h-10 w-96 rounded-md border border-slate-300 bg-white px-3 py-2 text-sm placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:cursor-not-allowed disabled:opacity-50"
+                disabled={isRunning}
+              />
+              <Button
+                onClick={handleRunAudit}
+                disabled={isRunning || !url.trim()}
+                className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:from-blue-700 hover:to-indigo-700"
+                size="lg"
+              >
+                {isRunning ? (
+                  <>
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    {auditProgress}
+                  </>
+                ) : (
+                  <>
+                    <Target className="h-4 w-4 mr-2" />
+                    Run Positioning Audit
+                  </>
+                )}
+              </Button>
+            </div>
+            <div className="flex items-center gap-6 text-xs text-blue-700">
+              <div className="flex items-center gap-1.5">
+                <CheckCircle className="h-3.5 w-3.5" />
+                <span>Homepage default</span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <CheckCircle className="h-3.5 w-3.5" />
+                <span>Landing pages</span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <CheckCircle className="h-3.5 w-3.5" />
+                <span>About/Story pages</span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <CheckCircle className="h-3.5 w-3.5" />
+                <span>Product pages</span>
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Hero Banner - Strategic positioning theme */}
       <div className="relative overflow-hidden bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-700 rounded-2xl p-8 text-white">
@@ -100,7 +196,7 @@ export default function PositioningAuditPage() {
 
           <div className="grid md:grid-cols-3 gap-4">
             <div className="bg-white/10 backdrop-blur rounded-xl p-4">
-              <div className="text-3xl font-bold mb-1">4</div>
+              <div className="text-3xl font-bold mb-1">6</div>
               <div className="text-sm text-blue-100">Key Dimensions</div>
             </div>
             <div className="bg-white/10 backdrop-blur rounded-xl p-4">

@@ -7,7 +7,7 @@ import { user_prompt, UserPromptProduct } from "./user_prompt";
 export const fullAuditWithOpenAI = async (
   data: Omit<UserPromptProduct, "websiteContent">,
 ) => {
-  const client = getOpenAIClient();
+  const client = await getOpenAIClient();
 
   const webContent = await getWebsiteContent(data.website);
   const cleanContent = {
