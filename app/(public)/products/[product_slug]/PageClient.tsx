@@ -147,7 +147,7 @@ export default function ProductPageClient({
   return (
     <>
       {jsonLd && <JSONLD data={jsonLd} />}
-      <div className="min-h-screen bg-gradient-to-br pt-6 from-slate-50 via-white to-primary/5">
+      <div className="min-h-screen bg-gradient-to-br pt-20 from-slate-50 via-white to-primary/5">
         {/* Header */}
         <div className="relative bg-slate-100 max-w-6xl mx-auto rounded-xl">
           <div className="max-w-6xl mx-auto px-4 py-8">
