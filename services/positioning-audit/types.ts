@@ -17,6 +17,7 @@ export interface CategoryOwnershipResult {
   ownedKeywords: string[];
   missingKeywords: string[];
   categoryLeaders: string[];
+  categoryOwnershipLevel: "Dominant" | "Strong" | "Blended" | "Weak" | "Ghost";
   recommendations: string[];
 }
 
@@ -24,8 +25,13 @@ export interface UniqueValuePropositionResult {
   score: number;
   maxScore: number;
   identifiedUVP: string;
-  uvpClarity: "clear" | "somewhat clear" | "unclear";
-  uniquenessLevel: "highly unique" | "moderately unique" | "not unique";
+  uvpClarity: "Exceptional" | "Clear" | "Moderate" | "Unclear" | "Absent";
+  uniquenessLevel:
+    | "Highly Unique"
+    | "Distinctive"
+    | "Moderate"
+    | "Generic"
+    | "Common";
   supportingEvidence: string[];
   recommendations: string[];
 }
@@ -36,6 +42,12 @@ export interface CompetitiveDifferentiationResult {
   identifiedCompetitors: string[];
   differentiationFactors: string[];
   weakPoints: string[];
+  differentiationStrength:
+    | "Dominant"
+    | "Strong"
+    | "Moderate"
+    | "Weak"
+    | "Absent";
   recommendations: string[];
 }
 
@@ -43,8 +55,13 @@ export interface TargetAudienceClarityResult {
   score: number;
   maxScore: number;
   identifiedAudiences: string[];
-  audienceSpecificity: "very specific" | "somewhat specific" | "vague";
-  personaDepth: "detailed" | "basic" | "missing";
+  audienceSpecificity:
+    | "Laser-Focused"
+    | "Specific"
+    | "Moderate"
+    | "Vague"
+    | "Undefined";
+  personaDepth: "Comprehensive" | "Detailed" | "Basic" | "Minimal" | "Missing";
   recommendations: string[];
 }
 
@@ -53,15 +70,25 @@ export interface ProblemSolutionFitResult {
   maxScore: number;
   identifiedProblems: string[];
   solutionClarity: string;
-  fitQuality: "strong" | "moderate" | "weak";
+  fitQuality: "Exceptional" | "Strong" | "Moderate" | "Weak" | "Poor";
   recommendations: string[];
 }
 
 export interface MessagingConsistencyResult {
   score: number;
   maxScore: number;
-  toneConsistency: "consistent" | "somewhat consistent" | "inconsistent";
-  valuePropConsistency: "consistent" | "somewhat consistent" | "inconsistent";
+  toneConsistency:
+    | "Exceptional"
+    | "Consistent"
+    | "Moderate"
+    | "Inconsistent"
+    | "Chaotic";
+  valuePropConsistency:
+    | "Exceptional"
+    | "Consistent"
+    | "Moderate"
+    | "Inconsistent"
+    | "Contradictory";
   channelAlignment: string[];
   recommendations: string[];
 }

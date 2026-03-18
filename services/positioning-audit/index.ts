@@ -1,5 +1,24 @@
 export { runPositioningAudit } from "./positioning-audit";
-export { runStandalonePositioningAudit } from "./positioning-audit-standalone";
+export {
+  getOrRunPositioningAudit,
+  runStandalonePositioningAudit,
+} from "./positioning-audit-standalone";
+export {
+  createPositioningReport,
+  deleteAllPositioningReports,
+  deletePositioningReport,
+  getAveragePositioningScore,
+  getLatestPositioningReport,
+  getPositioningReportById,
+  getPositioningReportCount,
+  getPositioningReports,
+  getPositioningReportsByBand,
+  getPositioningReportsByScoreRange,
+  getPositioningTrendData,
+  hasRecentPositioningReport,
+  PositioningReport,
+  updatePositioningReport,
+} from "./positioning-report-crud";
 export type {
   CategoryOwnershipResult,
   CompetitiveDifferentiationResult,

@@ -136,6 +136,13 @@ Evaluate:
 4. What keywords are they missing that would strengthen category ownership?
 5. Who are the likely category leaders they're competing against?
 
+Rate category ownership on a 5-level scale:
+- Dominant (90-100): They own the category completely
+- Strong (70-89): Clear category leadership
+- Blended (50-69): Understandable but not distinct
+- Weak (30-49): Unclear category positioning
+- Ghost (0-29): Invisible or non-existent category presence
+
 Be specific and actionable in your analysis.`,
       },
       {
@@ -154,6 +161,11 @@ Be specific and actionable in your analysis.`,
             score: {
               type: "integer",
               description: "Score from 0-100",
+            },
+            categoryOwnershipLevel: {
+              type: "string",
+              enum: ["Dominant", "Strong", "Blended", "Weak", "Ghost"],
+              description: "5-level category ownership assessment",
             },
             categoryDefinition: {
               type: "string",
@@ -185,6 +197,7 @@ Be specific and actionable in your analysis.`,
           },
           required: [
             "score",
+            "categoryOwnershipLevel",
             "categoryDefinition",
             "ownedKeywords",
             "missingKeywords",
@@ -214,7 +227,7 @@ async function analyzeUniqueValueProposition(
   url: string,
 ): Promise<UniqueValuePropositionResult> {
   const response = await openai.chat.completions.create({
-    model: "gpt-4o-mini-search-preview",
+    model: "gpt-4o-mini",
     messages: [
       {
         role: "system",
@@ -225,6 +238,10 @@ Evaluate:
 2. How clearly is it communicated?
 3. How unique is it compared to typical solutions in the market?
 4. What evidence supports their UVP claims?
+
+Rate UVP on 5-level scales:
+- UVP Clarity: Exceptional, Clear, Moderate, Unclear, Absent
+- Uniqueness Level: Highly Unique, Distinctive, Moderate, Generic, Common
 
 Be critical and specific. A strong UVP is clear, specific, and meaningfully different from alternatives.`,
       },
@@ -252,13 +269,19 @@ Be critical and specific. A strong UVP is clear, specific, and meaningfully diff
             },
             uvpClarity: {
               type: "string",
-              enum: ["clear", "somewhat clear", "unclear"],
-              description: "How clearly the UVP is communicated",
+              enum: ["Exceptional", "Clear", "Moderate", "Unclear", "Absent"],
+              description: "5-level UVP clarity assessment",
             },
             uniquenessLevel: {
               type: "string",
-              enum: ["highly unique", "moderately unique", "not unique"],
-              description: "How unique the value proposition is",
+              enum: [
+                "Highly Unique",
+                "Distinctive",
+                "Moderate",
+                "Generic",
+                "Common",
+              ],
+              description: "5-level uniqueness assessment",
             },
             supportingEvidence: {
               type: "array",
@@ -284,6 +307,7 @@ Be critical and specific. A strong UVP is clear, specific, and meaningfully diff
         },
       },
     },
+    temperature: 0.3,
   });
 
   const result = JSON.parse(
@@ -314,6 +338,13 @@ Evaluate:
 3. Where are their weak points or gaps in differentiation?
 4. How defensible is their positioning?
 
+Rate differentiation strength on a 5-level scale:
+- Dominant (90-100): Unassailable differentiation
+- Strong (70-89): Clear competitive advantages
+- Moderate (50-69): Some differentiation present
+- Weak (30-49): Minimal differentiation
+- Absent (0-29): No meaningful differentiation
+
 Be honest and critical. Weak differentiation is a common startup problem.`,
       },
       {
@@ -332,6 +363,11 @@ Be honest and critical. Weak differentiation is a common startup problem.`,
             score: {
               type: "integer",
               description: "Score from 0-100",
+            },
+            differentiationStrength: {
+              type: "string",
+              enum: ["Dominant", "Strong", "Moderate", "Weak", "Absent"],
+              description: "5-level differentiation strength assessment",
             },
             identifiedCompetitors: {
               type: "array",
@@ -358,6 +394,7 @@ Be honest and critical. Weak differentiation is a common startup problem.`,
           },
           required: [
             "score",
+            "differentiationStrength",
             "identifiedCompetitors",
             "differentiationFactors",
             "weakPoints",
@@ -398,6 +435,10 @@ Evaluate:
 3. Do they show depth of understanding (personas, use cases, pain points)?
 4. Are they trying to serve everyone or a specific niche?
 
+Rate on 5-level scales:
+- Audience Specificity: Laser-Focused, Specific, Moderate, Vague, Undefined
+- Persona Depth: Comprehensive, Detailed, Basic, Minimal, Missing
+
 Specific, well-defined audiences indicate stronger positioning.`,
       },
       {
@@ -424,13 +465,25 @@ Specific, well-defined audiences indicate stronger positioning.`,
             },
             audienceSpecificity: {
               type: "string",
-              enum: ["very specific", "somewhat specific", "vague"],
-              description: "How specifically the audience is defined",
+              enum: [
+                "Laser-Focused",
+                "Specific",
+                "Moderate",
+                "Vague",
+                "Undefined",
+              ],
+              description: "5-level audience specificity assessment",
             },
             personaDepth: {
               type: "string",
-              enum: ["detailed", "basic", "missing"],
-              description: "Depth of persona/audience understanding shown",
+              enum: [
+                "Comprehensive",
+                "Detailed",
+                "Basic",
+                "Minimal",
+                "Missing",
+              ],
+              description: "5-level persona depth assessment",
             },
             recommendations: {
               type: "array",
@@ -481,6 +534,13 @@ Evaluate:
 3. How strong is the fit between problem and solution?
 4. Do they demonstrate deep understanding of the problem?
 
+Rate fit quality on a 5-level scale:
+- Exceptional (90-100): Perfect problem-solution alignment
+- Strong (70-89): Clear problem with well-defined solution
+- Moderate (50-69): Problem and solution somewhat aligned
+- Weak (30-49): Unclear problem or solution
+- Poor (0-29): No clear problem-solution fit
+
 Strong problem-solution fit is fundamental to good positioning.`,
       },
       {
@@ -512,8 +572,8 @@ Strong problem-solution fit is fundamental to good positioning.`,
             },
             fitQuality: {
               type: "string",
-              enum: ["strong", "moderate", "weak"],
-              description: "Quality of fit between problem and solution",
+              enum: ["Exceptional", "Strong", "Moderate", "Weak", "Poor"],
+              description: "5-level problem-solution fit assessment",
             },
             recommendations: {
               type: "array",
@@ -564,6 +624,10 @@ Evaluate:
 3. Do different sections/pages align in their messaging?
 4. Are there contradictions or mixed messages?
 
+Rate on 5-level scales:
+- Tone Consistency: Exceptional, Consistent, Moderate, Inconsistent, Chaotic
+- Value Prop Consistency: Exceptional, Consistent, Moderate, Inconsistent, Contradictory
+
 Consistent messaging builds trust and clarity.`,
       },
       {
@@ -585,13 +649,25 @@ Consistent messaging builds trust and clarity.`,
             },
             toneConsistency: {
               type: "string",
-              enum: ["consistent", "somewhat consistent", "inconsistent"],
-              description: "Consistency of tone and voice",
+              enum: [
+                "Exceptional",
+                "Consistent",
+                "Moderate",
+                "Inconsistent",
+                "Chaotic",
+              ],
+              description: "5-level tone consistency assessment",
             },
             valuePropConsistency: {
               type: "string",
-              enum: ["consistent", "somewhat consistent", "inconsistent"],
-              description: "Consistency of value proposition messaging",
+              enum: [
+                "Exceptional",
+                "Consistent",
+                "Moderate",
+                "Inconsistent",
+                "Contradictory",
+              ],
+              description: "5-level value prop consistency assessment",
             },
             channelAlignment: {
               type: "array",

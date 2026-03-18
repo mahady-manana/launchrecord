@@ -10,7 +10,6 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import type { PositioningAuditResult } from "@/services/positioning-audit";
-import { useProductStore } from "@/stores/product-store";
 import {
   AlertCircle,
   ArrowLeft,
@@ -25,68 +24,36 @@ import {
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
-export default function PositioningReportsPage() {
+export default function PositioningReportDetailPage() {
   const params = useParams();
   const router = useRouter();
   const productId = params.product as string;
-  const { selectedProduct } = useProductStore();
+  const reportId = params.report_id as string;
 
   const [report, setReport] = useState<PositioningAuditResult | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const loadReport = async () => {
-      // First try to load from API (database)
       try {
         const response = await fetch(
-          `/api/positioning-reports?productId=${productId}&type=latest`,
+          `/api/positioning-reports?reportId=${reportId}`,
         );
         if (response.ok) {
-          const report = await response.json();
-          setReport(report);
-          setIsLoading(false);
-          return;
+          const data = await response.json();
+          setReport(data);
         }
       } catch (error) {
-        console.error("Failed to load report from database:", error);
+        console.error("Failed to load report:", error);
+      } finally {
+        setIsLoading(false);
       }
-
-      // Fallback to sessionStorage
-      const storedResult = sessionStorage.getItem("positioningAuditResult");
-
-      if (storedResult) {
-        try {
-          const parsed = JSON.parse(storedResult);
-          // Verify it's for this product
-          if (
-            parsed.url.includes(selectedProduct?.website || "") ||
-            parsed.productId === productId
-          ) {
-            setReport(parsed);
-          }
-        } catch (error) {
-          console.error("Failed to parse audit result:", error);
-        }
-      }
-
-      setIsLoading(false);
     };
 
     loadReport();
-  }, [productId, selectedProduct?.website]);
+  }, [reportId]);
 
-  const getBadgeColor = (
-    value: string,
-    type:
-      | "clarity"
-      | "uniqueness"
-      | "specificity"
-      | "depth"
-      | "fit"
-      | "consistency"
-      | "strength"
-      | "ownership",
-  ) => {
+  const getBadgeColor = (value: string) => {
     const colorMap: Record<string, string> = {
       // 5-level scales - Green to Red gradient
       Exceptional: "bg-green-100 text-green-700 border-green-200",
@@ -177,9 +144,10 @@ export default function PositioningReportsPage() {
                 <Target className="h-12 w-12 text-blue-600" />
               </div>
             </div>
-            <CardTitle>No Report Available</CardTitle>
+            <CardTitle>Report Not Found</CardTitle>
             <CardDescription>
-              Run a positioning audit to generate your category position report
+              Unable to load the positioning report. It may have been deleted or
+              never existed.
             </CardDescription>
           </CardHeader>
           <CardContent className="flex justify-center gap-4">
@@ -345,17 +313,15 @@ export default function PositioningReportsPage() {
                 </h4>
                 <div className="flex flex-wrap gap-2">
                   {report.categoryOwnership.categoryLeaders.length > 0 ? (
-                    report.categoryOwnership.categoryLeaders.map(
-                      (leader, idx) => (
-                        <Badge
-                          key={idx}
-                          variant="outline"
-                          className="bg-slate-100"
-                        >
-                          {leader}
-                        </Badge>
-                      ),
-                    )
+                    report.categoryOwnership.categoryLeaders.map((leader) => (
+                      <Badge
+                        key={leader}
+                        variant="outline"
+                        className="bg-slate-100"
+                      >
+                        {leader}
+                      </Badge>
+                    ))
                   ) : (
                     <span className="text-sm text-slate-500">
                       No competitors identified
@@ -372,9 +338,9 @@ export default function PositioningReportsPage() {
                 </h4>
                 <div className="flex flex-wrap gap-2">
                   {report.categoryOwnership.ownedKeywords.length > 0 ? (
-                    report.categoryOwnership.ownedKeywords.map((kw, idx) => (
+                    report.categoryOwnership.ownedKeywords.map((kw) => (
                       <Badge
-                        key={idx}
+                        key={kw}
                         className="bg-green-100 text-green-700 border-green-200"
                       >
                         {kw}
@@ -393,9 +359,9 @@ export default function PositioningReportsPage() {
                 </h4>
                 <div className="flex flex-wrap gap-2">
                   {report.categoryOwnership.missingKeywords.length > 0 ? (
-                    report.categoryOwnership.missingKeywords.map((kw, idx) => (
+                    report.categoryOwnership.missingKeywords.map((kw) => (
                       <Badge
-                        key={idx}
+                        key={kw}
                         className="bg-orange-100 text-orange-700 border-orange-200"
                       >
                         {kw}
@@ -416,9 +382,9 @@ export default function PositioningReportsPage() {
                   Recommendations
                 </h4>
                 <ul className="space-y-1">
-                  {report.categoryOwnership.recommendations.map((rec, idx) => (
+                  {report.categoryOwnership.recommendations.map((rec) => (
                     <li
-                      key={idx}
+                      key={rec}
                       className="text-sm text-blue-800 flex items-start gap-2"
                     >
                       <span className="text-blue-600 mt-0.5">•</span>
@@ -463,7 +429,6 @@ export default function PositioningReportsPage() {
                   <Badge
                     className={getBadgeColor(
                       report.uniqueValueProposition.uvpClarity,
-                      "clarity",
                     )}
                   >
                     {report.uniqueValueProposition.uvpClarity}
@@ -476,7 +441,6 @@ export default function PositioningReportsPage() {
                   <Badge
                     className={getBadgeColor(
                       report.uniqueValueProposition.uniquenessLevel,
-                      "uniqueness",
                     )}
                   >
                     {report.uniqueValueProposition.uniquenessLevel}
@@ -492,9 +456,9 @@ export default function PositioningReportsPage() {
                 </h4>
                 <ul className="space-y-1">
                   {report.uniqueValueProposition.supportingEvidence.map(
-                    (ev, idx) => (
+                    (ev) => (
                       <li
-                        key={idx}
+                        key={ev}
                         className="text-sm text-slate-600 flex items-start gap-2"
                       >
                         <span className="text-indigo-600 mt-0.5">•</span>
@@ -512,17 +476,15 @@ export default function PositioningReportsPage() {
                   Recommendations
                 </h4>
                 <ul className="space-y-1">
-                  {report.uniqueValueProposition.recommendations.map(
-                    (rec, idx) => (
-                      <li
-                        key={idx}
-                        className="text-sm text-indigo-800 flex items-start gap-2"
-                      >
-                        <span className="text-indigo-600 mt-0.5">•</span>
-                        <span>{rec}</span>
-                      </li>
-                    ),
-                  )}
+                  {report.uniqueValueProposition.recommendations.map((rec) => (
+                    <li
+                      key={rec}
+                      className="text-sm text-indigo-800 flex items-start gap-2"
+                    >
+                      <span className="text-indigo-600 mt-0.5">•</span>
+                      <span>{rec}</span>
+                    </li>
+                  ))}
                 </ul>
               </div>
             )}
@@ -545,15 +507,28 @@ export default function PositioningReportsPage() {
           <div className="space-y-4">
             <div>
               <h4 className="font-semibold text-slate-900 mb-2">
+                Differentiation Strength
+              </h4>
+              <Badge
+                className={getBadgeColor(
+                  report.competitiveDifferentiation.differentiationStrength,
+                )}
+              >
+                {report.competitiveDifferentiation.differentiationStrength}
+              </Badge>
+            </div>
+
+            <div>
+              <h4 className="font-semibold text-slate-900 mb-2">
                 Differentiation Factors
               </h4>
               <div className="space-y-2">
                 {report.competitiveDifferentiation.differentiationFactors
                   .length > 0 ? (
                   report.competitiveDifferentiation.differentiationFactors.map(
-                    (factor, idx) => (
+                    (factor) => (
                       <div
-                        key={idx}
+                        key={factor}
                         className="p-3 bg-green-50 border border-green-200 rounded-lg"
                       >
                         <span className="text-sm text-green-800">{factor}</span>
@@ -575,9 +550,9 @@ export default function PositioningReportsPage() {
                 </h4>
                 <div className="space-y-2">
                   {report.competitiveDifferentiation.weakPoints.map(
-                    (weakness, idx) => (
+                    (weakness) => (
                       <div
-                        key={idx}
+                        key={weakness}
                         className="p-3 bg-orange-50 border border-orange-200 rounded-lg"
                       >
                         <span className="text-sm text-orange-800">
@@ -597,9 +572,9 @@ export default function PositioningReportsPage() {
                 </h4>
                 <ul className="space-y-1">
                   {report.competitiveDifferentiation.recommendations.map(
-                    (rec, idx) => (
+                    (rec) => (
                       <li
-                        key={idx}
+                        key={rec}
                         className="text-sm text-purple-800 flex items-start gap-2"
                       >
                         <span className="text-purple-600 mt-0.5">•</span>
@@ -634,9 +609,9 @@ export default function PositioningReportsPage() {
                   {report.targetAudienceClarity.identifiedAudiences.length >
                   0 ? (
                     report.targetAudienceClarity.identifiedAudiences.map(
-                      (audience, idx) => (
+                      (audience) => (
                         <Badge
-                          key={idx}
+                          key={audience}
                           variant="outline"
                           className="bg-blue-50 text-blue-700 border-blue-200"
                         >
@@ -660,7 +635,6 @@ export default function PositioningReportsPage() {
                   <Badge
                     className={getBadgeColor(
                       report.targetAudienceClarity.audienceSpecificity,
-                      "specificity",
                     )}
                   >
                     {report.targetAudienceClarity.audienceSpecificity}
@@ -673,7 +647,6 @@ export default function PositioningReportsPage() {
                   <Badge
                     className={getBadgeColor(
                       report.targetAudienceClarity.personaDepth,
-                      "depth",
                     )}
                   >
                     {report.targetAudienceClarity.personaDepth}
@@ -687,17 +660,15 @@ export default function PositioningReportsPage() {
                     Recommendations
                   </h4>
                   <ul className="space-y-1">
-                    {report.targetAudienceClarity.recommendations.map(
-                      (rec, idx) => (
-                        <li
-                          key={idx}
-                          className="text-sm text-blue-800 flex items-start gap-2"
-                        >
-                          <span className="text-blue-600 mt-0.5">•</span>
-                          <span>{rec}</span>
-                        </li>
-                      ),
-                    )}
+                    {report.targetAudienceClarity.recommendations.map((rec) => (
+                      <li
+                        key={rec}
+                        className="text-sm text-blue-800 flex items-start gap-2"
+                      >
+                        <span className="text-blue-600 mt-0.5">•</span>
+                        <span>{rec}</span>
+                      </li>
+                    ))}
                   </ul>
                 </div>
               )}
@@ -724,9 +695,9 @@ export default function PositioningReportsPage() {
                 <div className="space-y-2">
                   {report.problemSolutionFit.identifiedProblems.length > 0 ? (
                     report.problemSolutionFit.identifiedProblems.map(
-                      (problem, idx) => (
+                      (problem) => (
                         <div
-                          key={idx}
+                          key={problem}
                           className="p-3 bg-slate-50 border border-slate-200 rounded-lg"
                         >
                           <span className="text-sm text-slate-700">
@@ -760,7 +731,6 @@ export default function PositioningReportsPage() {
                 <Badge
                   className={getBadgeColor(
                     report.problemSolutionFit.fitQuality,
-                    "fit",
                   )}
                 >
                   {report.problemSolutionFit.fitQuality}
@@ -773,17 +743,15 @@ export default function PositioningReportsPage() {
                     Recommendations
                   </h4>
                   <ul className="space-y-1">
-                    {report.problemSolutionFit.recommendations.map(
-                      (rec, idx) => (
-                        <li
-                          key={idx}
-                          className="text-sm text-indigo-800 flex items-start gap-2"
-                        >
-                          <span className="text-indigo-600 mt-0.5">•</span>
-                          <span>{rec}</span>
-                        </li>
-                      ),
-                    )}
+                    {report.problemSolutionFit.recommendations.map((rec) => (
+                      <li
+                        key={rec}
+                        className="text-sm text-indigo-800 flex items-start gap-2"
+                      >
+                        <span className="text-indigo-600 mt-0.5">•</span>
+                        <span>{rec}</span>
+                      </li>
+                    ))}
                   </ul>
                 </div>
               )}
@@ -813,7 +781,6 @@ export default function PositioningReportsPage() {
                 <Badge
                   className={getBadgeColor(
                     report.messagingConsistency.toneConsistency,
-                    "consistency",
                   )}
                 >
                   {report.messagingConsistency.toneConsistency}
@@ -826,7 +793,6 @@ export default function PositioningReportsPage() {
                 <Badge
                   className={getBadgeColor(
                     report.messagingConsistency.valuePropConsistency,
-                    "consistency",
                   )}
                 >
                   {report.messagingConsistency.valuePropConsistency}
@@ -841,9 +807,9 @@ export default function PositioningReportsPage() {
                 </h4>
                 <ul className="space-y-1">
                   {report.messagingConsistency.channelAlignment.map(
-                    (channel, idx) => (
+                    (channel) => (
                       <li
-                        key={idx}
+                        key={channel}
                         className="text-sm text-slate-600 flex items-start gap-2"
                       >
                         <span className="text-teal-600 mt-0.5">•</span>
@@ -861,17 +827,15 @@ export default function PositioningReportsPage() {
                   Recommendations
                 </h4>
                 <ul className="space-y-1">
-                  {report.messagingConsistency.recommendations.map(
-                    (rec, idx) => (
-                      <li
-                        key={idx}
-                        className="text-sm text-teal-800 flex items-start gap-2"
-                      >
-                        <span className="text-teal-600 mt-0.5">•</span>
-                        <span>{rec}</span>
-                      </li>
-                    ),
-                  )}
+                  {report.messagingConsistency.recommendations.map((rec) => (
+                    <li
+                      key={rec}
+                      className="text-sm text-teal-800 flex items-start gap-2"
+                    >
+                      <span className="text-teal-600 mt-0.5">•</span>
+                      <span>{rec}</span>
+                    </li>
+                  ))}
                 </ul>
               </div>
             )}
