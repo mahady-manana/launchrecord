@@ -105,9 +105,10 @@ export async function POST(request: NextRequest) {
         description: surveyData.description,
         tagline: surveyData.tagline,
         name: surveyData.saasName,
-        website: normalizeUrl(surveyData.saasUrl, {
+        website: normalizeUrl(product.website!, {
           stripWWW: false,
           defaultProtocol: "https",
+          forceHttps: true,
         }),
         founder: surveyData.founderName,
         revenueStage: surveyData.revenue,
