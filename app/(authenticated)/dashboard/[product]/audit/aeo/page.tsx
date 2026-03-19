@@ -9,13 +9,15 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { runStandaloneAEOAudit } from "@/services/aeo-audit/aeo-audit-standalone";
 import { useProductStore } from "@/stores/product-store";
 import {
+  AlertCircle,
   ArrowLeft,
+  BarChart3,
   Bot,
   Brain,
   CheckCircle,
+  Clock,
   Cpu,
   Eye,
   Loader2,
@@ -26,7 +28,18 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+
+interface AEOReport {
+  _id: string;
+  url: string;
+  score: number;
+  maxScore: number;
+  checks: Array<{ passed: boolean; score: number }>;
+  createdAt: string;
+  cacheAge?: number;
+  fromCache?: boolean;
+}
 
 export default function AEOAuditPage() {
   const params = useParams();
@@ -37,26 +50,92 @@ export default function AEOAuditPage() {
   const [url, setUrl] = useState(selectedProduct?.website || "");
   const [isRunning, setIsRunning] = useState(false);
   const [auditProgress, setAuditProgress] = useState("");
+  const [reports, setReports] = useState<AEOReport[]>([]);
+  const [isLoadingReports, setIsLoadingReports] = useState(true);
+  const [showCacheWarning, setShowCacheWarning] = useState(false);
+  const [cachedReport, setCachedReport] = useState<AEOReport | null>(null);
+  const [auditError, setAuditError] = useState<string | null>(null);
 
-  const handleRunAudit = async () => {
+  useEffect(() => {
+    loadReports();
+  }, [productId]);
+
+  const loadReports = async () => {
+    try {
+      setIsLoadingReports(true);
+      const response = await fetch(
+        `/api/aeo-reports?productId=${productId}&page=1&limit=5`,
+      );
+      if (response.ok) {
+        const data = await response.json();
+        setReports(data.reports || []);
+      }
+    } catch (error) {
+      console.error("Failed to load reports:", error);
+    } finally {
+      setIsLoadingReports(false);
+    }
+  };
+
+  const getScoreColor = (score: number) => {
+    if (score >= 90) return "text-green-600";
+    if (score >= 70) return "text-lime-600";
+    if (score >= 50) return "text-yellow-600";
+    if (score >= 30) return "text-orange-600";
+    return "text-red-600";
+  };
+
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+    });
+  };
+
+  const handleRunAudit = async (force = false) => {
     if (!url.trim()) {
       alert("Please enter a URL to audit");
       return;
     }
 
+    setAuditError(null);
     setIsRunning(true);
-    setAuditProgress("Initializing AEO audit...");
+    setAuditProgress("Checking for existing reports...");
 
     try {
       const websiteUrl = url.startsWith("http") ? url : `https://${url}`;
 
-      setAuditProgress("Scanning AI engine visibility...");
-
-      const result = await runStandaloneAEOAudit({
-        url: websiteUrl,
+      // Call API endpoint which handles database operations and caching
+      const response = await fetch("/api/aeo-audit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          url: websiteUrl,
+          productId: selectedProduct?.id,
+          saveToDb: true,
+          force: force,
+        }),
       });
 
-      setAuditProgress("Analyzing semantic authority...");
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Audit failed");
+      }
+
+      const result = await response.json();
+
+      // Check if this is a cached report
+      if (result.fromCache && !force) {
+        setCachedReport(result);
+        setShowCacheWarning(true);
+        setIsRunning(false);
+        setAuditProgress("");
+        return;
+      }
+
+      setAuditProgress("Saving results...");
 
       // Store result in session storage
       sessionStorage.setItem(
@@ -70,19 +149,32 @@ export default function AEOAuditPage() {
 
       setAuditProgress("Complete!");
 
+      // Reload reports list
+      await loadReports();
+
       setTimeout(() => {
         setIsRunning(false);
         setAuditProgress("");
-        // Redirect to reports page
-        router.push(`/dashboard/${productId}/audit/aeo/reports`);
+        // Redirect to the specific report page
+        if (result._id) {
+          router.push(
+            `/dashboard/${productId}/audit/aeo/reports/${result._id}`,
+          );
+        } else {
+          router.push(`/dashboard/${productId}/audit/aeo/reports`);
+        }
       }, 1000);
     } catch (error) {
       console.error("AEO Audit failed:", error);
-      setAuditProgress("Audit failed. Please try again.");
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : "Audit failed. Please try again.";
+      setAuditError(errorMessage);
+      setAuditProgress("");
       setTimeout(() => {
         setIsRunning(false);
-        setAuditProgress("");
-      }, 2000);
+      }, 500);
     }
   };
 
@@ -137,7 +229,7 @@ export default function AEOAuditPage() {
                 disabled={isRunning}
               />
               <Button
-                onClick={handleRunAudit}
+                onClick={() => handleRunAudit()}
                 disabled={isRunning || !url.trim()}
                 className="bg-gradient-to-r from-cyan-600 to-blue-600 text-white hover:from-cyan-700 hover:to-blue-700"
                 size="lg"
@@ -156,6 +248,139 @@ export default function AEOAuditPage() {
               </Button>
             </div>
           </div>
+        </CardContent>
+      </Card>
+
+      {/* Error Display */}
+      {auditError && (
+        <Card className="border-red-200 bg-red-50">
+          <CardContent className="pt-6">
+            <div className="flex items-start gap-4">
+              <div className="p-2 bg-red-100 rounded-full">
+                <AlertCircle className="h-6 w-6 text-red-600" />
+              </div>
+              <div className="flex-1">
+                <h3 className="text-lg font-semibold text-red-900 mb-2">
+                  Audit Failed
+                </h3>
+                <p className="text-red-700 mb-4">{auditError}</p>
+                <div className="flex gap-3">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setAuditError(null)}
+                  >
+                    Dismiss
+                  </Button>
+                  <Button
+                    size="sm"
+                    onClick={() => handleRunAudit(true)}
+                    className="bg-red-600 text-white hover:bg-red-700"
+                  >
+                    Try Again
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Recent Reports */}
+      <Card>
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle className="flex items-center gap-2">
+                <BarChart3 className="h-5 w-5 text-cyan-600" />
+                Recent Reports
+              </CardTitle>
+              <CardDescription>Your latest AEO audit results</CardDescription>
+            </div>
+            {reports.length > 0 && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() =>
+                  router.push(`/dashboard/${productId}/audit/aeo/reports`)
+                }
+              >
+                View All
+              </Button>
+            )}
+          </div>
+        </CardHeader>
+        <CardContent>
+          {isLoadingReports ? (
+            <div className="flex items-center justify-center py-8">
+              <Loader2 className="h-6 w-6 animate-spin text-cyan-600" />
+            </div>
+          ) : reports.length === 0 ? (
+            <div className="text-center py-8">
+              <div className="flex justify-center mb-4">
+                <div className="p-4 bg-cyan-100 rounded-full">
+                  <Bot className="h-8 w-8 text-cyan-600" />
+                </div>
+              </div>
+              <h3 className="text-lg font-semibold text-slate-900 mb-2">
+                No Reports Yet
+              </h3>
+              <p className="text-slate-500 mb-4">
+                Run your first AEO audit to see results here
+              </p>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {reports.map((report) => (
+                <div
+                  key={report._id}
+                  className="flex items-center justify-between p-4 rounded-lg border border-slate-200 hover:border-cyan-300 hover:bg-cyan-50 transition-all cursor-pointer"
+                  onClick={() =>
+                    router.push(
+                      `/dashboard/${productId}/audit/aeo/reports/${report._id}`,
+                    )
+                  }
+                >
+                  <div className="flex items-center gap-4 flex-1">
+                    <div
+                      className={`text-2xl font-bold ${getScoreColor(report.score)}`}
+                    >
+                      {report.score}
+                    </div>
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 mb-1">
+                        <Badge
+                          className={
+                            report.score >= 70
+                              ? "bg-green-100 text-green-700 border-green-200"
+                              : report.score >= 50
+                                ? "bg-yellow-100 text-yellow-700 border-yellow-200"
+                                : "bg-red-100 text-red-700 border-red-200"
+                          }
+                        >
+                          {report.score >= 70
+                            ? "Good"
+                            : report.score >= 50
+                              ? "Moderate"
+                              : "Needs Work"}
+                        </Badge>
+                        <span className="text-xs text-slate-500 flex items-center gap-1">
+                          <Clock className="h-3 w-3" />
+                          {formatDate(report.createdAt)}
+                        </span>
+                      </div>
+                      <div className="text-sm text-slate-600 truncate">
+                        {report.url}
+                      </div>
+                    </div>
+                  </div>
+                  <Button variant="ghost" size="sm">
+                    View Details
+                  </Button>
+                </div>
+              ))}
+            </div>
+          )}
         </CardContent>
       </Card>
 
@@ -422,6 +647,94 @@ export default function AEOAuditPage() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Cache Warning Dialog */}
+      {showCacheWarning && cachedReport && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <Card className="max-w-lg w-full">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <div className="p-2 bg-cyan-100 rounded-full">
+                  <Bot className="h-6 w-6 text-cyan-600" />
+                </div>
+                Recent Report Found
+              </CardTitle>
+              <CardDescription>
+                An AEO audit for this URL was already run recently
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="p-4 bg-cyan-50 border border-cyan-200 rounded-lg">
+                <p className="text-sm text-cyan-800 mb-3">
+                  <strong>Why are we showing this?</strong>
+                  <br />
+                  To ensure consistent and reliable scores, we cache audit
+                  results for 30 days. Running multiple audits on the same
+                  website can produce varying scores due to AI analysis
+                  differences, which undermines trust in the system.
+                </p>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div className="text-center p-3 bg-white border rounded-lg">
+                  <div
+                    className={`text-3xl font-bold ${getScoreColor(cachedReport.score)}`}
+                  >
+                    {cachedReport.score}
+                  </div>
+                  <div className="text-xs text-slate-500">Score</div>
+                </div>
+                <div className="text-center p-3 bg-white border rounded-lg">
+                  <div className="text-lg font-semibold text-slate-900">
+                    {cachedReport.score >= 70
+                      ? "Good"
+                      : cachedReport.score >= 50
+                        ? "Moderate"
+                        : "Needs Work"}
+                  </div>
+                  <div className="text-xs text-slate-500">Rating</div>
+                </div>
+              </div>
+
+              <div className="text-center text-sm text-slate-600">
+                Report generated {formatDate(cachedReport.createdAt)}(
+                {cachedReport.cacheAge} days ago)
+              </div>
+            </CardContent>
+            <div className="flex gap-3 p-6 pt-0">
+              <Button
+                variant="outline"
+                className="flex-1"
+                onClick={() => {
+                  setShowCacheWarning(false);
+                  setCachedReport(null);
+                  router.push(
+                    `/dashboard/${productId}/audit/aeo/reports/${cachedReport._id}`,
+                  );
+                }}
+              >
+                View Existing Report
+              </Button>
+              <Button
+                variant="outline"
+                className="flex-1"
+                onClick={() => {
+                  setShowCacheWarning(false);
+                  setCachedReport(null);
+                  handleRunAudit(true);
+                }}
+              >
+                Force New Audit
+              </Button>
+            </div>
+            <div className="px-6 pb-6">
+              <p className="text-xs text-center text-slate-500">
+                ⚠️ Force new audit only if the website has significantly changed
+              </p>
+            </div>
+          </Card>
+        </div>
+      )}
     </div>
   );
 }
