@@ -440,15 +440,6 @@ export default function ProductAuditPage({ params }: AuditPageProps) {
           /* No Audit - Show Start Card */
           <Card className="border-2 border-orange-200 shadow-xl">
             <CardHeader className="text-center pb-8">
-              <div className="flex justify-center mb-6">
-                <div className="relative">
-                  <div className="w-24 h-24 border-4 border-orange-200 rounded-full"></div>
-                  <div className="absolute top-0 left-0 w-24 h-24 border-4 border-orange-600 rounded-full border-t-transparent animate-spin"></div>
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <Zap className="h-10 w-10 text-orange-600" />
-                  </div>
-                </div>
-              </div>
               <CardTitle className="text-3xl">
                 Ready to Analyze Your SaaS?
               </CardTitle>
