@@ -1,5 +1,7 @@
 import { connectToDatabase } from "@/lib/db";
+import { generateUniqueSlug } from "@/lib/utils";
 import Product from "@/models/product";
+import { Types } from "mongoose";
 import { NextRequest, NextResponse } from "next/server";
 import normalizeUrl from "normalize-url";
 
@@ -29,13 +31,12 @@ export async function PUT(request: NextRequest) {
     }
 
     // Update product fields from survey answers
-    if (answers.name) {
-      product.name = answers.name;
-    }
+
     if (answers.website) {
       product.website = normalizeUrl(answers.website, {
         forceHttps: true,
         stripWWW: false,
+        defaultProtocol: "https",
       });
     }
     if (answers.tagline) {
@@ -53,6 +54,19 @@ export async function PUT(request: NextRequest) {
       product.topics = answers.topics || [];
     }
 
+    if (answers.name) {
+      product.name = answers.name;
+    }
+    if (answers.name) {
+      const slug = await generateUniqueSlug(answers.name, async (slug) => {
+        const existing = await Product.findOne({
+          slug,
+          _id: { $ne: new Types.ObjectId(productId) },
+        });
+        return !!existing;
+      });
+      product.slug = slug;
+    }
     // Merge surveyData (founder info, etc.)
     if (answers.surveyData) {
       Object.keys(answers.surveyData).forEach((key) => {

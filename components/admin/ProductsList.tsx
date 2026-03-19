@@ -2,6 +2,7 @@
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Dialog,
   DialogContent,
@@ -9,7 +10,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import clsx from "clsx";
 import { ExternalLink, Loader2, RefreshCw, TrendingUp } from "lucide-react";
@@ -47,8 +47,10 @@ export function ProductsList({
   onToggleSelect,
   onSelectAll,
 }: ProductsListProps) {
-  const allSelected = products.length > 0 && selectedProducts.size === products.length;
-  const someSelected = selectedProducts.size > 0 && selectedProducts.size < products.length;
+  const allSelected =
+    products.length > 0 && selectedProducts.size === products.length;
+  const someSelected =
+    selectedProducts.size > 0 && selectedProducts.size < products.length;
 
   return (
     <div className="space-y-2">
@@ -76,7 +78,9 @@ export function ProductsList({
               key={product._id}
               className={clsx(
                 "flex items-center gap-3 p-3 border rounded-lg transition-colors",
-                isSelected ? "bg-green-50 border-green-300" : "hover:bg-muted/50"
+                isSelected
+                  ? "bg-green-50 border-green-300"
+                  : "hover:bg-muted/50",
               )}
             >
               <Checkbox
@@ -84,7 +88,7 @@ export function ProductsList({
                 onCheckedChange={() => onToggleSelect(product._id)}
                 className="h-4 w-4 shrink-0"
               />
-              
+
               <div className="flex-1 min-w-0">
                 <div className="flex gap-3">
                   <div>
@@ -94,14 +98,16 @@ export function ProductsList({
                       width={32}
                       alt=""
                       className={clsx(
-                        "w-full h-full object-cover",
+                        "w-12 h-12 object-cover",
                         !product.logo && "opacity-50",
                       )}
                     />
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
-                      <span className="font-medium truncate">{product.name}</span>
+                      <span className="font-medium truncate">
+                        {product.name}
+                      </span>
                       <a
                         href={product.website}
                         target="_blank"

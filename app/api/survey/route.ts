@@ -1,7 +1,7 @@
 import { connectToDatabase } from "@/lib/db";
 import { getUserSession } from "@/lib/session";
-import Product from "@/models/product";
 import { generateUniqueSlug } from "@/lib/utils";
+import Product from "@/models/product";
 import { NextRequest, NextResponse } from "next/server";
 import normalizeUrl from "normalize-url";
 
@@ -28,6 +28,7 @@ export async function POST(request: NextRequest) {
     const normalizedUrl = normalizeUrl(saasUrl, {
       forceHttps: true,
       stripWWW: false,
+      defaultProtocol: "https",
     });
 
     // Check if product with this domain already exists
@@ -97,10 +98,13 @@ export async function POST(request: NextRequest) {
     }
 
     // Generate unique slug from product name
-    const slug = await generateUniqueSlug(saasName || "Unknown", async (slug) => {
-      const existing = await Product.findOne({ slug })
-      return !!existing
-    });
+    const slug = await generateUniqueSlug(
+      saasName || "Unknown",
+      async (slug) => {
+        const existing = await Product.findOne({ slug });
+        return !!existing;
+      },
+    );
 
     // Create incomplete product with early access flag
     const product = await Product.create({
