@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { PartyPopper } from "lucide-react";
+import { Star } from "lucide-react";
 import { useState } from "react";
 
 export function HeroSection() {
@@ -16,24 +16,30 @@ export function HeroSection() {
 
   return (
     <section className="py-12 pb-20 relative bg-gradient-to-t from-green-50 to-white">
-      <div className="space-y-8 px-4 max-w-6xl mx-auto ">
-        <div className="space-y-4">
-          <div className="flex items-center justify-start gap-4 flex-wrap">
-            <div className="bg-green-100 flex items-center justify-center gap-2 py-1.5 px-4 text-sm rounded-lg text-green-800">
-              <PartyPopper className="h-4 w-4" />
-              <p className="font-medium">
-                Whitelist is open for Sovereign Founders
+      <div className="space-y-8 relative px-4 max-w-6xl mx-auto ">
+        <div className="space-y-4 pt-8">
+          <div className="hidden md:flex items-center justify-center absolute bg-secondary rounded-full h-40 w-40 top-5 right-5 gap-4">
+            <div className="flex items-center justify-center flex-col text-center text-white">
+              <Star className="animate-spin" size={30} />
+              <p className="font-bold text-3xl pt-2">+ 5,500</p>
+              <p className="text-xl font-bold leading-5">
+                Startups <br /> <span>Audited</span>
               </p>
             </div>
           </div>
-          <p className="font-bold text-purple-700 uppercase tracking-wide">
+          <div className="flex md:hidden">
+            <p className="font-bold">
+              + 5,500 Startups <span>Audited</span>
+            </p>
+          </div>
+          <p className="font-bold text-sm text-purple-700 uppercase tracking-wide">
             The <span className="text-orange-500">#1 Platform</span> For
             Verified Sovereignty & Defensibility Ledger for Startups
           </p>
         </div>
 
         <div className="space-y-4">
-          <h1 className="text-5xl font-mono md:text-6xl font-semibold tracking-tighter text-slate-700 leading-[0.9]">
+          <h1 className="text-3xl font-mono md:text-5xl font-semibold tracking-tighter text-slate-700 leading-[0.9]">
             Audits your startup’s <br />
             <span className="text-orange-500">sovereignty</span> and{" "}
             <span className="text-green-600">defensibility</span>.

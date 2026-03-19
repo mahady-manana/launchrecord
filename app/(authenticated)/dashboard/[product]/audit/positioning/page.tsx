@@ -281,7 +281,94 @@ export default function PositioningAuditPage() {
           </div>
         </CardContent>
       </Card>
-
+      <Card>
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle className="flex items-center gap-2">
+                <BarChart3 className="h-5 w-5 text-blue-600" />
+                Recent Reports
+              </CardTitle>
+              <CardDescription>
+                Your latest positioning audit results
+              </CardDescription>
+            </div>
+            {reports.length > 0 && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() =>
+                  router.push(
+                    `/dashboard/${productId}/audit/positioning/reports`,
+                  )
+                }
+              >
+                View All
+              </Button>
+            )}
+          </div>
+        </CardHeader>
+        <CardContent>
+          {isLoadingReports ? (
+            <div className="flex items-center justify-center py-8">
+              <Loader2 className="h-6 w-6 animate-spin text-blue-600" />
+            </div>
+          ) : reports.length === 0 ? (
+            <div className="text-center py-8">
+              <div className="flex justify-center mb-4">
+                <div className="p-4 bg-blue-100 rounded-full">
+                  <Target className="h-8 w-8 text-blue-600" />
+                </div>
+              </div>
+              <h3 className="text-lg font-semibold text-slate-900 mb-2">
+                No Reports Yet
+              </h3>
+              <p className="text-slate-500 mb-4">
+                Run your first positioning audit to see results here
+              </p>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {reports.map((report) => (
+                <div
+                  key={report._id}
+                  className="flex items-center justify-between p-4 rounded-lg border border-slate-200 hover:border-blue-300 hover:bg-blue-50 transition-all cursor-pointer"
+                  onClick={() =>
+                    router.push(
+                      `/dashboard/${productId}/audit/positioning/reports/${report._id}`,
+                    )
+                  }
+                >
+                  <div className="flex items-center gap-4 flex-1">
+                    <div
+                      className={`text-2xl font-bold ${getScoreColor(report.overallScore)}`}
+                    >
+                      {report.overallScore}
+                    </div>
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 mb-1">
+                        <Badge className={getBandColor(report.positioningBand)}>
+                          {report.positioningBand}
+                        </Badge>
+                        <span className="text-xs text-slate-500 flex items-center gap-1">
+                          <Clock className="h-3 w-3" />
+                          {formatDate(report.createdAt)}
+                        </span>
+                      </div>
+                      <div className="text-sm text-slate-600 truncate">
+                        {report.url}
+                      </div>
+                    </div>
+                  </div>
+                  <Button variant="ghost" size="sm">
+                    View Details
+                  </Button>
+                </div>
+              ))}
+            </div>
+          )}
+        </CardContent>
+      </Card>
       {/* Error Display */}
       {auditError && (
         <Card className="border-red-200 bg-red-50">
@@ -469,94 +556,6 @@ export default function PositioningAuditPage() {
       </Card>
 
       {/* Recent Reports */}
-      <Card>
-        <CardHeader>
-          <div className="flex items-center justify-between">
-            <div>
-              <CardTitle className="flex items-center gap-2">
-                <BarChart3 className="h-5 w-5 text-blue-600" />
-                Recent Reports
-              </CardTitle>
-              <CardDescription>
-                Your latest positioning audit results
-              </CardDescription>
-            </div>
-            {reports.length > 0 && (
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() =>
-                  router.push(
-                    `/dashboard/${productId}/audit/positioning/reports`,
-                  )
-                }
-              >
-                View All
-              </Button>
-            )}
-          </div>
-        </CardHeader>
-        <CardContent>
-          {isLoadingReports ? (
-            <div className="flex items-center justify-center py-8">
-              <Loader2 className="h-6 w-6 animate-spin text-blue-600" />
-            </div>
-          ) : reports.length === 0 ? (
-            <div className="text-center py-8">
-              <div className="flex justify-center mb-4">
-                <div className="p-4 bg-blue-100 rounded-full">
-                  <Target className="h-8 w-8 text-blue-600" />
-                </div>
-              </div>
-              <h3 className="text-lg font-semibold text-slate-900 mb-2">
-                No Reports Yet
-              </h3>
-              <p className="text-slate-500 mb-4">
-                Run your first positioning audit to see results here
-              </p>
-            </div>
-          ) : (
-            <div className="space-y-3">
-              {reports.map((report) => (
-                <div
-                  key={report._id}
-                  className="flex items-center justify-between p-4 rounded-lg border border-slate-200 hover:border-blue-300 hover:bg-blue-50 transition-all cursor-pointer"
-                  onClick={() =>
-                    router.push(
-                      `/dashboard/${productId}/audit/positioning/reports/${report._id}`,
-                    )
-                  }
-                >
-                  <div className="flex items-center gap-4 flex-1">
-                    <div
-                      className={`text-2xl font-bold ${getScoreColor(report.overallScore)}`}
-                    >
-                      {report.overallScore}
-                    </div>
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-1">
-                        <Badge className={getBandColor(report.positioningBand)}>
-                          {report.positioningBand}
-                        </Badge>
-                        <span className="text-xs text-slate-500 flex items-center gap-1">
-                          <Clock className="h-3 w-3" />
-                          {formatDate(report.createdAt)}
-                        </span>
-                      </div>
-                      <div className="text-sm text-slate-600 truncate">
-                        {report.url}
-                      </div>
-                    </div>
-                  </div>
-                  <Button variant="ghost" size="sm">
-                    View Details
-                  </Button>
-                </div>
-              ))}
-            </div>
-          )}
-        </CardContent>
-      </Card>
 
       {/* Strategic Questions */}
       <Card className="border-blue-200 bg-blue-50">

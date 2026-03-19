@@ -1,12 +1,12 @@
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   AlertCircle,
   Award,
+  LucideIcon,
   Shield,
   Target,
   Zap,
-  LucideIcon,
 } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 interface Painkiller {
   pain: string;
@@ -54,7 +54,7 @@ const painkillers: Painkiller[] = [
 
 export function PainkillersSection() {
   return (
-    <section className="max-w-6xl mx-auto space-y-12">
+    <section className="max-w-6xl mx-auto space-y-12 py-10">
       <div className="text-center space-y-4">
         <h2 className="text-4xl font-bold text-foreground">
           What Founders Don't Know (But Should)

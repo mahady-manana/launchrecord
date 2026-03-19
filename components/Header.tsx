@@ -61,6 +61,13 @@ const pillars: Pillar[] = [
     icon: "🛡️",
     color: "purple",
   },
+  {
+    name: "SIO-V5 Engine",
+    href: "/sio-v5-engine",
+    description: "The Engine behind everything",
+    icon: "",
+    color: "purple",
+  },
 ];
 
 export function Header() {
@@ -232,13 +239,7 @@ export function Header() {
             href="/leaderboard"
             className="font-bold text-sm  text p-1 text-slate-800 rounded-xl px-1 hover:bg-slate-100 hover:underline"
           >
-            Sovereign 100
-          </Link>
-          <Link
-            href="/sio-v5-engine"
-            className="font-bold text-sm p-1 text-slate-800 rounded-xl px-1 hover:bg-slate-100 hover:underline"
-          >
-            SIO-V5 <span className="md:inline hidden">Engine</span>
+            Directories
           </Link>
           {isAuthenticated ? (
             <Link href="/dashboard">

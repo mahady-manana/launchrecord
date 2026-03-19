@@ -1,28 +1,27 @@
 "use client";
 
-import { LandingLeaderboard } from "@/components/LandingLeaderboard";
-import { PricingCard, pricingTiers } from "@/components/pricing/pricing-card";
-import { WarBriefingPreview } from "@/components/WarBriefingPreview";
+import { FAQSection } from "@/components/landing/FAQSection";
+import { FivePillarsSection } from "@/components/landing/FivePillarsSection";
 import { HeroSection } from "@/components/landing/HeroSection";
-import { ProtocolSection } from "@/components/landing/ProtocolSection";
-import { StatsSection } from "@/components/landing/StatsSection";
 import { PainkillersSection } from "@/components/landing/PainkillersSection";
 import { PreAuditFunnel } from "@/components/landing/PreAuditFunnel";
-import { FAQSection } from "@/components/landing/FAQSection";
 import { SocialProofSection } from "@/components/landing/SocialProofSection";
+import { StatsSection } from "@/components/landing/StatsSection";
+import { PricingCard, pricingTiers } from "@/components/pricing/pricing-card";
 import Link from "next/link";
+import { ReactNode } from "react";
 
-export default function LaunchRecordLandingPage() {
+interface LaunchRecordLandingPageProps {
+  Directories: ReactNode;
+}
+export default function LaunchRecordLandingPage({
+  Directories,
+}: LaunchRecordLandingPageProps) {
   return (
-    <div className="space-y-20 py-10 lg:px-0 px-4">
+    <div className="py-10 lg:px-0 px-4">
       <HeroSection />
-      <section className="max-w-6xl mx-auto">
-        <LandingLeaderboard />
-      </section>
-      <section className="max-w-6xl mx-auto">
-        <WarBriefingPreview />
-      </section>
-      <ProtocolSection />
+      {Directories}
+      <FivePillarsSection />
       <StatsSection />
       <PainkillersSection />
       <section className="max-w-7xl mx-auto space-y-12 bg-slate-900 px-4 rounded-xl py-16">

@@ -151,11 +151,10 @@ export default function AuthenticatedLayout({
                   </div>
                   <div className="flex-1">
                     <h3 className="font-bold text-white">
-                      Launch Date: March 17, 2026
+                      AEO Audit is now available
                     </h3>
                     <p className="text-sm text-slate-100 mt-1.5">
-                      Some features will be available before the official launch
-                      date. Stay tuned for updates!
+                      Start auditing our Startup's AI Visibility
                     </p>
                   </div>
                 </div>
