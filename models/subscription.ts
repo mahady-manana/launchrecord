@@ -41,12 +41,12 @@ const SubscriptionSchema = new Schema<ISubscription>(
     monthlyAuditLimit: {
       type: Number,
       required: true,
-      default: 3, // Free: 3, Founder: 10, Growth: 30, Sovereign: unlimited
+      default: 1, // Free: 1/month, Founder: 15/month, Growth: 30/month, Sovereign: unlimited
     },
     weeklyAuditLimit: {
       type: Number,
       required: true,
-      default: 0, // Free: 0, Founder: 1, Growth: 5, Sovereign: unlimited
+      default: 0, // Free: 0/week, Founder: 5/week, Growth: 5/week, Sovereign: unlimited
     },
     status: {
       type: String,

@@ -151,10 +151,11 @@ export default function AuthenticatedLayout({
                   </div>
                   <div className="flex-1">
                     <h3 className="font-bold text-white">
-                      AEO Audit is now available
+                      AEO Audit and Positioining Audit are now available
                     </h3>
                     <p className="text-sm text-slate-100 mt-1.5">
-                      Start auditing our Startup's AI Visibility
+                      Start auditing our Startup's AI Visibility, Positioning
+                      your Startup to the right niche
                     </p>
                   </div>
                 </div>

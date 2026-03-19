@@ -42,6 +42,22 @@ interface PositioningReport {
   fromCache?: boolean;
 }
 
+interface UsageInfo {
+  auditsUsed: number;
+  auditsLimit: number;
+  weeklyAuditUsed: number;
+  weeklyAuditLimit: number;
+  resetAt: string;
+}
+
+interface LimitError {
+  limitReached: true;
+  limitType: "monthly" | "weekly";
+  used: number;
+  limit: number;
+  resetAt?: string;
+}
+
 export default function PositioningAuditPage() {
   const params = useParams();
   const router = useRouter();
@@ -59,6 +75,8 @@ export default function PositioningAuditPage() {
   );
   const [forceAudit, setForceAudit] = useState(false);
   const [auditError, setAuditError] = useState<string | null>(null);
+  const [limitError, setLimitError] = useState<LimitError | null>(null);
+  const [usage, setUsage] = useState<UsageInfo | null>(null);
 
   useEffect(() => {
     loadReports();
@@ -116,6 +134,7 @@ export default function PositioningAuditPage() {
     }
 
     setAuditError(null);
+    setLimitError(null);
     setIsRunning(true);
     setAuditProgress("Checking for existing reports...");
 
@@ -136,10 +155,22 @@ export default function PositioningAuditPage() {
 
       if (!response.ok) {
         const errorData = await response.json();
+
+        // Handle limit errors
+        if (response.status === 403 && errorData.limitReached) {
+          setLimitError(errorData);
+          throw new Error(errorData.error || "Audit limit reached");
+        }
+
         throw new Error(errorData.message || "Audit failed");
       }
 
       const result = await response.json();
+
+      // Update usage info if available
+      if (result.usage) {
+        setUsage(result.usage);
+      }
 
       // Check if this is a cached report
       if (result.fromCache && !force) {
@@ -185,7 +216,11 @@ export default function PositioningAuditPage() {
         error instanceof Error
           ? error.message
           : "Audit failed. Please try again.";
-      setAuditError(errorMessage);
+
+      // Don't set auditError for limit errors (we show upgrade dialog instead)
+      if (!limitError) {
+        setAuditError(errorMessage);
+      }
       setAuditProgress("");
       setTimeout(() => {
         setIsRunning(false);
@@ -404,6 +439,43 @@ export default function PositioningAuditPage() {
         </Card>
       )}
 
+      {/* Usage Display */}
+      {usage && (
+        <Card className="border-blue-200 bg-blue-50">
+          <CardContent className="pt-6">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-blue-100 rounded-full">
+                  <Target className="h-5 w-5 text-blue-600" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-blue-900">
+                    Positioning Audit Usage
+                  </h3>
+                  <p className="text-sm text-blue-700">
+                    {usage.auditsUsed} of {usage.auditsLimit} used this month
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center gap-4">
+                <div className="text-right">
+                  <div className="text-sm text-blue-700">Weekly Limit</div>
+                  <div className="text-lg font-bold text-blue-900">
+                    {usage.weeklyAuditUsed} / {usage.weeklyAuditLimit}
+                  </div>
+                </div>
+                <div className="text-right">
+                  <div className="text-sm text-blue-700">Monthly Limit</div>
+                  <div className="text-lg font-bold text-blue-900">
+                    {usage.auditsUsed} / {usage.auditsLimit}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
       {/* Hero Banner - Strategic positioning theme */}
       <div className="relative overflow-hidden bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-700 rounded-2xl p-8 text-white">
         <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl" />
@@ -606,6 +678,95 @@ export default function PositioningAuditPage() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Limit Reached - Upgrade Dialog */}
+      {limitError && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <Card className="max-w-lg w-full border-orange-200 bg-orange-50">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <div className="p-2 bg-orange-100 rounded-full">
+                  <AlertCircle className="h-6 w-6 text-orange-600" />
+                </div>
+                Audit Limit Reached
+              </CardTitle>
+              <CardDescription>
+                {limitError.limitType === "weekly"
+                  ? "You've used all your weekly positioning audits"
+                  : "You've used all your monthly positioning audits"}
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="text-center p-3 bg-white border rounded-lg">
+                  <div className="text-3xl font-bold text-orange-600">
+                    {limitError.used}
+                  </div>
+                  <div className="text-xs text-slate-500">Used</div>
+                </div>
+                <div className="text-center p-3 bg-white border rounded-lg">
+                  <div className="text-3xl font-bold text-slate-900">
+                    {limitError.limit}
+                  </div>
+                  <div className="text-xs text-slate-500">Limit</div>
+                </div>
+              </div>
+
+              {limitError.limitType === "weekly" && limitError.resetAt && (
+                <div className="text-center text-sm text-slate-600">
+                  Weekly limit resets on{" "}
+                  {new Date(limitError.resetAt).toLocaleDateString()}
+                </div>
+              )}
+
+              <div className="p-4 bg-white border rounded-lg">
+                <h4 className="font-semibold text-slate-900 mb-2">
+                  Upgrade to Founder Plan
+                </h4>
+                <ul className="space-y-2 text-sm text-slate-700">
+                  <li className="flex items-center gap-2">
+                    <CheckCircle className="h-4 w-4 text-green-600" />
+                    <span>5 positioning audits per week</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <CheckCircle className="h-4 w-4 text-green-600" />
+                    <span>15 audits per month</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <CheckCircle className="h-4 w-4 text-green-600" />
+                    <span>Priority support</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <CheckCircle className="h-4 w-4 text-green-600" />
+                    <span>Advanced analytics</span>
+                  </li>
+                </ul>
+              </div>
+
+              <div className="flex items-center gap-2 text-orange-700 text-sm">
+                <AlertCircle className="h-4 w-4" />
+                <span>Only $49/month - Cancel anytime</span>
+              </div>
+            </CardContent>
+            <div className="flex gap-3 p-6 pt-0">
+              <Button
+                variant="outline"
+                className="flex-1"
+                onClick={() => {
+                  setLimitError(null);
+                }}
+              >
+                Maybe Later
+              </Button>
+              <Link href="/dashboard/subscription" className="flex-1">
+                <Button className="w-full bg-orange-600 text-white hover:bg-orange-700">
+                  Upgrade to Founder
+                </Button>
+              </Link>
+            </div>
+          </Card>
+        </div>
+      )}
 
       {/* Cache Warning Dialog */}
       {showCacheWarning && cachedReport && (

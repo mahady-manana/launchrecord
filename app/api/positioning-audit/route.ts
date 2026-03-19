@@ -1,3 +1,6 @@
+import { connectToDatabase } from "@/lib/db";
+import Subscription from "@/models/subscription";
+import Usage from "@/models/usage";
 import {
   getLatestPositioningReport,
   runStandalonePositioningAudit,
@@ -6,7 +9,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
 const positioningAuditSchema = z.object({
-  url: z.string().url("Invalid URL format"),
+  url: z.string(),
   productId: z.string().optional(),
   saveToDb: z.boolean().optional().default(false),
   force: z.boolean().optional().default(false), // Force new audit even if recent report exists
@@ -41,7 +44,109 @@ export async function POST(request: NextRequest) {
 
     const { url, productId, saveToDb, force } = validation.data;
 
-    // Check for existing recent report if productId is provided and force is false
+    if (!productId) {
+      return NextResponse.json(
+        { error: "Product ID is required" },
+        { status: 400 },
+      );
+    }
+
+    // Check audit limits based on subscription
+    await connectToDatabase();
+
+    const subscription = await Subscription.findOne({
+      productId,
+      status: "active",
+      deletedAt: null,
+    });
+
+    const now = new Date();
+    const weekStart = new Date(now);
+    weekStart.setDate(now.getDate() - now.getDay()); // Start of week (Sunday)
+    weekStart.setHours(0, 0, 0, 0);
+    const weekEnd = new Date(weekStart);
+    weekEnd.setDate(weekStart.getDate() + 6);
+    weekEnd.setHours(23, 59, 59, 999);
+
+    const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+    const monthEnd = new Date(
+      now.getFullYear(),
+      now.getMonth() + 1,
+      0,
+      23,
+      59,
+      59,
+      999,
+    );
+
+    // Get or create usage record
+    let usage = await Usage.findOne({
+      productId,
+      periodStart: { $gte: monthStart, $lte: monthEnd },
+    });
+
+    if (!usage) {
+      // Create new usage record for this month
+      usage = await Usage.create({
+        productId,
+        periodStart: monthStart,
+        periodEnd: monthEnd,
+        auditsUsed: 0,
+        auditsLimit: subscription?.monthlyAuditLimit || 1,
+        weeklyAuditUsed: 0,
+        weeklyAuditLimit: subscription?.weeklyAuditLimit || 0,
+        weekStart,
+        weekEnd,
+        resetAt: weekEnd,
+      });
+    }
+
+    // Reset weekly count if new week
+    if (now < usage.weekStart || now > usage.weekEnd) {
+      usage.weeklyAuditUsed = 0;
+      usage.weekStart = weekStart;
+      usage.weekEnd = weekEnd;
+      usage.resetAt = weekEnd;
+      await usage.save();
+    }
+
+    // Determine audit limits
+    const monthlyLimit = subscription?.monthlyAuditLimit || 1;
+    const weeklyLimit = subscription?.weeklyAuditLimit || 0;
+    const isFree = !subscription || subscription.planType === "free";
+
+    // Check if user has reached their monthly limit
+    if (usage.auditsUsed >= monthlyLimit) {
+      return NextResponse.json(
+        {
+          error: isFree
+            ? "You've reached your monthly positioning audit limit (1/month). Upgrade to Founder plan for 15 audits/month."
+            : `You've reached your monthly positioning audit limit (${monthlyLimit}/month).`,
+          limitReached: true,
+          limitType: "monthly",
+          used: usage.auditsUsed,
+          limit: monthlyLimit,
+        },
+        { status: 403 },
+      );
+    }
+
+    // Check weekly limit for paid plans
+    if (!isFree && usage.weeklyAuditUsed >= weeklyLimit) {
+      return NextResponse.json(
+        {
+          error: `You've reached your weekly positioning audit limit (${weeklyLimit}/week). Next reset on ${usage.resetAt.toLocaleDateString()}.`,
+          limitReached: true,
+          limitType: "weekly",
+          used: usage.weeklyAuditUsed,
+          limit: weeklyLimit,
+          resetAt: usage.resetAt,
+        },
+        { status: 403 },
+      );
+    }
+
+    // Check for existing recent report if force is false
     if (productId && !force) {
       const existingReport = await getLatestPositioningReport(productId);
 
@@ -73,9 +178,21 @@ export async function POST(request: NextRequest) {
       saveToDb,
     );
 
+    // Increment usage counters
+    usage.auditsUsed += 1;
+    usage.weeklyAuditUsed += 1;
+    await usage.save();
+
     return NextResponse.json({
       ...result,
       fromCache: false,
+      usage: {
+        auditsUsed: usage.auditsUsed,
+        auditsLimit: monthlyLimit,
+        weeklyAuditUsed: usage.weeklyAuditUsed,
+        weeklyAuditLimit: weeklyLimit,
+        resetAt: usage.resetAt,
+      },
     });
   } catch (error) {
     console.error("Positioning audit API error:", error);

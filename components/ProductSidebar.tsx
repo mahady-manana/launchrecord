@@ -6,6 +6,7 @@ import {
   BarChart3,
   Bot,
   ChevronRight,
+  CreditCard,
   Eye,
   LayoutDashboard,
   Shield,
@@ -63,6 +64,8 @@ export function ProductSidebar() {
 
   const isOverview = pathname === `/dashboard/${selectedProduct.id}`;
   const isAudit = pathname.startsWith(`/dashboard/${selectedProduct.id}/audit`);
+  const isSubscription =
+    pathname === `/dashboard/${selectedProduct.id}/subscription`;
 
   return (
     <div className="flex flex-col h-full">
@@ -153,6 +156,35 @@ export function ProductSidebar() {
                 Audit
               </span>
               {isAudit && (
+                <ChevronRight className="h-4 w-4 text-orange-600 ml-auto" />
+              )}
+            </Link>
+
+            <Link
+              href={`/dashboard/${selectedProduct.id}/subscription`}
+              className={`group flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm transition-all duration-200 hover:bg-gradient-to-r hover:from-orange-50 hover:to-amber-50 hover:shadow-sm ${
+                isSubscription
+                  ? "bg-gradient-to-r from-orange-50 to-amber-50 shadow-sm"
+                  : ""
+              }`}
+            >
+              <div
+                className={`flex h-9 w-9 items-center justify-center rounded-lg transition-colors ${
+                  isSubscription
+                    ? "bg-white shadow-sm"
+                    : "bg-slate-100 group-hover:bg-white group-hover:shadow-sm"
+                }`}
+              >
+                <CreditCard
+                  className={`h-5 w-5 ${isSubscription ? "text-orange-600" : "text-slate-500"}`}
+                />
+              </div>
+              <span
+                className={`font-medium ${isSubscription ? "text-orange-700" : "text-slate-600"}`}
+              >
+                Subscription
+              </span>
+              {isSubscription && (
                 <ChevronRight className="h-4 w-4 text-orange-600 ml-auto" />
               )}
             </Link>

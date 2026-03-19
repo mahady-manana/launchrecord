@@ -1,18 +1,36 @@
 "use client";
 
-import { useState, useEffect, Suspense } from "react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { useSubscription } from "@/hooks/use-subscription";
-import { useSubscribe } from "@/hooks/use-subscribe";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { useCancelSubscription } from "@/hooks/use-cancel-subscription";
-import { Check, AlertCircle, Loader2, Plus, ChevronRight, Package, CreditCard, ArrowLeft, Zap, Shield, Crown } from "lucide-react";
-import { useSearchParams } from "next/navigation";
-import { toast } from "sonner";
-import Link from "next/link";
 import { useProducts } from "@/hooks/use-products";
+import { useSubscribe } from "@/hooks/use-subscribe";
+import { useSubscription } from "@/hooks/use-subscription";
 import { useProductStore } from "@/stores/product-store";
+import {
+  AlertCircle,
+  ArrowLeft,
+  Check,
+  ChevronRight,
+  CreditCard,
+  Crown,
+  Loader2,
+  Package,
+  Plus,
+  Shield,
+  Zap,
+} from "lucide-react";
+import Link from "next/link";
+import { useSearchParams } from "next/navigation";
+import { Suspense, useEffect, useState } from "react";
+import { toast } from "sonner";
 
 const plans = [
   {
@@ -24,12 +42,12 @@ const plans = [
     icon: Zap,
     isFeatured: true,
     limits: {
-      monthly: 10,
-      weekly: 1,
+      monthly: 15,
+      weekly: 5,
     },
     features: [
-      "1 Auto Audit / Week",
-      "10 Audits / Month",
+      "5 Positioning Audits / Week",
+      "15 Audits / Month",
       "1 Product",
       "5 Team Members",
       "5 Competitors",
@@ -95,9 +113,12 @@ function SubscriptionContent() {
   const { loadAllProductsData } = useProducts();
   const { subscriptions, fetchSubscription } = useSubscription();
   const { startSubscription, isLoading } = useSubscribe();
-  const { cancelSubscription, isLoading: isCanceling } = useCancelSubscription();
+  const { cancelSubscription, isLoading: isCanceling } =
+    useCancelSubscription();
   const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
-  const [selectedProductId, setSelectedProductId] = useState<string | null>(null);
+  const [selectedProductId, setSelectedProductId] = useState<string | null>(
+    null,
+  );
   const [currentStep, setCurrentStep] = useState<1 | 2>(1);
   const [error, setError] = useState<string | null>(null);
 
@@ -132,7 +153,9 @@ function SubscriptionContent() {
     setError(null);
   };
 
-  const handleSubscribe = async (planType: "founder" | "growth" | "sovereign") => {
+  const handleSubscribe = async (
+    planType: "founder" | "growth" | "sovereign",
+  ) => {
     if (!selectedProductId) {
       setError("Please select a product first");
       return;
@@ -140,14 +163,17 @@ function SubscriptionContent() {
 
     setError(null);
     setSelectedPlan(planType);
-    
-    const result = await startSubscription({ productId: selectedProductId, planType });
+
+    const result = await startSubscription({
+      productId: selectedProductId,
+      planType,
+    });
     if (!result.ok) {
       setError(result.error || "Unable to start checkout.");
       setSelectedPlan(null);
       return;
     }
-    
+
     if (result.url) {
       window.location.assign(result.url);
     }
@@ -183,13 +209,17 @@ function SubscriptionContent() {
   };
 
   // Get subscription for selected product
-  const selectedSubscription = subscriptions.find(s => s.productId === selectedProductId);
+  const selectedSubscription = subscriptions.find(
+    (s) => s.productId === selectedProductId,
+  );
   const currentPlan = selectedSubscription?.planType || null;
 
   return (
     <div className="space-y-6">
       <div>
-        <p className="text-xs uppercase tracking-[0.3em] text-muted-foreground">Billing</p>
+        <p className="text-xs uppercase tracking-[0.3em] text-muted-foreground">
+          Billing
+        </p>
         <h1 className="mt-2 text-2xl font-semibold">Subscription</h1>
       </div>
 
@@ -197,20 +227,28 @@ function SubscriptionContent() {
       <Card>
         <CardContent className="pt-6">
           <div className="flex items-center justify-center gap-4">
-            <div className={`flex items-center gap-2 ${currentStep === 1 ? "text-primary" : "text-muted-foreground"}`}>
-              <div className={`h-8 w-8 rounded-full flex items-center justify-center font-bold ${
-                currentStep === 1 ? "bg-primary text-white" : "bg-muted"
-              }`}>
+            <div
+              className={`flex items-center gap-2 ${currentStep === 1 ? "text-primary" : "text-muted-foreground"}`}
+            >
+              <div
+                className={`h-8 w-8 rounded-full flex items-center justify-center font-bold ${
+                  currentStep === 1 ? "bg-primary text-white" : "bg-muted"
+                }`}
+              >
                 1
               </div>
               <Package className="h-4 w-4" />
               <span className="font-medium">Select Product</span>
             </div>
             <ChevronRight className="h-4 w-4 text-muted-foreground" />
-            <div className={`flex items-center gap-2 ${currentStep === 2 ? "text-primary" : "text-muted-foreground"}`}>
-              <div className={`h-8 w-8 rounded-full flex items-center justify-center font-bold ${
-                currentStep === 2 ? "bg-primary text-white" : "bg-muted"
-              }`}>
+            <div
+              className={`flex items-center gap-2 ${currentStep === 2 ? "text-primary" : "text-muted-foreground"}`}
+            >
+              <div
+                className={`h-8 w-8 rounded-full flex items-center justify-center font-bold ${
+                  currentStep === 2 ? "bg-primary text-white" : "bg-muted"
+                }`}
+              >
                 2
               </div>
               <CreditCard className="h-4 w-4" />
@@ -233,8 +271,10 @@ function SubscriptionContent() {
             {productsWithReports.length > 0 ? (
               <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
                 {productsWithReports.map((product) => {
-                  const productSubscription = subscriptions.find(s => s.productId === product.id);
-                  
+                  const productSubscription = subscriptions.find(
+                    (s) => s.productId === product.id,
+                  );
+
                   return (
                     <button
                       key={product.id}
@@ -250,7 +290,11 @@ function SubscriptionContent() {
                           <p className="font-semibold">{product.name}</p>
                           <p className="text-sm text-muted-foreground mt-1">
                             {productSubscription ? (
-                              <Badge className={getStatusColor(productSubscription.status)}>
+                              <Badge
+                                className={getStatusColor(
+                                  productSubscription.status,
+                                )}
+                              >
                                 {productSubscription.planType}
                               </Badge>
                             ) : (
@@ -295,7 +339,10 @@ function SubscriptionContent() {
                 <div className="flex items-center justify-between">
                   <div className="space-y-1">
                     <p className="text-sm font-medium">
-                      Plan: <span className="capitalize">{selectedSubscription.planType}</span>
+                      Plan:{" "}
+                      <span className="capitalize">
+                        {selectedSubscription.planType}
+                      </span>
                     </p>
                     <p className="text-sm text-muted-foreground">
                       Status:{" "}
@@ -308,10 +355,14 @@ function SubscriptionContent() {
                     </p>
                   </div>
                   <div className="text-right">
-                    <p className="text-sm text-muted-foreground">Current period ends</p>
+                    <p className="text-sm text-muted-foreground">
+                      Current period ends
+                    </p>
                     <p className="text-lg font-semibold">
                       {selectedSubscription.currentPeriodEnd
-                        ? new Date(selectedSubscription.currentPeriodEnd).toLocaleDateString()
+                        ? new Date(
+                            selectedSubscription.currentPeriodEnd,
+                          ).toLocaleDateString()
                         : "-"}
                     </p>
                   </div>
@@ -341,7 +392,9 @@ function SubscriptionContent() {
                     <p className="text-sm">
                       Your subscription will end on{" "}
                       {selectedSubscription.currentPeriodEnd
-                        ? new Date(selectedSubscription.currentPeriodEnd).toLocaleDateString()
+                        ? new Date(
+                            selectedSubscription.currentPeriodEnd,
+                          ).toLocaleDateString()
                         : "the current period end"}
                     </p>
                   </div>
@@ -360,7 +413,11 @@ function SubscriptionContent() {
                     Choose the plan that fits your needs
                   </CardDescription>
                 </div>
-                <Button variant="ghost" size="sm" onClick={handleBackToProducts}>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={handleBackToProducts}
+                >
                   <ArrowLeft className="h-4 w-4 mr-2" />
                   Change Product
                 </Button>
@@ -370,8 +427,10 @@ function SubscriptionContent() {
               <div className="grid gap-6 md:grid-cols-3">
                 {plans.map((plan) => {
                   const isCurrentPlan = currentPlan === plan.id;
-                  const isUpgrade = plan.id === "growth" && currentPlan === "founder";
-                  const isDowngrade = plan.id === "founder" && currentPlan === "growth";
+                  const isUpgrade =
+                    plan.id === "growth" && currentPlan === "founder";
+                  const isDowngrade =
+                    plan.id === "founder" && currentPlan === "growth";
                   const isComingSoon = plan.comingSoon;
 
                   return (
@@ -396,35 +455,58 @@ function SubscriptionContent() {
                       ) : null}
                       <CardHeader>
                         <div className="flex items-center gap-2 mb-2">
-                          <div className={`p-2 rounded-lg ${
-                            plan.isFeatured 
-                              ? "bg-gradient-to-br from-primary to-primary/80 text-white shadow-lg" 
-                              : "bg-primary/10 text-primary"
-                          }`}>
+                          <div
+                            className={`p-2 rounded-lg ${
+                              plan.isFeatured
+                                ? "bg-gradient-to-br from-primary to-primary/80 text-white shadow-lg"
+                                : "bg-primary/10 text-primary"
+                            }`}
+                          >
                             <Shield className="h-5 w-5" />
                           </div>
-                          <CardTitle className={`text-lg ${
-                            plan.isFeatured ? "text-primary font-black" : ""
-                          }`}>{plan.name}</CardTitle>
+                          <CardTitle
+                            className={`text-lg ${
+                              plan.isFeatured ? "text-primary font-black" : ""
+                            }`}
+                          >
+                            {plan.name}
+                          </CardTitle>
                         </div>
-                        <CardDescription className={plan.isFeatured ? "text-slate-600" : ""}>
+                        <CardDescription
+                          className={plan.isFeatured ? "text-slate-600" : ""}
+                        >
                           {plan.description}
                         </CardDescription>
                         <div className="flex items-baseline gap-1">
-                          <span className={`text-4xl font-black ${
-                            plan.isFeatured ? "text-primary" : ""
-                          }`}>{plan.price}</span>
-                          <span className="text-muted-foreground">{plan.period}</span>
+                          <span
+                            className={`text-4xl font-black ${
+                              plan.isFeatured ? "text-primary" : ""
+                            }`}
+                          >
+                            {plan.price}
+                          </span>
+                          <span className="text-muted-foreground">
+                            {plan.period}
+                          </span>
                         </div>
                       </CardHeader>
                       <CardContent className="flex-1 space-y-4">
                         <ul className="space-y-3">
                           {plan.features.map((feature, idx) => (
-                            <li key={idx} className="flex items-start gap-2 text-sm">
-                              <Check className={`h-4 w-4 mt-0.5 flex-shrink-0 ${
-                                plan.isFeatured ? "text-primary" : "text-green-600"
-                              }`} />
-                              <span className={plan.isFeatured ? "font-medium" : ""}>
+                            <li
+                              key={idx}
+                              className="flex items-start gap-2 text-sm"
+                            >
+                              <Check
+                                className={`h-4 w-4 mt-0.5 flex-shrink-0 ${
+                                  plan.isFeatured
+                                    ? "text-primary"
+                                    : "text-green-600"
+                                }`}
+                              />
+                              <span
+                                className={plan.isFeatured ? "font-medium" : ""}
+                              >
                                 {feature}
                               </span>
                             </li>
@@ -437,10 +519,16 @@ function SubscriptionContent() {
                               ? "bg-gradient-to-r from-primary to-primary/90 hover:from-primary hover:to-primary/80 text-white shadow-lg hover:shadow-xl hover:scale-[1.02]"
                               : ""
                           }`}
-                          variant={plan.isFeatured && !isComingSoon ? "default" : "outline"}
+                          variant={
+                            plan.isFeatured && !isComingSoon
+                              ? "default"
+                              : "outline"
+                          }
                           disabled={isCurrentPlan || isLoading || isComingSoon}
                           onClick={() =>
-                            handleSubscribe(plan.id as "founder" | "growth" | "sovereign")
+                            handleSubscribe(
+                              plan.id as "founder" | "growth" | "sovereign",
+                            )
                           }
                         >
                           {isLoading && selectedPlan === plan.id ? (
@@ -454,7 +542,11 @@ function SubscriptionContent() {
                             "Coming Soon"
                           ) : (
                             <>
-                              {isUpgrade ? "🚀 Upgrade" : isDowngrade ? "Downgrade" : "✨ Get Started"}
+                              {isUpgrade
+                                ? "🚀 Upgrade"
+                                : isDowngrade
+                                  ? "Downgrade"
+                                  : "✨ Get Started"}
                             </>
                           )}
                         </Button>

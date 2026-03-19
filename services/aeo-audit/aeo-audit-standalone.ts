@@ -1,3 +1,4 @@
+"use server";
 import { AEO_CHECKLIST } from "../aeo_checklist";
 import {
   getWebsiteContent,

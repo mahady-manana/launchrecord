@@ -35,15 +35,14 @@ export default function AEOReportsPage() {
   useEffect(() => {
     // Load report from sessionStorage
     const storedResult = sessionStorage.getItem("aeoAuditResult");
-
     if (storedResult) {
       try {
         const parsed = JSON.parse(storedResult);
         // Verify it's for this product
-        if (
-          parsed.url.includes(selectedProduct?.website || "") ||
-          parsed.productId === productId
-        ) {
+        console.log("====================================");
+        console.log(parsed, productId, productId);
+        console.log("====================================");
+        if (parsed.productId === productId) {
           setReport(parsed);
         }
       } catch (error) {
@@ -235,7 +234,7 @@ export default function AEOReportsPage() {
                 .filter((c) => c.passed)
                 .map((check, idx) => (
                   <li
-                    key={check.id}
+                    key={idx}
                     className="flex items-start gap-3 p-4 rounded-lg bg-white border border-green-200"
                   >
                     <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
