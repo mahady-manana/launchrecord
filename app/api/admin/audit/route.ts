@@ -4,6 +4,7 @@ import Product from "@/models/product";
 import { fullAuditWithOpenAI } from "@/services/full_audit_with_openai";
 import type { AuditReportV1 } from "@/types/audit-report-v1";
 import { NextRequest, NextResponse } from "next/server";
+import normalizeUrl from "normalize-url";
 
 // POST - Run audit on existing product by ID
 export async function POST(request: NextRequest) {
@@ -31,12 +32,16 @@ export async function POST(request: NextRequest) {
 
     try {
       const surveyData = product.surveyData || {};
-      
+
       const response = await fullAuditWithOpenAI({
-        description: surveyData.description || product.description || "Not provided",
+        description:
+          surveyData.description || product.description || "Not provided",
         tagline: surveyData.tagline || product.tagline || "Not provided",
         name: surveyData.saasName || product.name || "Unknown",
-        website: surveyData.saasUrl || product.website || "",
+        website:
+          normalizeUrl(surveyData.saasUrl || product.website, {
+            stripWWW: false,
+          }) || "",
         founder: surveyData.founderName || "Unknown",
         revenueStage: surveyData.revenue || "pre-revenue",
       });
