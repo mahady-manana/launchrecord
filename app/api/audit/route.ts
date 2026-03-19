@@ -6,6 +6,7 @@ import Report from "@/models/report";
 import { fullAuditWithOpenAI } from "@/services/full_audit_with_openai";
 import type { AuditReportV1 } from "@/types/audit-report-v1";
 import { NextRequest, NextResponse } from "next/server";
+import normalizeUrl from "normalize-url";
 
 interface SurveyData {
   email: string;
@@ -104,7 +105,7 @@ export async function POST(request: NextRequest) {
         description: surveyData.description,
         tagline: surveyData.tagline,
         name: surveyData.saasName,
-        website: surveyData.saasUrl,
+        website: normalizeUrl(surveyData.saasUrl, { stripWWW: false }),
         founder: surveyData.founderName,
         revenueStage: surveyData.revenue,
       });

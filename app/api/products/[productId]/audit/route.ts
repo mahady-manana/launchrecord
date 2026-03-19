@@ -10,6 +10,7 @@ import type { AuditReportV1 } from "@/types/audit-report-v1";
 import { jsonError, jsonSuccess } from "@/utils/response";
 import { isSameOrigin } from "@/utils/security";
 import { NextRequest, NextResponse } from "next/server";
+import normalizeUrl from "normalize-url";
 
 // Plan limits configuration
 const PLAN_LIMITS: Record<string, { monthly: number; weekly: number }> = {
@@ -202,7 +203,7 @@ export async function POST(
       description: surveyData.description,
       tagline: surveyData.tagline,
       name: surveyData.saasName,
-      website: surveyData.saasUrl,
+      website: normalizeUrl(surveyData.saasUrl, { stripWWW: false }),
       founder: surveyData.founderName,
       revenueStage: surveyData.revenue,
     });

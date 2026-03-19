@@ -1,4 +1,5 @@
 import axios from "axios";
+import normalizeUrl from "normalize-url";
 
 export interface FetchWebsiteContentResult {
   html: string;
@@ -9,9 +10,12 @@ export interface FetchWebsiteContentResult {
 export async function fetchWebsiteContent(
   url: string,
 ): Promise<FetchWebsiteContentResult> {
-  const { data: html } = await axios.get<string>(url, {
-    headers: { "User-Agent": "Mozilla/5.0 (compatible; SidleBot/1.0)" },
-  });
+  const { data: html } = await axios.get<string>(
+    normalizeUrl(url, { stripWWW: false }),
+    {
+      headers: { "User-Agent": "Mozilla/5.0 (compatible; SidleBot/1.0)" },
+    },
+  );
 
   // Parse URL to get base for robots.txt and sitemap
   const urlObj = new URL(url);
