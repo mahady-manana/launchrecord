@@ -8,13 +8,14 @@ const pageUrl = `${appUrl}/positioning-audit`;
 export const metadata: Metadata = {
   title: {
     default:
-      "Positioning Audit - Measure Your Market Differentiation | LaunchRecord",
+      "Category King Positioning Tool - Free Market Differentiation Audit | LaunchRecord",
     template: "%s | LaunchRecord",
   },
   description:
-    "Free positioning audit for startups. Analyze your market differentiation, category definition, and competitive positioning. Get your positioning score in 2-3 minutes.",
+    "Free positioning strategy tool for startups. Analyze your market differentiation, category definition, and competitive positioning. Get your positioning score and action plan in 2-3 minutes.",
   keywords: [
-    "positioning audit",
+    "positioning tool",
+    "category king",
     "market positioning",
     "competitive differentiation",
     "category definition",
@@ -22,6 +23,7 @@ export const metadata: Metadata = {
     "market position",
     "unique value proposition",
     "positioning strategy",
+    "positioning audit",
     "SIO-V5",
     "LaunchRecord",
   ],
@@ -33,9 +35,9 @@ export const metadata: Metadata = {
     canonical: pageUrl,
   },
   openGraph: {
-    title: "Positioning Audit - Measure Your Market Differentiation",
+    title: "Category King Positioning Tool - Free Market Differentiation Audit",
     description:
-      "Free positioning audit for startups. Analyze your market differentiation and competitive positioning.",
+      "Free positioning strategy tool for startups. Analyze your market differentiation and competitive positioning.",
     url: pageUrl,
     siteName: "LaunchRecord",
     locale: "en_US",
@@ -45,16 +47,16 @@ export const metadata: Metadata = {
         url: "/og-image.png",
         width: 1200,
         height: 630,
-        alt: "LaunchRecord Positioning Audit Dashboard",
+        alt: "LaunchRecord Category King Positioning Tool Dashboard",
         type: "image/png",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Positioning Audit - Measure Your Market Differentiation",
+    title: "Category King Positioning Tool - Free Market Differentiation Audit",
     description:
-      "Free positioning audit for startups. Get your positioning score in minutes.",
+      "Free positioning strategy tool for startups. Get your positioning score in minutes.",
     images: ["/og-image.png"],
     creator: "@launchrecord",
   },

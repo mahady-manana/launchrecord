@@ -4,12 +4,18 @@ import { Button } from "@/components/ui/button";
 import { PILLAR_CONFIGS } from "@/lib/pillar-audit-service";
 import {
   ArrowRight,
+  BarChart3,
   Brain,
   CheckCircle2,
+  Compass,
+  Eye,
+  Flag,
   Layers,
+  Lightbulb,
   Shield,
   Target,
   Trophy,
+  Users,
   Zap,
 } from "lucide-react";
 import Link from "next/link";
@@ -32,29 +38,71 @@ export default function PositioningAuditPageClient() {
       icon: <Target className="h-5 w-5" />,
       title: "Category Ownership",
       desc: "Define and dominate your unique market space",
+      details: [
+        "Clear category definition that you can own",
+        "Distinctive language that sets you apart",
+        "Market perception as the go-to solution",
+      ],
+    },
+    {
+      icon: <Trophy className="h-5 w-5" />,
+      title: "Unique Value Proposition",
+      desc: "Articulate what makes you uniquely valuable",
+      details: [
+        "Specific outcomes customers can expect",
+        "Quantifiable benefits and ROI",
+        "Clear differentiation from alternatives",
+      ],
     },
     {
       icon: <Shield className="h-5 w-5" />,
-      title: "Competitive Moat",
-      desc: "Build defensible differentiation",
+      title: "Competitive Differentiation",
+      desc: "Build defensible differentiation from competitors",
+      details: [
+        "Explicit competitor contrasts",
+        "Unfair advantages that are hard to copy",
+        "Clear reasons why you win deals",
+      ],
     },
     {
-      icon: <Brain className="h-5 w-5" />,
-      title: "AI Entity Strength",
-      desc: "Recognition across language models",
+      icon: <Users className="h-5 w-5" />,
+      title: "Target Audience Clarity",
+      desc: "Crystal clear understanding of your ideal customer",
+      details: [
+        "Well-defined ICP with specific criteria",
+        "Deep understanding of customer pain points",
+        "Clear buyer persona and decision-maker mapping",
+      ],
+    },
+    {
+      icon: <Lightbulb className="h-5 w-5" />,
+      title: "Problem-Solution Fit",
+      desc: "Demonstrate clear connection between pain point and solution",
+      details: [
+        "Articulated problem worth solving",
+        "Direct mapping of features to pain points",
+        "Evidence of solution effectiveness",
+      ],
     },
     {
       icon: <Layers className="h-5 w-5" />,
-      title: "Message Hierarchy",
-      desc: "Clear positioning cascade",
+      title: "Messaging Consistency",
+      desc: "Unified positioning across all touchpoints",
+      details: [
+        "Consistent voice across all channels",
+        "Aligned messaging from website to sales",
+        "Coherent brand narrative and story",
+      ],
     },
   ];
 
   const scores = [
-    { label: "Category Definition", range: "0-100", color: "bg-blue-500" },
+    { label: "Category Ownership", range: "0-100", color: "bg-blue-500" },
     { label: "Unique Value Prop", range: "0-100", color: "bg-indigo-500" },
     { label: "Competitive Diff", range: "0-100", color: "bg-violet-500" },
-    { label: "AI Recognition", range: "0-100", color: "bg-purple-500" },
+    { label: "Target Audience", range: "0-100", color: "bg-purple-500" },
+    { label: "Problem-Solution Fit", range: "0-100", color: "bg-pink-500" },
+    { label: "Messaging Consistency", range: "0-100", color: "bg-rose-500" },
   ];
 
   return (
@@ -71,19 +119,20 @@ export default function PositioningAuditPageClient() {
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <div className="space-y-8">
               <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur px-4 py-2 rounded-full text-white text-sm font-medium">
-                <Target className="h-4 w-4" />
-                <span>Positioning Audit</span>
+                <BarChart3 className="h-4 w-4" />
+                <span>Free Positioning Audit Tool</span>
               </div>
 
               <h1 className="text-5xl md:text-7xl font-bold text-white leading-none">
-                Own Your
+                Positioning
                 <br />
-                <span className="text-blue-200">Category</span>
+                <span className="text-blue-200">Audit Tool</span>
               </h1>
 
               <p className="text-xl text-blue-100 leading-relaxed">
                 Measure how distinctly your startup occupies a unique space in
-                the market and AI consciousness.
+                the market. Get your positioning score across 6 critical
+                dimensions in minutes.
               </p>
 
               <form onSubmit={handleStartAudit} className="space-y-4">
@@ -100,7 +149,7 @@ export default function PositioningAuditPageClient() {
                     type="submit"
                     className="h-14 px-8 bg-slate-900 text-white hover:bg-slate-800 rounded-xl font-semibold transition-all flex items-center gap-2"
                   >
-                    Start
+                    Analyze
                     <ArrowRight className="h-4 w-4" />
                   </Button>
                 </div>
@@ -160,12 +209,12 @@ export default function PositioningAuditPageClient() {
               What Gets Measured
             </h2>
             <p className="text-lg text-slate-600 max-w-2xl mx-auto">
-              Four critical dimensions that determine your market positioning
+              Six critical dimensions that determine your market positioning
               strength
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-6">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {features.map((feature, idx) => (
               <div
                 key={idx}
@@ -177,7 +226,79 @@ export default function PositioningAuditPageClient() {
                 <h3 className="text-xl font-semibold text-slate-900 mb-2">
                   {feature.title}
                 </h3>
-                <p className="text-slate-600">{feature.desc}</p>
+                <p className="text-slate-600 mb-4">{feature.desc}</p>
+                <ul className="space-y-2">
+                  {feature.details.map((detail, detailIdx) => (
+                    <li
+                      key={detailIdx}
+                      className="flex items-start gap-2 text-sm text-slate-500"
+                    >
+                      <CheckCircle2 className="h-4 w-4 text-blue-500 flex-shrink-0 mt-0.5" />
+                      <span>{detail}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Why Positioning Matters */}
+      <section className="py-24 px-4 bg-white">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl font-bold text-slate-900 mb-4">
+              Why Positioning Matters
+            </h2>
+            <p className="text-lg text-slate-600 max-w-3xl mx-auto">
+              Great positioning isn't just marketing—it's your competitive
+              advantage in every customer conversation, sales pitch, and AI
+              recommendation
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-8">
+            {[
+              {
+                icon: <Compass className="h-6 w-6" />,
+                title: "Guides Customer Decisions",
+                desc: "Clear positioning helps buyers instantly understand why you're the right choice, reducing sales cycles and increasing conversion rates.",
+                stat: "3x faster",
+                statLabel: "sales decisions",
+              },
+              {
+                icon: <Flag className="h-6 w-6" />,
+                title: "Wins AI Recommendations",
+                desc: "Strong entity signals and category definition make you more likely to be recommended by ChatGPT, Claude, and other AI assistants.",
+                stat: "5x more",
+                statLabel: "AI citations",
+              },
+              {
+                icon: <Lightbulb className="h-6 w-6" />,
+                title: "Attracts Perfect Customers",
+                desc: "When you own a category, you attract customers who specifically want what you offer—leading to higher LTV and lower churn.",
+                stat: "40% higher",
+                statLabel: "customer LTV",
+              },
+            ].map((item, idx) => (
+              <div
+                key={idx}
+                className="bg-gradient-to-br from-slate-50 to-blue-50/50 rounded-2xl p-8 border border-slate-200 hover:border-blue-300 hover:shadow-lg transition-all"
+              >
+                <div className="h-12 w-12 bg-blue-600 rounded-xl flex items-center justify-center text-white mb-6">
+                  {item.icon}
+                </div>
+                <h3 className="text-xl font-bold text-slate-900 mb-3">
+                  {item.title}
+                </h3>
+                <p className="text-slate-600 mb-6">{item.desc}</p>
+                <div className="pt-6 border-t border-slate-200">
+                  <div className="text-3xl font-bold text-blue-600">
+                    {item.stat}
+                  </div>
+                  <div className="text-sm text-slate-500">{item.statLabel}</div>
+                </div>
               </div>
             ))}
           </div>
@@ -192,7 +313,7 @@ export default function PositioningAuditPageClient() {
               Positioning Bands
             </h2>
             <p className="text-lg text-slate-400 max-w-2xl mx-auto">
-              Where does your startup rank?
+              Discover where your startup ranks—and what it takes to move up
             </p>
           </div>
 
@@ -242,6 +363,52 @@ export default function PositioningAuditPageClient() {
         </div>
       </section>
 
+      {/* How It Works */}
+      <section className="py-24 px-4 bg-slate-50">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl font-bold text-slate-900 mb-4">
+              How the Tool Works
+            </h2>
+            <p className="text-lg text-slate-600">
+              Get your positioning score and action plan in three simple steps
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-8">
+            {[
+              {
+                step: "01",
+                title: "Enter Your URL",
+                desc: "Submit your startup's website URL. We'll analyze your positioning signals, messaging, and market presence.",
+              },
+              {
+                step: "02",
+                title: "AI-Powered Analysis",
+                desc: "Our engine evaluates category definition, differentiation, AI entity recognition, and competitive positioning.",
+              },
+              {
+                step: "03",
+                title: "Get Action Plan",
+                desc: "Receive your positioning score, band ranking, and specific recommendations to strengthen your market position.",
+              },
+            ].map((item, idx) => (
+              <div key={idx} className="relative">
+                <div className="text-8xl font-bold text-blue-100 absolute -top-4 -left-4">
+                  {item.step}
+                </div>
+                <div className="relative bg-white rounded-2xl p-8 border border-slate-200">
+                  <h3 className="text-xl font-bold text-slate-900 mb-3">
+                    {item.title}
+                  </h3>
+                  <p className="text-slate-600">{item.desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* CTA */}
       <section className="py-24 px-4">
         <div className="max-w-4xl mx-auto text-center">
@@ -277,13 +444,17 @@ export default function PositioningAuditPageClient() {
       {/* Related Audits */}
       <section className="py-24 px-4 bg-slate-50">
         <div className="max-w-7xl mx-auto">
-          <h3 className="text-2xl font-bold text-slate-900 mb-8 text-center">
-            Other Audit Tools
+          <h3 className="text-2xl font-bold text-slate-900 mb-4 text-center">
+            Explore Other Free Audit Tools
           </h3>
+          <p className="text-lg text-slate-600 text-center mb-12 max-w-2xl mx-auto">
+            Complete your startup audit with our full suite of positioning and
+            visibility tools
+          </p>
           <div className="grid md:grid-cols-4 gap-4">
             <Link
               href="/clarity-audit"
-              className="bg-white border border-slate-200 rounded-xl p-6 hover:shadow-lg transition-all"
+              className="bg-white border border-slate-200 rounded-xl p-6 hover:shadow-lg hover:shadow-green-100/50 hover:border-green-300 transition-all"
             >
               <div className="flex items-center gap-3 mb-3">
                 <div className="h-10 w-10 bg-green-100 rounded-lg flex items-center justify-center text-green-600">
@@ -291,11 +462,13 @@ export default function PositioningAuditPageClient() {
                 </div>
                 <span className="font-semibold text-slate-800">Clarity</span>
               </div>
-              <p className="text-sm text-slate-600">Message clarity audit</p>
+              <p className="text-sm text-slate-600">
+                Message clarity audit - 5 second test
+              </p>
             </Link>
             <Link
               href="/momentum-audit"
-              className="bg-white border border-slate-200 rounded-xl p-6 hover:shadow-lg transition-all"
+              className="bg-white border border-slate-200 rounded-xl p-6 hover:shadow-lg hover:shadow-orange-100/50 hover:border-orange-300 transition-all"
             >
               <div className="flex items-center gap-3 mb-3">
                 <div className="h-10 w-10 bg-orange-100 rounded-lg flex items-center justify-center text-orange-600">
@@ -307,7 +480,7 @@ export default function PositioningAuditPageClient() {
             </Link>
             <Link
               href="/founder-proof-audit"
-              className="bg-white border border-slate-200 rounded-xl p-6 hover:shadow-lg transition-all"
+              className="bg-white border border-slate-200 rounded-xl p-6 hover:shadow-lg hover:shadow-purple-100/50 hover:border-purple-300 transition-all"
             >
               <div className="flex items-center gap-3 mb-3">
                 <div className="h-10 w-10 bg-purple-100 rounded-lg flex items-center justify-center text-purple-600">
@@ -321,7 +494,7 @@ export default function PositioningAuditPageClient() {
             </Link>
             <Link
               href="/aeo-audit"
-              className="bg-white border border-slate-200 rounded-xl p-6 hover:shadow-lg transition-all"
+              className="bg-white border border-slate-200 rounded-xl p-6 hover:shadow-lg hover:shadow-cyan-100/50 hover:border-cyan-300 transition-all"
             >
               <div className="flex items-center gap-3 mb-3">
                 <div className="h-10 w-10 bg-cyan-100 rounded-lg flex items-center justify-center text-cyan-600">
@@ -335,25 +508,5 @@ export default function PositioningAuditPageClient() {
         </div>
       </section>
     </div>
-  );
-}
-
-function Eye(props: React.SVGProps<SVGSVGElement>) {
-  return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" />
-      <circle cx="12" cy="12" r="3" />
-    </svg>
   );
 }
