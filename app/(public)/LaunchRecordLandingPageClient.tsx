@@ -1,5 +1,6 @@
 "use client";
 
+import { BlogSection } from "@/components/landing/BlogSection";
 import { FAQSection } from "@/components/landing/FAQSection";
 import { FivePillarsSection } from "@/components/landing/FivePillarsSection";
 import { HeroSection } from "@/components/landing/HeroSection";
@@ -52,6 +53,7 @@ export default function LaunchRecordLandingPage({
       </section>
       <PreAuditFunnel />
       <FAQSection />
+      <BlogSection />
       <SocialProofSection />
     </div>
   );
