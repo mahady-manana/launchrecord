@@ -2,26 +2,22 @@
 
 import { Button } from "@/components/ui/button";
 import {
-  Search,
-  Bot,
-  Target,
-  TrendingUp,
-  CheckCircle2,
-  XCircle,
   ArrowRight,
-  Lightbulb,
   BarChart3,
-  Globe,
+  Bot,
   Brain,
-  Zap,
+  CheckCircle2,
   Eye,
-  Layers,
-  Link as LinkIcon,
   FileText,
+  Globe,
+  Layers,
+  Lightbulb,
+  Link as LinkIcon,
   Users,
+  Zap,
 } from "lucide-react";
-import { useState } from "react";
 import Link from "next/link";
+import { useState } from "react";
 
 export default function AeoVsSeoPageClient() {
   const [websiteUrl, setWebsiteUrl] = useState("");
@@ -169,16 +165,28 @@ export default function AeoVsSeoPageClient() {
   ];
 
   const stats = [
-    { value: "50%", label: "Searches end with AI answers (no clicks)", source: "2026" },
-    { value: "74%", label: "Users trust AI recommendations", source: "Recent Study" },
-    { value: "3x", label: "Higher conversion from AI citations", source: "vs Traditional Search" },
+    {
+      value: "50%",
+      label: "Searches end with AI answers (no clicks)",
+      source: "2026",
+    },
+    {
+      value: "74%",
+      label: "Users trust AI recommendations",
+      source: "Recent Study",
+    },
+    {
+      value: "3x",
+      label: "Higher conversion from AI citations",
+      source: "vs Traditional Search",
+    },
     { value: "60%", label: "Gen Z starts searches with AI", source: "2026" },
   ];
 
   return (
     <div className="space-y-24 py-16">
       {/* Hero Section */}
-      <section className="px-4 max-w-6xl mx-auto space-y-8">
+      <section className="px-4 max-w-6xl mx-auto space-y-8 pt-10">
         <div className="space-y-6">
           <div className="inline-flex items-center gap-2 bg-purple-100 px-4 py-1.5 rounded-lg text-purple-800 text-sm font-medium">
             <Lightbulb className="h-4 w-4" />
@@ -206,7 +214,9 @@ export default function AeoVsSeoPageClient() {
               </div>
               <div>
                 <h3 className="text-lg font-semibold text-blue-900">SEO</h3>
-                <p className="text-sm text-blue-700">Search Engine Optimization</p>
+                <p className="text-sm text-blue-700">
+                  Search Engine Optimization
+                </p>
               </div>
             </div>
             <p className="text-slate-700">
@@ -239,8 +249,12 @@ export default function AeoVsSeoPageClient() {
       <section className="px-4 max-w-6xl mx-auto">
         <div className="bg-gradient-to-br from-slate-900 to-slate-800 rounded-2xl p-8 md:p-12">
           <div className="text-center mb-8 space-y-2">
-            <h2 className="text-3xl font-bold text-white">Why This Matters Now</h2>
-            <p className="text-slate-300">The search landscape is fundamentally shifting</p>
+            <h2 className="text-3xl font-bold text-white">
+              Why This Matters Now
+            </h2>
+            <p className="text-slate-300">
+              The search landscape is fundamentally shifting
+            </p>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
             {stats.map((stat, idx) => (
@@ -399,8 +413,8 @@ export default function AeoVsSeoPageClient() {
                     item.impact === "Critical"
                       ? "bg-red-100 text-red-700"
                       : item.impact === "High"
-                      ? "bg-orange-100 text-orange-700"
-                      : "bg-blue-100 text-blue-700"
+                        ? "bg-orange-100 text-orange-700"
+                        : "bg-blue-100 text-blue-700"
                   }`}
                 >
                   {item.impact} Impact
@@ -441,8 +455,8 @@ export default function AeoVsSeoPageClient() {
                       item.priority === "high"
                         ? "bg-red-500"
                         : item.priority === "medium"
-                        ? "bg-orange-500"
-                        : "bg-blue-500"
+                          ? "bg-orange-500"
+                          : "bg-blue-500"
                     }`}
                   />
                   <span className="font-semibold text-slate-800">
@@ -480,23 +494,25 @@ export default function AeoVsSeoPageClient() {
                 <strong className="text-slate-900">
                   SEO isn't dead—but it's not enough.
                 </strong>{" "}
-                Traditional search still drives massive traffic, and the fundamentals
-                (quality content, technical excellence, user experience) benefit both
-                SEO and AEO.
+                Traditional search still drives massive traffic, and the
+                fundamentals (quality content, technical excellence, user
+                experience) benefit both SEO and AEO.
               </p>
               <p className="text-lg text-slate-700 leading-relaxed">
                 <strong className="text-slate-900">
                   AEO is your competitive edge.
                 </strong>{" "}
-                As AI answers capture more searches, being the cited source becomes
-                critical for brand visibility and authority. Early adopters will
-                dominate AI recommendations.
+                As AI answers capture more searches, being the cited source
+                becomes critical for brand visibility and authority. Early
+                adopters will dominate AI recommendations.
               </p>
               <p className="text-lg text-slate-700 leading-relaxed">
-                <strong className="text-slate-900">The winning strategy:</strong>{" "}
-                Maintain SEO excellence while building AEO capabilities. Use the same
-                content foundation—optimize it for both keyword rankings and AI
-                citation.
+                <strong className="text-slate-900">
+                  The winning strategy:
+                </strong>{" "}
+                Maintain SEO excellence while building AEO capabilities. Use the
+                same content foundation—optimize it for both keyword rankings
+                and AI citation.
               </p>
             </div>
 
@@ -504,7 +520,9 @@ export default function AeoVsSeoPageClient() {
               <div className="bg-white rounded-lg p-4 shadow-sm">
                 <div className="flex items-center gap-2 mb-2">
                   <CheckCircle2 className="h-5 w-5 text-green-600" />
-                  <span className="font-semibold text-slate-800">Keep Doing</span>
+                  <span className="font-semibold text-slate-800">
+                    Keep Doing
+                  </span>
                 </div>
                 <ul className="text-sm text-slate-600 space-y-1">
                   <li>• Quality content creation</li>
@@ -517,7 +535,9 @@ export default function AeoVsSeoPageClient() {
               <div className="bg-white rounded-lg p-4 shadow-sm">
                 <div className="flex items-center gap-2 mb-2">
                   <CheckCircle2 className="h-5 w-5 text-orange-600" />
-                  <span className="font-semibold text-slate-800">Start Doing</span>
+                  <span className="font-semibold text-slate-800">
+                    Start Doing
+                  </span>
                 </div>
                 <ul className="text-sm text-slate-600 space-y-1">
                   <li>• Schema markup implementation</li>
@@ -539,8 +559,8 @@ export default function AeoVsSeoPageClient() {
               Ready to Audit Your AEO Readiness?
             </h2>
             <p className="text-xl text-orange-100 max-w-2xl mx-auto">
-              Get your AI visibility score and see how you compare to competitors.
-              Free audit powered by the SIO-V5 engine.
+              Get your AI visibility score and see how you compare to
+              competitors. Free audit powered by the SIO-V5 engine.
             </p>
           </div>
 

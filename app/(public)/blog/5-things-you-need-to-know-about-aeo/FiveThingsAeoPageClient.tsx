@@ -259,7 +259,7 @@ export default function FiveThingsAeoPageClient() {
   return (
     <div className="space-y-24 py-16">
       {/* Hero Section */}
-      <section className="px-4 max-w-6xl mx-auto space-y-8">
+      <section className="px-4 max-w-6xl mx-auto space-y-8 pt-10">
         <div className="space-y-6">
           <div className="inline-flex items-center gap-2 bg-purple-100 px-4 py-1.5 rounded-lg text-purple-800 text-sm font-medium">
             <Sparkles className="h-4 w-4" />

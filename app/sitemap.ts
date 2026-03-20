@@ -181,6 +181,18 @@ export default async function sitemap(props: {
             changeFrequency: "monthly",
             priority: 0.3,
           },
+          {
+            url: `${BASE_URL}/blog/will-aeo-commoditize-seo`,
+            lastModified: new Date(),
+            changeFrequency: "weekly",
+            priority: 0.9,
+          },
+          {
+            url: `${BASE_URL}/blog/5-things-you-need-to-know-about-aeo`,
+            lastModified: new Date(),
+            changeFrequency: "weekly",
+            priority: 0.9,
+          },
         ]
       : [];
 
