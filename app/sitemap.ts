@@ -104,6 +104,24 @@ export default async function sitemap(props: {
             priority: 1,
           },
           {
+            url: `${BASE_URL}/positioning-audit`,
+            lastModified: new Date(),
+            changeFrequency: "weekly",
+            priority: 1,
+          },
+          {
+            url: `${BASE_URL}/clarity-audit`,
+            lastModified: new Date(),
+            changeFrequency: "weekly",
+            priority: 1,
+          },
+          {
+            url: `${BASE_URL}/momentum-audit`,
+            lastModified: new Date(),
+            changeFrequency: "weekly",
+            priority: 1,
+          },
+          {
             url: `${BASE_URL}/aeo-vs-seo`,
             lastModified: new Date(),
             changeFrequency: "weekly",
