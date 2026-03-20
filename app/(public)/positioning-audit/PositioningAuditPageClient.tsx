@@ -123,10 +123,12 @@ export default function PositioningAuditPageClient() {
                 <span>Free Positioning Audit Tool</span>
               </div>
 
-              <h1 className="text-5xl md:text-7xl font-bold text-white leading-none">
-                Positioning
+              <h1 className="text-3xl md:text-5xl font-bold text-white leading-none">
+                Positioning Audit
                 <br />
-                <span className="text-blue-200">Audit Tool</span>
+                <span className="text-blue-100">
+                  Analyze market differentiation for startups
+                </span>
               </h1>
 
               <p className="text-xl text-blue-100 leading-relaxed">

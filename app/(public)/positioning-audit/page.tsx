@@ -8,7 +8,7 @@ const pageUrl = `${appUrl}/positioning-audit`;
 export const metadata: Metadata = {
   title: {
     default:
-      "Category King Positioning Tool - Free Market Differentiation Audit | LaunchRecord",
+      "Positioning Audit for Startups - Free Market Differentiation Audit | LaunchRecord",
     template: "%s | LaunchRecord",
   },
   description:
@@ -35,7 +35,7 @@ export const metadata: Metadata = {
     canonical: pageUrl,
   },
   openGraph: {
-    title: "Category King Positioning Tool - Free Market Differentiation Audit",
+    title: "Positioning Audit for Startups - Free Market Differentiation Audit",
     description:
       "Free positioning strategy tool for startups. Analyze your market differentiation and competitive positioning.",
     url: pageUrl,
@@ -54,7 +54,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Category King Positioning Tool - Free Market Differentiation Audit",
+    title: "Positioning Audit for Startups - Free Market Differentiation Audit",
     description:
       "Free positioning strategy tool for startups. Get your positioning score in minutes.",
     images: ["/og-image.png"],
@@ -104,7 +104,7 @@ export default function PositioningAuditPage() {
         "@type": "WebPage",
         "@id": pageUrl,
         url: pageUrl,
-        name: "Positioning Audit - Measure Your Market Differentiation | LaunchRecord",
+        name: "Positioning Audit for Startups - Measure Your Market Differentiation | LaunchRecord",
         description:
           "Free positioning audit for startups. Analyze your market differentiation, category definition, and competitive positioning.",
         isPartOf: {
