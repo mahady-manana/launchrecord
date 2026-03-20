@@ -1,10 +1,10 @@
 "use client";
 
+import { IncompleteDataModal } from "@/components/incomplete-data-modal";
 import { useProducts } from "@/hooks/use-products";
 import { useProductStore } from "@/stores/product-store";
-import { useRouter, useParams } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { Loader2 } from "lucide-react";
 
 export default function ProductLayout({
   children,
@@ -14,10 +14,12 @@ export default function ProductLayout({
   params: Promise<{ product: string }>;
 }) {
   const router = useRouter();
+  const pathname = usePathname();
   const { selectedProduct, setSelectedProduct, products } = useProductStore();
   const { fetchProducts } = useProducts();
   const [isInitializing, setIsInitializing] = useState(true);
   const [productId, setProductId] = useState<string | null>(null);
+  const [showIncompleteModal, setShowIncompleteModal] = useState(false);
 
   useEffect(() => {
     async function loadProduct() {
@@ -38,7 +40,7 @@ export default function ProductLayout({
 
     // Find the product in the store
     const foundProduct = products.find(
-      (p) => p.id === productId || p._id === productId
+      (p) => p.id === productId || p._id === productId,
     );
 
     if (foundProduct) {
@@ -49,6 +51,32 @@ export default function ProductLayout({
       router.push("/dashboard");
     }
   }, [productId, products, setSelectedProduct, router]);
+
+  // Check for incomplete data after product is loaded
+  useEffect(() => {
+    if (!selectedProduct || isInitializing) return;
+
+    // Don't show modal on settings page
+    if (pathname?.includes("/settings")) {
+      return;
+    }
+
+    const hasMissingData =
+      !selectedProduct.logo ||
+      !selectedProduct.tagline ||
+      !selectedProduct.description ||
+      !selectedProduct.topics ||
+      !selectedProduct.topics.length;
+
+    if (hasMissingData) {
+      // Show modal after a short delay to avoid interrupting initial load
+      const timer = setTimeout(() => {
+        setShowIncompleteModal(true);
+      }, 1000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [selectedProduct, isInitializing, pathname]);
 
   if (isInitializing) {
     return (
@@ -65,5 +93,13 @@ export default function ProductLayout({
     return null;
   }
 
-  return <>{children}</>;
+  return (
+    <>
+      {children}
+      <IncompleteDataModal
+        open={showIncompleteModal}
+        onOpenChange={setShowIncompleteModal}
+      />
+    </>
+  );
 }

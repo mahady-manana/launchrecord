@@ -247,6 +247,8 @@ export function ProductSection({
                     insight={report.aeo_index.critique}
                     icon={GlobeIcon}
                     description="Track your AEO presence accross multiple AI"
+                    productId={product._id}
+                    pillar="aeo"
                   />
                   <PillarScoreCard
                     score={report.positioning_sharpness.score}
@@ -254,6 +256,8 @@ export function ProductSection({
                     insight={report.positioning_sharpness.critique}
                     icon={TargetIcon}
                     description="Keep an eye on your positioning shit"
+                    productId={product._id}
+                    pillar="positioning"
                   />
                   <PillarScoreCard
                     score={report.clarity_velocity.score}
@@ -261,6 +265,8 @@ export function ProductSection({
                     insight={report.clarity_velocity.critique}
                     icon={ZapIcon}
                     description="Pay attention to Time-To-Aha"
+                    productId={product._id}
+                    pillar="clarity"
                   />
                   <PillarScoreCard
                     score={report.momentum_signal.score}
@@ -268,6 +274,8 @@ export function ProductSection({
                     insight={report.momentum_signal.critique}
                     icon={TrendingUpIcon}
                     description="Find the best momentum to gear up your product"
+                    productId={product._id}
+                    pillar="momentum"
                   />
                   <PillarScoreCard
                     score={report.founder_proof_vault.score}
@@ -275,6 +283,8 @@ export function ProductSection({
                     insight={report.founder_proof_vault.critique}
                     icon={AwardIcon}
                     description="Prove we are wrong"
+                    productId={product._id}
+                    pillar="proof"
                   />
                 </div>
               </div>
@@ -331,6 +341,8 @@ interface PillarScoreCardProps {
   insight?: string;
   icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
   description: string;
+  productId: string;
+  pillar: "aeo" | "positioning" | "clarity" | "momentum" | "proof";
 }
 
 function PillarScoreCard({
@@ -339,6 +351,8 @@ function PillarScoreCard({
   insight,
   icon: Icon,
   description,
+  productId,
+  pillar,
 }: PillarScoreCardProps) {
   const getScoreStyle = (score: number) => {
     if (score >= 90)
@@ -375,6 +389,14 @@ function PillarScoreCard({
   };
 
   const style = getScoreStyle(score);
+
+  const pillarUrlMap = {
+    aeo: "audit/aeo",
+    positioning: "audit/positioning",
+    clarity: "audit/clarity",
+    momentum: "audit/momentum",
+    proof: "audit/founder-proof",
+  };
 
   return (
     <div
@@ -416,6 +438,18 @@ function PillarScoreCard({
           </p>
         </div>
       )}
+
+      {/* Full Audit CTA Button */}
+      <Link
+        href={`/dashboard/${productId}/${pillarUrlMap[pillar]}`}
+        className={cn(
+          "relative mt-2.5 w-full px-2 py-1.5 rounded-md text-[9px] font-bold uppercase tracking-wide transition-all duration-300 hover:shadow-md",
+          style.bg,
+          "text-white",
+        )}
+      >
+        Full Audit
+      </Link>
     </div>
   );
 }

@@ -43,7 +43,7 @@ interface ProductSettingsProps {
 export default function ProductSettingsPage({ params }: ProductSettingsProps) {
   const router = useRouter();
   const { products, selectedProduct, setSelectedProduct } = useProductStore();
-  const { fetchProducts } = useProducts();
+  const { fetchProducts, updateProduct } = useProducts();
 
   const [product, setProduct] = useState<typeof selectedProduct>(null);
   const [isEditingInfo, setIsEditingInfo] = useState(false);
@@ -189,6 +189,8 @@ export default function ProductSettingsPage({ params }: ProductSettingsProps) {
           tagline: data.product.tagline,
           description: data.product.description,
         });
+        // Update the store
+        await updateProduct(product.id, data.product);
         toast.success("Product information updated!");
         setIsEditingInfo(false);
       } else {
@@ -214,7 +216,10 @@ export default function ProductSettingsPage({ params }: ProductSettingsProps) {
       });
 
       if (response.ok) {
+        const data = await response.json();
         setFormData({ ...formData, logo: url });
+        // Update the store
+        await updateProduct(product.id, { logo: url });
         toast.success("Logo updated!");
         setIsEditingLogo(false);
       } else {
@@ -241,6 +246,8 @@ export default function ProductSettingsPage({ params }: ProductSettingsProps) {
       if (response.ok) {
         const data = await response.json();
         setFormData({ ...formData, website: data.product.website });
+        // Update the store
+        await updateProduct(product.id, { website: data.product.website });
         toast.success("Website updated!");
         setIsEditingWebsite(false);
       } else {
@@ -270,6 +277,8 @@ export default function ProductSettingsPage({ params }: ProductSettingsProps) {
         setTopics(data.topics || []);
         setSearchQuery("");
         setSearchResults([]);
+        // Update the store
+        await updateProduct(product.id, { topics: data.topics || [] });
         toast.success("Topic added!");
       } else {
         const data = await response.json();
@@ -294,6 +303,8 @@ export default function ProductSettingsPage({ params }: ProductSettingsProps) {
       if (response.ok) {
         const data = await response.json();
         setTopics(data.topics || []);
+        // Update the store
+        await updateProduct(product.id, { topics: data.topics || [] });
         toast.success("Topic removed!");
       } else {
         toast.error("Failed to remove topic");

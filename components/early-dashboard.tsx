@@ -17,9 +17,11 @@ import {
   TrendingUp,
   Zap,
 } from "lucide-react";
+import Link from "next/link";
 
 interface EarlyDashboardProps {
   report: AuditReportV1;
+  productId?: string;
   founderName?: string;
   saasName?: string;
   showNavigation?: boolean;
@@ -28,6 +30,7 @@ interface EarlyDashboardProps {
 
 export function EarlyDashboard({
   report,
+  productId,
   founderName = "Founder",
   saasName = "Your SaaS",
   showNavigation = true,
@@ -285,6 +288,14 @@ export function EarlyDashboard({
                   </div>
                 ))}
               </div>
+              {productId && (
+                <Link
+                  href={`/dashboard/${productId}/audit/aeo`}
+                  className="block w-full bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white text-center font-semibold py-2.5 px-4 rounded-lg transition-all duration-300 hover:shadow-lg"
+                >
+                  Full AEO Audit
+                </Link>
+              )}
             </CardContent>
           </Card>
 
@@ -329,6 +340,14 @@ export function EarlyDashboard({
                   </div>
                 ))}
               </div>
+              {productId && (
+                <Link
+                  href={`/dashboard/${productId}/audit/positioning`}
+                  className="block w-full bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white text-center font-semibold py-2.5 px-4 rounded-lg transition-all duration-300 hover:shadow-lg"
+                >
+                  Full Positioning Audit
+                </Link>
+              )}
             </CardContent>
           </Card>
 
@@ -371,6 +390,14 @@ export function EarlyDashboard({
                   </div>
                 ))}
               </div>
+              {productId && (
+                <Link
+                  href={`/dashboard/${productId}/audit/clarity`}
+                  className="block w-full bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white text-center font-semibold py-2.5 px-4 rounded-lg transition-all duration-300 hover:shadow-lg"
+                >
+                  Full Clarity Audit
+                </Link>
+              )}
             </CardContent>
           </Card>
 
@@ -413,6 +440,14 @@ export function EarlyDashboard({
                   </div>
                 ))}
               </div>
+              {productId && (
+                <Link
+                  href={`/dashboard/${productId}/audit/momentum`}
+                  className="block w-full bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white text-center font-semibold py-2.5 px-4 rounded-lg transition-all duration-300 hover:shadow-lg"
+                >
+                  Full Momentum Audit
+                </Link>
+              )}
             </CardContent>
           </Card>
         </div>
@@ -457,6 +492,14 @@ export function EarlyDashboard({
                   </div>
                 ))}
             </div>
+            {productId && (
+              <Link
+                href={`/dashboard/${productId}/audit/founder-proof`}
+                className="block w-full bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white text-center font-semibold py-2.5 px-4 rounded-lg transition-all duration-300 hover:shadow-lg"
+              >
+                Full Founder Proof Audit
+              </Link>
+            )}
           </CardContent>
         </Card>
 

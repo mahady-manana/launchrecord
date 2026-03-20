@@ -1,5 +1,5 @@
-import { create } from "zustand";
 import { AuditReportV1 } from "@/types/audit-report-v1";
+import { create } from "zustand";
 
 export interface Product {
   _id: string;
@@ -10,6 +10,7 @@ export interface Product {
   logo?: string | null;
   website?: string | null;
   users?: string[];
+  topics?: string[];
   score?: number | null;
   earlyAccess?: boolean;
   addedByAdmin?: boolean;
@@ -61,37 +62,48 @@ export const useProductStore = create<ProductState>((set) => ({
 
   setReportsCache: (reportsCache) => set({ reportsCache }),
 
-  updateReportCache: (productId, report) => set((state) => ({
-    reportsCache: { ...state.reportsCache, [productId]: report },
-    productsWithReports: state.productsWithReports.map((p) =>
-      p.id === productId ? { ...p, report } : p
-    ),
-  })),
+  updateReportCache: (productId, report) =>
+    set((state) => ({
+      reportsCache: { ...state.reportsCache, [productId]: report },
+      productsWithReports: state.productsWithReports.map((p) =>
+        p.id === productId ? { ...p, report } : p,
+      ),
+    })),
 
-  addProduct: (product) => set((state) => ({
-    products: [...state.products, product],
-    productsWithReports: [...state.productsWithReports, { ...product, report: state.reportsCache[product.id] || null }],
-  })),
+  addProduct: (product) =>
+    set((state) => ({
+      products: [...state.products, product],
+      productsWithReports: [
+        ...state.productsWithReports,
+        { ...product, report: state.reportsCache[product.id] || null },
+      ],
+    })),
 
-  updateProduct: (id, updates) => set((state) => ({
-    products: state.products.map((p) =>
-      p.id === id || p._id === id ? { ...p, ...updates } : p
-    ),
-    productsWithReports: state.productsWithReports.map((p) =>
-      p.id === id || p._id === id ? { ...p, ...updates } : p
-    ),
-    selectedProduct: state.selectedProduct?.id === id || state.selectedProduct?._id === id
-      ? { ...state.selectedProduct, ...updates }
-      : state.selectedProduct,
-  })),
+  updateProduct: (id, updates) =>
+    set((state) => ({
+      products: state.products.map((p) =>
+        p.id === id || p._id === id ? { ...p, ...updates } : p,
+      ),
+      productsWithReports: state.productsWithReports.map((p) =>
+        p.id === id || p._id === id ? { ...p, ...updates } : p,
+      ),
+      selectedProduct:
+        state.selectedProduct?.id === id || state.selectedProduct?._id === id
+          ? { ...state.selectedProduct, ...updates }
+          : state.selectedProduct,
+    })),
 
-  removeProduct: (id) => set((state) => ({
-    products: state.products.filter((p) => p.id !== id && p._id !== id),
-    productsWithReports: state.productsWithReports.filter((p) => p.id !== id && p._id !== id),
-    selectedProduct: state.selectedProduct?.id === id || state.selectedProduct?._id === id
-      ? null
-      : state.selectedProduct,
-  })),
+  removeProduct: (id) =>
+    set((state) => ({
+      products: state.products.filter((p) => p.id !== id && p._id !== id),
+      productsWithReports: state.productsWithReports.filter(
+        (p) => p.id !== id && p._id !== id,
+      ),
+      selectedProduct:
+        state.selectedProduct?.id === id || state.selectedProduct?._id === id
+          ? null
+          : state.selectedProduct,
+    })),
 
   setSelectedProduct: (product) => set({ selectedProduct: product }),
 
@@ -101,11 +113,12 @@ export const useProductStore = create<ProductState>((set) => ({
 
   setError: (error) => set({ error }),
 
-  clearProducts: () => set({
-    products: [],
-    productsWithReports: [],
-    reportsCache: {},
-    selectedProduct: null,
-    error: null,
-  }),
+  clearProducts: () =>
+    set({
+      products: [],
+      productsWithReports: [],
+      reportsCache: {},
+      selectedProduct: null,
+      error: null,
+    }),
 }));

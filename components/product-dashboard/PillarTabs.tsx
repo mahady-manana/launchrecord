@@ -4,17 +4,18 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { AuditReportV1 } from "@/types/audit-report-v1";
 import {
   AEOPresencePillar,
-  PositioningSharpnessPillar,
   ClarityVelocityPillar,
-  MomentumSignalPillar,
   FounderProofVaultPillar,
+  MomentumSignalPillar,
+  PositioningSharpnessPillar,
 } from "./pillars";
 
 interface PillarTabsProps {
   report: AuditReportV1;
+  productId: string;
 }
 
-export function PillarTabs({ report }: PillarTabsProps) {
+export function PillarTabs({ report, productId }: PillarTabsProps) {
   return (
     <Tabs defaultValue="overview" className="space-y-4">
       <TabsList className="grid w-full grid-cols-6">
@@ -28,32 +29,32 @@ export function PillarTabs({ report }: PillarTabsProps) {
 
       <TabsContent value="overview" className="space-y-4">
         <div className="grid md:grid-cols-2 gap-4">
-          <AEOPresencePillar report={report} />
-          <PositioningSharpnessPillar report={report} />
-          <ClarityVelocityPillar report={report} />
-          <MomentumSignalPillar report={report} />
-          <FounderProofVaultPillar report={report} />
+          <AEOPresencePillar report={report} productId={productId} />
+          <PositioningSharpnessPillar report={report} productId={productId} />
+          <ClarityVelocityPillar report={report} productId={productId} />
+          <MomentumSignalPillar report={report} productId={productId} />
+          <FounderProofVaultPillar report={report} productId={productId} />
         </div>
       </TabsContent>
 
       <TabsContent value="aeo">
-        <AEOPresencePillar report={report} />
+        <AEOPresencePillar report={report} productId={productId} />
       </TabsContent>
 
       <TabsContent value="positioning">
-        <PositioningSharpnessPillar report={report} />
+        <PositioningSharpnessPillar report={report} productId={productId} />
       </TabsContent>
 
       <TabsContent value="clarity">
-        <ClarityVelocityPillar report={report} />
+        <ClarityVelocityPillar report={report} productId={productId} />
       </TabsContent>
 
       <TabsContent value="momentum">
-        <MomentumSignalPillar report={report} />
+        <MomentumSignalPillar report={report} productId={productId} />
       </TabsContent>
 
       <TabsContent value="proof">
-        <FounderProofVaultPillar report={report} />
+        <FounderProofVaultPillar report={report} productId={productId} />
       </TabsContent>
     </Tabs>
   );

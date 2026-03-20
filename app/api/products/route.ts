@@ -1,7 +1,8 @@
 import { connectToDatabase } from "@/lib/db";
 import { getUserSession } from "@/lib/session";
-import Product from "@/models/product";
 import { generateUniqueSlug } from "@/lib/utils";
+import Product from "@/models/product";
+import Topic from "@/models/topic";
 import { NextRequest, NextResponse } from "next/server";
 import normalizeUrl from "normalize-url";
 
@@ -20,6 +21,7 @@ export async function GET(request: NextRequest) {
       users: user?.id,
     })
       .sort({ createdAt: -1 })
+      .populate("topics", "", Topic)
       .lean();
 
     // Transform products for client
@@ -37,6 +39,7 @@ export async function GET(request: NextRequest) {
       surveyData: product.surveyData,
       createdAt: product.createdAt.toISOString(),
       updatedAt: product.updatedAt.toISOString(),
+      topics: product.topics,
     }));
 
     return NextResponse.json({
@@ -80,7 +83,7 @@ export async function POST(request: NextRequest) {
     if (existingProduct) {
       // Product already exists, don't create duplicate
       return NextResponse.json(
-        { 
+        {
           error: "Product with this URL already exists",
           existingProductId: existingProduct._id.toString(),
           existingProductName: existingProduct.name,
@@ -91,8 +94,8 @@ export async function POST(request: NextRequest) {
 
     // Generate unique slug from product name
     const slug = await generateUniqueSlug(name, async (slug) => {
-      const existing = await Product.findOne({ slug })
-      return !!existing
+      const existing = await Product.findOne({ slug });
+      return !!existing;
     });
 
     const product = await Product.create({

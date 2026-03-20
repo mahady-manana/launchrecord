@@ -1,6 +1,7 @@
 "use client";
 
 import { BillingOverview, SIOFivePillars } from "@/components/dashboard";
+import { MissingDataBanner } from "@/components/missing-data-banner";
 import {
   CategoryWeights,
   EgoStab,
@@ -97,6 +98,9 @@ export default function ProductDashboard() {
         onExport={handleExport}
         onSettings={handleSettings}
       />
+
+      {/* Missing Data Warning Banner */}
+      <MissingDataBanner />
 
       {/* Info Banner */}
       <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg p-4">
@@ -197,7 +201,7 @@ export default function ProductDashboard() {
           </div>
 
           {/* Pillar Tabs with Detailed Analysis */}
-          <PillarTabs report={report} />
+          <PillarTabs report={report} productId={selectedProduct._id} />
 
           {/* Competitors */}
           {report.top_competitors.length > 0 && (

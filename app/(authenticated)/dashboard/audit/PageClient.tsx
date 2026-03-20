@@ -4,6 +4,7 @@ import { EarlyDashboard } from "@/components/early-dashboard";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { useProducts } from "@/hooks/use-products";
 import type { AuditReportV1 } from "@/types/audit-report-v1";
 import {
   AlertCircle,
@@ -70,6 +71,7 @@ function DashboardAuditContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const productId = searchParams.get("product");
+  const { fetchProducts } = useProducts();
 
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
   const [report, setReport] = useState<AuditReportV1 | null>(null);
@@ -113,6 +115,9 @@ function DashboardAuditContent() {
         setReport(data.data.analysis);
         setShowResults(true);
         setIsProcessing(false);
+        await fetchProducts(id);
+
+        // Refetch products and update selected product with new audit data
       } else if (response.status === 503 && data.retry) {
         setShowRetryScheduled(true);
         setError(data.error || "System is at capacity");
@@ -212,7 +217,9 @@ function DashboardAuditContent() {
   }
 
   if (showResults && report) {
-    return <EarlyDashboard report={report} />;
+    return (
+      <EarlyDashboard report={report} productId={productId || undefined} />
+    );
   }
 
   const currentStep = analysisSteps[currentStepIndex];
