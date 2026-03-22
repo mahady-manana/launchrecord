@@ -1,12 +1,18 @@
 "use client";
 
 import { BillingOverview, SIOFivePillars } from "@/components/dashboard";
+import {
+  AEOCard,
+  ClarityCard,
+  MomentumCard,
+  PositioningCard,
+  ProofCard,
+  SimplifiedEgoStab,
+  SimplifiedOverallAssessment,
+} from "@/components/explainable-report";
 import { MissingDataBanner } from "@/components/missing-data-banner";
 import {
   CategoryWeights,
-  EgoStab,
-  OverallAssessment,
-  PillarTabs,
   ProductDashboardHeader,
 } from "@/components/product-dashboard";
 import { Badge } from "@/components/ui/badge";
@@ -25,17 +31,18 @@ import {
   BarChart3,
   CheckCircle,
   Clock,
+  HelpCircle,
   Info,
   RefreshCcw,
-  Shield,
 } from "lucide-react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 export default function ProductDashboard() {
   const router = useRouter();
   const { selectedProduct } = useProductStore();
-  const { fetchProducts, updateProduct } = useProducts();
+  const { fetchProducts } = useProducts();
 
   const [report, setReport] = useState<
     (AuditReportV1 & { createdAt?: string }) | null
@@ -91,7 +98,7 @@ export default function ProductDashboard() {
   }
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
       {/* Header */}
       <ProductDashboardHeader
         onRunAudit={handleRunAudit}
@@ -113,8 +120,8 @@ export default function ProductDashboard() {
               Intelligence Command Center
             </h3>
             <p className="text-sm text-blue-700 mt-1">
-              Complete SIO-V5 analysis for {selectedProduct.name}. Track
-              defensibility across 5 key pillars.
+              Complete SIO-V5 analysis for {selectedProduct.name}. Quick
+              overview with score + what it means.
             </p>
           </div>
         </div>
@@ -131,7 +138,7 @@ export default function ProductDashboard() {
             </div>
             <CardTitle className="text-2xl">No Audit Available</CardTitle>
             <CardDescription>
-              Run an audit to generate the complete SIO-V5 intelligence report
+              Run an audit to generate your SIO-V5 report
             </CardDescription>
           </CardHeader>
           <CardContent className="flex justify-center">
@@ -160,13 +167,26 @@ export default function ProductDashboard() {
                 </p>
               </div>
             </div>
-            <Badge
-              variant="outline"
-              className="bg-green-50 text-green-700 border-green-200"
-            >
-              <CheckCircle className="h-3 w-3 mr-1" />
-              Completed
-            </Badge>
+            <div className="flex items-center gap-2">
+              <Button
+                variant="ghost"
+                size="sm"
+                asChild
+                className="text-blue-600 hover:text-blue-700"
+              >
+                <a href={`/dashboard/${selectedProduct.id}/guidance/overview`}>
+                  <HelpCircle className="h-4 w-4 mr-2" />
+                  Guide
+                </a>
+              </Button>
+              <Badge
+                variant="outline"
+                className="bg-green-50 text-green-700 border-green-200"
+              >
+                <CheckCircle className="h-3 w-3 mr-1" />
+                Completed
+              </Badge>
+            </div>
           </div>
 
           {/* Calculate composite score */}
@@ -176,20 +196,33 @@ export default function ProductDashboard() {
             return (
               <>
                 {/* Overall Assessment */}
-                <OverallAssessment
+                <SimplifiedOverallAssessment
                   report={report}
                   productName={selectedProduct.name}
                 />
 
-                {/* Ego Stab - Score-based insights card */}
-                <EgoStab report={report} compositeScore={compositeScore} />
+                {/* Ego Stab */}
+                <SimplifiedEgoStab
+                  report={report}
+                  compositeScore={compositeScore}
+                />
               </>
             );
           })()}
 
           {/* 5 Pillars Overview */}
           <div>
-            <h2 className="text-xl font-semibold mb-4">SIO-V5 Pillars</h2>
+            <div className="flex items-center justify-between mb-3">
+              <h2 className="text-lg font-semibold">SIO-V5 Pillars</h2>
+              <Button variant="ghost" size="sm" asChild>
+                <Link
+                  href={`/dashboard/${selectedProduct.id}/guidance/overview`}
+                >
+                  <Info className="h-4 w-4 mr-2" />
+                  Learn more
+                </Link>
+              </Button>
+            </div>
             <SIOFivePillars
               aeoScore={report.aeo_index.score}
               positioningScore={report.positioning_sharpness.score}
@@ -200,20 +233,52 @@ export default function ProductDashboard() {
             />
           </div>
 
-          {/* Pillar Tabs with Detailed Analysis */}
-          <PillarTabs report={report} productId={selectedProduct._id} />
+          {/* Individual Pillar Cards with Grade Summary at Top */}
+          <div className="space-y-6">
+            <div className="flex items-center justify-between">
+              <h2 className="text-lg font-semibold">Detailed Analysis</h2>
+              <p className="text-xs text-muted-foreground">
+                Score + what it means at a glance
+              </p>
+            </div>
+
+            <div className="grid lg:grid-cols-2 gap-4">
+              <AEOCard
+                report={report}
+                productId={selectedProduct.id}
+                fullAuditLink={`/dashboard/${selectedProduct.id}/audit/aeo`}
+              />
+              <PositioningCard
+                report={report}
+                productId={selectedProduct.id}
+                fullAuditLink={`/dashboard/${selectedProduct.id}/audit/positioning`}
+              />
+              <ClarityCard
+                report={report}
+                productId={selectedProduct.id}
+                fullAuditLink={`/dashboard/${selectedProduct.id}/audit/clarity`}
+              />
+              <MomentumCard
+                report={report}
+                productId={selectedProduct.id}
+                fullAuditLink={`/dashboard/${selectedProduct.id}/audit/momentum`}
+              />
+              <ProofCard
+                report={report}
+                productId={selectedProduct.id}
+                fullAuditLink={`/dashboard/${selectedProduct.id}/audit/proof`}
+              />
+            </div>
+          </div>
 
           {/* Competitors */}
           {report.top_competitors.length > 0 && (
             <Card>
               <CardHeader>
                 <div className="flex items-center gap-2">
-                  <Shield className="h-5 w-5 text-orange-600" />
+                  <Info className="h-5 w-5 text-orange-600" />
                   <CardTitle>Top Competitors</CardTitle>
                 </div>
-                <CardDescription>
-                  Competitive landscape analysis
-                </CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="grid md:grid-cols-3 gap-4">
