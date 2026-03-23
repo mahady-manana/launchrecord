@@ -22,7 +22,8 @@ export const fullAuditWithOpenAI = async (
     websiteContent: JSON.stringify(cleanContent, null, 2),
   });
   const auditResponse = await client.chat.completions.create({
-    model: "gpt-4o-mini-search-preview",
+    model: "gpt-4o-mini",
+    // model: "gpt-4o-mini-search-preview",
     messages: [
       {
         role: "system",
