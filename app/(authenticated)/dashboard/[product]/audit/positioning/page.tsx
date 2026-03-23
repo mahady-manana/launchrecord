@@ -43,10 +43,10 @@ interface PositioningReport {
 }
 
 interface UsageInfo {
-  auditsUsed: number;
-  auditsLimit: number;
-  weeklyAuditUsed: number;
-  weeklyAuditLimit: number;
+  positioningAuditsUsed: number;
+  positioningAuditsLimit: number;
+  positioningWeeklyAuditUsed: number;
+  positioningWeeklyAuditLimit: number;
   resetAt: string;
 }
 
@@ -453,7 +453,8 @@ export default function PositioningAuditPage() {
                     Positioning Audit Usage
                   </h3>
                   <p className="text-sm text-blue-700">
-                    {usage.auditsUsed} of {usage.auditsLimit} used this month
+                    {usage.positioningAuditsUsed} of{" "}
+                    {usage.positioningAuditsLimit} used this month
                   </p>
                 </div>
               </div>
@@ -461,13 +462,15 @@ export default function PositioningAuditPage() {
                 <div className="text-right">
                   <div className="text-sm text-blue-700">Weekly Limit</div>
                   <div className="text-lg font-bold text-blue-900">
-                    {usage.weeklyAuditUsed} / {usage.weeklyAuditLimit}
+                    {usage.positioningWeeklyAuditUsed} /{" "}
+                    {usage.positioningWeeklyAuditLimit}
                   </div>
                 </div>
                 <div className="text-right">
                   <div className="text-sm text-blue-700">Monthly Limit</div>
                   <div className="text-lg font-bold text-blue-900">
-                    {usage.auditsUsed} / {usage.auditsLimit}
+                    {usage.positioningAuditsUsed} /{" "}
+                    {usage.positioningAuditsLimit}
                   </div>
                 </div>
               </div>

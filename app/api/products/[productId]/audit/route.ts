@@ -71,10 +71,14 @@ async function checkAndUpdateUsage(productId: string, planType: string) {
       productId,
       periodStart: monthStart,
       periodEnd: monthEnd,
-      auditsUsed: 0,
-      auditsLimit: limits.monthly,
-      weeklyAuditUsed: 0,
-      weeklyAuditLimit: limits.weekly,
+      sioAuditsUsed: 0,
+      sioAuditsLimit: limits.monthly,
+      sioWeeklyAuditUsed: 0,
+      sioWeeklyAuditLimit: limits.weekly,
+      positioningAuditsUsed: 0,
+      positioningAuditsLimit: limits.monthly,
+      positioningWeeklyAuditUsed: 0,
+      positioningWeeklyAuditLimit: limits.weekly,
       weekStart,
       weekEnd,
       resetAt: monthEnd,
@@ -82,14 +86,17 @@ async function checkAndUpdateUsage(productId: string, planType: string) {
   } else {
     // Check if week has reset
     if (usage.weekEnd < now) {
-      usage.weeklyAuditUsed = 0;
+      usage.sioWeeklyAuditUsed = 0;
+      usage.positioningWeeklyAuditUsed = 0;
       usage.weekStart = weekStart;
       usage.weekEnd = weekEnd;
     }
 
     // Update limits in case plan changed
-    usage.auditsLimit = limits.monthly;
-    usage.weeklyAuditLimit = limits.weekly;
+    usage.sioAuditsLimit = limits.monthly;
+    usage.sioWeeklyAuditLimit = limits.weekly;
+    usage.positioningAuditsLimit = limits.monthly;
+    usage.positioningWeeklyAuditLimit = limits.weekly;
     usage.periodEnd = monthEnd;
     usage.resetAt = monthEnd;
 
@@ -140,18 +147,18 @@ export async function POST(
   // Check and update usage
   const usage = await checkAndUpdateUsage(productId, planType);
 
-  // Check weekly limit
-  if (usage.weeklyAuditUsed >= usage.weeklyAuditLimit) {
+  // Check weekly limit (SIO)
+  if (usage.sioWeeklyAuditUsed >= usage.sioWeeklyAuditLimit) {
     return jsonError(
-      `Weekly audit limit reached (${usage.weeklyAuditUsed}/${usage.weeklyAuditLimit}). Resets on ${usage.weekEnd.toLocaleDateString()}`,
+      `Weekly audit limit reached (${usage.sioWeeklyAuditUsed}/${usage.sioWeeklyAuditLimit}). Resets on ${usage.weekEnd.toLocaleDateString()}`,
       429,
     );
   }
 
-  // Check monthly limit
-  if (usage.auditsUsed >= usage.auditsLimit) {
+  // Check monthly limit (SIO)
+  if (usage.sioAuditsUsed >= usage.sioAuditsLimit) {
     return jsonError(
-      `Monthly audit limit reached (${usage.auditsUsed}/${usage.auditsLimit}). Resets on ${usage.periodEnd.toLocaleDateString()}`,
+      `Monthly audit limit reached (${usage.sioAuditsUsed}/${usage.sioAuditsLimit}). Resets on ${usage.periodEnd.toLocaleDateString()}`,
       429,
     );
   }
@@ -170,10 +177,10 @@ export async function POST(
         report: existingReport,
         existing: true,
         usage: {
-          auditsUsed: usage.auditsUsed,
-          auditsLimit: usage.auditsLimit,
-          weeklyAuditUsed: usage.weeklyAuditUsed,
-          weeklyAuditLimit: usage.weeklyAuditLimit,
+          sioAuditsUsed: usage.sioAuditsUsed,
+          sioAuditsLimit: usage.sioAuditsLimit,
+          sioWeeklyAuditUsed: usage.sioWeeklyAuditUsed,
+          sioWeeklyAuditLimit: usage.sioWeeklyAuditLimit,
           resetsOn: usage.periodEnd.toLocaleDateString(),
           weekResetsOn: usage.weekEnd.toLocaleDateString(),
         },
@@ -259,9 +266,9 @@ export async function POST(
     report: auditReport,
   });
 
-  // Increment usage counters
-  usage.auditsUsed += 1;
-  usage.weeklyAuditUsed += 1;
+  // Increment usage counters (SIO)
+  usage.sioAuditsUsed += 1;
+  usage.sioWeeklyAuditUsed += 1;
   await usage.save();
 
   return jsonSuccess({
@@ -270,10 +277,10 @@ export async function POST(
     analysis: auditReport,
     existing: false,
     usage: {
-      auditsUsed: usage.auditsUsed,
-      auditsLimit: usage.auditsLimit,
-      weeklyAuditUsed: usage.weeklyAuditUsed,
-      weeklyAuditLimit: usage.weeklyAuditLimit,
+      sioAuditsUsed: usage.sioAuditsUsed,
+      sioAuditsLimit: usage.sioAuditsLimit,
+      sioWeeklyAuditUsed: usage.sioWeeklyAuditUsed,
+      sioWeeklyAuditLimit: usage.sioWeeklyAuditLimit,
       resetsOn: usage.periodEnd.toLocaleDateString(),
       weekResetsOn: usage.weekEnd.toLocaleDateString(),
     },
@@ -316,10 +323,10 @@ export async function GET(
   return jsonSuccess({
     usage: {
       planType,
-      auditsUsed: usage.auditsUsed,
-      auditsLimit: usage.auditsLimit,
-      weeklyAuditUsed: usage.weeklyAuditUsed,
-      weeklyAuditLimit: usage.weeklyAuditLimit,
+      sioAuditsUsed: usage.sioAuditsUsed,
+      sioAuditsLimit: usage.sioAuditsLimit,
+      sioWeeklyAuditUsed: usage.sioWeeklyAuditUsed,
+      sioWeeklyAuditLimit: usage.sioWeeklyAuditLimit,
       resetsOn: usage.periodEnd.toLocaleDateString(),
       weekResetsOn: usage.weekEnd.toLocaleDateString(),
     },

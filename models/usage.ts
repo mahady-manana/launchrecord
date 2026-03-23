@@ -4,10 +4,21 @@ export interface IUsage extends Document {
   productId: mongoose.Types.ObjectId;
   periodStart: Date;
   periodEnd: Date;
-  auditsUsed: number;
-  auditsLimit: number;
-  weeklyAuditUsed: number;
-  weeklyAuditLimit: number;
+  // SIO Audit counters (legacy: auditsUsed for backward compatibility)
+  sioAuditsUsed: number;
+  sioAuditsLimit: number;
+  sioWeeklyAuditUsed: number;
+  sioWeeklyAuditLimit: number;
+  // Positioning Audit counters
+  positioningAuditsUsed: number;
+  positioningAuditsLimit: number;
+  positioningWeeklyAuditUsed: number;
+  positioningWeeklyAuditLimit: number;
+  // Legacy fields for backward compatibility (deprecated)
+  auditsUsed?: number;
+  auditsLimit?: number;
+  weeklyAuditUsed?: number;
+  weeklyAuditLimit?: number;
   weekStart: Date;
   weekEnd: Date;
   resetAt: Date;
@@ -31,6 +42,49 @@ const UsageSchema = new Schema<IUsage>(
       type: Date,
       required: true,
     },
+    // SIO Audit counters
+    sioAuditsUsed: {
+      type: Number,
+      default: 0,
+      min: 0,
+    },
+    sioAuditsLimit: {
+      type: Number,
+      required: true,
+      default: 3, // Free tier: 3 per month
+    },
+    sioWeeklyAuditUsed: {
+      type: Number,
+      default: 0,
+      min: 0,
+    },
+    sioWeeklyAuditLimit: {
+      type: Number,
+      required: true,
+      default: 0, // Free tier: 0 per week
+    },
+    // Positioning Audit counters
+    positioningAuditsUsed: {
+      type: Number,
+      default: 0,
+      min: 0,
+    },
+    positioningAuditsLimit: {
+      type: Number,
+      required: true,
+      default: 1, // Free tier: 1 per month
+    },
+    positioningWeeklyAuditUsed: {
+      type: Number,
+      default: 0,
+      min: 0,
+    },
+    positioningWeeklyAuditLimit: {
+      type: Number,
+      required: true,
+      default: 0, // Free tier: 0 per week
+    },
+    // Legacy fields for backward compatibility (deprecated)
     auditsUsed: {
       type: Number,
       default: 0,
@@ -39,7 +93,7 @@ const UsageSchema = new Schema<IUsage>(
     auditsLimit: {
       type: Number,
       required: true,
-      default: 3, // Free tier: 3 per month
+      default: 3,
     },
     weeklyAuditUsed: {
       type: Number,
@@ -49,7 +103,7 @@ const UsageSchema = new Schema<IUsage>(
     weeklyAuditLimit: {
       type: Number,
       required: true,
-      default: 0, // Free tier: 0 per week
+      default: 0,
     },
     weekStart: {
       type: Date,

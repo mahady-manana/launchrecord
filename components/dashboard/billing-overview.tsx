@@ -18,12 +18,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  AlertCircle,
-  CreditCard,
-  TrendingUp,
-  Zap,
-} from "lucide-react";
+import { AlertCircle, CreditCard, TrendingUp } from "lucide-react";
 
 interface ProductBilling {
   productId: string;
@@ -33,10 +28,18 @@ interface ProductBilling {
   nextInvoiceDate?: string;
   nextInvoiceAmount?: number;
   usage?: {
-    auditsUsed: number;
-    auditsLimit: number;
-    productsUsed: number;
-    productsLimit: number;
+    // SIO Audit usage
+    sioAuditsUsed?: number;
+    sioAuditsLimit?: number;
+    // Positioning Audit usage
+    positioningAuditsUsed?: number;
+    positioningAuditsLimit?: number;
+    // Legacy fields for backward compatibility
+    auditsUsed?: number;
+    auditsLimit?: number;
+    // Common
+    productsUsed?: number;
+    productsLimit?: number;
   };
 }
 
@@ -164,15 +167,26 @@ export function BillingOverview({
                               className="h-full bg-green-600 rounded-full"
                               style={{
                                 width: `${
-                                  (billing.usage.auditsUsed /
-                                    billing.usage.auditsLimit) *
+                                  ((billing.usage.sioAuditsUsed ||
+                                    billing.usage.auditsUsed ||
+                                    0) /
+                                    (billing.usage.sioAuditsLimit ||
+                                      billing.usage.auditsLimit ||
+                                      1)) *
                                   100
                                 }%`,
                               }}
                             />
                           </div>
                           <div className="text-xs text-muted-foreground mt-1">
-                            {billing.usage.auditsUsed}/{billing.usage.auditsLimit} audits
+                            {billing.usage.sioAuditsUsed ||
+                              billing.usage.auditsUsed ||
+                              0}
+                            /
+                            {billing.usage.sioAuditsLimit ||
+                              billing.usage.auditsLimit ||
+                              1}{" "}
+                            audits
                           </div>
                         </div>
                       </div>

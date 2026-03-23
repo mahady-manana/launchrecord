@@ -91,19 +91,24 @@ export async function POST(request: NextRequest) {
         productId,
         periodStart: monthStart,
         periodEnd: monthEnd,
-        auditsUsed: 0,
-        auditsLimit: subscription?.monthlyAuditLimit || 1,
-        weeklyAuditUsed: 0,
-        weeklyAuditLimit: subscription?.weeklyAuditLimit || 0,
+        sioAuditsUsed: 0,
+        sioAuditsLimit: subscription?.monthlyAuditLimit || 1,
+        sioWeeklyAuditUsed: 0,
+        sioWeeklyAuditLimit: subscription?.weeklyAuditLimit || 0,
         weekStart,
         weekEnd,
+        positioningAuditsUsed: 0,
+        positioningAuditsLimit: subscription?.monthlyAuditLimit || 1,
+        positioningWeeklyAuditUsed: 0,
+        positioningWeeklyAuditLimit: subscription?.weeklyAuditLimit || 0,
         resetAt: weekEnd,
       });
     }
 
     // Reset weekly count if new week
     if (now < usage.weekStart || now > usage.weekEnd) {
-      usage.weeklyAuditUsed = 0;
+      usage.sioWeeklyAuditUsed = 0;
+      usage.positioningWeeklyAuditUsed = 0;
       usage.weekStart = weekStart;
       usage.weekEnd = weekEnd;
       usage.resetAt = weekEnd;
@@ -115,8 +120,8 @@ export async function POST(request: NextRequest) {
     const weeklyLimit = subscription?.weeklyAuditLimit || 0;
     const isFree = !subscription || subscription.planType === "free";
 
-    // Check if user has reached their monthly limit
-    if (usage.auditsUsed >= monthlyLimit) {
+    // Check if user has reached their monthly positioning audit limit
+    if (usage.positioningAuditsUsed >= monthlyLimit) {
       return NextResponse.json(
         {
           error: isFree
@@ -124,7 +129,7 @@ export async function POST(request: NextRequest) {
             : `You've reached your monthly positioning audit limit (${monthlyLimit}/month).`,
           limitReached: true,
           limitType: "monthly",
-          used: usage.auditsUsed,
+          used: usage.positioningAuditsUsed,
           limit: monthlyLimit,
         },
         { status: 403 },
@@ -132,13 +137,13 @@ export async function POST(request: NextRequest) {
     }
 
     // Check weekly limit for paid plans
-    if (!isFree && usage.weeklyAuditUsed >= weeklyLimit) {
+    if (!isFree && usage.positioningWeeklyAuditUsed >= weeklyLimit) {
       return NextResponse.json(
         {
           error: `You've reached your weekly positioning audit limit (${weeklyLimit}/week). Next reset on ${usage.resetAt.toLocaleDateString()}.`,
           limitReached: true,
           limitType: "weekly",
-          used: usage.weeklyAuditUsed,
+          used: usage.positioningWeeklyAuditUsed,
           limit: weeklyLimit,
           resetAt: usage.resetAt,
         },
@@ -179,18 +184,18 @@ export async function POST(request: NextRequest) {
     );
 
     // Increment usage counters
-    usage.auditsUsed += 1;
-    usage.weeklyAuditUsed += 1;
+    usage.positioningAuditsUsed += 1;
+    usage.positioningWeeklyAuditUsed += 1;
     await usage.save();
 
     return NextResponse.json({
       ...result,
       fromCache: false,
       usage: {
-        auditsUsed: usage.auditsUsed,
-        auditsLimit: monthlyLimit,
-        weeklyAuditUsed: usage.weeklyAuditUsed,
-        weeklyAuditLimit: weeklyLimit,
+        positioningAuditsUsed: usage.positioningAuditsUsed,
+        positioningAuditsLimit: monthlyLimit,
+        positioningWeeklyAuditUsed: usage.positioningWeeklyAuditUsed,
+        positioningWeeklyAuditLimit: weeklyLimit,
         resetAt: usage.resetAt,
       },
     });
