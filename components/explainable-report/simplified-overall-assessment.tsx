@@ -58,6 +58,7 @@ export function SimplifiedOverallAssessment({
             </CardDescription>
           </div>
           <ExplainableScore
+            showGrade
             score={compositeScore}
             label="SIO Score"
             size="lg"

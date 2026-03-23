@@ -1,24 +1,29 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { 
-  Brain, 
-  Target, 
-  TrendingUp, 
-  Users, 
-  Search, 
-  MessageSquare,
-  ShieldAlert,
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  Brain,
   CheckCircle,
-  XCircle,
   HelpCircle,
-  Shield
+  Search,
+  Shield,
+  ShieldAlert,
+  Target,
+  TrendingUp,
+  Users,
+  XCircle,
 } from "lucide-react";
 import Link from "next/link";
 
 export default function HowScoreWorksPage() {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-orange-50 to-white py-12 px-4">
+    <div className="min-h-screen bg-gradient-to-b from-orange-50 to-white py-12 px-4 pt-20">
       <div className="max-w-4xl mx-auto space-y-12">
         {/* Header */}
         <div className="text-center space-y-4">
@@ -27,12 +32,16 @@ export default function HowScoreWorksPage() {
           </Badge>
           <h1 className="text-4xl font-bold">How Does the SIO Score Work?</h1>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            Our AI analyzes your product across multiple dimensions to give you a single, actionable score.
-            Here&apos;s what goes into it — and what doesn&apos;t.
+            Our AI analyzes your product across multiple dimensions to give you
+            a single, actionable score. Here&apos;s what goes into it — and what
+            doesn&apos;t.
           </p>
           <div className="pt-4">
             <Link href="/survey">
-              <Button size="lg" className="gap-2 bg-orange-600 hover:bg-orange-700">
+              <Button
+                size="lg"
+                className="gap-2 bg-orange-600 hover:bg-orange-700"
+              >
                 <Brain className="h-5 w-5" />
                 Get Your Free Audit
               </Button>
@@ -167,7 +176,8 @@ export default function HowScoreWorksPage() {
                 </CardDescription>
               </CardHeader>
               <CardContent className="text-sm text-muted-foreground">
-                A small startup with clear messaging can outscore a well-funded competitor with confusing positioning.
+                A small startup with clear messaging can outscore a well-funded
+                competitor with confusing positioning.
               </CardContent>
             </Card>
 
@@ -180,7 +190,8 @@ export default function HowScoreWorksPage() {
                 </CardDescription>
               </CardHeader>
               <CardContent className="text-sm text-muted-foreground">
-                We judge your product on its current positioning, not how long you&apos;ve been working on it.
+                We judge your product on its current positioning, not how long
+                you&apos;ve been working on it.
               </CardContent>
             </Card>
 
@@ -193,7 +204,8 @@ export default function HowScoreWorksPage() {
                 </CardDescription>
               </CardHeader>
               <CardContent className="text-sm text-muted-foreground">
-                Whether you use React, Vue, or plain HTML — we only care about what your customers see.
+                Whether you use React, Vue, or plain HTML — we only care about
+                what your customers see.
               </CardContent>
             </Card>
 
@@ -206,7 +218,8 @@ export default function HowScoreWorksPage() {
                 </CardDescription>
               </CardHeader>
               <CardContent className="text-sm text-muted-foreground">
-                A pre-revenue startup can have a better score than a profitable company with weak positioning.
+                A pre-revenue startup can have a better score than a profitable
+                company with weak positioning.
               </CardContent>
             </Card>
           </div>
@@ -227,9 +240,12 @@ export default function HowScoreWorksPage() {
                 1
               </div>
               <div className="flex-1 space-y-2">
-                <h3 className="font-semibold text-lg">Enter Your Product URL</h3>
+                <h3 className="font-semibold text-lg">
+                  Enter Your Product URL
+                </h3>
                 <p className="text-muted-foreground">
-                  We&apos;ll analyze your public website — no login required. Our AI scans your landing page, messaging, and positioning.
+                  We&apos;ll analyze your public website — no login required.
+                  Our AI scans your landing page, messaging, and positioning.
                 </p>
               </div>
             </div>
@@ -239,9 +255,12 @@ export default function HowScoreWorksPage() {
                 2
               </div>
               <div className="flex-1 space-y-2">
-                <h3 className="font-semibold text-lg">Answer 10 Quick Questions</h3>
+                <h3 className="font-semibold text-lg">
+                  Answer 10 Quick Questions
+                </h3>
                 <p className="text-muted-foreground">
-                  Tell us about your challenges, team, and goals. This helps us contextualize your score and provide relevant recommendations.
+                  Tell us about your challenges, team, and goals. This helps us
+                  contextualize your score and provide relevant recommendations.
                 </p>
               </div>
             </div>
@@ -251,9 +270,12 @@ export default function HowScoreWorksPage() {
                 3
               </div>
               <div className="flex-1 space-y-2">
-                <h3 className="font-semibold text-lg">Get Your Score + Action Plan</h3>
+                <h3 className="font-semibold text-lg">
+                  Get Your Score + Action Plan
+                </h3>
                 <p className="text-muted-foreground">
-                  Receive your SIO score (0-100) with specific, prioritized recommendations to improve your AI visibility and positioning.
+                  Receive your SIO score (0-100) with specific, prioritized
+                  recommendations to improve your AI visibility and positioning.
                 </p>
               </div>
             </div>
@@ -264,9 +286,7 @@ export default function HowScoreWorksPage() {
         <section className="space-y-6">
           <div className="text-center space-y-2">
             <h2 className="text-3xl font-bold">Understanding Your Score</h2>
-            <p className="text-muted-foreground">
-              What your number means
-            </p>
+            <p className="text-muted-foreground">What your number means</p>
           </div>
 
           <div className="space-y-3">
@@ -275,35 +295,45 @@ export default function HowScoreWorksPage() {
               <div className="flex-1 h-3 bg-red-100 rounded-full overflow-hidden">
                 <div className="h-full bg-red-600 w-1/4" />
               </div>
-              <div className="w-40 text-sm text-muted-foreground">Needs Work</div>
+              <div className="w-40 text-sm text-muted-foreground">
+                Needs Work
+              </div>
             </div>
             <div className="flex items-center gap-4">
               <div className="w-32 font-semibold text-orange-600">31-50</div>
               <div className="flex-1 h-3 bg-orange-100 rounded-full overflow-hidden">
                 <div className="h-full bg-orange-600 w-2/4" />
               </div>
-              <div className="w-40 text-sm text-muted-foreground">Getting There</div>
+              <div className="w-40 text-sm text-muted-foreground">
+                Getting There
+              </div>
             </div>
             <div className="flex items-center gap-4">
               <div className="w-32 font-semibold text-yellow-600">51-70</div>
               <div className="flex-1 h-3 bg-yellow-100 rounded-full overflow-hidden">
                 <div className="h-full bg-yellow-600 w-3/4" />
               </div>
-              <div className="w-40 text-sm text-muted-foreground">Solid Foundation</div>
+              <div className="w-40 text-sm text-muted-foreground">
+                Solid Foundation
+              </div>
             </div>
             <div className="flex items-center gap-4">
               <div className="w-32 font-semibold text-green-600">71-85</div>
               <div className="flex-1 h-3 bg-green-100 rounded-full overflow-hidden">
                 <div className="h-full bg-green-600 w-4/5" />
               </div>
-              <div className="w-40 text-sm text-muted-foreground">Strong Position</div>
+              <div className="w-40 text-sm text-muted-foreground">
+                Strong Position
+              </div>
             </div>
             <div className="flex items-center gap-4">
               <div className="w-32 font-semibold text-green-700">86-100</div>
               <div className="flex-1 h-3 bg-green-100 rounded-full overflow-hidden">
                 <div className="h-full bg-green-700" />
               </div>
-              <div className="w-40 text-sm text-muted-foreground">Industry Leader</div>
+              <div className="w-40 text-sm text-muted-foreground">
+                Industry Leader
+              </div>
             </div>
           </div>
         </section>
@@ -322,25 +352,36 @@ export default function HowScoreWorksPage() {
               <div className="flex gap-3 items-start">
                 <HelpCircle className="h-5 w-5 text-blue-600 flex-shrink-0 mt-0.5" />
                 <p className="text-sm text-blue-900">
-                  <strong>The score is an estimate, not a guarantee.</strong> Our AI analyzes patterns across thousands of products, but it&apos;s not perfect. It might score you higher or lower than a human expert would.
+                  <strong>The score is an estimate, not a guarantee.</strong>{" "}
+                  Our AI analyzes patterns across thousands of products, but
+                  it&apos;s not perfect. It might score you higher or lower than
+                  a human expert would.
                 </p>
               </div>
               <div className="flex gap-3 items-start">
                 <HelpCircle className="h-5 w-5 text-blue-600 flex-shrink-0 mt-0.5" />
                 <p className="text-sm text-blue-900">
-                  <strong>We analyze what&apos;s public.</strong> If your best content is behind a login or in a demo, we can&apos;t see it. Your score reflects your public-facing presence only.
+                  <strong>We analyze what&apos;s public.</strong> If your best
+                  content is behind a login or in a demo, we can&apos;t see it.
+                  Your score reflects your public-facing presence only.
                 </p>
               </div>
               <div className="flex gap-3 items-start">
                 <HelpCircle className="h-5 w-5 text-blue-600 flex-shrink-0 mt-0.5" />
                 <p className="text-sm text-blue-900">
-                  <strong>AI models change.</strong> As AI chatbots update their algorithms, your visibility may change. We update our scoring regularly to reflect these changes.
+                  <strong>AI models change.</strong> As AI chatbots update their
+                  algorithms, your visibility may change. We update our scoring
+                  regularly to reflect these changes.
                 </p>
               </div>
               <div className="flex gap-3 items-start">
                 <HelpCircle className="h-5 w-5 text-blue-600 flex-shrink-0 mt-0.5" />
                 <p className="text-sm text-blue-900">
-                  <strong>The score is a starting point, not the final word.</strong> Use it to identify weaknesses and track improvement — but don&apos;t treat it as absolute truth.
+                  <strong>
+                    The score is a starting point, not the final word.
+                  </strong>{" "}
+                  Use it to identify weaknesses and track improvement — but
+                  don&apos;t treat it as absolute truth.
                 </p>
               </div>
             </CardContent>
@@ -362,7 +403,9 @@ export default function HowScoreWorksPage() {
                 <CheckCircle className="h-8 w-8 text-green-600 mb-3" />
                 <h3 className="font-semibold mb-2">No Pay-to-Play</h3>
                 <p className="text-sm text-muted-foreground">
-                  Your score can&apos;t be bought. We don&apos;t offer &quot;score improvement&quot; services that would create a conflict of interest.
+                  Your score can&apos;t be bought. We don&apos;t offer
+                  &quot;score improvement&quot; services that would create a
+                  conflict of interest.
                 </p>
               </CardContent>
             </Card>
@@ -370,9 +413,12 @@ export default function HowScoreWorksPage() {
             <Card>
               <CardContent className="pt-6">
                 <CheckCircle className="h-8 w-8 text-green-600 mb-3" />
-                <h3 className="font-semibold mb-2">Same Algorithm for Everyone</h3>
+                <h3 className="font-semibold mb-2">
+                  Same Algorithm for Everyone
+                </h3>
                 <p className="text-sm text-muted-foreground">
-                  Every product is scored using the same criteria. No special treatment, no hidden factors.
+                  Every product is scored using the same criteria. No special
+                  treatment, no hidden factors.
                 </p>
               </CardContent>
             </Card>
@@ -380,9 +426,12 @@ export default function HowScoreWorksPage() {
             <Card>
               <CardContent className="pt-6">
                 <CheckCircle className="h-8 w-8 text-green-600 mb-3" />
-                <h3 className="font-semibold mb-2">We Admit When We&apos;re Wrong</h3>
+                <h3 className="font-semibold mb-2">
+                  We Admit When We&apos;re Wrong
+                </h3>
                 <p className="text-sm text-muted-foreground">
-                  If our AI makes a mistake, we&apos;ll tell you. Transparency builds trust — perfect scores don&apos;t.
+                  If our AI makes a mistake, we&apos;ll tell you. Transparency
+                  builds trust — perfect scores don&apos;t.
                 </p>
               </CardContent>
             </Card>
@@ -398,7 +447,10 @@ export default function HowScoreWorksPage() {
             </p>
           </div>
           <Link href="/survey">
-            <Button size="lg" className="gap-2 bg-orange-600 hover:bg-orange-700">
+            <Button
+              size="lg"
+              className="gap-2 bg-orange-600 hover:bg-orange-700"
+            >
               <Brain className="h-5 w-5" />
               Start Your Free Audit
             </Button>

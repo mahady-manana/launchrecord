@@ -304,7 +304,7 @@ export function Header() {
 
         {/* Mobile Menu */}
         {isMobileMenuOpen && (
-          <div className="md:hidden absolute top-full left-0 right-0 bg-white border-b border-slate-200 rounded-b-2xl shadow-lg mx-4 p-4 z-50">
+          <div className="md:hidden absolute top-full max-h-[80vh] overflow-y-auto left-0 right-0 bg-white border-b border-slate-200 rounded-b-2xl shadow-lg mx-4 p-4 z-50">
             <div className="flex flex-col gap-2">
               {/* Audit Tools Section */}
               <div className="border-b border-slate-200 pb-3">
@@ -325,7 +325,7 @@ export function Header() {
                           <div className="text-sm font-medium text-slate-800">
                             {pillar.name}
                           </div>
-                          <div className="text-xs text-slate-500">
+                          <div className="text-xs text-slate-500 mb:block hidden">
                             {pillar.description}
                           </div>
                         </div>
@@ -370,7 +370,7 @@ export function Header() {
                         <div className="text-sm font-medium text-slate-800">
                           {category.name}
                         </div>
-                        <div className="text-xs text-slate-500">
+                        <div className="text-xs text-slate-500 mb:block hidden">
                           {category.count} products
                         </div>
                       </Link>

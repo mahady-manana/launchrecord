@@ -8,7 +8,6 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import {
   Tooltip,
@@ -24,20 +23,21 @@ interface ExplainableScoreProps {
   score: number;
   label?: string;
   size?: "sm" | "md" | "lg";
-  
+
   // Explanation content
   what: string;
   how: string;
   why: string;
-  
+
   // Optional additional details
   scoreBreakdown?: {
     label: string;
     value: number;
     explanation: string;
   }[];
-  
+
   className?: string;
+  showGrade?: boolean;
 }
 
 export function ExplainableScore({
@@ -49,6 +49,7 @@ export function ExplainableScore({
   why,
   scoreBreakdown,
   className,
+  showGrade,
 }: ExplainableScoreProps) {
   const [open, setOpen] = useState(false);
 
@@ -79,11 +80,11 @@ export function ExplainableScore({
             score={score}
             label={label}
             size={size}
-            showGrade
+            showGrade={showGrade}
             showLabel
           />
         </div>
-        
+
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
@@ -97,7 +98,9 @@ export function ExplainableScore({
               </Button>
             </TooltipTrigger>
             <TooltipContent side="right" className="max-w-xs">
-              <p className="text-xs">Click to learn how this score is calculated</p>
+              <p className="text-xs">
+                Click to learn how this score is calculated
+              </p>
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>
@@ -113,7 +116,9 @@ export function ExplainableScore({
               Grade: {grade}
             </div>
           </div>
-          <DialogTitle className="text-xl mt-2">Understanding Your Score</DialogTitle>
+          <DialogTitle className="text-xl mt-2">
+            Understanding Your Score
+          </DialogTitle>
           <DialogDescription>
             Learn what this score means, how it's calculated, and why it matters
           </DialogDescription>
@@ -124,7 +129,9 @@ export function ExplainableScore({
           <div className="space-y-2 p-4 bg-blue-50 rounded-lg border border-blue-200">
             <div className="flex items-center gap-2">
               <Info className="h-4 w-4 text-blue-600" />
-              <h4 className="text-sm font-semibold text-blue-800">What is this score?</h4>
+              <h4 className="text-sm font-semibold text-blue-800">
+                What is this score?
+              </h4>
             </div>
             <p className="text-sm text-blue-900 leading-relaxed">{what}</p>
           </div>
@@ -133,10 +140,12 @@ export function ExplainableScore({
           <div className="space-y-2 p-4 bg-green-50 rounded-lg border border-green-200">
             <div className="flex items-center gap-2">
               <HelpCircle className="h-4 w-4 text-green-600" />
-              <h4 className="text-sm font-semibold text-green-800">How is it calculated?</h4>
+              <h4 className="text-sm font-semibold text-green-800">
+                How is it calculated?
+              </h4>
             </div>
             <p className="text-sm text-green-900 leading-relaxed">{how}</p>
-            
+
             {scoreBreakdown && scoreBreakdown.length > 0 && (
               <div className="mt-3 space-y-2">
                 <p className="text-xs font-semibold text-green-700 uppercase tracking-wider">
@@ -148,10 +157,19 @@ export function ExplainableScore({
                     className="flex items-center justify-between p-2 bg-white rounded border border-green-100"
                   >
                     <div className="flex-1">
-                      <p className="text-sm font-medium text-green-900">{item.label}</p>
-                      <p className="text-xs text-green-700">{item.explanation}</p>
+                      <p className="text-sm font-medium text-green-900">
+                        {item.label}
+                      </p>
+                      <p className="text-xs text-green-700">
+                        {item.explanation}
+                      </p>
                     </div>
-                    <div className={cn("text-lg font-bold", getScoreColor(item.value))}>
+                    <div
+                      className={cn(
+                        "text-lg font-bold",
+                        getScoreColor(item.value),
+                      )}
+                    >
                       {item.value}
                     </div>
                   </div>
@@ -164,30 +182,42 @@ export function ExplainableScore({
           <div className="space-y-2 p-4 bg-amber-50 rounded-lg border border-amber-200">
             <div className="flex items-center gap-2">
               <HelpCircle className="h-4 w-4 text-amber-600" />
-              <h4 className="text-sm font-semibold text-amber-800">Why does it matter?</h4>
+              <h4 className="text-sm font-semibold text-amber-800">
+                Why does it matter?
+              </h4>
             </div>
             <p className="text-sm text-amber-900 leading-relaxed">{why}</p>
           </div>
 
           {/* Score Interpretation */}
           <div className="p-4 bg-slate-50 rounded-lg border border-slate-200">
-            <h4 className="text-sm font-semibold text-slate-800 mb-3">Score Interpretation</h4>
+            <h4 className="text-sm font-semibold text-slate-800 mb-3">
+              Score Interpretation
+            </h4>
             <div className="space-y-2">
               <div className="flex items-center gap-3">
                 <div className="w-3 h-3 rounded-full bg-green-600" />
-                <span className="text-sm text-slate-700">90-100: Excellent - Top performer</span>
+                <span className="text-sm text-slate-700">
+                  90-100: Excellent - Top performer
+                </span>
               </div>
               <div className="flex items-center gap-3">
                 <div className="w-3 h-3 rounded-full bg-lime-600" />
-                <span className="text-sm text-slate-700">70-89: Good - Above average</span>
+                <span className="text-sm text-slate-700">
+                  70-89: Good - Above average
+                </span>
               </div>
               <div className="flex items-center gap-3">
                 <div className="w-3 h-3 rounded-full bg-orange-600" />
-                <span className="text-sm text-slate-700">40-69: Needs Improvement - Room to grow</span>
+                <span className="text-sm text-slate-700">
+                  40-69: Needs Improvement - Room to grow
+                </span>
               </div>
               <div className="flex items-center gap-3">
                 <div className="w-3 h-3 rounded-full bg-red-600" />
-                <span className="text-sm text-slate-700">0-39: Critical - Immediate attention needed</span>
+                <span className="text-sm text-slate-700">
+                  0-39: Critical - Immediate attention needed
+                </span>
               </div>
             </div>
           </div>

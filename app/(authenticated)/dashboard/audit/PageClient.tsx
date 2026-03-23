@@ -1,6 +1,5 @@
 "use client";
 
-import { EarlyDashboard } from "@/components/early-dashboard";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -116,7 +115,7 @@ function DashboardAuditContent() {
         setShowResults(true);
         setIsProcessing(false);
         await fetchProducts(id);
-
+        router.push("/dashboard/" + id);
         // Refetch products and update selected product with new audit data
       } else if (response.status === 503 && data.retry) {
         setShowRetryScheduled(true);
@@ -218,7 +217,16 @@ function DashboardAuditContent() {
 
   if (showResults && report) {
     return (
-      <EarlyDashboard report={report} productId={productId || undefined} />
+      <div className="text-center space-y-4">
+        <Badge className="bg-orange-600 hover:bg-orange-700 animate-pulse">
+          <Zap className="h-3 w-3 mr-1" />
+          Report ready...
+        </Badge>
+        <h1 className="text-4xl font-bold text-foreground">Redirecting</h1>
+        <p className="text-lg text-muted-foreground max-w-xl mx-auto">
+          Our AI is analyzing your positioning across multiple dimensions
+        </p>
+      </div>
     );
   }
 
