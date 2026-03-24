@@ -36,7 +36,8 @@ export const metadata: Metadata = {
     canonical: pageUrl,
   },
   openGraph: {
-    title: "LaunchRecord - Audit Your Startup's Sovereignty & Defensibility",
+    title:
+      "LaunchRecord - Audit Your Startup’s Market Positioning, Clarity and Strategic Moat.",
     description:
       "Analyze your positioning, clarity, AEO presence, and strategic moat with AI-powered SIO-V5 engine.",
     url: pageUrl,
@@ -55,7 +56,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "LaunchRecord - Audit Your Startup's Sovereignty & Defensibility",
+    title:
+      "LaunchRecord - Audit Your Startup’s Market Positioning, Clarity and Strategic Moat.",
     description:
       "Analyze your positioning, clarity, AEO presence, and strategic moat.",
     images: ["/og-image.png"],
@@ -113,7 +115,7 @@ export default function LaunchRecordLandingPage() {
         url: appUrl,
         name: "LaunchRecord",
         description:
-          "Audit your startup's sovereignty and defensibility with AI-powered analysis",
+          "Audit Your Startup’s Market Positioning, Clarity and Strategic Moat.",
         publisher: {
           "@id": `${appUrl}/#organization`,
         },
@@ -131,7 +133,7 @@ export default function LaunchRecordLandingPage() {
         "@type": "WebPage",
         "@id": pageUrl,
         url: pageUrl,
-        name: "LaunchRecord - Audit Your Startup's Sovereignty & Defensibility",
+        name: "LaunchRecord - Audit Your Startup’s Market Positioning, Clarity and Strategic Moat.",
         description:
           "Analyze your positioning, clarity, AEO presence, and strategic moat. The SIO-V5 engine analyzes your positioning against 10,000+ records.",
         isPartOf: {

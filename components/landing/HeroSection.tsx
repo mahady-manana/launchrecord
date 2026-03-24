@@ -38,19 +38,20 @@ export function HeroSection() {
           </p>
         </div>
 
-        <div className="space-y-4">
-          <h1 className="text-3xl font-mono md:text-5xl font-semibold tracking-tighter text-slate-700 leading-[0.9]">
-            Audits your startup’s <br />
-            <span className="text-orange-500">sovereignty</span> and{" "}
-            <span className="text-green-600">defensibility</span>.
+        <div className="space-y-4 max-w-4xl">
+          <h1 className="text-3xl font-mono md:text-6xl font-semibold tracking-tighter text-slate-700 leading-[1.1]">
+            We Audit Your Startup’s{" "}
+            <span className="text-orange-500">Positioning</span>,{" "}
+            <span className="text-green-600">Product Clarity</span> and
+            Strategic Moat.
+            <br />
           </h1>
 
           <p className="block text-xl text-slate-600 font-mono mt-4 tracking-normal normal-case">
-            LaunchRecord analyze your <span>positioning</span>,{" "}
-            <span>product clarity</span>, <span>AEO presence</span>, and{" "}
-            <span>strategic moat</span>.<br /> The SIO-V5 engine analyzes your
-            positioning against 10,000+ records to ensure you aren't just a
-            feature waiting to be deleted.
+            LaunchRecord analyzes your startup’s market positioning &
+            differentiation, product clarity, AEO presence, and strategic moat.
+            Our SIO-V5 engine benchmarks your startup against 10,000+ records to
+            ensure you stand out—not get lost in the noise.
           </p>
         </div>
 

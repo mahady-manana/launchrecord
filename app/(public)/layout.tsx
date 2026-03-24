@@ -7,14 +7,15 @@ const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
 export const metadata: Metadata = {
   title: {
     default:
-      "Audits your startup's sovereignty and defensibility | LaunchRecord",
+      "Audit Your Startup’s Market Positioning, Clarity and Strategic Moat.",
     template: "%s",
   },
   description:
-    "Analyze your positioning, clarity, AEO presence, and strategic moat. The SIO-V5 engine analyzes your positioning against 10,000+ records to ensure you aren't just a feature waiting to be deleted.",
+    "LaunchRecord analyzes your startup’s market positioning & differentiation, product clarity, AEO presence, and strategic moat. Our SIO-V5 engine benchmarks your startup against 10,000+ records to ensure you stand out",
   metadataBase: new URL(appUrl),
   openGraph: {
-    title: "Audits your startup's sovereignty and defensibility",
+    title:
+      "Audit Your Startup’s Market Positioning, Clarity and Strategic Moat.",
     description:
       "Analyze your positioning, clarity, AEO presence, and strategic moat.",
     url: appUrl,
@@ -31,7 +32,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Audits your startup's sovereignty and defensibility",
+    title:
+      "Audit Your Startup’s Market Positioning, Clarity and Strategic Moat.",
     description:
       "Analyze your positioning, clarity, AEO presence, and strategic moat.",
     images: ["/og-image.png"],
