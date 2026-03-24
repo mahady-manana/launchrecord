@@ -3,15 +3,18 @@
 import { useSession } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
+import { useProducts } from "@/hooks/use-products";
 
 function DashboardSurveyContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { data: session, status } = useSession();
+  const { fetchProducts } = useProducts();
 
   const [startupName, setStartupName] = useState("");
   const [startupUrl, setStartupUrl] = useState(searchParams.get("url") || "");
   const [isLoading, setIsLoading] = useState(false);
+  const pillar = (searchParams.get("pillar") || "").toLowerCase();
 
   useEffect(() => {
     if (status === "loading") return;
@@ -33,6 +36,7 @@ function DashboardSurveyContent() {
           saasName: startupName,
           saasUrl: startupUrl,
           founderName: session?.user?.name || "",
+          pillar: pillar || undefined,
         }),
       });
 
@@ -49,7 +53,33 @@ function DashboardSurveyContent() {
       }
 
       if (data.productId) {
-        router.push(`/dashboard/audit?product=${data.productId}`);
+        await fetchProducts(data.productId);
+        const pillarRoutes: Record<string, string> = {
+          positioning: "positioning",
+          clarity: "clarity",
+          momentum: "momentum",
+          "founder-proof": "founder-proof",
+          founderproof: "founder-proof",
+          aeo: "aeo",
+        };
+        const pillarSlug = pillarRoutes[pillar];
+        if (pillarSlug) {
+          const params = new URLSearchParams();
+          if (pillarSlug === "positioning") {
+            params.set("autorun", "1");
+            if (startupUrl) {
+              params.set("url", startupUrl);
+            }
+          }
+          const query = params.toString();
+          router.push(
+            `/dashboard/${data.productId}/audit/${pillarSlug}${
+              query ? `?${query}` : ""
+            }`,
+          );
+        } else {
+          router.push(`/dashboard/audit?product=${data.productId}`);
+        }
       }
     } catch (error) {
       console.error("Error initializing audit:", error);

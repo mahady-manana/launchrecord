@@ -26,8 +26,8 @@ import {
   Trophy,
 } from "lucide-react";
 import Link from "next/link";
-import { useParams, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
 
 interface PositioningReport {
   _id: string;
@@ -61,6 +61,7 @@ interface LimitError {
 export default function PositioningAuditPage() {
   const params = useParams();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const productId = params.product as string;
   const { selectedProduct } = useProductStore();
 
@@ -77,10 +78,23 @@ export default function PositioningAuditPage() {
   const [auditError, setAuditError] = useState<string | null>(null);
   const [limitError, setLimitError] = useState<LimitError | null>(null);
   const [usage, setUsage] = useState<UsageInfo | null>(null);
+  const autoRunStartedRef = useRef(false);
 
   useEffect(() => {
     loadReports();
   }, [productId]);
+
+  useEffect(() => {
+    if (url.trim()) return;
+    const urlParam = searchParams.get("url");
+    if (urlParam) {
+      setUrl(urlParam);
+      return;
+    }
+    if (selectedProduct?.website) {
+      setUrl(selectedProduct.website);
+    }
+  }, [searchParams, selectedProduct, url]);
 
   const loadReports = async () => {
     try {
@@ -147,7 +161,7 @@ export default function PositioningAuditPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           url: websiteUrl,
-          productId: selectedProduct?.id,
+          productId: selectedProduct?.id || productId,
           saveToDb: true,
           force: force,
         }),
@@ -227,6 +241,17 @@ export default function PositioningAuditPage() {
       }, 500);
     }
   };
+
+  useEffect(() => {
+    const shouldAutoRun =
+      searchParams.get("autorun") === "1" ||
+      searchParams.get("autorun") === "true";
+    if (!shouldAutoRun) return;
+    if (autoRunStartedRef.current) return;
+    if (!url.trim()) return;
+    autoRunStartedRef.current = true;
+    handleRunAudit();
+  }, [searchParams, url]);
 
   return (
     <div className="space-y-8">

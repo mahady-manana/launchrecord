@@ -2,6 +2,8 @@ import { connectToDatabase } from "@/lib/db";
 import { getUserSession } from "@/lib/session";
 import { generateUniqueSlug } from "@/lib/utils";
 import Product from "@/models/product";
+import { fetchWebsiteContent } from "@/services/fetchWebsiteContent";
+import { parseWebsiteContent } from "@/services/parseWebsiteContent";
 import { NextRequest, NextResponse } from "next/server";
 import normalizeUrl from "normalize-url";
 
@@ -105,13 +107,23 @@ export async function POST(request: NextRequest) {
         return !!existing;
       },
     );
+    let description = null;
+    let tagline = null;
+    try {
+      const page = await fetchWebsiteContent(normalizedUrl);
 
+      const parse = parseWebsiteContent(page);
+      description = parse?.meta?.description;
+      tagline = parse?.meta?.title;
+    } catch {
+      // cointue
+    }
     // Create incomplete product with early access flag
     const product = await Product.create({
       name: saasName || "Unknown",
       website: normalizedUrl,
-      description: null,
-      tagline: null,
+      description: description,
+      tagline: tagline,
       logo: `http://www.google.com/s2/favicons?domain=${normalizedUrl}`,
       users: user?._id ? [user._id] : [],
       score: null,

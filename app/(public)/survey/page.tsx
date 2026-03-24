@@ -15,15 +15,23 @@ function SurveyRedirectContent() {
     if (status === "unauthenticated") {
       // Not logged in - redirect to login with callback
       const url = searchParams.get("url");
-      const callbackUrl = url
-        ? `/dashboard/survey?url=${encodeURIComponent(url)}`
+      const pillar = searchParams.get("pillar");
+      const params = new URLSearchParams();
+      if (url) params.set("url", url);
+      if (pillar) params.set("pillar", pillar);
+      const callbackUrl = params.toString()
+        ? `/dashboard/survey?${params.toString()}`
         : "/dashboard/survey";
       router.push(`/register?callbackUrl=${encodeURIComponent(callbackUrl)}`);
     } else if (status === "authenticated") {
       // Already logged in - redirect to dashboard survey
       const url = searchParams.get("url");
-      const targetUrl = url
-        ? `/dashboard/survey?url=${encodeURIComponent(url)}`
+      const pillar = searchParams.get("pillar");
+      const params = new URLSearchParams();
+      if (url) params.set("url", url);
+      if (pillar) params.set("pillar", pillar);
+      const targetUrl = params.toString()
+        ? `/dashboard/survey?${params.toString()}`
         : "/dashboard/survey";
       router.push(targetUrl);
     }
