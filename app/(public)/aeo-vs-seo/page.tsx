@@ -1,33 +1,43 @@
 import { JSONLD } from "@/components/JsonLd";
-import AeoVsSeoPageClient from "./AeoVsSeoPageClient";
 import type { Metadata } from "next";
+import AeoVsSeoPageClient from "./AeoVsSeoPageClient";
 
 const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
 const pageUrl = `${appUrl}/aeo-vs-seo`;
 
+const CURRENT_DATE = new Date().toISOString().split("T")[0];
+const PUBLISHED_DATE = "2026-01-15";
+
 export const metadata: Metadata = {
   title: {
     default:
-      "AEO vs SEO: What's the Difference & What Actually Matters | LaunchRecord",
+      "AEO vs SEO 2026: Key Differences, What Matters & How to Win | LaunchRecord",
     template: "%s | LaunchRecord",
   },
   description:
-    "Understand the real differences between AEO and SEO. Learn what matters for AI visibility, what to prioritize, and how to optimize for both search engines and answer engines.",
+    "Complete 2026 guide to AEO vs SEO. Learn the critical differences between Answer Engine Optimization and Search Engine Optimization, what actually matters for AI visibility, and proven strategies to dominate both.",
   keywords: [
-    "AEO vs SEO",
+    "AEO vs SEO 2026",
     "Answer Engine Optimization",
     "SEO vs AEO difference",
     "AI search optimization",
-    "AEO strategy",
+    "AEO strategy guide",
     "SEO strategy 2026",
-    "AI visibility",
+    "AI visibility optimization",
     "ChatGPT optimization",
     "search engine vs answer engine",
     "semantic SEO",
     "entity optimization",
     "AI citation optimization",
+    "zero-click search",
+    "LLM optimization",
+    "generative AI search",
+    "SIO search intelligence optimization",
   ],
-  authors: [{ name: "LaunchRecord", url: appUrl }],
+  authors: [
+    { name: "LaunchRecord Team", url: appUrl },
+    { name: "LaunchRecord", url: `${appUrl}/about` },
+  ],
   creator: "LaunchRecord",
   publisher: "LaunchRecord",
   metadataBase: new URL(appUrl),
@@ -35,9 +45,9 @@ export const metadata: Metadata = {
     canonical: pageUrl,
   },
   openGraph: {
-    title: "AEO vs SEO: What's the Difference & What Actually Matters",
+    title: "AEO vs SEO 2026: Complete Guide to AI Search Optimization",
     description:
-      "Complete guide to AEO vs SEO. Learn the key differences, what matters for AI visibility, and how to optimize for both traditional search and AI answer engines.",
+      "Master AEO and SEO in 2026. Comprehensive comparison with actionable strategies for AI visibility, traditional search rankings, and winning the zero-click future.",
     url: pageUrl,
     siteName: "LaunchRecord",
     locale: "en_US",
@@ -47,18 +57,26 @@ export const metadata: Metadata = {
         url: "/og-image.png",
         width: 1200,
         height: 630,
-        alt: "AEO vs SEO Comparison Chart - LaunchRecord",
+        alt: "AEO vs SEO Comparison Chart - Complete Guide 2026 | LaunchRecord",
+        type: "image/png",
+      },
+      {
+        url: "/aeo-vs-seo-og.png",
+        width: 1200,
+        height: 630,
+        alt: "Answer Engine Optimization vs Search Engine Optimization",
         type: "image/png",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "AEO vs SEO: What's the Difference & What Actually Matters",
+    title: "AEO vs SEO 2026: What's the Difference & What Actually Matters",
     description:
-      "Complete guide to AEO vs SEO. Learn what matters for AI visibility in 2026.",
+      "Complete guide to AEO vs SEO. Learn what matters for AI visibility, key differences, and winning strategies for 2026.",
     images: ["/og-image.png"],
     creator: "@launchrecord",
+    site: "@launchrecord",
   },
   robots: {
     index: true,
@@ -70,6 +88,10 @@ export const metadata: Metadata = {
       "max-image-preview": "large",
       "max-snippet": -1,
     },
+  },
+  other: {
+    "article:published_time": PUBLISHED_DATE,
+    "article:modified_time": CURRENT_DATE,
   },
 };
 
@@ -102,6 +124,20 @@ export default function AeoVsSeoPage() {
         },
       },
       {
+        "@type": "Person",
+        "@id": `${appUrl}/#author`,
+        name: "LaunchRecord Team",
+        url: `${appUrl}/about`,
+        jobTitle: "Product Team",
+        worksFor: {
+          "@id": `${appUrl}/#organization`,
+        },
+        sameAs: [
+          "https://twitter.com/launchrecord",
+          "https://linkedin.com/company/launchrecord",
+        ],
+      },
+      {
         "@type": "WebSite",
         "@id": `${appUrl}/#website`,
         url: appUrl,
@@ -125,9 +161,9 @@ export default function AeoVsSeoPage() {
         "@type": "WebPage",
         "@id": pageUrl,
         url: pageUrl,
-        name: "AEO vs SEO: What's the Difference & What Actually Matters | LaunchRecord",
+        name: "AEO vs SEO 2026: Key Differences, What Matters & How to Win | LaunchRecord",
         description:
-          "Complete guide comparing AEO and SEO. Learn the differences, what matters for AI visibility, and strategic considerations for 2026.",
+          "Complete 2026 guide comparing AEO and SEO. Learn the critical differences, what matters for AI visibility, key strategies, and how to optimize for both search engines and answer engines.",
         isPartOf: {
           "@id": `${appUrl}/#website`,
         },
@@ -144,6 +180,12 @@ export default function AeoVsSeoPage() {
             description:
               "SEO is the practice of optimizing content to rank in traditional search engine results pages.",
           },
+          {
+            "@type": "Thing",
+            name: "AI Visibility",
+            description:
+              "The measure of how often and prominently a brand appears in AI-generated responses.",
+          },
         ],
         primaryImageOfPage: {
           "@type": "ImageObject",
@@ -159,6 +201,9 @@ export default function AeoVsSeoPage() {
           "@type": "SpeakableSpecification",
           cssSelector: ["h1", "h2", ".summary"],
         },
+        significantLink: {
+          "@id": `${pageUrl}#significant-links`,
+        },
       },
       {
         "@type": "BreadcrumbList",
@@ -173,18 +218,47 @@ export default function AeoVsSeoPage() {
           {
             "@type": "ListItem",
             position: 2,
-            name: "AEO vs SEO",
+            name: "Resources",
+            item: `${appUrl}/resources`,
+          },
+          {
+            "@type": "ListItem",
+            position: 3,
+            name: "AEO vs SEO Guide 2026",
             item: pageUrl,
+          },
+        ],
+      },
+      {
+        "@type": "SignificantLink",
+        "@id": `${pageUrl}#significant-links`,
+        significantLink: [
+          {
+            "@type": "LinkRelation",
+            name: "AEO Audit Tool",
+            url: `${appUrl}/aeo-audit`,
+          },
+          {
+            "@type": "LinkRelation",
+            name: "How Scoring Works",
+            url: `${appUrl}/how-score-works`,
+          },
+          {
+            "@type": "LinkRelation",
+            name: "SIO-V5 Engine",
+            url: `${appUrl}/sio-v5-engine`,
           },
         ],
       },
       {
         "@type": "Article",
         "@id": `${pageUrl}#article`,
-        headline: "AEO vs SEO: What's the Difference & What Actually Matters",
-        alternativeHeadline: "The Complete Guide to Answer Engine Optimization vs Search Engine Optimization",
+        headline:
+          "AEO vs SEO 2026: What's the Difference & What Actually Matters",
+        alternativeHeadline:
+          "The Complete Guide to Answer Engine Optimization vs Search Engine Optimization for 2026",
         description:
-          "Comprehensive comparison of AEO and SEO strategies. Learn what matters for AI visibility, key differences, and how to optimize for both.",
+          "Comprehensive comparison of AEO and SEO strategies. Learn what matters for AI visibility, key differences, actionable strategies, and how to optimize for both traditional search and AI answer engines in 2026.",
         image: [
           {
             "@type": "ImageObject",
@@ -193,10 +267,10 @@ export default function AeoVsSeoPage() {
             height: 630,
           },
         ],
-        datePublished: "2026-03-13",
-        dateModified: "2026-03-13",
+        datePublished: PUBLISHED_DATE,
+        dateModified: CURRENT_DATE,
         author: {
-          "@id": `${appUrl}/#organization`,
+          "@id": `${appUrl}/#author`,
         },
         publisher: {
           "@id": `${appUrl}/#organization`,
@@ -207,10 +281,13 @@ export default function AeoVsSeoPage() {
         inLanguage: "en-US",
         articleSection: "Digital Marketing Strategy",
         articleBody:
-          "This comprehensive guide compares Answer Engine Optimization (AEO) and Search Engine Optimization (SEO), explaining the key differences, what matters for AI visibility, and strategic considerations for startups in 2026.",
-        wordCount: "2500",
+          "This comprehensive 2026 guide compares Answer Engine Optimization (AEO) and Search Engine Optimization (SEO), explaining the key differences, what matters for AI visibility, strategic considerations for startups, and actionable tactics to dominate both traditional search and AI answer engines.",
+        wordCount: "3200",
         keywords:
-          "AEO, SEO, Answer Engine Optimization, Search Engine Optimization, AI visibility, ChatGPT optimization, semantic SEO",
+          "AEO, SEO, Answer Engine Optimization, Search Engine Optimization, AI visibility, ChatGPT optimization, semantic SEO, entity optimization, zero-click search, 2026 SEO strategy",
+        mainEntity: {
+          "@id": `${pageUrl}#faq`,
+        },
       },
       {
         "@type": "FAQPage",
@@ -226,7 +303,7 @@ export default function AeoVsSeoPage() {
           },
           {
             "@type": "Question",
-            name: "Should I focus on AEO or SEO?",
+            name: "Should I focus on AEO or SEO in 2026?",
             acceptedAnswer: {
               "@type": "Answer",
               text: "You should focus on both. SEO still drives significant organic traffic, while AEO prepares you for the AI-driven search future. The fundamentals of quality content and technical excellence benefit both strategies. Use SEO as your foundation and layer AEO optimization on top.",
@@ -262,6 +339,22 @@ export default function AeoVsSeoPage() {
             acceptedAnswer: {
               "@type": "Answer",
               text: "Content that directly answers specific questions with clear, concise information performs best. Use structured data, demonstrate expertise (E-E-A-T), cover topics comprehensively, and format content for easy AI parsing. FAQ pages, how-to guides, and definitive resources are ideal.",
+            },
+          },
+          {
+            "@type": "Question",
+            name: "How long does it take to see results from AEO?",
+            acceptedAnswer: {
+              "@type": "Answer",
+              text: "AEO is an ongoing process. AI models train on historical data, so changes take time to reflect. Focus on consistent, high-quality content and entity building. Expect 3-6 months for measurable impact, similar to traditional SEO timelines.",
+            },
+          },
+          {
+            "@type": "Question",
+            name: "Does technical SEO still matter for AEO?",
+            acceptedAnswer: {
+              "@type": "Answer",
+              text: "Yes. AI crawlers need to access and parse your content. Fast load times, clean structure, mobile optimization, and proper indexing remain foundational for both SEO and AEO. Technical excellence is a prerequisite for both strategies.",
             },
           },
         ],
@@ -321,12 +414,22 @@ export default function AeoVsSeoPage() {
               "@id": `${pageUrl}#definitions`,
             },
           },
+          {
+            "@type": "DefinedTerm",
+            name: "SIO",
+            termCode: "SIO",
+            description:
+              "Search Intelligence Optimization—a comprehensive approach to optimizing for both traditional search engines and AI answer engines using data-driven insights.",
+            inDefinedTermSet: {
+              "@id": `${pageUrl}#definitions`,
+            },
+          },
         ],
       },
       {
         "@type": "LearningResource",
         "@id": `${pageUrl}#learning`,
-        name: "AEO vs SEO Guide",
+        name: "AEO vs SEO Guide 2026",
         description:
           "Educational resource comparing Answer Engine Optimization and Search Engine Optimization strategies for 2026.",
         educationalLevel: "Intermediate",
@@ -334,11 +437,22 @@ export default function AeoVsSeoPage() {
         typicalAgeRange: "18+",
         timeRequired: "PT15M",
         author: {
-          "@id": `${appUrl}/#organization`,
+          "@id": `${appUrl}/#author`,
         },
-        educationalUse: "Professional development, marketing strategy",
+        educationalUse:
+          "Professional development, marketing strategy, SEO training",
         inLanguage: "en-US",
         url: pageUrl,
+      },
+      {
+        "@type": "Table",
+        "@id": `${pageUrl}#comparison-table`,
+        name: "AEO vs SEO Comparison Table",
+        description:
+          "Side-by-side comparison of Answer Engine Optimization and Search Engine Optimization",
+        about: {
+          "@id": `${pageUrl}#article`,
+        },
       },
     ],
   };
