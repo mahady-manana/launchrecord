@@ -1,21 +1,61 @@
 import Link from "next/link";
 
-export function Footer() {
-  const currentYear = new Date().getFullYear();
+interface Category {
+  _id: string;
+  name: string;
+  slug: string;
+  count: number;
+}
 
-  const productLinks = [
+async function fetchCategories(): Promise<Category[]> {
+  try {
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+    const res = await fetch(`${appUrl}/api/topics?top=18`, {
+      cache: "force-cache",
+      next: { revalidate: 3600 }, // Revalidate every hour
+    });
+    const data = await res.json();
+    if (data.success) {
+      return data.topics;
+    }
+    return [];
+  } catch (error) {
+    console.error("Failed to fetch categories:", error);
+    return [];
+  }
+}
+
+export async function Footer() {
+  const currentYear = new Date().getFullYear();
+  const categories = await fetchCategories();
+
+  const resources = [
+    { href: "/aeo-vs-seo", label: "AEO vs SEO Guide" },
+    { href: "/how-score-works", label: "How Scoring Works" },
     { href: "/sio-v5-engine", label: "SIO-V5 Engine" },
-    { href: "/leaderboard", label: "Sovereign 100" },
-    { href: "/survey", label: "Get Audited" },
-    { href: "/how-score-works", label: "How the Score Works" },
-    { href: "/pricing", label: "Pricing" },
-    { href: "/products", label: "Products" },
+    {
+      href: "/blog/will-aeo-commoditize-seo",
+      label: "Will AEO Commoditize SEO?",
+    },
+    {
+      href: "/blog/5-things-you-need-to-know-about-aeo",
+      label: "5 Things About AEO",
+    },
   ];
 
-  const auditLinks = [
+  const tools = [
     { href: "/aeo-audit", label: "AEO Audit" },
-    { href: "/aeo-vs-seo", label: "AEO vs SEO" },
-    { href: "/categories", label: "Categories" },
+    { href: "/positioning-audit", label: "Positioning Audit" },
+    { href: "/clarity-audit", label: "Product Clarity Audit" },
+    { href: "/momentum-audit", label: "Momentum Audit" },
+    { href: "/founder-proof-audit", label: "Founder Proof Audit" },
+    { href: "/leaderboard", label: "Sovereign 100" },
+  ];
+
+  const productLinks = [
+    { href: "/pricing", label: "Pricing" },
+    { href: "/dashboard", label: "Dashboard" },
+    { href: "/categories", label: "All Categories" },
   ];
 
   const companyLinks = [
@@ -26,7 +66,6 @@ export function Footer() {
   const accountLinks = [
     { href: "/login", label: "Login" },
     { href: "/register", label: "Sign Up" },
-    { href: "/dashboard", label: "Dashboard" },
   ];
 
   const legalLinks = [
@@ -36,11 +75,12 @@ export function Footer() {
   ];
 
   return (
-    <footer className="border-t border-border bg-card mt-auto">
-      <div className="mx-auto w-full max-w-6xl px-6 py-12">
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-8">
+    <footer className="border-t border-border bg-card">
+      <div className="mx-auto w-full max-w-7xl px-6 py-12">
+        {/* Main Footer Grid */}
+        <div className="grid grid-cols-2 md:grid-cols-6 gap-8 mb-12">
           {/* Brand Column */}
-          <div className="col-span-2 md:col-span-1 space-y-4">
+          <div className="col-span-2 md:col-span-2 space-y-4">
             <div className="flex items-center gap-2">
               <div className="w-8 h-8 rounded-lg flex items-center justify-center">
                 <img
@@ -58,6 +98,44 @@ export function Footer() {
             <p className="text-xs text-muted-foreground">
               © {currentYear} LaunchRecord
             </p>
+          </div>
+
+          {/* Resources Column */}
+          <div className="space-y-3">
+            <h3 className="font-semibold text-sm uppercase tracking-wider text-primary">
+              📚 Resources
+            </h3>
+            <ul className="space-y-2">
+              {resources.map((link) => (
+                <li key={link.href}>
+                  <Link
+                    href={link.href}
+                    className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                  >
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Tools Column */}
+          <div className="space-y-3">
+            <h3 className="font-semibold text-sm uppercase tracking-wider text-primary">
+              🔧 Tools
+            </h3>
+            <ul className="space-y-2">
+              {tools.map((link) => (
+                <li key={link.href}>
+                  <Link
+                    href={link.href}
+                    className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                  >
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
           </div>
 
           {/* Product Column */}
@@ -79,26 +157,7 @@ export function Footer() {
             </ul>
           </div>
 
-          {/* Audit Column */}
-          <div className="space-y-3">
-            <h3 className="font-semibold text-sm uppercase tracking-wider">
-              Audits
-            </h3>
-            <ul className="space-y-2">
-              {auditLinks.map((link) => (
-                <li key={link.href}>
-                  <Link
-                    href={link.href}
-                    className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-                  >
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Company Column */}
+          {/* Company & Account Column */}
           <div className="space-y-3">
             <h3 className="font-semibold text-sm uppercase tracking-wider">
               Company
@@ -114,34 +173,72 @@ export function Footer() {
                   </Link>
                 </li>
               ))}
-            </ul>
-          </div>
-
-          {/* Account Column */}
-          <div className="space-y-3">
-            <h3 className="font-semibold text-sm uppercase tracking-wider">
-              Account
-            </h3>
-            <ul className="space-y-2">
-              {accountLinks.map((link) => (
-                <li key={link.href}>
+              <li className="pt-2">
+                <h4 className="font-semibold text-xs uppercase tracking-wider text-primary mb-2">
+                  Account
+                </h4>
+                {accountLinks.map((link) => (
                   <Link
+                    key={link.href}
                     href={link.href}
-                    className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                    className="block text-sm text-muted-foreground hover:text-foreground transition-colors"
                   >
                     {link.label}
                   </Link>
-                </li>
-              ))}
+                ))}
+              </li>
             </ul>
           </div>
+        </div>
+
+        {/* Categories Section */}
+        <div className="border-t border-border pt-8 mb-8">
+          <h3 className="font-semibold text-sm uppercase tracking-wider text-primary mb-4">
+            🏆 Top Categories
+          </h3>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
+            {categories.length > 0 ? (
+              categories.slice(0, 100).map((category) => (
+                <Link
+                  key={category._id}
+                  href={`/categories/${category.slug}`}
+                  className="text-sm text-muted-foreground hover:text-foreground hover:bg-slate-100 px-2 py-1 rounded transition-colors"
+                >
+                  {category.name}
+                  <span className="text-xs text-slate-400 ml-1">
+                    ({category.count})
+                  </span>
+                </Link>
+              ))
+            ) : (
+              // Fallback static categories if fetch fails
+              <>
+                <Link
+                  href="/categories"
+                  className="text-sm text-muted-foreground hover:text-foreground px-2 py-1"
+                >
+                  View All Categories
+                </Link>
+              </>
+            )}
+          </div>
+          {categories.length > 0 && (
+            <div className="mt-4 text-center">
+              <Link
+                href="/categories"
+                className="inline-block text-sm font-medium text-primary hover:underline"
+              >
+                View all categories →
+              </Link>
+            </div>
+          )}
         </div>
 
         {/* Legal & Social Row */}
         <div className="mt-8 pt-8 border-t border-border">
           <div className="flex flex-col md:flex-row justify-between items-center gap-6">
             {/* Legal Links */}
-            <div className="flex items-center gap-6">
+            <div className="flex items-center gap-6 flex-wrap justify-center">
               {legalLinks.map((link) => (
                 <Link
                   key={link.href}
