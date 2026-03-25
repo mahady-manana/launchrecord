@@ -28,13 +28,13 @@ const stats: Stat[] = [
 export function StatPad() {
   return (
     <section className="pb-10 pt-0 bg-slate-800">
-      <div className="max-w-6xl mx-auto flex justify-between gap-4 p-4">
+      <div className="max-w-6xl mx-auto flex md:flex-row flex-col justify-between gap-4 p-4">
         {stats.map((stat) => (
           <div
             key={stat.label}
-            className="px-4 text-center md:w-1/4 w-1/2 rounded-xl py-2 border border-slate-600"
+            className="px-4 text-center md:w-1/4 w-full rounded-xl py-2 border border-slate-600"
           >
-            <div className="text-4xl font-black text-slate-200">
+            <div className="md:text-4xl text-2xl font-black text-slate-200">
               {stat.value}{" "}
               {stat.percent ? <span className="text-sm">/100</span> : null}
             </div>

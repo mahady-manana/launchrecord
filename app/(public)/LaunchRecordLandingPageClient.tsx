@@ -7,7 +7,6 @@ import { HeroSection } from "@/components/landing/HeroSection";
 import { PainkillersSection } from "@/components/landing/PainkillersSection";
 import { PreAuditFunnel } from "@/components/landing/PreAuditFunnel";
 import { SocialProofSection } from "@/components/landing/SocialProofSection";
-import { StatsSection } from "@/components/landing/StatsSection";
 import { PricingCard, pricingTiers } from "@/components/pricing/pricing-card";
 import Link from "next/link";
 import { ReactNode } from "react";
@@ -21,14 +20,13 @@ export default function LaunchRecordLandingPage({
   StatPad,
 }: LaunchRecordLandingPageProps) {
   return (
-    <div className="pb-10 lg:px-0 px-4">
+    <div className="pb-10 lg:px-0">
       <HeroSection />
       {StatPad}
       {Directories}
       <FivePillarsSection />
-      <StatsSection />
       <PainkillersSection />
-      <section className="max-w-7xl mx-auto space-y-12 bg-slate-900 px-4 rounded-xl py-16">
+      <section className="max-w-7xl mx-auto space-y-12 bg-slate-900 px-4 md:rounded-xl py-16">
         <div className="text-center space-y-4">
           <h2 className="text-4xl font-bold text-slate-100">
             Choose Your War Room

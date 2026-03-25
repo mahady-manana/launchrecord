@@ -14,8 +14,8 @@ export function HeroSection() {
   };
 
   return (
-    <section className="py-12 pt-20 relative bg-slate-800">
-      <div className="space-y-8 relative px-4 max-w-6xl mx-auto ">
+    <section className="py-12 pt-20 relative bg-slate-800 min-h-[80vh] flex items-center justify-center">
+      <div className="space-y-8 relative px-4 max-w-6xl mx-auto text-center ">
         <div className="space-y-4 pt-8">
           <p className="font-bold text-sm text-purple-100 uppercase tracking-wide">
             The <span className="text-orange-300">#1 Platform</span> For
@@ -32,18 +32,18 @@ export function HeroSection() {
             <br />
           </h1>
 
-          <p className="block text-xl text-slate-200 font-mono mt-4 tracking-normal normal-case">
+          <p className="block text-xl max-w-2xl mx-auto text-slate-200 font-mono mt-4 tracking-normal normal-case">
             LaunchRecord analyzes your startup’s market positioning &
             differentiation, product clarity, AEO presence, and strategic moat.
             Our SIO-V5 engine benchmarks your startup against 10,000+ records to
-            ensure you stand out—not get lost in the noise.
+            ensure you stand out not get lost in the noise.
           </p>
         </div>
 
         <div className="space-y-4">
           <form
             onSubmit={handleStartAudit}
-            className="flex flex-col sm:flex-row gap-2 max-w-xl"
+            className="flex flex-col sm:flex-row gap-2 max-w-xl mx-auto"
           >
             <input
               type="text"

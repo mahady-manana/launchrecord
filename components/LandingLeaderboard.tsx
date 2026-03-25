@@ -66,7 +66,7 @@ export async function LandingLeaderboard() {
   ]);
 
   return (
-    <section className="bg-slate-100 pb-10">
+    <section className="bg-slate-100 pb-10 md:px-0 px-4">
       <div>
         {topTopics.length > 0 && (
           <div className="bg-slate-950 overflow-x-auto from-black to-transparent -mx-4 px-4 backdrop-blur-sm">
@@ -105,7 +105,7 @@ export async function LandingLeaderboard() {
           </p>
         </div>
         {leaderboardProducts.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             {leaderboardProducts.map((product, index) => {
               const rank = index + 1;
               const isTopThree = rank <= 3;

@@ -54,7 +54,7 @@ const painkillers: Painkiller[] = [
 
 export function PainkillersSection() {
   return (
-    <section className="max-w-6xl mx-auto space-y-12 py-10">
+    <section className="max-w-6xl mx-auto space-y-12 py-10  md:px-0 px-4">
       <div className="text-center space-y-4">
         <h2 className="text-4xl font-bold text-foreground">
           What Founders Don't Know (But Should)

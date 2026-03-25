@@ -1,15 +1,15 @@
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   AlertCircle,
   Brain,
-  Layers,
-  FileText,
-  Shield,
   CheckCircle,
-  TrendingUp,
+  FileText,
+  Layers,
   LucideIcon,
+  Shield,
+  TrendingUp,
 } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 interface FAQ {
   question: string;
@@ -64,7 +64,7 @@ const faqs: FAQ[] = [
 
 export function FAQSection() {
   return (
-    <section className="max-w-6xl mx-auto space-y-12 py-16">
+    <section className="max-w-6xl mx-auto space-y-12 py-16  md:px-0 px-4">
       <div className="text-center space-y-4">
         <Badge
           variant="outline"

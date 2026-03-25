@@ -1,10 +1,10 @@
-import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 export function SocialProofSection() {
   return (
-    <section className="max-w-6xl mx-auto text-center space-y-8 py-12 border-t border-border">
+    <section className="max-w-6xl  md:px-0 px-4 mx-auto text-center space-y-8 py-12 border-t border-border">
       <h3 className="text-2xl font-semibold text-foreground">
         For Founders Who Refuse to Be Commoditized
       </h3>
