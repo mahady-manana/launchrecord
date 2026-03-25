@@ -66,10 +66,10 @@ export async function LandingLeaderboard() {
   ]);
 
   return (
-    <section className="bg-slate-100 pb-10 md:px-0 px-4">
+    <section className="bg-slate-100 pb-10 md:px-0">
       <div>
         {topTopics.length > 0 && (
-          <div className="bg-slate-950 overflow-x-auto from-black to-transparent -mx-4 px-4 backdrop-blur-sm">
+          <div className="bg-slate-950 overflow-x-auto from-black to-transparent px-4 backdrop-blur-sm">
             <div className="flex gap-0 justify-center">
               {topTopics.map((topic) => (
                 <Link
@@ -89,7 +89,7 @@ export async function LandingLeaderboard() {
           </div>
         )}
       </div>
-      <div className="max-w-6xl mx-auto">
+      <div className="max-w-6xl mx-auto md:px-0 px-4">
         {/* Sticky Categories Tabs */}
         <div className="py-8">
           <h2 className="text-4xl font-bold">
