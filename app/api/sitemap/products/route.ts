@@ -18,7 +18,7 @@ export async function GET(request: NextRequest) {
     const cursor = searchParams.get("cursor");
 
     // Validate limit to prevent excessive loads
-    const validatedLimit = Math.min(Math.max(limit, 1), 5000);
+    const validatedLimit = Math.min(Math.max(limit, 1), 10000);
 
     const query: Record<string, any> = {
       deletedAt: null,

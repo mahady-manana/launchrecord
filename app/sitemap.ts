@@ -17,6 +17,11 @@ async function getCounts() {
 
     const productsData = await productsRes?.json().catch(() => null);
     const topicsData = await topicsRes?.json().catch(() => null);
+    console.log({
+      p: productsData?.pagination?.total,
+      t: topicsData?.pagination?.total,
+    });
+
     return {
       products: productsData?.pagination?.total ?? 0,
       topics: topicsData?.pagination?.total ?? 0,
