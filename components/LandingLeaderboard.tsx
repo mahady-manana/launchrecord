@@ -30,7 +30,7 @@ interface Topic {
 const fetchLeaderboard = cache(async (): Promise<LeaderboardEntry[]> => {
   try {
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/api/leaderboard?limit=12`,
+      `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/api/leaderboard?limit=12&page=2`,
       { cache: "no-store" },
     );
     const data = await response.json();
@@ -69,7 +69,7 @@ export async function LandingLeaderboard() {
     <section className="bg-slate-100 pb-10">
       <div>
         {topTopics.length > 0 && (
-          <div className="bg-slate-800 overflow-x-auto from-black to-transparent -mx-4 px-4 backdrop-blur-sm">
+          <div className="bg-slate-950 overflow-x-auto from-black to-transparent -mx-4 px-4 backdrop-blur-sm">
             <div className="flex gap-0 justify-center">
               {topTopics.map((topic) => (
                 <Link
@@ -93,7 +93,7 @@ export async function LandingLeaderboard() {
         {/* Sticky Categories Tabs */}
         <div className="py-8">
           <h2 className="text-4xl font-bold">
-            Discovers top products on our Record
+            Discover top products on LaunchRecord
           </h2>
           <p>
             As part of our effort to give founders a maximum visibility, premium

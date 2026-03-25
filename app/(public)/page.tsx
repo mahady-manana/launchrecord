@@ -1,4 +1,5 @@
 import { JSONLD } from "@/components/JsonLd";
+import { StatPad } from "@/components/landing/StatPad";
 import { LandingLeaderboard } from "@/components/LandingLeaderboard";
 import type { Metadata } from "next";
 import LaunchRecordLandingPageClient from "./LaunchRecordLandingPageClient";
@@ -394,7 +395,10 @@ export default function LaunchRecordLandingPage() {
   return (
     <>
       <JSONLD data={jsonLd} />
-      <LaunchRecordLandingPageClient Directories={<LandingLeaderboard />} />
+      <LaunchRecordLandingPageClient
+        Directories={<LandingLeaderboard />}
+        StatPad={<StatPad />}
+      />
     </>
   );
 }

@@ -14,13 +14,16 @@ import { ReactNode } from "react";
 
 interface LaunchRecordLandingPageProps {
   Directories: ReactNode;
+  StatPad: ReactNode;
 }
 export default function LaunchRecordLandingPage({
   Directories,
+  StatPad,
 }: LaunchRecordLandingPageProps) {
   return (
-    <div className="py-10 lg:px-0 px-4">
+    <div className="pb-10 lg:px-0 px-4">
       <HeroSection />
+      {StatPad}
       {Directories}
       <FivePillarsSection />
       <StatsSection />

@@ -3,9 +3,9 @@ import { AuthProvider } from "@/providers/auth-provider";
 import { DataInitializer } from "@/providers/data-initializer";
 import { ThemeProvider } from "@/providers/theme-provider";
 import { GoogleAnalytics } from "@next/third-parties/google";
+import { Analytics } from "@vercel/analytics/next";
 import type { Metadata } from "next";
 import { Akshar, Space_Grotesk } from "next/font/google";
-
 import Script from "next/script";
 import "./globals.css";
 
@@ -89,6 +89,7 @@ export default function RootLayout({
             <Toaster />
           </AuthProvider>
         </ThemeProvider>
+        <Analytics />
         <GoogleAnalytics gaId="G-Z31MSTXKKS" />
         <Script
           type="text/javascript"
