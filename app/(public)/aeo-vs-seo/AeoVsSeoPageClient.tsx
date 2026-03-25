@@ -439,6 +439,103 @@ export default function AeoVsSeoPageClient() {
         {/* VS Badge - Desktop */}
       </section>
 
+      {/* Introduction Description Section */}
+      <section className="px-4 max-w-4xl mx-auto space-y-6">
+        <div className="text-center space-y-4 mb-8">
+          <h2 className="text-3xl md:text-4xl font-bold text-slate-800">
+            Understanding AEO vs SEO
+          </h2>
+          <p className="text-slate-600 max-w-2xl mx-auto">
+            The search landscape has fundamentally changed. Here's what you need
+            to know.
+          </p>
+        </div>
+
+        <div className="prose prose-slate max-w-none space-y-6">
+          <p className="text-lg text-slate-700 leading-relaxed">
+            <strong className="text-slate-900">
+              Search is undergoing its biggest transformation in decades.
+            </strong>{" "}
+            Traditional search engines like Google are no longer the only way
+            people find information. AI-powered answer engines—like ChatGPT,
+            Claude, Gemini, and Perplexity—are changing how users discover
+            brands, products, and solutions.
+          </p>
+
+          <p className="text-lg text-slate-700 leading-relaxed">
+            <strong className="text-slate-900">
+              Here's the fundamental shift:
+            </strong>{" "}
+            SEO (Search Engine Optimization) was built for a world where users
+            click through to websites. AEO (Answer Engine Optimization) is
+            designed for a world where AI provides direct answers—often without
+            any clicks at all. This "zero-click" future means your brand needs
+            to be the source AI engines trust and cite.
+          </p>
+
+          <div className="grid md:grid-cols-2 gap-6 my-8">
+            <div className="bg-blue-50 border border-blue-200 rounded-xl p-6">
+              <h3 className="text-lg font-semibold text-blue-900 mb-3 flex items-center gap-2">
+                <Globe className="h-5 w-5" />
+                When SEO Wins
+              </h3>
+              <ul className="space-y-2 text-slate-700">
+                <li className="flex items-start gap-2">
+                  <CheckCircle2 className="h-5 w-5 text-blue-600 flex-shrink-0 mt-0.5" />
+                  <span>
+                    User searches "best CRM for startups" and clicks your review
+                  </span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <CheckCircle2 className="h-5 w-5 text-blue-600 flex-shrink-0 mt-0.5" />
+                  <span>
+                    Traditional Google search drives organic traffic to your
+                    blog
+                  </span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <CheckCircle2 className="h-5 w-5 text-blue-600 flex-shrink-0 mt-0.5" />
+                  <span>Product pages rank for commercial keywords</span>
+                </li>
+              </ul>
+            </div>
+
+            <div className="bg-orange-50 border border-orange-200 rounded-xl p-6">
+              <h3 className="text-lg font-semibold text-orange-900 mb-3 flex items-center gap-2">
+                <Bot className="h-5 w-5" />
+                When AEO Wins
+              </h3>
+              <ul className="space-y-2 text-slate-700">
+                <li className="flex items-start gap-2">
+                  <CheckCircle2 className="h-5 w-5 text-orange-600 flex-shrink-0 mt-0.5" />
+                  <span>
+                    ChatGPT recommends your product when asked about solutions
+                  </span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <CheckCircle2 className="h-5 w-5 text-orange-600 flex-shrink-0 mt-0.5" />
+                  <span>Claude cites your research in its response</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <CheckCircle2 className="h-5 w-5 text-orange-600 flex-shrink-0 mt-0.5" />
+                  <span>Gemini mentions your brand as a trusted source</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <p className="text-lg text-slate-700 leading-relaxed">
+            <strong className="text-slate-900">The smart strategy?</strong>{" "}
+            Don't choose between them. Use SEO as your foundation—quality
+            content, technical excellence, and user experience benefit both
+            approaches. Then layer AEO optimization on top: structured data,
+            entity building, and AI-focused content formatting. This dual
+            approach ensures you capture both traditional search traffic and
+            emerging AI-driven visibility.
+          </p>
+        </div>
+      </section>
+
       {/* Stats Section */}
       <section className="px-4 max-w-6xl mx-auto">
         <div className="bg-gradient-to-br from-slate-900 to-slate-800 rounded-2xl p-8 md:p-12">
