@@ -17,26 +17,26 @@ export function HeroSection() {
     <section className="py-12 pt-20 relative bg-slate-800 min-h-[80vh] flex items-center justify-center">
       <div className="space-y-8 relative px-4 max-w-6xl mx-auto text-center pt-20">
         <div className="space-y-4 max-w-4xl">
-          <h1 className="text-3xl font-mono md:text-6xl font-semibold tracking-tighter text-slate-100 leading-[1.1]">
-            We Audit Your Startup’s{" "}
-            <span className="text-orange-400">Positioning</span>,{" "}
-            <span className="text-green-400">Product Clarity</span> and
-            Strategic Moat.
+          <h1 className="text-4xl font-mono md:text-7xl font-semibold tracking-tighter text-slate-100 leading-[1.1]">
+            Get a Free Audit to Make Your{" "}
+            <span className="text-orange-400">Positioning</span> and
+            <span className="text-green-400"> Product Clear. </span>
             <br />
+            Convert More Customers
           </h1>
 
-          <p className="block text-xl max-w-2xl mx-auto text-slate-200 font-mono mt-4 tracking-normal normal-case">
-            LaunchRecord analyzes your startup’s market positioning &
-            differentiation, product clarity, AEO presence, and strategic moat.
-            Our SIO-V5 engine benchmarks your startup against 10,000+ records to
-            ensure you stand out not get lost in the noise.
-          </p>
-        </div>
-        <div className="space-y-4">
-          <p className="font-bold text-sm text-purple-100 uppercase tracking-wide">
-            The <span className="text-orange-300">#1 Platform</span> For
-            Verified Sovereignty & Defensibility Ledger for Startups
-          </p>
+          <div className="space-y-2">
+            <p className="font-bold text-2xl text-slate-300 tracking-wide">
+              Clear positioning and messaging turn confusion into conversions.
+            </p>
+            <p className="block text-lg max-w-2xl mx-auto text-slate-200 font-mono tracking-normal normal-case">
+              LaunchRecord helps you spot the blind spots in your startup. We
+              audit your positioning, product clarity, AEO visibility,
+              differentiation, and strategic moat — benchmarking against 10,000+
+              startups so you can make your product obvious and convert more
+              users.
+            </p>
+          </div>
         </div>
 
         <div className="space-y-4">

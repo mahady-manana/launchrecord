@@ -1,7 +1,10 @@
-import type { AEOCheckResult, CheckFunction } from "../types";
-import type { WebsiteContentPayload } from "@/services/getWebsiteContent";
+import type { CheckFunction } from "../types";
 
-export const techPerfCwvCheck: CheckFunction = async (item, url, pageContent) => {
+export const techPerfCwvCheck: CheckFunction = async (
+  item,
+  url,
+  pageContent,
+) => {
   const evidence: string[] = [];
   const recommendations: string[] = [];
   let score = 0;
@@ -19,7 +22,7 @@ export const techPerfCwvCheck: CheckFunction = async (item, url, pageContent) =>
     score += 1;
   }
 
-  if (meta.og.url || meta.twitter.site) {
+  if (meta.og.exists || meta.twitter.exists) {
     evidence.push("Has social media optimization");
     score += 1;
   }

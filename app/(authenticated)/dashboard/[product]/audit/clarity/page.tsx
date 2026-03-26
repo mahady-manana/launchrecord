@@ -238,11 +238,18 @@ export default function ClarityAuditPage() {
       searchParams.get("autorun") === "1" ||
       searchParams.get("autorun") === "true";
     if (!shouldAutoRun) return;
-    if (autoRunStartedRef.current) return;
+
+    // Check if we already ran autorun for this session
+    const hasRunKey = `clarity_autorun_${productId}`;
+    const hasRun = sessionStorage.getItem(hasRunKey);
+    if (hasRun) return;
+
     if (!url.trim()) return;
-    autoRunStartedRef.current = true;
+
+    // Mark as run so it doesn't run again on back/navigation
+    sessionStorage.setItem(hasRunKey, "true");
     handleRunAudit();
-  }, [searchParams, url]);
+  }, [searchParams, url, productId]);
 
   return (
     <div className="space-y-8">
@@ -296,9 +303,7 @@ export default function ClarityAuditPage() {
                   Audit Any Page on Your Website
                 </h3>
                 <p className="text-sm text-green-700">
-                  Enter any URL from your website to analyze clarity. Leave
-                  as-is to audit your homepage, or enter a specific page URL to
-                  check landing pages, product pages, or pricing pages.
+                  Enter any URL from your website to analyze clarity.
                 </p>
               </div>
             </div>

@@ -29,6 +29,7 @@ const pruneEmptyStrings = (value: unknown): unknown => {
 
 const estimateTokens = (text?: string): number => {
   if (!text) return 0;
+
   return Math.max(1, Math.ceil(text.length / 4));
 };
 
@@ -42,6 +43,7 @@ const enforceTokenLimit = (
 } => {
   let jsonPayload = JSON.stringify(payload, null, 2);
   let tokenEstimate = estimateTokens(jsonPayload);
+
   if (tokenEstimate <= TOKEN_LIMIT) {
     return { payload, jsonPayload, tokenEstimate, trimmed: false };
   }
@@ -60,24 +62,18 @@ const enforceTokenLimit = (
   let nextPayload = payload;
   let jsonPayloadTemp = jsonPayload;
   let tokenEstimateTemp = tokenEstimate;
-  console.log("====================================");
-  console.log(tokenEstimateTemp, simplified);
-  console.log("====================================");
   // Remove lines one by one from the end until within limit
   while (
     tokenEstimateTemp > TOKEN_LIMIT &&
     trimmedLines.length > 1 // Keep at least one line
   ) {
     trimmedLines.pop(); // Remove last line
-    console.log("===============ssss=============dd========");
-    console.log(tokenEstimateTemp, trimmedLines);
-    console.log("====================================");
-
     const trimmedContent = trimmedLines.join("\n");
     nextPayload = { ...payload, simplifiedContent: trimmedContent };
     jsonPayloadTemp = JSON.stringify(nextPayload, null, 2);
     tokenEstimateTemp = estimateTokens(jsonPayloadTemp);
   }
+
   return {
     payload: nextPayload,
     jsonPayload: jsonPayloadTemp,
@@ -111,13 +107,16 @@ export const getWebsiteContent = async (
   if (!limited) {
     return parse;
   }
-  const { payload, jsonPayload, tokenEstimate, trimmed } =
-    enforceTokenLimit(cleanedPayload);
+  const { payload, jsonPayload, tokenEstimate, trimmed } = enforceTokenLimit({
+    ...cleanedPayload,
+    html: "",
+  });
 
   return {
     ...payload,
     jsonPayload,
     tokenEstimate,
     trimmed,
+    html: cleanedPayload.html,
   } as WebsiteContentPayload;
 };

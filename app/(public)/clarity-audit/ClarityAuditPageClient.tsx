@@ -6,7 +6,6 @@ import {
   ArrowRight,
   ArrowUpRight,
   CheckCircle2,
-  Clock,
   Eye,
   Layout,
   MessageSquare,
@@ -36,20 +35,20 @@ export default function ClarityAuditPageClient() {
         </div>
 
         <div className="relative max-w-5xl mx-auto px-4 py-32 text-center">
-          <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur px-5 py-2 rounded-full text-white text-sm font-medium mb-8">
-            <Clock className="h-4 w-4" />
-            <span>The 5-Second Test</span>
-          </div>
-
-          <h1 className="text-5xl md:text-7xl font-bold text-white mb-6 leading-tight">
-            Do Visitors Get It
+          <h1 className="text-5xl md:text-6xl font-bold text-white mb-6 tracking-tighter">
+            Product Clarity Audit
             <br />
-            <span className="text-green-200">In 5 Seconds?</span>
+            <span className="">
+              Make your product obvious <br /> and turn visitors into customers
+            </span>
           </h1>
 
-          <p className="text-xl text-green-100 max-w-2xl mx-auto mb-10 leading-relaxed">
-            Evaluate how quickly and clearly visitors understand what your
-            product does and why it matters.
+          <p className="text-xl text-white max-w-4xl mx-auto mb-10 leading-relaxed">
+            Most startups struggle because users don’t immediately understand
+            what their product does. LaunchRecord audits your product messaging
+            and clarity, benchmarking against 10,000+ startups, to pinpoint
+            exactly what’s unclear, confusing, or holding back conversions — so
+            you can fix it fast and grow with confidence.
           </p>
 
           <form onSubmit={handleStartAudit} className="max-w-xl mx-auto">

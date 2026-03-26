@@ -1,7 +1,10 @@
-import type { AEOCheckResult, CheckFunction } from "../types";
-import type { WebsiteContentPayload } from "@/services/getWebsiteContent";
+import type { CheckFunction } from "../types";
 
-export const trustSecurityCheck: CheckFunction = async (item, url, pageContent) => {
+export const trustSecurityCheck: CheckFunction = async (
+  item,
+  url,
+  pageContent,
+) => {
   const evidence: string[] = [];
   const recommendations: string[] = [];
   let score = 0;
@@ -12,7 +15,7 @@ export const trustSecurityCheck: CheckFunction = async (item, url, pageContent) 
     score += 1;
   }
 
-  if (meta.og.site_name || meta.twitter.site) {
+  if (meta.og.exists || meta.twitter.exists) {
     evidence.push("Has verified site identity");
     score += 1;
   }

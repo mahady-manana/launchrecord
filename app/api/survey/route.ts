@@ -31,6 +31,7 @@ export async function POST(request: NextRequest) {
       forceHttps: true,
       stripWWW: false,
       defaultProtocol: "https",
+      removePath: true,
     });
 
     // Check if product with this domain already exists

@@ -1,31 +1,6 @@
 import * as cheerio from "cheerio";
 import type { FetchWebsiteContentResult } from "./fetchWebsiteContent";
 
-export interface OpenGraphMeta {
-  title: string;
-  description: string;
-  type: string;
-  image: string;
-  url: string;
-  site_name: string;
-}
-
-export interface TwitterMeta {
-  card: string;
-  title: string;
-  description: string;
-  image: string;
-  site: string;
-  creator: string;
-}
-
-export interface ArticleMeta {
-  published_time: string;
-  modified_time: string;
-  section: string;
-  tag: string;
-}
-
 export interface MetaInfo {
   title: string;
   description: string;
@@ -35,16 +10,19 @@ export interface MetaInfo {
   author: string;
   language: string;
   charset: string;
-  og: OpenGraphMeta;
-  twitter: TwitterMeta;
-  article: ArticleMeta;
+  og: {
+    exists: boolean;
+  };
+  twitter: {
+    exists: boolean;
+  };
 }
 
 export interface ParsedHTML {
   html: string;
   meta: MetaInfo;
   simplifiedContent: string;
-  ldJson: unknown[];
+  ldJson: Array<{ "@type": string }>;
   robottxts: string;
   sitemap: "present" | "no_sitemap" | "accessible" | "not_accessible";
 }
@@ -70,6 +48,18 @@ export function parseWebsiteContent(
     if (match) charset = match[1].trim();
   }
 
+  // Check if Open Graph meta tags exist
+  const ogTitle = getMetaProperty("og:title");
+  const ogDescription = getMetaProperty("og:description");
+  const ogImage = getMetaProperty("og:image");
+  const ogExists = !!(ogTitle || ogDescription || ogImage);
+
+  // Check if Twitter meta tags exist
+  const twitterCard = getMetaContent("twitter:card");
+  const twitterTitle = getMetaContent("twitter:title");
+  const twitterImage = getMetaContent("twitter:image");
+  const twitterExists = !!(twitterCard || twitterTitle || twitterImage);
+
   const meta: MetaInfo = {
     title: $("title").text().trim() || "",
     description: getMetaContent("description"),
@@ -84,26 +74,10 @@ export function parseWebsiteContent(
       "",
     charset,
     og: {
-      title: getMetaProperty("og:title"),
-      description: getMetaProperty("og:description"),
-      type: getMetaProperty("og:type"),
-      image: getMetaProperty("og:image"),
-      url: getMetaProperty("og:url"),
-      site_name: getMetaProperty("og:site_name"),
+      exists: ogExists,
     },
     twitter: {
-      card: getMetaContent("twitter:card"),
-      title: getMetaContent("twitter:title"),
-      description: getMetaContent("twitter:description"),
-      image: getMetaContent("twitter:image"),
-      site: getMetaContent("twitter:site"),
-      creator: getMetaContent("twitter:creator"),
-    },
-    article: {
-      published_time: getMetaProperty("article:published_time"),
-      modified_time: getMetaProperty("article:modified_time"),
-      section: getMetaProperty("article:section"),
-      tag: getMetaProperty("article:tag"),
+      exists: twitterExists,
     },
   };
 
@@ -121,12 +95,26 @@ export function parseWebsiteContent(
       }
     });
 
-  const ldJson: unknown[] = [];
+  // Extract only @type from JSON-LD schemas
+  const ldJson: Array<{ "@type": string }> = [];
   $('script[type="application/ld+json"]').each((_, el) => {
     try {
-      ldJson.push(JSON.parse($(el).html() || ""));
+      const schema = JSON.parse($(el).html() || "");
+
+      // Handle @graph structure
+      if (schema["@graph"] && Array.isArray(schema["@graph"])) {
+        schema["@graph"].forEach((node: any) => {
+          if (node["@type"]) {
+            ldJson.push({ "@type": node["@type"] });
+          }
+        });
+      }
+      // Handle single schema object
+      else if (schema["@type"]) {
+        ldJson.push({ "@type": schema["@type"] });
+      }
     } catch {
-      // Ignore invalid JSON-LD blocks.
+      // Ignore invalid JSON-LD blocks
     }
   });
 

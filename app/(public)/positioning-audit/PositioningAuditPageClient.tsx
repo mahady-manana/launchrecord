@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button";
 import { PILLAR_CONFIGS } from "@/lib/pillar-audit-service";
 import {
   ArrowRight,
-  BarChart3,
   Brain,
   CheckCircle2,
   Compass,
@@ -118,23 +117,19 @@ export default function PositioningAuditPageClient() {
         <div className="relative max-w-7xl mx-auto px-4 py-24 md:py-32">
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <div className="space-y-8">
-              <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur px-4 py-2 rounded-full text-white text-sm font-medium">
-                <BarChart3 className="h-4 w-4" />
-                <span>Free Positioning Audit Tool</span>
-              </div>
-
-              <h1 className="text-3xl md:text-5xl font-bold text-white leading-none">
-                Positioning Audit
+              <h1 className="text-3xl md:text-5xl font-bold text-white leading-none tracking-tighter">
+                Get a Free Positioning Audit
                 <br />
-                <span className="text-blue-100">
-                  Analyze market differentiation for startups
+                <span className="text-blue-100 text-5xl">
+                  & Market differentiation
                 </span>
               </h1>
 
               <p className="text-xl text-blue-100 leading-relaxed">
-                Measure how distinctly your startup occupies a unique space in
-                the market. Get your positioning score across 6 critical
-                dimensions in minutes.
+                LaunchRecord evaluates your startup’s market positioning,
+                differentiation, and strategic fit. Our SIO-V5 engine benchmarks
+                your startup against 10,000+ records to show where you’re
+                getting lost — so you can stand out and attract the right users.
               </p>
 
               <form onSubmit={handleStartAudit} className="space-y-4">

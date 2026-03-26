@@ -247,11 +247,18 @@ export default function PositioningAuditPage() {
       searchParams.get("autorun") === "1" ||
       searchParams.get("autorun") === "true";
     if (!shouldAutoRun) return;
-    if (autoRunStartedRef.current) return;
+
+    // Check if we already ran autorun for this session
+    const hasRunKey = `positioning_autorun_${productId}`;
+    const hasRun = sessionStorage.getItem(hasRunKey);
+    if (hasRun) return;
+
     if (!url.trim()) return;
-    autoRunStartedRef.current = true;
+
+    // Mark as run so it doesn't run again on back/navigation
+    sessionStorage.setItem(hasRunKey, "true");
     handleRunAudit();
-  }, [searchParams, url]);
+  }, [searchParams, url, productId]);
 
   return (
     <div className="space-y-8">
@@ -287,8 +294,6 @@ export default function PositioningAuditPage() {
                 </h3>
                 <p className="text-sm text-blue-700">
                   Enter any URL from your website to analyze your positioning.
-                  Leave as-is to audit your homepage, or enter a specific page
-                  URL to check product pages, landing pages, or about pages.
                 </p>
               </div>
             </div>

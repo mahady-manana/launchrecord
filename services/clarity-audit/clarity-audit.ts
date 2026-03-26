@@ -194,15 +194,8 @@ export async function runClarityAudit(
       tagline: options.tagline,
       description: options.description,
       content: webContent?.simplifiedContent,
-      metadata: webContent?.meta,
-      jsonLd: webContent?.ldJson,
     };
-    console.log("====================================");
-    console.log(JSON.stringify(cleanContent));
-    console.log("====================================");
-    if (cleanContent) {
-      return null as any;
-    }
+
     const userPrompt = `
 Analyze this product website for clarity velocity:
 
