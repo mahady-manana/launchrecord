@@ -12,7 +12,17 @@ import {
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import clsx from "clsx";
-import { ExternalLink, Loader2, RefreshCw, TrendingUp } from "lucide-react";
+import {
+  Check,
+  ExternalLink,
+  Loader2,
+  Pencil,
+  RefreshCw,
+  TrendingUp,
+  X,
+} from "lucide-react";
+import { useState } from "react";
+import { Input } from "../ui/input";
 
 interface Product {
   _id: string;
@@ -23,6 +33,9 @@ interface Product {
   score?: number;
   logo?: string;
   addedByAdmin?: boolean;
+  metadata?: {
+    phUrl?: string;
+  };
   reports?: Array<{
     overallScore: number;
     status: string;
@@ -37,6 +50,7 @@ interface ProductsListProps {
   selectedProducts: Set<string>;
   onToggleSelect: (id: string) => void;
   onSelectAll: () => void;
+  onUpdateWebsite?: (productId: string, website: string) => void;
 }
 
 export function ProductsList({
@@ -46,32 +60,78 @@ export function ProductsList({
   selectedProducts,
   onToggleSelect,
   onSelectAll,
+  onUpdateWebsite,
 }: ProductsListProps) {
+  const [filterNoWebsite, setFilterNoWebsite] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editingUrl, setEditingUrl] = useState("");
+
   const allSelected =
     products.length > 0 && selectedProducts.size === products.length;
   const someSelected =
     selectedProducts.size > 0 && selectedProducts.size < products.length;
 
+  const filteredProducts = filterNoWebsite
+    ? products.filter((p) => !p.website)
+    : products;
+
+  const handleStartEdit = (product: Product) => {
+    setEditingId(product._id);
+    setEditingUrl(product.website || product.metadata?.phUrl || "");
+  };
+
+  const handleCancelEdit = () => {
+    setEditingId(null);
+    setEditingUrl("");
+  };
+
+  const handleSaveEdit = (productId: string) => {
+    if (onUpdateWebsite && editingUrl.trim()) {
+      onUpdateWebsite(productId, editingUrl.trim());
+    }
+    setEditingId(null);
+    setEditingUrl("");
+  };
+
   return (
     <div className="space-y-2">
-      {/* Header with select all */}
-      <div className="flex items-center gap-3 px-4 py-2 bg-muted/50 rounded-lg">
-        <Checkbox
-          checked={allSelected}
-          onCheckedChange={onSelectAll}
-          className="h-4 w-4"
-        />
-        <span className="text-sm text-muted-foreground">
-          {selectedProducts.size} selected
-        </span>
+      {/* Header with select all and filter */}
+      <div className="flex items-center justify-between gap-3 px-4 py-2 bg-muted/50 rounded-lg">
+        <div className="flex items-center gap-3">
+          <Checkbox
+            checked={allSelected}
+            onCheckedChange={onSelectAll}
+            className="h-4 w-4"
+          />
+          <span className="text-sm text-muted-foreground">
+            {selectedProducts.size} selected
+          </span>
+        </div>
+        <div className="flex items-center gap-2">
+          <Checkbox
+            id="filter-no-website"
+            checked={filterNoWebsite}
+            onCheckedChange={(checked) =>
+              setFilterNoWebsite(checked as boolean)
+            }
+            className="h-4 w-4"
+          />
+          <Label
+            htmlFor="filter-no-website"
+            className="text-sm font-normal cursor-pointer"
+          >
+            No website ({products.filter((p) => !p.website).length})
+          </Label>
+        </div>
       </div>
 
       {/* Product list */}
       <div className="space-y-2">
-        {products.map((product) => {
+        {filteredProducts.map((product) => {
           const hasAudit = product.score;
           const score = product.score || product.reports?.[0]?.overallScore;
           const isSelected = selectedProducts.has(product._id);
+          const isEditing = editingId === product._id;
 
           return (
             <div
@@ -108,14 +168,7 @@ export function ProductsList({
                       <span className="font-medium truncate">
                         {product.name}
                       </span>
-                      <a
-                        href={product.website}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-muted-foreground hover:text-primary shrink-0"
-                      >
-                        <ExternalLink className="h-3 w-3" />
-                      </a>
+
                       {product.addedByAdmin && (
                         <Badge variant="secondary" className="text-xs">
                           Admin
@@ -144,23 +197,88 @@ export function ProductsList({
               </div>
 
               <div className="flex items-center gap-2 shrink-0">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => onAudit(product)}
-                  disabled={loading}
-                  className="h-8"
-                >
-                  {loading ? (
-                    <Loader2 className="h-3 w-3 animate-spin" />
-                  ) : (
-                    <>
-                      <RefreshCw className="h-3 w-3 mr-1" />
-                      Audit
-                    </>
-                  )}
-                </Button>
-                <ProductDialog product={product} />
+                {isEditing ? (
+                  <>
+                    <Input
+                      value={editingUrl}
+                      onChange={(e) => setEditingUrl(e.target.value)}
+                      placeholder="Paste URL..."
+                      className="h-8 w-48"
+                      autoFocus
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") handleSaveEdit(product._id);
+                        if (e.key === "Escape") handleCancelEdit();
+                      }}
+                    />
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handleSaveEdit(product._id)}
+                      disabled={loading || !editingUrl.trim()}
+                      className="h-8"
+                    >
+                      <Check className="h-3 w-3" />
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={handleCancelEdit}
+                      className="h-8"
+                    >
+                      <X className="h-3 w-3" />
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => onAudit(product)}
+                      disabled={loading}
+                      className="h-8"
+                    >
+                      {loading ? (
+                        <Loader2 className="h-3 w-3 animate-spin" />
+                      ) : (
+                        <>
+                          <RefreshCw className="h-3 w-3 mr-1" />
+                          Audit
+                        </>
+                      )}
+                    </Button>
+                    <ProductDialog product={product} />
+                    {!product.website && onUpdateWebsite && (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleStartEdit(product)}
+                        className="h-8"
+                        title="Add website URL"
+                      >
+                        <Pencil className="h-3 w-3" />
+                      </Button>
+                    )}
+                    {product.website ? (
+                      <a
+                        href={product.website}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-muted-foreground hover:text-primary shrink-0 w-8 flex justify-center bg-green-700 h-8 items-center rounded-md text-white"
+                      >
+                        <ExternalLink className="h-3 w-3" />
+                      </a>
+                    ) : product.metadata?.phUrl ? (
+                      <a
+                        href={product.metadata.phUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-muted-foreground hover:text-primary shrink-0 w-8 flex justify-center bg-blue-500 h-8 items-center rounded-md text-white"
+                      >
+                        <ExternalLink className="h-3 w-3" />
+                      </a>
+                    ) : null}
+                  </>
+                )}
               </div>
             </div>
           );

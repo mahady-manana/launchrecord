@@ -1,22 +1,15 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import {
-  Search,
-  FileText,
-  Loader2,
-  RefreshCw,
-} from "lucide-react";
+import { ActiveAuditsCard } from "@/components/admin/ActiveAuditsCard";
+import { AddAuditDialog } from "@/components/admin/AddAuditDialog";
 import { BulkImportDialog } from "@/components/admin/BulkImportDialog";
 import { BulkSaveDialog } from "@/components/admin/BulkSaveDialog";
-import { ActiveAuditsCard } from "@/components/admin/ActiveAuditsCard";
 import { ProductsList } from "@/components/admin/ProductsList";
-import { AddAuditDialog } from "@/components/admin/AddAuditDialog";
-import normalizeUrl from "normalize-url";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { FileText, Loader2, RefreshCw, Search } from "lucide-react";
+import { useCallback, useEffect, useState } from "react";
 
 interface AuditProduct {
   _id: string;
@@ -55,7 +48,9 @@ export default function SIOV5AdminPage() {
   const [totalPages, setTotalPages] = useState(1);
   const [totalProducts, setTotalProducts] = useState(0);
   const [showNotAuditedOnly, setShowNotAuditedOnly] = useState(false);
-  const [selectedProducts, setSelectedProducts] = useState<Set<string>>(new Set());
+  const [selectedProducts, setSelectedProducts] = useState<Set<string>>(
+    new Set(),
+  );
 
   const [activeAudits, setActiveAudits] = useState<AuditTask[]>([]);
   const [bulkImportQueue, setBulkImportQueue] = useState<AuditTask[]>([]);
@@ -86,6 +81,29 @@ export default function SIOV5AdminPage() {
       setLoading(false);
     }
   }, [page, searchTerm, showNotAuditedOnly]);
+
+  const handleUpdateWebsite = async (productId: string, website: string) => {
+    try {
+      const response = await fetch(`/api/admin/products/${productId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ website }),
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        // Refresh products list
+        await fetchProducts();
+      } else {
+        console.error("Failed to update website:", data.error);
+        alert(`Failed to update website: ${data.error}`);
+      }
+    } catch (error) {
+      console.error("Error updating website:", error);
+      alert("Failed to update website. Please try again.");
+    }
+  };
 
   useEffect(() => {
     fetchProducts();
@@ -205,7 +223,12 @@ export default function SIOV5AdminPage() {
       console.error("Error finding product:", error);
       setActiveAudits((prev) => [
         ...prev,
-        { ...audit, status: "error", progress: 100, error: "Product not found" },
+        {
+          ...audit,
+          status: "error",
+          progress: 100,
+          error: "Product not found",
+        },
       ]);
       setCurrentQueueIndex(index + 1);
       setTimeout(() => {
@@ -462,7 +485,10 @@ export default function SIOV5AdminPage() {
   };
 
   const resumeQueue = () => {
-    if (bulkImportQueue.length > 0 && currentQueueIndex < bulkImportQueue.length) {
+    if (
+      bulkImportQueue.length > 0 &&
+      currentQueueIndex < bulkImportQueue.length
+    ) {
       setIsProcessingQueue(true);
       processQueue(bulkImportQueue, currentQueueIndex);
     }
@@ -505,7 +531,7 @@ export default function SIOV5AdminPage() {
 
   const auditSelected = async () => {
     const selectedCount = selectedProducts.size;
-    
+
     if (selectedCount === 0) {
       alert("Please select at least one product");
       return;
@@ -519,7 +545,9 @@ export default function SIOV5AdminPage() {
       return;
     }
 
-    const selectedProductsList = products.filter(p => selectedProducts.has(p._id));
+    const selectedProductsList = products.filter((p) =>
+      selectedProducts.has(p._id),
+    );
     const queue: AuditTask[] = selectedProductsList.map((p) => ({
       id: crypto.randomUUID(),
       name: p.name,
@@ -549,9 +577,9 @@ export default function SIOV5AdminPage() {
           </p>
         </div>
         <div className="flex gap-2">
-          <Button 
-            variant={showNotAuditedOnly ? "default" : "outline"} 
-            className="gap-2" 
+          <Button
+            variant={showNotAuditedOnly ? "default" : "outline"}
+            className="gap-2"
             onClick={() => {
               setShowNotAuditedOnly(!showNotAuditedOnly);
               setPage(1);
@@ -561,7 +589,11 @@ export default function SIOV5AdminPage() {
             {showNotAuditedOnly ? "Showing Not Audited" : "Show Not Audited"}
           </Button>
           {selectedProducts.size > 0 && (
-            <Button variant="default" className="gap-2 bg-green-600 hover:bg-green-700" onClick={auditSelected}>
+            <Button
+              variant="default"
+              className="gap-2 bg-green-600 hover:bg-green-700"
+              onClick={auditSelected}
+            >
               <RefreshCw className="h-4 w-4" />
               Audit Selected ({selectedProducts.size})
             </Button>
@@ -621,9 +653,9 @@ export default function SIOV5AdminPage() {
               <p>No products found. Start by adding an audit.</p>
             </div>
           ) : (
-            <ProductsList 
-              products={products} 
-              loading={loading} 
+            <ProductsList
+              products={products}
+              loading={loading}
               onAudit={runSingleAudit}
               selectedProducts={selectedProducts}
               onToggleSelect={(id) => {
@@ -639,9 +671,10 @@ export default function SIOV5AdminPage() {
                 if (selectedProducts.size === products.length) {
                   setSelectedProducts(new Set());
                 } else {
-                  setSelectedProducts(new Set(products.map(p => p._id)));
+                  setSelectedProducts(new Set(products.map((p) => p._id)));
                 }
               }}
+              onUpdateWebsite={handleUpdateWebsite}
             />
           )}
 
