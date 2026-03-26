@@ -10,7 +10,7 @@ const pageUrl = appUrl;
 export const metadata: Metadata = {
   title: {
     default:
-      "Get a Free Audit to Make Your Positioning and Product Clear | Launchrecord.com",
+      "Get a Free Audit to Clarify Your Startup's Positioning and Boost Conversions | Launchrecord.com",
     template: "%s | LaunchRecord",
   },
   description:
@@ -39,7 +39,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title:
-      "Get a Free Audit to Make Your Positioning and Product Clear | Launchrecord.com",
+      "Get a Free Audit to Clarify Your Startup's Positioning and Boost Conversions | Launchrecord.com",
     description:
       "Analyze your positioning, clarity, AEO presence, and strategic moat with AI-powered SIO-V5 engine.",
     url: pageUrl,
@@ -59,7 +59,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title:
-      "Get a Free Audit to Make Your Positioning and Product Clear | Launchrecord.com",
+      "Get a Free Audit to Clarify Your Startup's Positioning and Boost Conversions | Launchrecord.com",
     description:
       "Analyze your positioning, clarity, AEO presence, and strategic moat.",
     images: ["/og-image.png"],

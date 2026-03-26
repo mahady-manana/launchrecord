@@ -7,7 +7,7 @@ const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
 export const metadata: Metadata = {
   title: {
     default:
-      "Get a Free Audit to Make Your Positioning and Product Clear | Launchrecord.com",
+      "Get a Free Audit to Clarify Your Startup's Positioning and Boost Conversions | Launchrecord.com",
     template: "%s",
   },
   description:
@@ -15,7 +15,7 @@ export const metadata: Metadata = {
   metadataBase: new URL(appUrl),
   openGraph: {
     title:
-      "Get a Free Audit to Make Your Positioning and Product Clear | Launchrecord.com",
+      "Get a Free Audit to Clarify Your Startup's Positioning and Boost Conversions | Launchrecord.com",
     description:
       "Analyze your positioning, clarity, AEO presence, and strategic moat.",
     url: appUrl,
@@ -33,7 +33,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title:
-      "Get a Free Audit to Make Your Positioning and Product Clear | Launchrecord.com",
+      "Get a Free Audit to Clarify Your Startup's Positioning and Boost Conversions | Launchrecord.com",
     description:
       "Analyze your positioning, clarity, AEO presence, and strategic moat.",
     images: ["/og-image.png"],

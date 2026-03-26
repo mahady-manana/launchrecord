@@ -18,11 +18,10 @@ export function HeroSection() {
       <div className="space-y-8 relative px-4 max-w-6xl mx-auto text-center pt-20">
         <div className="space-y-4 max-w-4xl">
           <h1 className="text-4xl font-mono md:text-7xl font-semibold tracking-tighter text-slate-100 leading-[1.1]">
-            Get a Free Audit to Make Your{" "}
-            <span className="text-orange-400">Positioning</span> and
-            <span className="text-green-400"> Product Clear. </span>
+            Get a Free Audit to Clarify Your Startup's{" "}
+            <span className="text-orange-400">Positioning</span> and <br />
+            <span className="text-green-400"> Boost Conversions</span>
             <br />
-            Convert More Customers
           </h1>
 
           <div className="space-y-2">
