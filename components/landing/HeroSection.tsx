@@ -15,14 +15,7 @@ export function HeroSection() {
 
   return (
     <section className="py-12 pt-20 relative bg-slate-800 min-h-[80vh] flex items-center justify-center">
-      <div className="space-y-8 relative px-4 max-w-6xl mx-auto text-center ">
-        <div className="space-y-4 pt-8">
-          <p className="font-bold text-sm text-purple-100 uppercase tracking-wide">
-            The <span className="text-orange-300">#1 Platform</span> For
-            Verified Sovereignty & Defensibility Ledger for Startups
-          </p>
-        </div>
-
+      <div className="space-y-8 relative px-4 max-w-6xl mx-auto text-center pt-20">
         <div className="space-y-4 max-w-4xl">
           <h1 className="text-3xl font-mono md:text-6xl font-semibold tracking-tighter text-slate-100 leading-[1.1]">
             We Audit Your Startup’s{" "}
@@ -37,6 +30,12 @@ export function HeroSection() {
             differentiation, product clarity, AEO presence, and strategic moat.
             Our SIO-V5 engine benchmarks your startup against 10,000+ records to
             ensure you stand out not get lost in the noise.
+          </p>
+        </div>
+        <div className="space-y-4">
+          <p className="font-bold text-sm text-purple-100 uppercase tracking-wide">
+            The <span className="text-orange-300">#1 Platform</span> For
+            Verified Sovereignty & Defensibility Ledger for Startups
           </p>
         </div>
 

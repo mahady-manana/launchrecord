@@ -30,7 +30,7 @@ interface Topic {
 const fetchLeaderboard = cache(async (): Promise<LeaderboardEntry[]> => {
   try {
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/api/leaderboard?limit=12&page=2`,
+      `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/api/leaderboard?limit=12`,
       { cache: "no-store" },
     );
     const data = await response.json();

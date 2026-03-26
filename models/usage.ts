@@ -14,6 +14,11 @@ export interface IUsage extends Document {
   positioningAuditsLimit: number;
   positioningWeeklyAuditUsed: number;
   positioningWeeklyAuditLimit: number;
+  // Clarity Audit counters
+  clarityAuditsUsed: number;
+  clarityAuditsLimit: number;
+  clarityWeeklyAuditUsed: number;
+  clarityWeeklyAuditLimit: number;
   // Legacy fields for backward compatibility (deprecated)
   auditsUsed?: number;
   auditsLimit?: number;
@@ -80,6 +85,27 @@ const UsageSchema = new Schema<IUsage>(
       min: 0,
     },
     positioningWeeklyAuditLimit: {
+      type: Number,
+      required: true,
+      default: 0, // Free tier: 0 per week
+    },
+    // Clarity Audit counters
+    clarityAuditsUsed: {
+      type: Number,
+      default: 0,
+      min: 0,
+    },
+    clarityAuditsLimit: {
+      type: Number,
+      required: true,
+      default: 1, // Free tier: 1 per month
+    },
+    clarityWeeklyAuditUsed: {
+      type: Number,
+      default: 0,
+      min: 0,
+    },
+    clarityWeeklyAuditLimit: {
       type: Number,
       required: true,
       default: 0, // Free tier: 0 per week
