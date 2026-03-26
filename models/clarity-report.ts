@@ -13,34 +13,54 @@ export interface IClarityReport extends Document {
   score: number;
   band: "instant" | "clear" | "average" | "confusing" | "opaque";
 
-  // Critique
-  critique: string;
+  // Executive Summary
+  executiveSummary: string;
 
-  // Metrics
-  metrics: {
-    headlineClarity: number;
-    visualFlow: number;
-    valueHierarchy: number;
-    benefitClarity: number;
-    ctaClarity: number;
-    proofPlacement: number;
-  };
+  // Metrics (stored as Mixed, typed here for TypeScript)
+  metrics: any;
+
+  // 5-Second Test
+  fiveSecondTest: any;
 
   // Findings
-  findings: string[];
+  findings: {
+    critical: Array<{
+      issue: string;
+      location: string;
+      impact: string;
+      evidence: string;
+    }>;
+    warnings: Array<{
+      issue: string;
+      location: string;
+      impact: string;
+      evidence: string;
+    }>;
+    positives: Array<{
+      strength: string;
+      location: string;
+      why: string;
+    }>;
+  };
 
   // Recommendations
   recommendations: Array<{
+    priority: string;
+    category: string;
     action: string;
-    priority: number;
+    why: string;
+    before: string;
+    after: string;
+    implementation: {
+      steps: string[];
+      effort: string;
+      expectedImpact: string;
+    };
+    example: string;
   }>;
 
-  // 5-Second Test
-  fiveSecondTest: {
-    passes: boolean;
-    timeToUnderstand: number;
-    frictionPoints: string[];
-  };
+  // Competitive Context
+  competitiveContext: any;
 
   // Metadata
   auditDuration?: number;
@@ -87,41 +107,45 @@ const ClarityReportSchema = new Schema<IClarityReport>(
       },
     },
 
-    // Critique
-    critique: {
+    // Executive Summary
+    executiveSummary: {
       type: String,
-      required: [true, "Critique is required"],
+      required: [true, "Executive summary is required"],
     },
 
-    // Metrics
+    // Metrics (complex nested object)
     metrics: {
-      headlineClarity: { type: Number, required: true, min: 0, max: 100 },
-      visualFlow: { type: Number, required: true, min: 0, max: 100 },
-      valueHierarchy: { type: Number, required: true, min: 0, max: 100 },
-      benefitClarity: { type: Number, required: true, min: 0, max: 100 },
-      ctaClarity: { type: Number, required: true, min: 0, max: 100 },
-      proofPlacement: { type: Number, required: true, min: 0, max: 100 },
+      type: Schema.Types.Mixed,
+      required: true,
+    },
+
+    // 5-Second Test
+    fiveSecondTest: {
+      type: Schema.Types.Mixed,
+      required: true,
     },
 
     // Findings
     findings: {
-      type: [String],
-      default: [],
+      type: Schema.Types.Mixed,
+      default: { critical: [], warnings: [], positives: [] },
     },
 
     // Recommendations
-    recommendations: [
-      {
-        action: { type: String, required: true },
-        priority: { type: Number, required: true, min: 0, max: 100 },
-      },
-    ],
+    recommendations: {
+      type: Schema.Types.Mixed,
+      default: [],
+    },
 
-    // 5-Second Test
-    fiveSecondTest: {
-      passes: { type: Boolean, required: true },
-      timeToUnderstand: { type: Number, required: true, min: 0, max: 30 },
-      frictionPoints: { type: [String], default: [] },
+    // Competitive Context
+    competitiveContext: {
+      type: Schema.Types.Mixed,
+      default: {
+        clarityVsCompetitors: "average",
+        industryStandardClarity: 50,
+        yourClarity: 50,
+        gap: "No data available",
+      },
     },
 
     // Metadata

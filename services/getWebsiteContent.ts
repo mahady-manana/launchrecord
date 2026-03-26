@@ -32,17 +32,6 @@ const estimateTokens = (text?: string): number => {
   return Math.max(1, Math.ceil(text.length / 4));
 };
 
-const trimSimplifiedContent = (text: string, maxChars: number): string => {
-  if (maxChars <= 0) return "";
-  if (text.length <= maxChars) return text;
-  let slice = text.slice(0, maxChars);
-  const lastNewline = slice.lastIndexOf("\n");
-  if (lastNewline > 0) {
-    slice = slice.slice(0, lastNewline + 1);
-  }
-  return slice.trimEnd();
-};
-
 const enforceTokenLimit = (
   payload: Record<string, unknown>,
 ): {
@@ -71,28 +60,24 @@ const enforceTokenLimit = (
   let nextPayload = payload;
   let jsonPayloadTemp = jsonPayload;
   let tokenEstimateTemp = tokenEstimate;
-
+  console.log("====================================");
+  console.log(tokenEstimateTemp, simplified);
+  console.log("====================================");
   // Remove lines one by one from the end until within limit
   while (
     tokenEstimateTemp > TOKEN_LIMIT &&
     trimmedLines.length > 1 // Keep at least one line
   ) {
     trimmedLines.pop(); // Remove last line
+    console.log("===============ssss=============dd========");
+    console.log(tokenEstimateTemp, trimmedLines);
+    console.log("====================================");
+
     const trimmedContent = trimmedLines.join("\n");
     nextPayload = { ...payload, simplifiedContent: trimmedContent };
     jsonPayloadTemp = JSON.stringify(nextPayload, null, 2);
     tokenEstimateTemp = estimateTokens(jsonPayloadTemp);
   }
-
-  // If still over limit after removing all but one line, truncate the last line
-  if (tokenEstimateTemp > TOKEN_LIMIT && trimmedLines.length === 1) {
-    const maxChars = Math.max(0, TOKEN_LIMIT * 4 - 200); // Reserve some tokens for JSON structure
-    const truncatedLine = trimSimplifiedContent(trimmedLines[0], maxChars);
-    nextPayload = { ...payload, simplifiedContent: truncatedLine };
-    jsonPayloadTemp = JSON.stringify(nextPayload, null, 2);
-    tokenEstimateTemp = estimateTokens(jsonPayloadTemp);
-  }
-
   return {
     payload: nextPayload,
     jsonPayload: jsonPayloadTemp,

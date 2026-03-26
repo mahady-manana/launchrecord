@@ -13,11 +13,17 @@ function transformReport(doc: any): ClarityReport {
     url: doc.url,
     score: doc.score,
     band: doc.band,
-    critique: doc.critique,
+    executiveSummary: doc.executiveSummary,
     metrics: doc.metrics,
-    findings: doc.findings || [],
-    recommendations: doc.recommendations || [],
     fiveSecondTest: doc.fiveSecondTest,
+    findings: doc.findings || { critical: [], warnings: [], positives: [] },
+    recommendations: doc.recommendations || [],
+    competitiveContext: doc.competitiveContext || {
+      clarityVsCompetitors: "average",
+      industryStandardClarity: 50,
+      yourClarity: doc.score,
+      gap: "No data available",
+    },
     metadata: {
       auditDuration: doc.auditDuration,
       tokenUsage: doc.tokenUsage,
@@ -37,11 +43,12 @@ export async function createClarityReport(
   auditResult: {
     score: number;
     band: string;
-    critique: string;
+    executiveSummary: string;
     metrics: any;
-    findings: string[];
-    recommendations: Array<{ action: string; priority: number }>;
     fiveSecondTest: any;
+    findings: any;
+    recommendations: any;
+    competitiveContext: any;
   },
   metadata?: {
     auditDuration?: number;
@@ -56,11 +63,12 @@ export async function createClarityReport(
     url,
     score: auditResult.score,
     band: auditResult.band,
-    critique: auditResult.critique,
+    executiveSummary: auditResult.executiveSummary,
     metrics: auditResult.metrics,
+    fiveSecondTest: auditResult.fiveSecondTest,
     findings: auditResult.findings,
     recommendations: auditResult.recommendations,
-    fiveSecondTest: auditResult.fiveSecondTest,
+    competitiveContext: auditResult.competitiveContext,
     auditDuration: metadata?.auditDuration,
     tokenUsage: metadata?.tokenUsage,
     modelUsed: metadata?.modelUsed,

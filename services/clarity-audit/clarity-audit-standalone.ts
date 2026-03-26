@@ -38,11 +38,12 @@ export async function runStandaloneClarityAudit(
       {
         score: result.score,
         band: result.band,
-        critique: result.critique,
+        executiveSummary: result.executiveSummary,
         metrics: result.metrics,
+        fiveSecondTest: result.fiveSecondTest,
         findings: result.findings,
         recommendations: result.recommendations,
-        fiveSecondTest: result.fiveSecondTest,
+        competitiveContext: result.competitiveContext,
       },
       {
         auditDuration: duration,
