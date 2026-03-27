@@ -159,6 +159,10 @@ function DashboardSurveyContent() {
       clarity: "clarity",
     };
 
+    if (toolId === "sio") {
+      router.push(`/dashboard/audit?product=${productId}`);
+      return;
+    }
     const route = toolRoutes[toolId];
     if (route) {
       const params = new URLSearchParams();
