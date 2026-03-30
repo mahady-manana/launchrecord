@@ -11,14 +11,14 @@ interface Problem {
 
 const problems: Problem[] = [
   {
-    stat: "73% of startups have positioning debt",
+    stat: "85% of startups have positioning debt",
     title: "You Sound Like Every Other Startup",
     description:
       "Your messaging converges toward commodity every week. You're solving the same problems the same way, and prospects can't tell you apart from competitors.",
     icon: <AlertTriangle className="h-8 w-8" />,
   },
   {
-    stat: "40% bounce rate from unclear messaging",
+    stat: "65% bounce rate from unclear messaging",
     title: "Visitors Leave Without Understanding",
     description:
       "Prospects can't understand what you do in 5 seconds. Your homepage talks about you, not their problem. Every second of confusion kills conversion.",
