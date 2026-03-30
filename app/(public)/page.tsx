@@ -1,6 +1,4 @@
 import { JSONLD } from "@/components/JsonLd";
-import { StatPad } from "@/components/landing/StatPad";
-import { LandingLeaderboard } from "@/components/LandingLeaderboard";
 import type { Metadata } from "next";
 import LaunchRecordLandingPageClient from "./LaunchRecordLandingPageClient";
 
@@ -10,11 +8,11 @@ const pageUrl = appUrl;
 export const metadata: Metadata = {
   title: {
     default:
-      "Get a Free Audit to Clarify Your Startup's Positioning and Boost Conversions | Launchrecord.com",
+      "Get a Free Audit to Clarify Your Startup's Positioning and Boost Conversions | LaunchRecord",
     template: "%s | LaunchRecord",
   },
   description:
-    "Analyze your positioning, clarity, AEO presence, and strategic moat. The SIO-V5 engine analyzes your positioning against 10,000+ records to ensure you aren't just a feature waiting to be deleted.",
+    "LaunchRecord analyzes your positioning, clarity, AEO presence, and strategic moat. The SIO-V5 engine benchmarks against 10,000+ startups to ensure you aren't just a feature waiting to be deleted.",
   keywords: [
     "SaaS audit",
     "positioning analysis",
@@ -29,6 +27,9 @@ export const metadata: Metadata = {
     "strategic moat",
     "AI-powered audit",
     "startup analysis tool",
+    "positioning audit",
+    "clarity audit",
+    "SaaS positioning",
   ],
   authors: [{ name: "LaunchRecord", url: appUrl }],
   creator: "LaunchRecord",
@@ -39,7 +40,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title:
-      "Get a Free Audit to Clarify Your Startup's Positioning and Boost Conversions | Launchrecord.com",
+      "Get a Free Audit to Clarify Your Startup's Positioning and Boost Conversions | LaunchRecord",
     description:
       "Analyze your positioning, clarity, AEO presence, and strategic moat with AI-powered SIO-V5 engine.",
     url: pageUrl,
@@ -51,7 +52,7 @@ export const metadata: Metadata = {
         url: "/og-image.png",
         width: 1200,
         height: 630,
-        alt: "LaunchRecord - SF-1 War Briefing Preview",
+        alt: "LaunchRecord - Startup Positioning Audit",
         type: "image/png",
       },
     ],
@@ -59,7 +60,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title:
-      "Get a Free Audit to Clarify Your Startup's Positioning and Boost Conversions | Launchrecord.com",
+      "Get a Free Audit to Clarify Your Startup's Positioning and Boost Conversions | LaunchRecord",
     description:
       "Analyze your positioning, clarity, AEO presence, and strategic moat.",
     images: ["/og-image.png"],
@@ -117,7 +118,7 @@ export default function LaunchRecordLandingPage() {
         url: appUrl,
         name: "LaunchRecord",
         description:
-          "Get a Free Audit to Make Your Positioning and Product Clear | Launchrecord.com",
+          "Get a Free Audit to Make Your Positioning and Product Clear | LaunchRecord",
         publisher: {
           "@id": `${appUrl}/#organization`,
         },
@@ -135,9 +136,9 @@ export default function LaunchRecordLandingPage() {
         "@type": "WebPage",
         "@id": pageUrl,
         url: pageUrl,
-        name: "Launchrecord.com",
+        name: "LaunchRecord - Startup Positioning Audit",
         description:
-          "Analyze your positioning, clarity, AEO presence, and strategic moat. The SIO-V5 engine analyzes your positioning against 10,000+ records.",
+          "LaunchRecord analyzes your positioning, clarity, AEO presence, and strategic moat. The SIO-V5 engine benchmarks against 10,000+ startups.",
         isPartOf: {
           "@id": `${appUrl}/#website`,
         },
@@ -206,7 +207,7 @@ export default function LaunchRecordLandingPage() {
       {
         "@type": "Service",
         "@id": `${pageUrl}#service`,
-        serviceType: "Startup Defensibility Audit",
+        serviceType: "Startup Positioning Audit",
         provider: {
           "@id": `${appUrl}/#organization`,
         },
@@ -227,7 +228,7 @@ export default function LaunchRecordLandingPage() {
           priceCurrency: "USD",
           availability: "https://schema.org/InStock",
           description:
-            "Get a Free Audit to Make Your Positioning and Product Clear | Launchrecord.com",
+            "Get a Free Audit to Make Your Positioning and Product Clear | LaunchRecord",
         },
         hasOfferCatalog: {
           "@type": "OfferCatalog",
@@ -246,18 +247,27 @@ export default function LaunchRecordLandingPage() {
               "@type": "Offer",
               itemOffered: {
                 "@type": "Service",
-                name: "Competitive Intelligence",
+                name: "Founder Plan",
                 description:
-                  "Advanced competitive analysis and strategic warfare capabilities",
+                  "Weekly auto audits, competitive intelligence, and strategic recommendations",
               },
             },
             {
               "@type": "Offer",
               itemOffered: {
                 "@type": "Service",
-                name: "War Briefing",
+                name: "Growth Plan",
                 description:
-                  "Comprehensive strategic report with actionable intelligence",
+                  "Advanced competitive analysis, investor reports, and market intelligence",
+              },
+            },
+            {
+              "@type": "Offer",
+              itemOffered: {
+                "@type": "Service",
+                name: "Sovereign Plan",
+                description:
+                  "Complete strategic command center with white-glove support and emergency pivot calls",
               },
             },
           ],
@@ -282,17 +292,19 @@ export default function LaunchRecordLandingPage() {
         features: [
           "SIO-V5 Engine Analysis",
           "Positioning Audit",
+          "Clarity Assessment",
           "AEO Visibility Check",
           "Competitive Intelligence",
           "War Briefing Reports",
           "Defensibility Scoring",
+          "Weekly Moat Missions",
         ],
         offers: {
           "@type": "AggregateOffer",
           lowPrice: "0",
-          highPrice: "99",
+          highPrice: "299",
           priceCurrency: "USD",
-          offerCount: "3",
+          offerCount: "4",
         },
         aggregateRating: {
           "@type": "AggregateRating",
@@ -320,26 +332,26 @@ export default function LaunchRecordLandingPage() {
         mainEntity: [
           {
             "@type": "Question",
+            name: "What problem does LaunchRecord solve?",
+            acceptedAnswer: {
+              "@type": "Answer",
+              text: "Most startups are invisible to AI and sound like everyone else. LaunchRecord detects positioning blind spots with cold, clinical data and gives you a War Briefing with exact fixes before competitors or AI erase you from the market.",
+            },
+          },
+          {
+            "@type": "Question",
             name: "What is LaunchRecord?",
             acceptedAnswer: {
               "@type": "Answer",
-              text: "LaunchRecord is the #1 platform for verified sovereignty and defensibility ledger for startups. Our SIO-V5 engine analyzes your positioning against 10,000+ records to ensure you aren't just a feature waiting to be deleted.",
+              text: "LaunchRecord is the #1 platform for verified sovereignty and defensibility ledger for startups. Our SIO-V5 Engine analyzes your positioning, clarity, AEO presence, and strategic moat against 10,000+ records.",
             },
           },
           {
             "@type": "Question",
-            name: "What does the SIO-V5 engine analyze?",
+            name: "How does the audit work?",
             acceptedAnswer: {
               "@type": "Answer",
-              text: "The SIO-V5 engine analyzes your positioning, clarity, AEO (Answer Engine Optimization) presence, and strategic moat. It compares your startup against 10,000+ records to measure sovereignty and defensibility.",
-            },
-          },
-          {
-            "@type": "Question",
-            name: "How long does an audit take?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "The initial audit takes 2-3 minutes. You'll receive immediate scores and insights. Comprehensive War Briefing reports with detailed recommendations are generated within 24 hours.",
+              text: "Submit your URL. Our SIO-V5 Engine scrapes your site and cross-references your positioning against 1,400+ competitors. Within 2-3 minutes, you receive your War Briefing with status: JUNK, VULNERABLE, or SOVEREIGN.",
             },
           },
           {
@@ -347,7 +359,7 @@ export default function LaunchRecordLandingPage() {
             name: "Is there a free tier?",
             acceptedAnswer: {
               "@type": "Answer",
-              text: "Yes, LaunchRecord offers a free Core System tier that includes basic sovereignty and defensibility audits. Upgrade to unlock competitive intelligence and strategic warfare capabilities.",
+              text: "Yes. The Core System is free forever and includes SIO-V5 audit, Global Score, 5-pillar scoring, and positioning analysis. Upgrade to unlock competitive intelligence and strategic warfare capabilities.",
             },
           },
           {
@@ -355,7 +367,7 @@ export default function LaunchRecordLandingPage() {
             name: "Who should use LaunchRecord?",
             acceptedAnswer: {
               "@type": "Answer",
-              text: "LaunchRecord is designed for startup founders, SaaS companies, entrepreneurs, product leaders, and strategic planners who want to ensure their startup has defensible positioning in the AI era.",
+              text: "Startup founders, SaaS companies, product leaders, and strategic planners who refuse to be commoditized. If you're building a SaaS and care about being irreplaceable in the age of AI, this is your weapon.",
             },
           },
         ],
@@ -364,9 +376,9 @@ export default function LaunchRecordLandingPage() {
         "@type": "Article",
         "@id": `${pageUrl}#article`,
         headline:
-          "Get a Free Audit to Make Your Positioning and Product Clear | Launchrecord.com",
+          "Get a Free Audit to Clarify Your Startup's Positioning and Boost Conversions | LaunchRecord",
         description:
-          "Analyze your startup's positioning, clarity, AEO presence, and strategic moat with the AI-powered SIO-V5 engine.",
+          "LaunchRecord analyzes your positioning, clarity, AEO presence, and strategic moat with the AI-powered SIO-V5 engine.",
         image: [
           {
             "@type": "ImageObject",
@@ -376,7 +388,7 @@ export default function LaunchRecordLandingPage() {
           },
         ],
         datePublished: "2024-01-01",
-        dateModified: "2026-03-13",
+        dateModified: "2026-03-30",
         author: {
           "@id": `${appUrl}/#organization`,
         },
@@ -387,8 +399,8 @@ export default function LaunchRecordLandingPage() {
           "@id": pageUrl,
         },
         inLanguage: "en-US",
-        articleSection: "Startup Analysis & Strategic Intelligence",
-        wordCount: "2000",
+        articleSection: "Startup Positioning & Strategic Intelligence",
+        wordCount: "2500",
       },
     ],
   };
@@ -396,10 +408,7 @@ export default function LaunchRecordLandingPage() {
   return (
     <>
       <JSONLD data={jsonLd} />
-      <LaunchRecordLandingPageClient
-        Directories={<LandingLeaderboard />}
-        StatPad={<StatPad />}
-      />
+      <LaunchRecordLandingPageClient />
     </>
   );
 }

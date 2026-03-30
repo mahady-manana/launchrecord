@@ -81,7 +81,21 @@ export function parseWebsiteContent(
     },
   };
 
-  const allowedTags = ["h1", "h2", "h3", "p", "li"];
+  const allowedTags = [
+    "h1",
+    "h2",
+    "h3",
+    "h4",
+    "h5",
+    "h6",
+    "p",
+    "li",
+    "a",
+    "button",
+    "input",
+    "video",
+    "img",
+  ];
   let simplifiedContent = "";
   $("footer, nav, header, sidebar").remove();
   const selector = allowedTags.join(",");

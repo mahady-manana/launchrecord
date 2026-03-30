@@ -1,114 +1,102 @@
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  AlertCircle,
-  Brain,
-  CheckCircle,
-  FileText,
-  Layers,
-  LucideIcon,
-  Shield,
-  TrendingUp,
-} from "lucide-react";
-
 interface FAQ {
   question: string;
   answer: string;
-  icon: LucideIcon;
 }
 
 const faqs: FAQ[] = [
   {
-    question: "What does LaunchRecord do?",
+    question: "What problem does LaunchRecord solve?",
     answer:
-      "LaunchRecord is the Strategic Architect's weapon against AI-driven commoditization. We audit your SaaS product using our proprietary SIO-V5 Engine to measure your AEO presence, positioning, clarity, momentum, and proof density. The result? A brutal, data-driven War Briefing that tells you exactly where you're vulnerable and what to fix before competitors or LLMs erase you from the market.",
-    icon: FileText,
+      "Most startups are invisible to AI and sound like everyone else. Your positioning converges toward commodity every week. LLMs don't cite you. Prospects can't understand you in 5 seconds. LaunchRecord detects these blind spots with cold, clinical data—then gives you a War Briefing with exact fixes before competitors or AI erase you from the market.",
   },
   {
-    question: "What is SIO-V5?",
+    question: "What is LaunchRecord?",
     answer:
-      "SIO-V5 (Sovereign Intelligence Officer, Version 5) is our proprietary multi-agent auditing protocol. It analyzes your product across five clinical pillars and compares it against thousands of other startups. The output is a structured report with your Global Score, a brutal truth summary, and Survival Probability—no fluff, no marketing speak, just cold data.",
-    icon: Brain,
-  },
-  {
-    question: "What is SIDL (Sovereign Intelligence Defensibility Ledger)?",
-    answer:
-      "SIDL is our proprietary framework for measuring startup defensibility in the age of AI. It's the methodology behind every audit we run. SIDL evaluates five pillars: AEO Engine (will LLMs cite you?), Positioning Engine (how different are you from competitors?), Clarity Engine (can we understand you instantly?), Momentum Engine (social proof density), and Proof Engine (hard evidence vs. empty claims). Your SIDL score determines your rank on the Sovereign Leaderboard.",
-    icon: Layers,
-  },
-  {
-    question: "Why do I need this?",
-    answer:
-      "Because 94.2% of founders are invisible to LLMs. Your positioning is probably converging toward commodity territory every week. OpenAI's latest leak might overlap 40% of your roadmap and you didn't see it coming. Growth hacking won't save you. SIO-V5 detects Commodity Risk and Positioning Debt before it's too late. Either you're compounding defensibility, or you're quietly eroding. Which one is on your record?",
-    icon: AlertCircle,
+      "LaunchRecord is the #1 platform for verified sovereignty and defensibility ledger for startups. Our SIO-V5 Engine analyzes your positioning, clarity, AEO presence, and strategic moat against 10,000+ records. You get a Global Score, Survival Probability, and weekly missions to make your product obvious and convert more users.",
   },
   {
     question: "How does the audit work?",
     answer:
-      "Submit your URL. Our SIO-V5 Engine scrapes your site and cross-references your positioning against 1,400+ competitors to detect 'Commodity Convergence.' We simulate AEO visibility and run a clarity scan. You receive your War Briefing with a status: JUNK, VULNERABLE, or SOVEREIGN. Then you complete weekly missions to fix your record, upload proof, and climb the Sovereign 100.",
-    icon: CheckCircle,
+      "Submit your URL. Our SIO-V5 Engine scrapes your site and cross-references your positioning against 1,400+ competitors to detect Commodity Convergence. We simulate AEO visibility and run a clarity scan. Within 2-3 minutes, you receive your War Briefing with status: JUNK, VULNERABLE, or SOVEREIGN. Then complete weekly missions to fix your record and climb the Sovereign Leaderboard.",
   },
   {
-    question: "Who is this for?",
+    question: "What is SIO-V5?",
     answer:
-      "Sovereign Founders who refuse to be commoditized. If you're building a SaaS and you care about being irreplaceable in the age of AI, this is your weapon. Limited to 100 founding members for March 2026. No brand sponsorships. No generic advice. Just proprietary logic and human-led Proof-of-Work.",
-    icon: Shield,
+      "SIO-V5 (Sovereign Intelligence Officer, Version 5) is our proprietary multi-agent auditing protocol. It analyzes your product across five clinical pillars—Positioning, Clarity, AEO Presence, Momentum, and Founder Proof—then compares against thousands of startups. Output: Global Score, brutal truth summary, Survival Probability. No fluff, no marketing speak, just cold data.",
+  },
+  {
+    question: "What is the SIDL framework?",
+    answer:
+      "SIDL (Sovereign Intelligence Defensibility Ledger) is our proprietary methodology for measuring startup defensibility in the age of AI. It evaluates five pillars: AEO Engine (will LLMs cite you?), Positioning Engine (how different are you?), Clarity Engine (can we understand you instantly?), Momentum Engine (social proof density), and Proof Engine (hard evidence vs. empty claims). Your SIDL score determines your Sovereign Leaderboard rank.",
+  },
+  {
+    question: "Who should use LaunchRecord?",
+    answer:
+      "Startup founders, SaaS companies, product leaders, and strategic planners who refuse to be commoditized. If you're building a SaaS and you care about being irreplaceable in the age of AI, this is your weapon. The Core System is free. Upgrade to unlock competitive intelligence, strategic warfare capabilities, and white-glove support.",
+  },
+  {
+    question: "What outcomes can I expect?",
+    answer:
+      "Founders who fix their positioning and clarity see: +127% conversion rate (average after clarity fixes), +89% more citations in LLM responses, +2.3x improvement vs category competitors, and -43% CAC reduction from clearer messaging. Your War Briefing shows exactly where you're vulnerable and what to fix first.",
+  },
+  {
+    question: "Is there a free tier?",
+    answer:
+      "Yes. The Core System is free forever and includes: SIO-V5 audit, Global Score, 5-pillar scoring, positioning analysis, and score evolution tracking. Upgrade to Founder ($49/mo), Growth ($99/mo), or Sovereign ($299/mo) for competitive intelligence, weekly auto audits, investor reports, and strategic architect sessions.",
   },
   {
     question: "What happens after I get my War Briefing?",
     answer:
-      "You get access to your Sovereign Dashboard where you can track your scores across all five SIDL pillars. Complete weekly Moat Missions to improve your record. Upload proof of shipping, revenue velocity, and social proof. Climb the Sovereign Leaderboard. If you drop out of the Top 20, Tier 3 members get an Emergency Pivot Call. This isn't a one-time audit—it's ongoing defensibility tracking.",
-    icon: TrendingUp,
+      "You get access to your Sovereign Dashboard where you can track scores across all five SIDL pillars. Complete weekly Moat Missions to improve your record. Upload proof of shipping, revenue velocity, and social proof. Climb the Sovereign Leaderboard. This isn't a one-time audit—it's ongoing defensibility tracking.",
   },
 ];
 
 export function FAQSection() {
   return (
-    <section className="max-w-6xl mx-auto space-y-12 py-16  md:px-0 px-4">
-      <div className="text-center space-y-4">
-        <Badge
-          variant="outline"
-          className="font-mono text-xs tracking-[0.2em] uppercase py-1.5 px-6 border-primary/50 text-primary bg-primary/5"
-        >
-          KNOWLEDGE BASE
-        </Badge>
-        <h2 className="text-4xl font-bold text-foreground">
-          Frequently Asked Questions
-        </h2>
-        <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-          Everything you need to know about LaunchRecord, SIO-V5, and the SIDL
-          framework.
-        </p>
-      </div>
+    <section className="py-16 md:px-0 px-4 bg-slate-900">
+      <div className="max-w-6xl mx-auto space-y-12 ">
+        <div className="text-center space-y-4">
+          <h2 className="text-4xl font-bold text-slate-100">
+            Frequently Asked Questions
+          </h2>
+          <p className="text-lg text-slate-400 max-w-2xl mx-auto">
+            Everything you need to know about LaunchRecord, SIO-V5, and the SIDL
+            framework.
+          </p>
+        </div>
 
-      <div className="grid gap-4 max-w-4xl mx-auto">
-        {faqs.map((faq, idx) => {
-          const Icon = faq.icon;
-          return (
-            <Card
+        <div className="grid gap-4 max-w-4xl mx-auto">
+          {faqs.map((faq, idx) => (
+            <div
               key={idx}
-              className="border-border hover:border-primary/50 transition-colors"
+              className="border border-slate-700 bg-slate-800/50 rounded-xl overflow-hidden"
             >
-              <CardHeader>
-                <div className="flex items-start gap-4">
-                  <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
-                    <Icon className="h-5 w-5 text-primary" />
-                  </div>
-                  <div className="flex-1 space-y-2">
-                    <CardTitle className="text-lg text-foreground">
-                      {faq.question}
-                    </CardTitle>
-                  </div>
+              <details className="group">
+                <summary className="flex items-center justify-between p-6 cursor-pointer list-none">
+                  <h3 className="text-lg font-semibold text-slate-100 pr-4">
+                    {faq.question}
+                  </h3>
+                  <svg
+                    className="w-5 h-5 text-slate-400 transform group-open:rotate-180 transition-transform flex-shrink-0"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M19 9l-7 7-7-7"
+                    />
+                  </svg>
+                </summary>
+                <div className="px-6 pb-6 pt-0">
+                  <p className="text-slate-400 leading-relaxed">{faq.answer}</p>
                 </div>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground leading-relaxed">
-                  {faq.answer}
-                </p>
-              </CardContent>
-            </Card>
-          );
-        })}
+              </details>
+            </div>
+          ))}
+        </div>
       </div>
     </section>
   );

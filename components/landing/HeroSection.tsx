@@ -14,8 +14,8 @@ export function HeroSection() {
   };
 
   return (
-    <section className="py-12 pt-20 relative bg-slate-800 min-h-[80vh] flex items-center justify-center">
-      <div className="space-y-8 relative px-4 max-w-6xl mx-auto text-center pt-20">
+    <section className="py-12 relative bg-slate-800 min-h-screen flex items-center justify-center">
+      <div className="space-y-8 relative px-4 max-w-6xl mx-auto text-center">
         <div className="space-y-4 max-w-4xl">
           <h1 className="text-4xl font-mono md:text-7xl font-semibold tracking-tighter text-slate-100 leading-[1.1]">
             Get a Free Audit to Clarify Your Startup's{" "}

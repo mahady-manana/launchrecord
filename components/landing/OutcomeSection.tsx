@@ -1,0 +1,115 @@
+"use client";
+
+import { ArrowUpRight, BarChart3, DollarSign, Users } from "lucide-react";
+
+interface Outcome {
+  metric: string;
+  value: string;
+  description: string;
+  icon: React.ReactNode;
+  trend: "up" | "down";
+}
+
+const outcomes: Outcome[] = [
+  {
+    metric: "Conversion Rate",
+    value: "+127%",
+    description: "Average increase after clarity fixes",
+    icon: <ArrowUpRight className="h-8 w-8" />,
+    trend: "up",
+  },
+  {
+    metric: "AI Visibility",
+    value: "+89%",
+    description: "More citations in LLM responses",
+    icon: <Users className="h-8 w-8" />,
+    trend: "up",
+  },
+  {
+    metric: "Positioning Score",
+    value: "+2.3x",
+    description: "Improvement vs category competitors",
+    icon: <BarChart3 className="h-8 w-8" />,
+    trend: "up",
+  },
+  {
+    metric: "CAC Reduction",
+    value: "-43%",
+    description: "Lower acquisition cost from clarity",
+    icon: <DollarSign className="h-8 w-8" />,
+    trend: "down",
+  },
+];
+
+export function OutcomeSection() {
+  return (
+    <section className="py-20 bg-slate-900">
+      <div className="max-w-7xl mx-auto px-4">
+        {/* Section Header */}
+        <div className="text-center space-y-4 mb-16">
+          <h2 className="text-4xl md:text-5xl font-black text-slate-100 tracking-tighter">
+            The Outcome: Measurable Defensibility
+          </h2>
+          <p className="text-xl text-slate-400 max-w-3xl mx-auto">
+            Founders who fix their positioning and clarity don't just survive.
+            They compound advantage.
+          </p>
+        </div>
+
+        {/* Outcomes Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
+          {outcomes.map((outcome, index) => (
+            <div
+              key={index}
+              className="relative group bg-slate-800/50 border border-slate-700 hover:border-slate-600 rounded-xl p-8 transition-all duration-300"
+            >
+              {/* Icon */}
+              <div className="w-16 h-16 rounded-lg bg-slate-900 text-emerald-500 flex items-center justify-center mb-6">
+                {outcome.icon}
+              </div>
+
+              {/* Value */}
+              <p className="text-4xl font-black text-emerald-500 mb-2">
+                {outcome.value}
+              </p>
+
+              {/* Metric */}
+              <h3 className="text-lg font-bold text-slate-100 uppercase tracking-tight mb-2">
+                {outcome.metric}
+              </h3>
+
+              {/* Description */}
+              <p className="text-slate-400 text-sm leading-relaxed">
+                {outcome.description}
+              </p>
+
+              {/* Trend indicator */}
+              <div className="mt-4 flex items-center gap-2">
+                <div className="px-2 py-1 rounded text-xs font-bold uppercase bg-emerald-500/10 text-emerald-500">
+                  {outcome.trend === "up" ? "↑" : "↓"} Better
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Testimonial / Social Proof */}
+        <div className="bg-slate-800/50 border border-slate-700 rounded-xl p-8 md:p-12">
+          <div className="max-w-4xl mx-auto text-center space-y-6">
+            <blockquote className="text-2xl md:text-3xl font-medium text-slate-100 leading-relaxed">
+              "LaunchRecord showed us we were invisible to AI and our
+              positioning was commodity trash. Three months later, we're in the
+              Sovereign 100 and our demo rate doubled."
+            </blockquote>
+            <div className="flex items-center justify-center gap-4">
+              <div className="text-left">
+                <p className="font-bold text-slate-100">Sarah Chen</p>
+                <p className="text-slate-400 text-sm">Founder, Series A SaaS</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}

@@ -75,7 +75,7 @@ export async function Footer() {
   ];
 
   return (
-    <footer className="border-t border-border bg-card">
+    <footer className="bg-slate-950 text-slate-300">
       <div className="mx-auto w-full max-w-7xl px-6 py-12">
         {/* Main Footer Grid */}
         <div className="grid grid-cols-2 md:grid-cols-6 gap-8 mb-12">
@@ -92,7 +92,7 @@ export async function Footer() {
               </div>
               <span className="font-bold text-lg">Launch Record</span>
             </div>
-            <p className="text-sm text-muted-foreground">
+            <p className="text-sm ">
               The Strategic Architect&apos;s Weapon for the AI Era
             </p>
             <p className="text-xs text-muted-foreground">
@@ -108,10 +108,7 @@ export async function Footer() {
             <ul className="space-y-2">
               {resources.map((link) => (
                 <li key={link.href}>
-                  <Link
-                    href={link.href}
-                    className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-                  >
+                  <Link href={link.href} className="text-sm transition-colors">
                     {link.label}
                   </Link>
                 </li>
@@ -127,10 +124,7 @@ export async function Footer() {
             <ul className="space-y-2">
               {tools.map((link) => (
                 <li key={link.href}>
-                  <Link
-                    href={link.href}
-                    className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-                  >
+                  <Link href={link.href} className="text-sm  transition-colors">
                     {link.label}
                   </Link>
                 </li>
@@ -146,10 +140,7 @@ export async function Footer() {
             <ul className="space-y-2">
               {productLinks.map((link) => (
                 <li key={link.href}>
-                  <Link
-                    href={link.href}
-                    className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-                  >
+                  <Link href={link.href} className="text-sm transition-colors">
                     {link.label}
                   </Link>
                 </li>
@@ -165,10 +156,7 @@ export async function Footer() {
             <ul className="space-y-2">
               {companyLinks.map((link) => (
                 <li key={link.href}>
-                  <Link
-                    href={link.href}
-                    className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-                  >
+                  <Link href={link.href} className="text-sm transition-colors">
                     {link.label}
                   </Link>
                 </li>
@@ -181,7 +169,7 @@ export async function Footer() {
                   <Link
                     key={link.href}
                     href={link.href}
-                    className="block text-sm text-muted-foreground hover:text-foreground transition-colors"
+                    className="block text-sm transition-colors"
                   >
                     {link.label}
                   </Link>
@@ -202,7 +190,7 @@ export async function Footer() {
                 <Link
                   key={category._id}
                   href={`/categories/${category.slug}`}
-                  className="text-sm text-muted-foreground hover:text-foreground hover:bg-slate-100 px-2 py-1 rounded transition-colors"
+                  className="text-sm px-2 py-1 rounded transition-colors"
                 >
                   {category.name}
                   <span className="text-xs text-slate-400 ml-1">
@@ -213,10 +201,7 @@ export async function Footer() {
             ) : (
               // Fallback static categories if fetch fails
               <>
-                <Link
-                  href="/categories"
-                  className="text-sm text-muted-foreground hover:text-foreground px-2 py-1"
-                >
+                <Link href="/categories" className="text-sm px-2 py-1">
                   View All Categories
                 </Link>
               </>
@@ -243,7 +228,7 @@ export async function Footer() {
                 <Link
                   key={link.href}
                   href={link.href}
-                  className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                  className="text-sm transition-colors"
                 >
                   {link.label}
                 </Link>
@@ -254,7 +239,7 @@ export async function Footer() {
             <div className="flex items-center gap-4">
               <Link
                 href="https://twitter.com"
-                className="text-muted-foreground hover:text-foreground transition-colors"
+                className=" transition-colors"
                 target="_blank"
                 rel="noopener noreferrer"
               >
@@ -269,7 +254,7 @@ export async function Footer() {
               </Link>
               <Link
                 href="https://github.com"
-                className="text-muted-foreground hover:text-foreground transition-colors"
+                className=" transition-colors"
                 target="_blank"
                 rel="noopener noreferrer"
               >
@@ -288,7 +273,7 @@ export async function Footer() {
               </Link>
               <Link
                 href="https://linkedin.com"
-                className="text-muted-foreground hover:text-foreground transition-colors"
+                className=" transition-colors"
                 target="_blank"
                 rel="noopener noreferrer"
               >
@@ -308,7 +293,7 @@ export async function Footer() {
         {/* Bottom Bar */}
         <div className="mt-8 pt-8 border-t border-border">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-            <p className="text-xs text-muted-foreground">
+            <p className="text-xs  ">
               Built for sovereign founders who refuse to be commoditized.
             </p>
             <p className="text-xs text-muted-foreground">
