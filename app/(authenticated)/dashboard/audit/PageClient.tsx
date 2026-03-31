@@ -4,7 +4,8 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useProducts } from "@/hooks/use-products";
-import type { AuditReportV1 } from "@/types/audit-report-v1";
+import { useProductStore } from "@/stores/product-store";
+import type { ISIOReport } from "@/models/sio-report";
 import {
   AlertCircle,
   BarChart3,
@@ -71,9 +72,11 @@ function DashboardAuditContent() {
   const searchParams = useSearchParams();
   const productId = searchParams.get("product");
   const { fetchProducts } = useProducts();
+  const { selectedProduct } = useProductStore();
 
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
-  const [report, setReport] = useState<AuditReportV1 | null>(null);
+  const [report, setReport] = useState<ISIOReport | null>(null);
+  const [productUrl, setProductUrl] = useState<string | null>(null);
   const [showResults, setShowResults] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showRetryScheduled, setShowRetryScheduled] = useState(false);
@@ -83,12 +86,6 @@ function DashboardAuditContent() {
   const auditStartedRef = useRef(false);
 
   useEffect(() => {
-    if (productId && !auditStartedRef.current) {
-      auditStartedRef.current = true;
-      runAudit(productId);
-    } else if (!productId) {
-      // No product, redirect to survey
-    }
     const stepInterval = setInterval(() => {
       if (isProcessing) {
         setCurrentStepIndex((prev) => (prev + 1) % analysisSteps.length);
@@ -96,22 +93,53 @@ function DashboardAuditContent() {
     }, 1500);
 
     return () => clearInterval(stepInterval);
-  }, [productId]);
+  }, [isProcessing]);
 
-  const runAudit = async (id: string) => {
+  useEffect(() => {
+    const loadProduct = async () => {
+      if (!productId) return;
+      if (selectedProduct?.id === productId && selectedProduct.website) {
+        setProductUrl(selectedProduct.website);
+        return;
+      }
+
+      try {
+        const response = await fetch(`/api/products/${productId}`);
+        const data = await response.json();
+        if (response.ok && data.product?.website) {
+          setProductUrl(data.product.website);
+          return;
+        }
+        throw new Error("Product website is required to run an audit");
+      } catch (err: any) {
+        setError(err.message || "Failed to load product details");
+      }
+    };
+
+    loadProduct();
+  }, [productId, selectedProduct]);
+
+  useEffect(() => {
+    if (productId && productUrl && !auditStartedRef.current) {
+      auditStartedRef.current = true;
+      runAudit(productId, productUrl);
+    }
+  }, [productId, productUrl]);
+
+  const runAudit = async (id: string, url: string) => {
     setIsProcessing(true);
 
     try {
-      const response = await fetch("/api/audit", {
+      const response = await fetch("/api/sio-v5-audit", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ productId: id }),
+        body: JSON.stringify({ productId: id, url }),
       });
 
       const data = await response.json();
 
       if (response.ok) {
-        setReport(data.data.analysis);
+        setReport(data.data);
         setShowResults(true);
         setIsProcessing(false);
         await fetchProducts(id);
@@ -144,8 +172,8 @@ function DashboardAuditContent() {
 
       if (diff <= 0) {
         setCountdown("Retry available - refreshing...");
-        if (productId) {
-          runAudit(productId);
+        if (productId && productUrl) {
+          runAudit(productId, productUrl);
         }
         return;
       }
@@ -158,7 +186,7 @@ function DashboardAuditContent() {
     updateCountdown();
     const interval = setInterval(updateCountdown, 1000);
     return () => clearInterval(interval);
-  }, [retryAt, productId]);
+  }, [retryAt, productId, productUrl]);
 
   // Show error state
   if (error && !report) {

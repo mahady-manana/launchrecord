@@ -1,9 +1,11 @@
 "use client";
 
-import { ISIOReport } from "@/models/sio-report";
+import type { ISIOReport } from "@/models/sio-report";
+import type { ISanitizedSIOReport } from "@/services/sio-report/sanitizer";
+import { CommentItem } from "./CommentItem";
 
 interface OverallScoreCardProps {
-  report: ISIOReport;
+  report: ISIOReport | ISanitizedSIOReport;
 }
 
 export function OverallScoreCard({ report }: OverallScoreCardProps) {
@@ -34,9 +36,9 @@ export function OverallScoreCard({ report }: OverallScoreCardProps) {
   };
 
   return (
-    <div className="border border-slate-200 rounded-xl p-6 bg-white">
-      <div className="grid md:grid-cols-3 gap-6">
-        <div className="flex flex-col items-center justify-center">
+    <section className="py-8 border-b border-slate-200 space-y-6">
+      <div className="flex flex-col md:flex-row md:items-center gap-6">
+        <div className="flex items-center justify-center">
           <div className="relative w-32 h-32">
             <svg className="w-full h-full transform -rotate-90">
               <circle
@@ -65,17 +67,17 @@ export function OverallScoreCard({ report }: OverallScoreCardProps) {
                   {report.overallScore}
                 </div>
                 <div className="text-xs text-slate-500 uppercase tracking-wider">
-                  Overall
+                  Score
                 </div>
               </div>
             </div>
           </div>
         </div>
 
-        <div className="md:col-span-2 space-y-3">
+        <div className="space-y-3 flex-1">
           <div>
             <h2 className="text-lg font-bold text-slate-800 mb-2">
-              Overall Assessment
+              Executive Summary
             </h2>
             <p className="text-slate-600 text-sm leading-relaxed">
               {report.statement}
@@ -94,84 +96,48 @@ export function OverallScoreCard({ report }: OverallScoreCardProps) {
               {new Date(report.createdAt).toLocaleDateString()}
             </div>
           </div>
-
-          {/* Positive Comments */}
-          {report.overallCommentPositive &&
-            report.overallCommentPositive.length > 0 && (
-              <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-                <div className="flex items-start gap-2">
-                  <svg
-                    className="h-5 w-5 text-green-600 flex-shrink-0 mt-0.5"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                    />
-                  </svg>
-                  <div>
-                    <div className="text-sm font-semibold text-green-800 mb-2">
-                      What's Working Well
-                    </div>
-                    <ul className="space-y-1">
-                      {report.overallCommentPositive.map((comment, idx) => (
-                        <li
-                          key={idx}
-                          className="text-green-700 text-sm flex items-start gap-2"
-                        >
-                          <span className="text-green-500 mt-1">•</span>
-                          <span>{comment}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                </div>
-              </div>
-            )}
-
-          {/* Negative Comments */}
-          {report.overallCommentNegative &&
-            report.overallCommentNegative.length > 0 && (
-              <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-                <div className="flex items-start gap-2">
-                  <svg
-                    className="h-5 w-5 text-red-600 flex-shrink-0 mt-0.5"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
-                    />
-                  </svg>
-                  <div>
-                    <div className="text-sm font-semibold text-red-800 mb-2">
-                      Critical Issues
-                    </div>
-                    <ul className="space-y-1">
-                      {report.overallCommentNegative.map((comment, idx) => (
-                        <li
-                          key={idx}
-                          className="text-red-700 text-sm flex items-start gap-2"
-                        >
-                          <span className="text-red-500 mt-1">•</span>
-                          <span>{comment}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                </div>
-              </div>
-            )}
         </div>
       </div>
-    </div>
+
+      {/* Positive Comments */}
+      {report.overallCommentPositive &&
+        report.overallCommentPositive.length > 0 && (
+          <div className="space-y-2">
+            <div className="text-sm font-semibold text-slate-700">
+              Strengths To Double Down
+            </div>
+            <ul className="space-y-2">
+              {report.overallCommentPositive.map((comment, idx) => (
+                <CommentItem
+                  key={idx}
+                  as="li"
+                  variant="positive"
+                  text={comment}
+                />
+              ))}
+            </ul>
+          </div>
+        )}
+
+      {/* Negative Comments */}
+      {report.overallCommentNegative &&
+        report.overallCommentNegative.length > 0 && (
+          <div className="space-y-2">
+            <div className="text-sm font-semibold text-slate-700">
+              Conversion Blockers
+            </div>
+            <ul className="space-y-2">
+              {report.overallCommentNegative.map((comment, idx) => (
+                <CommentItem
+                  key={idx}
+                  as="li"
+                  variant="negative"
+                  text={comment}
+                />
+              ))}
+            </ul>
+          </div>
+        )}
+    </section>
   );
 }

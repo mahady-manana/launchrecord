@@ -57,7 +57,7 @@ const ProductSchema = new Schema<IProduct>(
       type: String,
       default: null,
       trim: true,
-      maxlength: [80, "Tagline must be less than 80 characters"],
+      maxlength: [200, "Tagline must be less than 120 characters"],
     },
     logo: {
       type: String,

@@ -1,16 +1,12 @@
-import ExampleSIOReportPageClient from "@/research/example-sio-report/ExampleSIOReportPageClient";
 import { Metadata } from "next";
+import PublicAuditPage from "@/components/audit/PublicAuditPage";
 
 export const metadata: Metadata = {
-  title: "SIO-V5 Report Example - LaunchRecord Research",
+  title: "Free SIO-V5 Audit - Instant Startup Report",
   description:
-    "Research preview: Example SIO-V5 report showing problem/solution-focused audit with measurable actions.",
-  robots: {
-    index: false,
-    follow: false,
-  },
+    "Run a free SIO-V5 audit to see your positioning, clarity, and AI visibility score. Get a shareable report in minutes.",
 };
 
-export default function ExampleSIOReportPage() {
-  return <ExampleSIOReportPageClient />;
+export default function SIOAuditPage() {
+  return <PublicAuditPage />;
 }

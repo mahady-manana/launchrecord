@@ -28,16 +28,9 @@ Raw HTML (h1, p, a tags only).
 
 ### Hero (Top of page)
 - Headline (first h1)
-- Subheadline (p after h1)
-- CTA (first a/button)
+- Subheadlines (one or more p after h1)
+- CTA(s)
 
-### Problems, Solutions, Outcomes, Features
-**Exact words only:**
-
-1. Problems they solve
-2. Outcomes they promise
-3. Solutions they offer
-4. Features they list
 
 ### Positioning
 **Exact words:**
@@ -67,12 +60,12 @@ Raw HTML (h1, p, a tags only).
 ### For Every Metric:
 
 **Provide both:**
-- **Positive comments** - What's working (1-2 items)
+- **Positive comments** - What's working (1-3 items)
 - **Negative comments** - What's broken (2-3 items)
 
 **Then:**
 - **Score** - 0-100 based on scoring table
-- **Fix** - Exact rewrite with numbers and ICP
+- **Fix** - Exact rewrite with numbers and ICP. Ready to use fixes (copy-paste).
 
 ### Rules:
 - Flag vague claims: "no metric"
@@ -114,21 +107,21 @@ Every issue = copy-paste fix with numbers + ICP.
 - **current** - Their exact text
 - **positiveComments** - 1-2 positives
 - **negativeComments** - 2-3 issues
-- **suggested** - 2-3 exact rewrites
+- **suggested** - 2-3 exact rewrites. Copy-paste ready. Please be creative in this we must give the best options user can have
 
 ### Positioning (6 dimensions)
 **Overall + each sub-metric:**
 - **current** - Their exact positioning
 - **positiveComments** - 1-2 positives
 - **negativeComments** - 2-3 issues
-- **suggested** - 2-3 exact rewrites
+- **suggested** - 2-3 exact rewrites. Copy-paste ready. Please be creative in this we must give the best options user can have
 
 ### Clarity (6 dimensions)
 **Overall + each sub-metric:**
 - **current** - Their exact text
 - **positiveComments** - 1-2 positives
 - **negativeComments** - 2-3 issues
-- **suggested** - 2-3 exact rewrites
+- **suggested** - 2-3 exact rewrites.  Copy-paste ready. Please be creative in this we must give the best options user can have
 - **unclearTexts** - Specific unclear sentences with fixes
 
 ### AEO (Simplified)
@@ -609,4 +602,24 @@ Output format must be a JSON object matching the following JSON schema:
   },
   required: ["score", "statement", "overallCommentPositive", "overallCommentNegative", "websiteSummary", "firstImpression", "positioning", "clarity", "aeo"],
 }
+`;
+
+export const sioV5CriticalPoints = `
+
+Here are some critical points to keep in mind when analyzing, giving recommendation and scoring the website:
+
+## Headline (it's the H1) 
+
+It is the most important text on the website. 
+It should clearly communicate the main value proposition and grab attention. 
+If it's vague, generic, or just states the brand name, that's a critical issue.
+Keep close attention to headline length or suggested length.
+Attention should be given to the headline consistency in both First Impression and Clarity sections. They should be aligned and not contradict each other.
+
+## Suggestions & fixes
+
+For every metrics, every suggestion must be an exact rewrite that the user can copy-paste.
+Taken care of length, value, meaning and tone.
+The suggestions should be creative and provide the best options possible for the user,
+not just one option.
 `;

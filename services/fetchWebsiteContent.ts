@@ -8,14 +8,12 @@ export interface FetchWebsiteContentResult {
 }
 
 export async function fetchWebsiteContent(
-  url: string,
+  urlWebsite: string,
 ): Promise<FetchWebsiteContentResult> {
-  const { data: html } = await axios.get<string>(
-    normalizeUrl(url, { stripWWW: false }),
-    {
-      headers: { "User-Agent": "Mozilla/5.0 (compatible; SidleBot/1.0)" },
-    },
-  );
+  const url = normalizeUrl(urlWebsite, { stripWWW: false, forceHttps: true });
+  const { data: html } = await axios.get<string>(url, {
+    headers: { "User-Agent": "Mozilla/5.0 (compatible; SidleBot/1.0)" },
+  });
 
   // Parse URL to get base for robots.txt and sitemap
   const urlObj = new URL(url);
