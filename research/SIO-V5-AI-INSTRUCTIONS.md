@@ -107,6 +107,15 @@ Every issue must have a copy-paste ready fix with specific numbers and ICP.
 
 ## Output Format
 
+### Overall Report
+
+```
+score: [0-100]
+statement: "[2-3 sentences overall assessment]"
+overallCommentPositive: ["[positive 1]", "[positive 2]"]
+overallCommentNegative: ["[negative 1]", "[negative 2]"]
+```
+
 ### Website Summary
 
 **Purpose:** Capture what the startup claims about themselves vs. what the audit reveals.
@@ -114,10 +123,10 @@ Every issue must have a copy-paste ready fix with specific numbers and ICP.
 ```
 summary: "[1-2 sentence tagline]"
 summaryComment?: "[comment on tagline]"
-problems: { currents: [], comments: [] }
-outcomes: { currents: [], comments: [] }
-solutions: { currents: [], comments: [] }
-features: { currents: [], comments: [] }
+problems: { currents: [], positiveComments: [], negativeComments: [] }
+outcomes: { currents: [], positiveComments: [], negativeComments: [] }
+solutions: { currents: [], positiveComments: [], negativeComments: [] }
+features: { currents: [], positiveComments: [], negativeComments: [] }
 isPositioningClear: true/false
 isMessagingClear: true/false
 areUsersLeftGuessing: true/false
@@ -130,7 +139,8 @@ areUsersLeftGuessing: true/false
 ```
 score: [0-100]
 statement: "[2-3 sentences]"
-overallComment: "[strategic comment]"
+overallCommentPositive: ["[positive observation 1]", "[positive observation 2]"]
+overallCommentNegative: ["[negative observation 1]", "[negative observation 2]"]
 headline: { current, comment, suggested }
 subheadline: { current, comment, suggested }
 cta: { current, comment, suggested }
@@ -143,6 +153,8 @@ cta: { current, comment, suggested }
 ```
 score: [0-100]
 statement: "[2-3 sentences overall assessment]"
+overallCommentPositive: ["[positive 1]", "[positive 2]"]
+overallCommentNegative: ["[negative 1]", "[negative 2]"]
 summary: { current, comments[], suggested }
 subMetrics: {
   categoryOwnership: { name, score, current, comments[], suggested }
@@ -161,6 +173,8 @@ subMetrics: {
 ```
 score: [0-100]
 statement: "[2-3 sentences overall assessment]"
+overallCommentPositive: ["[positive 1]", "[positive 2]"]
+overallCommentNegative: ["[negative 1]", "[negative 2]"]
 summary: { current, comments[], suggested }
 unclearSentences: [{ text, issue, fix }]
 subMetrics: {

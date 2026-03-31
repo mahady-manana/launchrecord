@@ -31,10 +31,25 @@ function SectionWithComments({
         ))}
       </div>
 
-      {/* Comments */}
-      {section.comments.length > 0 && (
+      {/* Positive Comments */}
+      {section.positiveComments && section.positiveComments.length > 0 && (
+        <div className="space-y-1 mb-3">
+          {section.positiveComments.map((comment, idx) => (
+            <div
+              key={idx}
+              className="text-green-600 text-xs italic flex items-start gap-1"
+            >
+              <span>✓</span>
+              <span>{comment}</span>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Negative Comments */}
+      {section.negativeComments && section.negativeComments.length > 0 && (
         <div className="space-y-1">
-          {section.comments.map((comment, idx) => (
+          {section.negativeComments.map((comment, idx) => (
             <div
               key={idx}
               className="text-orange-600 text-xs italic flex items-start gap-1"

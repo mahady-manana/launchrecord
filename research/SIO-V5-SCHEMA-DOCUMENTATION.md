@@ -25,11 +25,30 @@ The SIO-V5 Report Schema is a **problem-first, action-oriented** framework for a
 SIOV5Report
 ├── score (0-100)
 ├── statement (overall assessment)
+├── overallCommentPositive (positive observations)
+├── overallCommentNegative (negative observations)
 ├── websiteSummary (what they claim + audit comments)
 ├── firstImpression (hero section analysis)
 ├── positioning (6 sub-metrics with current/suggested)
 ├── clarity (6 sub-metrics + unclear sentence analysis)
 └── aeo (simplified free audit)
+```
+
+---
+
+## Section 0: Overall Report
+
+**Purpose:** High-level assessment of the startup with balanced positive and negative feedback.
+
+### Structure
+
+```typescript
+{
+  score: number;                    // Overall score 0-100
+  statement: string;                // 2-3 sentence overall assessment
+  overallCommentPositive: string[]; // What the startup is doing well
+  overallCommentNegative: string[]; // Critical issues to address
+}
 ```
 
 ---
@@ -44,10 +63,10 @@ SIOV5Report
 {
   summary: string;              // 1-2 sentence tagline from homepage
   summaryComment?: string;      // Comment on the summary
-  problems: { currents[], comments[] }
-  outcomes: { currents[], comments[] }
-  solutions: { currents[], comments[] }
-  features: { currents[], comments[] }
+  problems: { currents[], positiveComments[], negativeComments[] }
+  outcomes: { currents[], positiveComments[], negativeComments[] }
+  solutions: { currents[], positiveComments[], negativeComments[] }
+  features: { currents[], positiveComments[], negativeComments[] }
   isPositioningClear: boolean
   isMessagingClear: boolean
   areUsersLeftGuessing: boolean
@@ -56,12 +75,13 @@ SIOV5Report
 
 ### What It Shows
 
-| Field | Description |
-|-------|-------------|
-| `summary` | Their tagline/one-liner |
-| `currents[]` | List of what they claim (problems, outcomes, etc.) |
-| `comments[]` | Audit observations pointing out vagueness, lack of metrics, etc. |
-| 3 boolean flags | Quick positioning/messaging clarity check |
+| Field                | Description                                                      |
+| -------------------- | ---------------------------------------------------------------- |
+| `summary`            | Their tagline/one-liner                                          |
+| `currents[]`         | List of what they claim (problems, outcomes, etc.)               |
+| `positiveComments[]` | Positive observations about what's working well                  |
+| `negativeComments[]` | Audit observations pointing out vagueness, lack of metrics, etc. |
+| 3 boolean flags      | Quick positioning/messaging clarity check                        |
 
 ### Example
 
@@ -71,7 +91,8 @@ SIOV5Report
   "summaryComment": "Generic tagline without specific ICP or quantified outcome",
   "problems": {
     "currents": ["Teams waste time in meetings"],
-    "comments": ["Vague - no specific time/cost metrics"]
+    "positiveComments": ["Identifies real pain point around meeting fatigue"],
+    "negativeComments": ["Vague - no specific time/cost metrics"]
   }
 }
 ```
@@ -88,25 +109,42 @@ SIOV5Report
 {
   score: number;
   statement: string;
-  overallComment: string;       // Strategic guidance
-  headline: { current, comment, suggested }
-  subheadline: { current, comment, suggested }
-  cta: { current, comment, suggested }
+  overallCommentPositive: string[]; // Positive observations
+  overallCommentNegative: string[]; // Negative observations
+  headline: {
+    current, comment, suggested;
+  }
+  subheadline: {
+    current, comment, suggested;
+  }
+  cta: {
+    current, comment, suggested;
+  }
 }
 ```
 
 ### What It Shows
 
-| Element | Current | Comment | Suggested |
-|---------|---------|---------|-----------|
-| Headline | What they have | Why it fails | Exact rewrite |
+| Element     | Current        | Comment      | Suggested     |
+| ----------- | -------------- | ------------ | ------------- |
+| Headline    | What they have | Why it fails | Exact rewrite |
 | Subheadline | What they have | Why it fails | Exact rewrite |
-| CTA | What they have | Why it fails | Exact rewrite |
+| CTA         | What they have | Why it fails | Exact rewrite |
 
 ### Example
 
 ```json
 {
+  "score": 42,
+  "statement": "Your hero section fails the 5-second test.",
+  "overallCommentPositive": [
+    "Clear visual hierarchy with headline, subhead, and CTA present",
+    "Dashboard screenshot shows product interface"
+  ],
+  "overallCommentNegative": [
+    "Your hero section follows a feature-first pattern instead of problem-first",
+    "Visitors see your brand name before understanding what problem you solve"
+  ],
   "headline": {
     "current": "StandupAI - The Future of Work",
     "comment": "Leads with brand name - visitors don't know what you do",
@@ -127,6 +165,8 @@ SIOV5Report
 {
   score: number;
   statement: string;
+  overallCommentPositive: string[];  // Positive observations
+  overallCommentNegative: string[];  // Negative observations
   summary: { current, comments[], suggested }
   subMetrics: {
     categoryOwnership: PositioningSubMetric
@@ -153,14 +193,14 @@ SIOV5Report
 
 ### The 6 Dimensions
 
-| Dimension | What It Checks |
-|-----------|----------------|
-| **Category Ownership** | Do they own a specific category or compete in broad market? |
-| **Unique Value Prop** | Quantified outcomes vs feature lists |
-| **Competitive Diff** | Explicit competitor contrasts or vague "better than" |
-| **Target Audience** | Specific ICP (role, size, industry) or "teams" |
-| **Problem-Solution Fit** | Explicit problem stated or implied |
-| **Messaging Consistency** | Same narrative across all pages |
+| Dimension                 | What It Checks                                              |
+| ------------------------- | ----------------------------------------------------------- |
+| **Category Ownership**    | Do they own a specific category or compete in broad market? |
+| **Unique Value Prop**     | Quantified outcomes vs feature lists                        |
+| **Competitive Diff**      | Explicit competitor contrasts or vague "better than"        |
+| **Target Audience**       | Specific ICP (role, size, industry) or "teams"              |
+| **Problem-Solution Fit**  | Explicit problem stated or implied                          |
+| **Messaging Consistency** | Same narrative across all pages                             |
 
 ---
 
@@ -174,6 +214,8 @@ SIOV5Report
 {
   score: number;
   statement: string;
+  overallCommentPositive: string[];  // Positive observations
+  overallCommentNegative: string[];  // Negative observations
   summary: { current, comments[], suggested }
   unclearSentences: [         // Site-wide unclear text
     { text, issue, fix }
@@ -203,14 +245,14 @@ Every sub-metric AND the overall report contains specific unclear sentences:
 
 ### The 6 Dimensions
 
-| Dimension | What It Checks |
-|-----------|----------------|
-| **Headline Clarity** | 5-second comprehension test |
-| **Value Proposition** | Quantified outcomes vs vague benefits |
+| Dimension                   | What It Checks                            |
+| --------------------------- | ----------------------------------------- |
+| **Headline Clarity**        | 5-second comprehension test               |
+| **Value Proposition**       | Quantified outcomes vs vague benefits     |
 | **Feature-Benefit Mapping** | Features linked to outcomes or standalone |
-| **Visual Hierarchy** | Problem/outcome before product visuals |
-| **CTA Clarity** | Specific action + expectation setting |
-| **Proof Placement** | Social proof before or alongside CTAs |
+| **Visual Hierarchy**        | Problem/outcome before product visuals    |
+| **CTA Clarity**             | Specific action + expectation setting     |
+| **Proof Placement**         | Social proof before or alongside CTAs     |
 
 ---
 
@@ -235,12 +277,12 @@ Every sub-metric AND the overall report contains specific unclear sentences:
 
 ### What It Shows
 
-| Field | Description |
-|-------|-------------|
-| `isPresent` | Binary: mentioned in AI responses or not |
-| `engines` | Which engines mention the brand |
-| `comment` | Context about their AI visibility |
-| `recommendations` | 3 high-level fixes |
+| Field             | Description                              |
+| ----------------- | ---------------------------------------- |
+| `isPresent`       | Binary: mentioned in AI responses or not |
+| `engines`         | Which engines mention the brand          |
+| `comment`         | Context about their AI visibility        |
+| `recommendations` | 3 high-level fixes                       |
 
 ### Why Simplified?
 
@@ -254,12 +296,12 @@ Every sub-metric AND the overall report contains specific unclear sentences:
 
 ### Color Coding
 
-| Color | Meaning |
-|-------|---------|
-| **Red** | Current state (what's wrong) |
-| **Orange** | Comments/issues (⚠ warnings) |
-| **Green** | Suggested fixes (what to change to) |
-| **Blue** | Strategic guidance (overall comments) |
+| Color      | Meaning                               |
+| ---------- | ------------------------------------- |
+| **Red**    | Current state (what's wrong)          |
+| **Orange** | Comments/issues (⚠ warnings)          |
+| **Green**  | Suggested fixes (what to change to)   |
+| **Blue**   | Strategic guidance (overall comments) |
 
 ### Card Layout
 
@@ -290,17 +332,18 @@ Every sub-metric AND the overall report contains specific unclear sentences:
 
 ### Score Bands
 
-| Score | Band | Meaning |
-|-------|------|---------|
-| 90-100 | Dominant | You own the category |
-| 70-89 | Strong | Clear differentiation |
-| 50-69 | Blended | Understandable but not distinctive |
-| 30-49 | Weak | Unclear positioning |
-| 0-29 | Ghost | Invisible to market |
+| Score  | Band     | Meaning                            |
+| ------ | -------- | ---------------------------------- |
+| 90-100 | Dominant | You own the category               |
+| 70-89  | Strong   | Clear differentiation              |
+| 50-69  | Blended  | Understandable but not distinctive |
+| 30-49  | Weak     | Unclear positioning                |
+| 0-29   | Ghost    | Invisible to market                |
 
 ### How Scores Are Calculated
 
 Each sub-metric is scored 0-100 based on:
+
 - **Specificity** - Are numbers/metrics provided?
 - **Clarity** - Can visitors understand in 5 seconds?
 - **Differentiation** - Could this apply to competitors?
@@ -315,6 +358,7 @@ Overall score = weighted average of sub-metrics
 ### 1. Audit Website Content
 
 Extract from homepage + key pages:
+
 - Tagline/summary
 - Problem statements
 - Outcome claims
@@ -325,6 +369,7 @@ Extract from homepage + key pages:
 ### 2. Generate Comments
 
 For each element, identify:
+
 - Vague language (no metrics)
 - Generic jargon ("streamline", "innovative")
 - Missing ICP specification
@@ -334,6 +379,7 @@ For each element, identify:
 ### 3. Write Suggested Fixes
 
 For every issue, provide:
+
 - **Exact rewrite** - Not "improve headline" but the actual new headline
 - **Specific metrics** - Add numbers where missing
 - **ICP specification** - Add role/company size/industry
@@ -372,11 +418,11 @@ CTA: "Get Started"
 
 ## Files Reference
 
-| File | Purpose |
-|------|---------|
-| `sio-v5-report-schema.ts` | TypeScript interfaces |
-| `mock-data.ts` | Example report data |
-| `*-Card.tsx` | UI components for each section |
+| File                                  | Purpose                             |
+| ------------------------------------- | ----------------------------------- |
+| `sio-v5-report-schema.ts`             | TypeScript interfaces               |
+| `mock-data.ts`                        | Example report data                 |
+| `*-Card.tsx`                          | UI components for each section      |
 | `sovereignty-assessment-questions.ts` | 20 audit questions (5 per category) |
 
 ---

@@ -1,29 +1,37 @@
 "use client";
 
-import { SIOV5Report } from "../sio-v5-report-schema";
+import { ISIOReport } from "@/models/sio-report";
 
 interface OverallScoreCardProps {
-  report: SIOV5Report;
+  report: ISIOReport;
 }
 
 export function OverallScoreCard({ report }: OverallScoreCardProps) {
   const scoreColor =
-    report.score >= 70
+    report.overallScore >= 70
       ? "text-green-600"
-      : report.score >= 50
+      : report.overallScore >= 50
         ? "text-yellow-600"
-        : report.score >= 30
+        : report.overallScore >= 30
           ? "text-orange-600"
           : "text-red-600";
 
   const scoreBg =
-    report.score >= 70
+    report.overallScore >= 70
       ? "bg-green-500"
-      : report.score >= 50
+      : report.overallScore >= 50
         ? "bg-yellow-500"
-        : report.score >= 30
+        : report.overallScore >= 30
           ? "bg-orange-500"
           : "bg-red-500";
+
+  const bandColors = {
+    Dominant: "bg-green-100 text-green-800",
+    Strong: "bg-lime-100 text-lime-800",
+    Blended: "bg-yellow-100 text-yellow-800",
+    Weak: "bg-orange-100 text-orange-800",
+    Ghost: "bg-red-100 text-red-800",
+  };
 
   return (
     <div className="border border-slate-200 rounded-xl p-6 bg-white">
@@ -47,14 +55,14 @@ export function OverallScoreCard({ report }: OverallScoreCardProps) {
                 stroke="currentColor"
                 strokeWidth="10"
                 fill="none"
-                strokeDasharray={`${(report.score / 100) * 352} 352`}
+                strokeDasharray={`${(report.overallScore / 100) * 352} 352`}
                 className={scoreColor}
               />
             </svg>
             <div className="absolute inset-0 flex items-center justify-center">
               <div className="text-center">
                 <div className={`text-3xl font-black ${scoreColor}`}>
-                  {report.score}
+                  {report.overallScore}
                 </div>
                 <div className="text-xs text-slate-500 uppercase tracking-wider">
                   Overall
@@ -72,6 +80,19 @@ export function OverallScoreCard({ report }: OverallScoreCardProps) {
             <p className="text-slate-600 text-sm leading-relaxed">
               {report.statement}
             </p>
+          </div>
+
+          {/* Band Badge */}
+          <div className="flex items-center gap-3">
+            <div
+              className={`px-3 py-1.5 rounded-lg text-sm font-bold ${bandColors[report.reportBand]}`}
+            >
+              {report.reportBand}
+            </div>
+            <div className="text-xs text-slate-500">
+              <span className="font-semibold">Analyzed:</span>{" "}
+              {new Date(report.createdAt).toLocaleDateString()}
+            </div>
           </div>
 
           {/* Positive Comments */}
@@ -149,13 +170,6 @@ export function OverallScoreCard({ report }: OverallScoreCardProps) {
                 </div>
               </div>
             )}
-
-          <div className="flex items-center gap-4 text-xs text-slate-500">
-            <div>
-              <span className="font-semibold">Analyzed:</span>{" "}
-              {new Date(report.analyzedAt).toLocaleDateString()}
-            </div>
-          </div>
         </div>
       </div>
     </div>
