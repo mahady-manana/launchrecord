@@ -1,18 +1,22 @@
+import { authOptions } from "@/lib/auth";
 import { getOpenRouterClient } from "@/lib/openrouter";
+import SIOReport from "@/models/sio-report";
 import { getWebsiteContent } from "@/services/getWebsiteContent";
 import { mapToSIOReport } from "@/services/sio-report/mappers";
+import { sanitizeReportForGuest } from "@/services/sio-report/sanitizer";
 import { sioV5VerificationPrompt } from "@/services/sio-report/verification-prompt";
 import { sioV5JsonSchema } from "@/services/sio-v5-json-schema";
 import {
   sioV5SchemaPrompt,
   sioV5SystemPrompt,
 } from "@/services/sio-v5-system-prompt";
+import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { url } = body;
+    const { url, productId } = body;
 
     if (!url) {
       return NextResponse.json(
@@ -27,6 +31,19 @@ export async function POST(request: NextRequest) {
     } catch {
       return NextResponse.json(
         { error: "Invalid URL format" },
+        { status: 400 },
+      );
+    }
+
+    // Check if user is authenticated
+    const session = await getServerSession(authOptions);
+    const isGuest = !session?.user;
+    const userId = session?.user?.id;
+
+    // For logged-in users, productId is required
+    if (!isGuest && !productId) {
+      return NextResponse.json(
+        { error: "Product ID is required for authenticated users" },
         { status: 400 },
       );
     }
@@ -126,7 +143,7 @@ export async function POST(request: NextRequest) {
           },
           {
             role: "user",
-            content: `Review and improve inconsistent elements in this SIO-V5 audit report:\n\n${initialContent}`,
+            content: `Review and improve this SIO-V5 audit report:\n\n${initialContent}`,
           },
         ],
         responseFormat: {
@@ -175,13 +192,35 @@ export async function POST(request: NextRequest) {
     }
 
     // Map to proper format for DB and frontend
-    const report = mapToSIOReport(rawData);
+    const reportData = mapToSIOReport(rawData);
+
+    // Save to database (for both guest and logged-in users)
+    const savedReport = await SIOReport.create({
+      ...reportData,
+      product: productId || null,
+      url,
+      auditDuration: 0, // Can be calculated from timestamps
+      tokenUsage:
+        (initialResponse.usage?.totalTokens || 0) +
+        (verificationResponse.usage?.totalTokens || 0),
+      modelUsed: "qwen/qwen3.6-plus-preview:free",
+      rawAnalysis: initialContent,
+      verifiedAnalysis: verifiedContent,
+    });
+
+    // For guest users, sanitize the response (omit sensitive data)
+    const responseReport = isGuest
+      ? sanitizeReportForGuest(savedReport.toObject())
+      : savedReport.toObject();
 
     return NextResponse.json({
       success: true,
-      data: report,
+      data: responseReport,
+      isGuest,
       metadata: {
         verified: true,
+        savedToDb: true,
+        reportId: savedReport._id,
         tokenUsage: {
           initial: initialResponse.usage,
           verification: verificationResponse.usage,

@@ -1,0 +1,107 @@
+import { ISIOReport } from "@/models/sio-report";
+
+/**
+ * Sanitized SIO Report for guest users
+ * Omits sensitive/detailed data that requires signup to view
+ */
+export interface ISanitizedSIOReport {
+  overallScore: number;
+  statement: string;
+  reportBand: "Dominant" | "Strong" | "Blended" | "Weak" | "Ghost";
+  overallCommentPositive: string[];
+  overallCommentNegative: string[];
+  url: string;
+  createdAt: Date;
+
+  // Website Summary - Full data shown
+  websiteSummary: ISIOReport["websiteSummary"];
+
+  // First Impression - Only score and statement, omit detailed suggestions
+  firstImpression: {
+    score: number;
+    statement: string;
+    overallCommentPositive: string[];
+    overallCommentNegative: string[];
+    // Omitted: headline, subheadline, cta (detailed suggestions)
+  };
+
+  // Positioning - Only score and statement, omit sub-metrics
+  positioning: {
+    score: number;
+    statement: string;
+    overallCommentPositive: string[];
+    overallCommentNegative: string[];
+    // Omitted: summary, subMetrics
+  };
+
+  // Clarity - Only score and statement, omit detailed analysis
+  clarity: {
+    score: number;
+    statement: string;
+    overallCommentPositive: string[];
+    overallCommentNegative: string[];
+    // Omitted: summary, unclearSentences, subMetrics
+  };
+
+  // AEO - Full data shown (it's already simplified)
+  aeo: ISIOReport["aeo"];
+}
+
+/**
+ * Sanitizes SIO report for guest users
+ * Removes sensitive/detailed data that requires signup to view
+ * But keeps enough to show value and encourage signup
+ */
+export function sanitizeReportForGuest(report: ISIOReport): ISanitizedSIOReport {
+  return {
+    // Overall - Full data shown
+    overallScore: report.overallScore,
+    statement: report.statement,
+    reportBand: report.reportBand,
+    overallCommentPositive: report.overallCommentPositive,
+    overallCommentNegative: report.overallCommentNegative,
+    url: report.url,
+    createdAt: report.createdAt,
+
+    // Website Summary - Full data shown (surface level info)
+    websiteSummary: report.websiteSummary,
+
+    // First Impression - Only high-level info
+    firstImpression: {
+      score: report.firstImpression.score,
+      statement: report.firstImpression.statement,
+      overallCommentPositive: report.firstImpression.overallCommentPositive,
+      overallCommentNegative: report.firstImpression.overallCommentNegative,
+      // Omitted: headline, subheadline, cta (detailed suggestions)
+    },
+
+    // Positioning - Only high-level info
+    positioning: {
+      score: report.positioning.score,
+      statement: report.positioning.statement,
+      overallCommentPositive: report.positioning.overallCommentPositive,
+      overallCommentNegative: report.positioning.overallCommentNegative,
+      // Omitted: summary, subMetrics (detailed analysis)
+    },
+
+    // Clarity - Only high-level info
+    clarity: {
+      score: report.clarity.score,
+      statement: report.clarity.statement,
+      overallCommentPositive: report.clarity.overallCommentPositive,
+      overallCommentNegative: report.clarity.overallCommentNegative,
+      // Omitted: summary, unclearSentences, subMetrics (detailed analysis)
+    },
+
+    // AEO - Full data shown (already simplified free tier)
+    aeo: report.aeo,
+  };
+}
+
+/**
+ * Checks if user is authenticated based on request context
+ * For now, we'll pass this as a parameter
+ */
+export function shouldSanitizeReport(isGuest: boolean): boolean {
+  return isGuest;
+}

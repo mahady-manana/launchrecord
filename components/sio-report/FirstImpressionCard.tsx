@@ -1,20 +1,52 @@
 "use client";
 
 import { ISIOReport } from "@/models/sio-report";
+import { Lock } from "lucide-react";
 
 interface FirstImpressionCardProps {
-  report: ISIOReport["firstImpression"];
+  report:
+    | ISIOReport["firstImpression"]
+    | {
+        score: number;
+        statement: string;
+        overallCommentPositive: string[];
+        overallCommentNegative: string[];
+      };
+  isGuest?: boolean;
 }
 
 interface HeroElementProps {
   label: string;
-  current: string;
-  positiveComments: string[];
-  negativeComments: string[];
-  suggested: string[];
+  current?: string;
+  positiveComments?: string[];
+  negativeComments?: string[];
+  suggested?: string[];
+  isGuest?: boolean;
 }
 
-function HeroElement({ label, current, positiveComments, negativeComments, suggested }: HeroElementProps) {
+function HeroElement({
+  label,
+  current,
+  positiveComments,
+  negativeComments,
+  suggested,
+  isGuest,
+}: HeroElementProps) {
+  // For guest users, show locked state
+  if (isGuest) {
+    return (
+      <div className="space-y-2">
+        <div className="text-xs font-semibold text-slate-500 uppercase">
+          {label}
+        </div>
+        <div className="bg-slate-50 rounded-lg p-4 border border-slate-200 text-center">
+          <Lock className="h-8 w-8 text-slate-300 mx-auto mb-2" />
+          <p className="text-slate-500 text-sm">Sign up to see analysis</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-2">
       <div className="text-xs font-semibold text-slate-500 uppercase">
@@ -22,10 +54,14 @@ function HeroElement({ label, current, positiveComments, negativeComments, sugge
       </div>
 
       {/* Current */}
-      <div className="bg-red-50 rounded-lg p-3 border border-red-200 mb-2">
-        <div className="text-xs text-red-600 font-semibold mb-1">Current:</div>
-        <p className="text-red-700 text-sm line-through">{current}</p>
-      </div>
+      {current && (
+        <div className="bg-red-50 rounded-lg p-3 border border-red-200 mb-2">
+          <div className="text-xs text-red-600 font-semibold mb-1">
+            Current:
+          </div>
+          <p className="text-red-700 text-sm line-through">{current}</p>
+        </div>
+      )}
 
       {/* Positive Comments */}
       {positiveComments && positiveComments.length > 0 && (
@@ -65,7 +101,10 @@ function HeroElement({ label, current, positiveComments, negativeComments, sugge
           </div>
           <ul className="space-y-1">
             {suggested.map((item, idx) => (
-              <li key={idx} className="text-green-700 text-sm font-medium flex items-start gap-1">
+              <li
+                key={idx}
+                className="text-green-700 text-sm font-medium flex items-start gap-1"
+              >
                 <span className="text-green-500 mt-1">•</span>
                 <span>{item}</span>
               </li>
@@ -77,7 +116,10 @@ function HeroElement({ label, current, positiveComments, negativeComments, sugge
   );
 }
 
-export function FirstImpressionCard({ report }: FirstImpressionCardProps) {
+export function FirstImpressionCard({
+  report,
+  isGuest,
+}: FirstImpressionCardProps) {
   const scoreColor =
     report.score >= 70
       ? "text-green-600"
@@ -95,6 +137,8 @@ export function FirstImpressionCard({ report }: FirstImpressionCardProps) {
         : report.score >= 30
           ? "bg-orange-50"
           : "bg-red-50";
+
+  const hasDetailedData = "headline" in report;
 
   return (
     <div className="border border-slate-200 rounded-xl p-6 bg-white">
@@ -141,104 +185,109 @@ export function FirstImpressionCard({ report }: FirstImpressionCardProps) {
         {/* Positive Comments */}
         {report.overallCommentPositive &&
           report.overallCommentPositive.length > 0 && (
-          <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-            <div className="flex items-start gap-2">
-              <svg
-                className="h-5 w-5 text-green-600 flex-shrink-0 mt-0.5"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                />
-              </svg>
-              <div>
-                <div className="text-sm font-semibold text-green-800 mb-2">
-                  What's Working Well
+            <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+              <div className="flex items-start gap-2">
+                <svg
+                  className="h-5 w-5 text-green-600 flex-shrink-0 mt-0.5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
+                </svg>
+                <div>
+                  <div className="text-sm font-semibold text-green-800 mb-2">
+                    What's Working Well
+                  </div>
+                  <ul className="space-y-1">
+                    {report.overallCommentPositive.map((comment, idx) => (
+                      <li
+                        key={idx}
+                        className="text-green-700 text-sm flex items-start gap-2"
+                      >
+                        <span className="text-green-500 mt-1">•</span>
+                        <span>{comment}</span>
+                      </li>
+                    ))}
+                  </ul>
                 </div>
-                <ul className="space-y-1">
-                  {report.overallCommentPositive.map((comment, idx) => (
-                    <li
-                      key={idx}
-                      className="text-green-700 text-sm flex items-start gap-2"
-                    >
-                      <span className="text-green-500 mt-1">•</span>
-                      <span>{comment}</span>
-                    </li>
-                  ))}
-                </ul>
               </div>
             </div>
-          </div>
-        )}
+          )}
 
         {/* Negative Comments */}
         {report.overallCommentNegative &&
           report.overallCommentNegative.length > 0 && (
-          <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-            <div className="flex items-start gap-2">
-              <svg
-                className="h-5 w-5 text-red-600 flex-shrink-0 mt-0.5"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
-                />
-              </svg>
-              <div>
-                <div className="text-sm font-semibold text-red-800 mb-2">
-                  Areas to Improve
+            <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+              <div className="flex items-start gap-2">
+                <svg
+                  className="h-5 w-5 text-red-600 flex-shrink-0 mt-0.5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                  />
+                </svg>
+                <div>
+                  <div className="text-sm font-semibold text-red-800 mb-2">
+                    Areas to Improve
+                  </div>
+                  <ul className="space-y-1">
+                    {report.overallCommentNegative.map((comment, idx) => (
+                      <li
+                        key={idx}
+                        className="text-red-700 text-sm flex items-start gap-2"
+                      >
+                        <span className="text-red-500 mt-1">•</span>
+                        <span>{comment}</span>
+                      </li>
+                    ))}
+                  </ul>
                 </div>
-                <ul className="space-y-1">
-                  {report.overallCommentNegative.map((comment, idx) => (
-                    <li
-                      key={idx}
-                      className="text-red-700 text-sm flex items-start gap-2"
-                    >
-                      <span className="text-red-500 mt-1">•</span>
-                      <span>{comment}</span>
-                    </li>
-                  ))}
-                </ul>
               </div>
             </div>
-          </div>
-        )}
+          )}
       </div>
 
       {/* Hero Elements Grid */}
-      <div className="grid md:grid-cols-3 gap-4">
-        <HeroElement
-          label="Headline"
-          current={report.headline.current}
-          positiveComments={report.headline.positiveComments}
-          negativeComments={report.headline.negativeComments}
-          suggested={report.headline.suggested}
-        />
-        <HeroElement
-          label="Subheadline"
-          current={report.subheadline.current}
-          positiveComments={report.subheadline.positiveComments}
-          negativeComments={report.subheadline.negativeComments}
-          suggested={report.subheadline.suggested}
-        />
-        <HeroElement
-          label="CTA"
-          current={report.cta.current}
-          positiveComments={report.cta.positiveComments}
-          negativeComments={report.cta.negativeComments}
-          suggested={report.cta.suggested}
-        />
-      </div>
+      {hasDetailedData && (
+        <div className="grid md:grid-cols-3 gap-4">
+          <HeroElement
+            label="Headline"
+            current={report.headline.current}
+            positiveComments={report.headline.positiveComments}
+            negativeComments={report.headline.negativeComments}
+            suggested={report.headline.suggested}
+            isGuest={isGuest}
+          />
+          <HeroElement
+            label="Subheadline"
+            current={report.subheadline.current}
+            positiveComments={report.subheadline.positiveComments}
+            negativeComments={report.subheadline.negativeComments}
+            suggested={report.subheadline.suggested}
+            isGuest={isGuest}
+          />
+          <HeroElement
+            label="CTA"
+            current={report.cta.current}
+            positiveComments={report.cta.positiveComments}
+            negativeComments={report.cta.negativeComments}
+            suggested={report.cta.suggested}
+            isGuest={isGuest}
+          />
+        </div>
+      )}
     </div>
   );
 }

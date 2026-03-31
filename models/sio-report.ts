@@ -5,8 +5,8 @@ import type { IProduct } from "./product";
  * SIO-V5 Report Document Interface
  */
 export interface ISIOReport extends Document {
-  // References
-  product: Types.ObjectId | IProduct;
+  // References (optional for guest users)
+  product?: Types.ObjectId | IProduct;
   url: string;
 
   // Overall Score
@@ -268,7 +268,7 @@ const SIOReportSchema = new Schema<ISIOReport>(
     product: {
       type: Schema.Types.ObjectId,
       ref: "Product",
-      required: [true, "Product reference is required"],
+      required: false,
       index: true,
     },
     url: {
