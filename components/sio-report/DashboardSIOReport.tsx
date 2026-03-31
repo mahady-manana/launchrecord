@@ -27,11 +27,11 @@ function LockedOverlay({
   metricLabels,
 }: LockedOverlayProps) {
   return (
-    <div className="absolute inset-0 bg-gradient-to-t from-white via-white/80 to-transparent flex items-center justify-center">
-      <div className="bg-white/90 backdrop-blur-sm p-6 text-center">
+    <div className=" bg-gradient-to-t from-white via-white/80 to-transparent flex items-center justify-center">
+      <div className="bg-white/90 backdrop-blur-sm p-6 text-center max-w-2xl text-center">
         <Lock className="h-12 w-12 text-slate-400 mx-auto mb-4" />
         <h3 className="text-xl font-bold text-slate-800 mb-2">{title}</h3>
-        <p className="text-slate-600 mb-4 max-w-md">{description}</p>
+        <p className="text-slate-600 mb-4">{description}</p>
         {metricLabels && metricLabels.length > 0 && (
           <div className="flex flex-wrap justify-center gap-2 mb-5">
             {metricLabels.map((label) => (
@@ -206,13 +206,13 @@ export default function DashboardSIOReport({
 
           {/* Positioning */}
           <div className="relative p-8">
-            <PositioningCard report={positioningReport} />
+            <PositioningCard report={positioningReport} isGuest={isGuest} />
             {isGuest && (
               <LockedOverlay
-                title="Unlock Your Positioning Blueprint"
+                title="Stop guessing your positioning - Get full report and fixes"
                 description="See the exact positioning gaps and the copy to fix them."
                 signupHref={signupHref}
-                ctaLabel="Unlock Full Positioning Report"
+                ctaLabel="Get Full Positioning Report"
                 metricLabels={positioningMetricLabels}
               />
             )}
@@ -220,13 +220,13 @@ export default function DashboardSIOReport({
 
           {/* Clarity */}
           <div className="relative p-8">
-            <ClarityCard report={clarityReport} />
+            <ClarityCard report={clarityReport} isGuest={isGuest} />
             {isGuest && (
               <LockedOverlay
-                title="Unlock Your Clarity Blueprint"
+                title="Get full clarity report to boost conversions"
                 description="Get sentence-level fixes you can ship today."
                 signupHref={signupHref}
-                ctaLabel="Unlock Full Clarity Report"
+                ctaLabel="Signup and Get full report"
                 metricLabels={clarityMetricLabels}
               />
             )}
@@ -252,7 +252,7 @@ export default function DashboardSIOReport({
                 <Button
                   size="lg"
                   variant="secondary"
-                  className="font-bold text-orange-600"
+                  className="font-bold text-white"
                 >
                   Create Free Account to See Full Report
                 </Button>

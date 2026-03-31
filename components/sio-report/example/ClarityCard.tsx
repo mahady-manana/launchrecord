@@ -6,6 +6,7 @@ import { SIOV5Report } from "@/research/sio-v5-report-schema";
 
 interface ClarityCardProps {
   report: SIOV5Report["clarity"];
+  isGuest?: boolean;
 }
 
 interface SubMetricCardProps {
@@ -88,7 +89,7 @@ function SubMetricCard({
   );
 }
 
-export function ClarityCard({ report }: ClarityCardProps) {
+export function ClarityCard({ report, isGuest }: ClarityCardProps) {
   const scoreColor =
     report.score >= 70
       ? "text-green-600"
@@ -193,7 +194,7 @@ export function ClarityCard({ report }: ClarityCardProps) {
       {/* Overall Clarity Summary */}
       <div className="mb-6 space-y-3">
         <MetricInsight
-          title="Messaging Today"
+          title="Messaging Clarity"
           current={report.summary.current}
           positiveComments={report.summary.positiveComments}
           negativeComments={report.summary.negativeComments}
@@ -226,80 +227,88 @@ export function ClarityCard({ report }: ClarityCardProps) {
       )}
 
       {/* Sub-Metrics Grid */}
-      <div>
-        <div className="space-y-4">
-          <SubMetricCard
-            name={report.subMetrics.headlineClarity.name}
-            score={report.subMetrics.headlineClarity.score}
-            current={report.subMetrics.headlineClarity.current}
-            positiveComments={
-              report.subMetrics.headlineClarity.positiveComments
-            }
-            negativeComments={
-              report.subMetrics.headlineClarity.negativeComments
-            }
-            suggested={report.subMetrics.headlineClarity.suggested}
-            unclearTexts={report.subMetrics.headlineClarity.unclearTexts}
-          />
-          <SubMetricCard
-            name={report.subMetrics.valueProposition.name}
-            score={report.subMetrics.valueProposition.score}
-            current={report.subMetrics.valueProposition.current}
-            positiveComments={
-              report.subMetrics.valueProposition.positiveComments
-            }
-            negativeComments={
-              report.subMetrics.valueProposition.negativeComments
-            }
-            suggested={report.subMetrics.valueProposition.suggested}
-            unclearTexts={report.subMetrics.valueProposition.unclearTexts}
-          />
-          <SubMetricCard
-            name={report.subMetrics.featureBenefitMapping.name}
-            score={report.subMetrics.featureBenefitMapping.score}
-            current={report.subMetrics.featureBenefitMapping.current}
-            positiveComments={
-              report.subMetrics.featureBenefitMapping.positiveComments
-            }
-            negativeComments={
-              report.subMetrics.featureBenefitMapping.negativeComments
-            }
-            suggested={report.subMetrics.featureBenefitMapping.suggested}
-            unclearTexts={report.subMetrics.featureBenefitMapping.unclearTexts}
-          />
-          <SubMetricCard
-            name={report.subMetrics.visualHierarchy.name}
-            score={report.subMetrics.visualHierarchy.score}
-            current={report.subMetrics.visualHierarchy.current}
-            positiveComments={
-              report.subMetrics.visualHierarchy.positiveComments
-            }
-            negativeComments={
-              report.subMetrics.visualHierarchy.negativeComments
-            }
-            suggested={report.subMetrics.visualHierarchy.suggested}
-            unclearTexts={report.subMetrics.visualHierarchy.unclearTexts}
-          />
-          <SubMetricCard
-            name={report.subMetrics.ctaClarity.name}
-            score={report.subMetrics.ctaClarity.score}
-            current={report.subMetrics.ctaClarity.current}
-            positiveComments={report.subMetrics.ctaClarity.positiveComments}
-            negativeComments={report.subMetrics.ctaClarity.negativeComments}
-            suggested={report.subMetrics.ctaClarity.suggested}
-            unclearTexts={report.subMetrics.ctaClarity.unclearTexts}
-          />
-          <SubMetricCard
-            name={report.subMetrics.proofPlacement.name}
-            score={report.subMetrics.proofPlacement.score}
-            current={report.subMetrics.proofPlacement.current}
-            positiveComments={report.subMetrics.proofPlacement.positiveComments}
-            negativeComments={report.subMetrics.proofPlacement.negativeComments}
-            suggested={report.subMetrics.proofPlacement.suggested}
-            unclearTexts={report.subMetrics.proofPlacement.unclearTexts}
-          />
+      {isGuest ? null : (
+        <div>
+          <div className="space-y-4">
+            <SubMetricCard
+              name={report.subMetrics.headlineClarity.name}
+              score={report.subMetrics.headlineClarity.score}
+              current={report.subMetrics.headlineClarity.current}
+              positiveComments={
+                report.subMetrics.headlineClarity.positiveComments
+              }
+              negativeComments={
+                report.subMetrics.headlineClarity.negativeComments
+              }
+              suggested={report.subMetrics.headlineClarity.suggested}
+              unclearTexts={report.subMetrics.headlineClarity.unclearTexts}
+            />
+            <SubMetricCard
+              name={report.subMetrics.valueProposition.name}
+              score={report.subMetrics.valueProposition.score}
+              current={report.subMetrics.valueProposition.current}
+              positiveComments={
+                report.subMetrics.valueProposition.positiveComments
+              }
+              negativeComments={
+                report.subMetrics.valueProposition.negativeComments
+              }
+              suggested={report.subMetrics.valueProposition.suggested}
+              unclearTexts={report.subMetrics.valueProposition.unclearTexts}
+            />
+            <SubMetricCard
+              name={report.subMetrics.featureBenefitMapping.name}
+              score={report.subMetrics.featureBenefitMapping.score}
+              current={report.subMetrics.featureBenefitMapping.current}
+              positiveComments={
+                report.subMetrics.featureBenefitMapping.positiveComments
+              }
+              negativeComments={
+                report.subMetrics.featureBenefitMapping.negativeComments
+              }
+              suggested={report.subMetrics.featureBenefitMapping.suggested}
+              unclearTexts={
+                report.subMetrics.featureBenefitMapping.unclearTexts
+              }
+            />
+            <SubMetricCard
+              name={report.subMetrics.visualHierarchy.name}
+              score={report.subMetrics.visualHierarchy.score}
+              current={report.subMetrics.visualHierarchy.current}
+              positiveComments={
+                report.subMetrics.visualHierarchy.positiveComments
+              }
+              negativeComments={
+                report.subMetrics.visualHierarchy.negativeComments
+              }
+              suggested={report.subMetrics.visualHierarchy.suggested}
+              unclearTexts={report.subMetrics.visualHierarchy.unclearTexts}
+            />
+            <SubMetricCard
+              name={report.subMetrics.ctaClarity.name}
+              score={report.subMetrics.ctaClarity.score}
+              current={report.subMetrics.ctaClarity.current}
+              positiveComments={report.subMetrics.ctaClarity.positiveComments}
+              negativeComments={report.subMetrics.ctaClarity.negativeComments}
+              suggested={report.subMetrics.ctaClarity.suggested}
+              unclearTexts={report.subMetrics.ctaClarity.unclearTexts}
+            />
+            <SubMetricCard
+              name={report.subMetrics.proofPlacement.name}
+              score={report.subMetrics.proofPlacement.score}
+              current={report.subMetrics.proofPlacement.current}
+              positiveComments={
+                report.subMetrics.proofPlacement.positiveComments
+              }
+              negativeComments={
+                report.subMetrics.proofPlacement.negativeComments
+              }
+              suggested={report.subMetrics.proofPlacement.suggested}
+              unclearTexts={report.subMetrics.proofPlacement.unclearTexts}
+            />
+          </div>
         </div>
-      </div>
+      )}
     </section>
   );
 }

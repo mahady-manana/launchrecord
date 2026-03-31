@@ -6,6 +6,7 @@ import { SIOV5Report } from "@/research/sio-v5-report-schema";
 
 interface PositioningCardProps {
   report: SIOV5Report["positioning"];
+  isGuest?: boolean;
 }
 
 interface SubMetricCardProps {
@@ -64,7 +65,7 @@ function SubMetricCard({
   );
 }
 
-export function PositioningCard({ report }: PositioningCardProps) {
+export function PositioningCard({ report, isGuest }: PositioningCardProps) {
   const scoreColor =
     report.score >= 70
       ? "text-green-600"
@@ -174,74 +175,82 @@ export function PositioningCard({ report }: PositioningCardProps) {
       {/* Sub-Metrics Grid */}
       <div>
         <div className="space-y-4">
-          <SubMetricCard
-            name={report.subMetrics.categoryOwnership.name}
-            score={report.subMetrics.categoryOwnership.score}
-            current={report.subMetrics.categoryOwnership.current}
-            positiveComments={
-              report.subMetrics.categoryOwnership.positiveComments
-            }
-            negativeComments={
-              report.subMetrics.categoryOwnership.negativeComments
-            }
-            suggested={report.subMetrics.categoryOwnership.suggested}
-          />
-          <SubMetricCard
-            name={report.subMetrics.uniqueValueProp.name}
-            score={report.subMetrics.uniqueValueProp.score}
-            current={report.subMetrics.uniqueValueProp.current}
-            positiveComments={
-              report.subMetrics.uniqueValueProp.positiveComments
-            }
-            negativeComments={
-              report.subMetrics.uniqueValueProp.negativeComments
-            }
-            suggested={report.subMetrics.uniqueValueProp.suggested}
-          />
-          <SubMetricCard
-            name={report.subMetrics.competitiveDiff.name}
-            score={report.subMetrics.competitiveDiff.score}
-            current={report.subMetrics.competitiveDiff.current}
-            positiveComments={
-              report.subMetrics.competitiveDiff.positiveComments
-            }
-            negativeComments={
-              report.subMetrics.competitiveDiff.negativeComments
-            }
-            suggested={report.subMetrics.competitiveDiff.suggested}
-          />
-          <SubMetricCard
-            name={report.subMetrics.targetAudience.name}
-            score={report.subMetrics.targetAudience.score}
-            current={report.subMetrics.targetAudience.current}
-            positiveComments={report.subMetrics.targetAudience.positiveComments}
-            negativeComments={report.subMetrics.targetAudience.negativeComments}
-            suggested={report.subMetrics.targetAudience.suggested}
-          />
-          <SubMetricCard
-            name={report.subMetrics.problemSolutionFit.name}
-            score={report.subMetrics.problemSolutionFit.score}
-            current={report.subMetrics.problemSolutionFit.current}
-            positiveComments={
-              report.subMetrics.problemSolutionFit.positiveComments
-            }
-            negativeComments={
-              report.subMetrics.problemSolutionFit.negativeComments
-            }
-            suggested={report.subMetrics.problemSolutionFit.suggested}
-          />
-          <SubMetricCard
-            name={report.subMetrics.messagingConsistency.name}
-            score={report.subMetrics.messagingConsistency.score}
-            current={report.subMetrics.messagingConsistency.current}
-            positiveComments={
-              report.subMetrics.messagingConsistency.positiveComments
-            }
-            negativeComments={
-              report.subMetrics.messagingConsistency.negativeComments
-            }
-            suggested={report.subMetrics.messagingConsistency.suggested}
-          />
+          {isGuest ? null : (
+            <>
+              <SubMetricCard
+                name={report.subMetrics.categoryOwnership.name}
+                score={report.subMetrics.categoryOwnership.score}
+                current={report.subMetrics.categoryOwnership.current}
+                positiveComments={
+                  report.subMetrics.categoryOwnership.positiveComments
+                }
+                negativeComments={
+                  report.subMetrics.categoryOwnership.negativeComments
+                }
+                suggested={report.subMetrics.categoryOwnership.suggested}
+              />
+              <SubMetricCard
+                name={report.subMetrics.uniqueValueProp.name}
+                score={report.subMetrics.uniqueValueProp.score}
+                current={report.subMetrics.uniqueValueProp.current}
+                positiveComments={
+                  report.subMetrics.uniqueValueProp.positiveComments
+                }
+                negativeComments={
+                  report.subMetrics.uniqueValueProp.negativeComments
+                }
+                suggested={report.subMetrics.uniqueValueProp.suggested}
+              />
+              <SubMetricCard
+                name={report.subMetrics.competitiveDiff.name}
+                score={report.subMetrics.competitiveDiff.score}
+                current={report.subMetrics.competitiveDiff.current}
+                positiveComments={
+                  report.subMetrics.competitiveDiff.positiveComments
+                }
+                negativeComments={
+                  report.subMetrics.competitiveDiff.negativeComments
+                }
+                suggested={report.subMetrics.competitiveDiff.suggested}
+              />
+              <SubMetricCard
+                name={report.subMetrics.targetAudience.name}
+                score={report.subMetrics.targetAudience.score}
+                current={report.subMetrics.targetAudience.current}
+                positiveComments={
+                  report.subMetrics.targetAudience.positiveComments
+                }
+                negativeComments={
+                  report.subMetrics.targetAudience.negativeComments
+                }
+                suggested={report.subMetrics.targetAudience.suggested}
+              />
+              <SubMetricCard
+                name={report.subMetrics.problemSolutionFit.name}
+                score={report.subMetrics.problemSolutionFit.score}
+                current={report.subMetrics.problemSolutionFit.current}
+                positiveComments={
+                  report.subMetrics.problemSolutionFit.positiveComments
+                }
+                negativeComments={
+                  report.subMetrics.problemSolutionFit.negativeComments
+                }
+                suggested={report.subMetrics.problemSolutionFit.suggested}
+              />
+              <SubMetricCard
+                name={report.subMetrics.messagingConsistency.name}
+                score={report.subMetrics.messagingConsistency.score}
+                current={report.subMetrics.messagingConsistency.current}
+                positiveComments={
+                  report.subMetrics.messagingConsistency.positiveComments
+                }
+                negativeComments={
+                  report.subMetrics.messagingConsistency.negativeComments
+                }
+                suggested={report.subMetrics.messagingConsistency.suggested}
+              />
+            </>
+          )}
         </div>
       </div>
     </section>

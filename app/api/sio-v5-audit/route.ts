@@ -14,6 +14,7 @@ import {
 } from "@/services/sio-v5-system-prompt";
 import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
+import normalizeUrl from "normalize-url";
 import { z } from "zod";
 
 const sioV5AuditSchema = z.object({
@@ -35,18 +36,23 @@ export async function POST(request: NextRequest) {
 
     const { url, productId } = validation.data;
 
+    const validhost = normalizeUrl(url, {
+      stripWWW: false,
+      forceHttps: true,
+      removePath: true,
+    });
     // Check if user is authenticated
     const session = await getServerSession(authOptions);
     const isGuest = !session?.user;
     const userId = session?.user?.id;
 
     // For logged-in users, productId is required
-    // if (!isGuest && !productId) {
-    //   return NextResponse.json(
-    //     { error: "Product ID is required for authenticated users" },
-    //     { status: 400 },
-    //   );
-    // }
+    if (!isGuest && !productId) {
+      return NextResponse.json(
+        { error: "Product ID is required for authenticated users" },
+        { status: 400 },
+      );
+    }
 
     if (!isGuest && !userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -224,7 +230,7 @@ export async function POST(request: NextRequest) {
     const savedReport = await SIOReport.create({
       ...reportData,
       product: isGuest ? null : productId || null,
-      url,
+      url: validhost,
       auditDuration: 0, // Can be calculated from timestamps
       // tokenUsage:
       //   (initialResponse.usage?.totalTokens || 0) +
