@@ -1,13 +1,13 @@
 "use client";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { SIOV5Report } from "@/services/sio-report/schema";
 import { Product } from "@/stores/product-store";
-import { AuditReportV1 } from "@/types/audit-report-v1";
 import { AlertTriangle, CheckCircle, Package, TrendingUp } from "lucide-react";
 
 interface KPISummaryProps {
   products: Product[];
-  reports?: Record<string, AuditReportV1 | null>;
+  reports?: Record<string, SIOV5Report | null>;
   className?: string;
 }
 
@@ -21,26 +21,20 @@ export function KPISummary({
   // Count products with audited scores
   const auditedProducts = products.filter((p) => {
     const report = reports[p.id];
-    return (
-      report?.overall_assessment?.composite_score !== undefined &&
-      report.overall_assessment.composite_score !== null
-    );
+    return report?.overallScore !== undefined && report.overallScore !== null;
   }).length;
 
   // Count products with critical issues (score < 40)
   const criticalIssues = products.filter((p) => {
     const report = reports[p.id];
-    const score = report?.overall_assessment?.composite_score || p.score || 0;
+    const score = report?.overallScore || p.score || 0;
     return score < 40;
   }).length;
 
-  // Count products with strong momentum (momentum score >= 70)
+  // Count products with strong momentum (overall score >= 70)
   const strongMomentum = products.filter((p) => {
     const report = reports[p.id];
-    return (
-      report?.momentum_signal?.score !== undefined &&
-      report.momentum_signal.score >= 70
-    );
+    return report?.overallScore !== undefined && report.overallScore >= 70;
   }).length;
 
   // Count products needing audit

@@ -181,9 +181,20 @@ export default function DashboardSIOReport({
               <h1 className="text-2xl font-bold">
                 {isGuest ? "Free SIO-V5 Startup Audit" : "SIO-V5 Audit Report"}
               </h1>
-              <p className="text-sm mt-1">
-                Get instant feedback on your startup's positioning and clarity
-              </p>
+              <div className="pt-4">
+                <p className="text-slate-200">
+                  Website:{" "}
+                  <span className="bg-slate-700 px-4 rounded-md">
+                    {report?.url || "URL unavailable"}
+                  </span>
+                </p>
+                <p className="text-slate-200">
+                  Date:{" "}
+                  {report?.createdAt
+                    ? new Date(report.createdAt).toLocaleString()
+                    : "Date unavailable"}
+                </p>
+              </div>
             </div>
             {isGuest && (
               <Link href={signupHref}>

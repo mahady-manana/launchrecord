@@ -17,27 +17,24 @@ import {
 } from "@/components/ui/card";
 import { getProductStatus } from "@/lib/product-status";
 import { cn } from "@/lib/utils";
+import { SIOV5Report } from "@/services/sio-report/schema";
 import { ProductWithReport } from "@/stores/product-store";
-import { AuditReportV1 } from "@/types/audit-report-v1";
 import clsx from "clsx";
 import { AlertCircle, BarChart3, Crown, Globe, RefreshCcw } from "lucide-react";
 import Link from "next/link";
 
 interface ProductSectionProps {
   product: ProductWithReport;
-  report?: AuditReportV1 | null;
+  report?: SIOV5Report | null;
   onViewProduct: () => void;
-  onRunAudit: () => void;
 }
 
 export function ProductSection({
   product,
   report,
   onViewProduct,
-  onRunAudit,
 }: ProductSectionProps) {
-  const compositeScore =
-    report?.overall_assessment?.composite_score || product.score || 0;
+  const compositeScore = report?.overallScore || product.score || 0;
   const status = getProductStatus(compositeScore);
 
   const getStatusStyle = (color: string) => {
@@ -131,7 +128,7 @@ export function ProductSection({
                 {product.name}
               </CardTitle>
               {product.tagline ? (
-                <CardDescription className="mt-1.5 text-sm text-slate-500 font-medium line-clamp-1">
+                <CardDescription className="mt-1.5 text-sm text-slate-500 font-medium line-clamp-1 max-w-md">
                   {product.tagline}
                 </CardDescription>
               ) : (
@@ -146,7 +143,7 @@ export function ProductSection({
               href={`/dashboard/${product._id}/subscription`}
               className={cn(
                 "px-4 py-2 rounded-full text-xs font-bold tracking-wide uppercase shadow-lg bg-gradient-to-r from-primary/90 to-primary hover:from-primary hover:to-primary/90 transition-all",
-                "text-white",
+                "text-white flex items-center gap-1",
               )}
             >
               <Crown className="h-3 w-3 inline mr-1" />
@@ -157,7 +154,7 @@ export function ProductSection({
                 "px-4 py-2 rounded-full text-xs font-bold tracking-wide uppercase shadow-lg",
                 statusStyle.bg,
                 statusStyle.shadow,
-                "text-white",
+                "text-white  flex items-center gap-1",
               )}
             >
               {status.status}
@@ -165,7 +162,7 @@ export function ProductSection({
             <Link
               href={"/dashboard/" + product._id}
               className={cn(
-                "px-4 py-2 rounded-full text-xs font-bold tracking-wide uppercase shadow-lg bg-white",
+                "px-4 py-2 rounded-full text-xs font-bold tracking-wide uppercase shadow-lg bg-white flex items-center gap-1",
               )}
             >
               View dashboard
@@ -204,18 +201,18 @@ export function ProductSection({
                   </p>
                 </div>
               </div>
-              <Button
-                onClick={onRunAudit}
+              <Link
+                href={"/dashboard/" + product._id + "/audit-page"}
                 className={cn(
                   "h-10 px-5 rounded-xl font-semibold shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-xl",
                   statusStyle.bg,
                   statusStyle.shadow,
-                  "text-white",
+                  "text-white flex items-center gap-2",
                 )}
               >
                 <RefreshCcw className="h-4 w-4 mr-2" />
-                Run Audit
-              </Button>
+                <span>Run Audit</span>
+              </Link>
             </div>
           </div>
         ) : (
@@ -231,7 +228,7 @@ export function ProductSection({
                   )}
                 />
                 <div className="relative">
-                  <CircularScore showGrade score={compositeScore} size="lg" />
+                  <CircularScore score={compositeScore} size="lg" />
                 </div>
               </div>
 
@@ -242,45 +239,48 @@ export function ProductSection({
               <div className="flex-1">
                 <div className="grid grid-cols-5 gap-3">
                   <PillarScoreCard
-                    score={report.aeo_index.score}
+                    score={report.aeo.score}
                     label="AEO Presence"
-                    insight={report.aeo_index.critique}
+                    insight={report.aeo.statement}
                     icon={GlobeIcon}
                     description="Track your AEO presence accross multiple AI"
                     productId={product._id}
                     pillar="aeo"
                   />
                   <PillarScoreCard
-                    score={report.positioning_sharpness.score}
-                    label="Positioning Shit"
-                    insight={report.positioning_sharpness.critique}
+                    score={report.positioning.score}
+                    label="Positioning"
+                    insight={report.positioning.statement}
                     icon={TargetIcon}
-                    description="Keep an eye on your positioning shit"
+                    description="Keep an eye on your positioning"
                     productId={product._id}
                     pillar="positioning"
                   />
                   <PillarScoreCard
-                    score={report.clarity_velocity.score}
+                    score={report.clarity.score}
                     label="Product Clarity"
-                    insight={report.clarity_velocity.critique}
+                    insight={report.clarity.statement}
                     icon={ZapIcon}
                     description="Pay attention to Time-To-Aha"
                     productId={product._id}
                     pillar="clarity"
                   />
                   <PillarScoreCard
-                    score={report.momentum_signal.score}
+                    score={report.overallScore}
                     label="Momentum"
-                    insight={report.momentum_signal.critique}
+                    insight={report.statement}
                     icon={TrendingUpIcon}
                     description="Find the best momentum to gear up your product"
                     productId={product._id}
                     pillar="momentum"
                   />
                   <PillarScoreCard
-                    score={report.founder_proof_vault.score}
+                    score={report.overallScore}
                     label="Proof Vault"
-                    insight={report.founder_proof_vault.critique}
+                    insight={
+                      report.overallCommentPositive[0] ||
+                      "Build your proof vault"
+                    }
                     icon={AwardIcon}
                     description="Prove we are wrong"
                     productId={product._id}
@@ -291,7 +291,7 @@ export function ProductSection({
             </div>
 
             {/* Insights Bar - Enhanced */}
-            {report.overall_assessment.primary_constraint && (
+            {report.overallCommentNegative.length > 0 && (
               <div className="relative overflow-hidden rounded-xl bg-gradient-to-r from-slate-50 to-slate-100/50 border border-slate-200/60 p-3.5">
                 <div className="flex items-center gap-2.5">
                   <div className="p-1.5 rounded-lg bg-gradient-to-br from-orange-500 to-amber-500 shadow-md shadow-orange-500/20">
@@ -301,7 +301,7 @@ export function ProductSection({
                     Constraint:
                   </span>
                   <span className="text-xs font-bold text-slate-800">
-                    {report.overall_assessment.biggest_leverage_point}
+                    {report.overallCommentNegative[0]}
                   </span>
                 </div>
               </div>
@@ -317,15 +317,6 @@ export function ProductSection({
               >
                 <BarChart3 className="h-4 w-4 mr-2" />
                 Full Report
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={onRunAudit}
-                className="flex-1 h-11 rounded-xl text-sm font-semibold border-slate-200 hover:bg-gradient-to-r hover:from-orange-50 hover:to-amber-50 hover:text-orange-600 hover:border-orange-300 hover:shadow-lg hover:shadow-orange-500/10 transition-all duration-300"
-              >
-                <RefreshCcw className="h-4 w-4 mr-2" />
-                Re-run Audit
               </Button>
             </div>
           </div>

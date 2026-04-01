@@ -1,11 +1,11 @@
 "use client";
 
+import { SIOV5Report } from "@/services/sio-report/schema";
 import {
   useProductStore,
   type Product,
   type ProductWithReport,
 } from "@/stores/product-store";
-import { AuditReportV1 } from "@/types/audit-report-v1";
 import { useCallback, useState } from "react";
 
 export function useProducts() {
@@ -90,25 +90,215 @@ export function useProducts() {
           updatedAt: preview.updatedAt,
           report: preview.hasReport
             ? ({
-                overall_assessment: {
-                  composite_score: preview.compositeScore,
-                  primary_constraint: preview.primaryConstraint,
-                  biggest_leverage_point: preview.biggestLeveragePoint,
-                  category_position: preview.categoryPosition,
-                  survival_probability_12m: 50, // Default value as not included in preview
+                overallScore: preview.compositeScore,
+                score: preview.compositeScore,
+                statement: preview.biggestLeveragePoint || "Overall assessment",
+                overallCommentPositive: [],
+                overallCommentNegative: [],
+                websiteSummary: {
+                  summary: preview.categoryPosition || "",
+                  summaryComment: "",
+                  problems: {
+                    currents: [],
+                    positiveComments: [],
+                    negativeComments: [],
+                  },
+                  outcomes: {
+                    currents: [],
+                    positiveComments: [],
+                    negativeComments: [],
+                  },
+                  solutions: {
+                    currents: [],
+                    positiveComments: [],
+                    negativeComments: [],
+                  },
+                  features: {
+                    currents: [],
+                    positiveComments: [],
+                    negativeComments: [],
+                  },
+                  isPositioningClear: true,
+                  isMessagingClear: true,
+                  areUsersLeftGuessing: false,
                 },
-                aeo_index: { score: preview.pillars.aeo },
-                positioning_sharpness: { score: preview.pillars.positioning },
-                clarity_velocity: { score: preview.pillars.clarity },
-                momentum_signal: { score: preview.pillars.momentum },
-                founder_proof_vault: { score: preview.pillars.proof },
-              } as AuditReportV1)
+                firstImpression: {
+                  score: preview.pillars.clarity,
+                  statement: "First impression analysis",
+                  overallCommentPositive: [],
+                  overallCommentNegative: [],
+                  headline: {
+                    current: "",
+                    positiveComments: [],
+                    negativeComments: [],
+                    suggested: [],
+                  },
+                  subheadline: {
+                    current: "",
+                    positiveComments: [],
+                    negativeComments: [],
+                    suggested: [],
+                  },
+                  cta: {
+                    current: "",
+                    positiveComments: [],
+                    negativeComments: [],
+                    suggested: [],
+                  },
+                },
+                positioning: {
+                  score: preview.pillars.positioning,
+                  statement: "Positioning analysis",
+                  overallCommentPositive: [],
+                  overallCommentNegative: [],
+                  summary: {
+                    current: "",
+                    positiveComments: [],
+                    negativeComments: [],
+                    suggested: [],
+                  },
+                  subMetrics: {
+                    categoryOwnership: {
+                      name: "Category Ownership",
+                      score: preview.pillars.positioning,
+                      current: "",
+                      positiveComments: [],
+                      negativeComments: [],
+                      suggested: [],
+                    },
+                    uniqueValueProp: {
+                      name: "Unique Value Prop",
+                      score: preview.pillars.positioning,
+                      current: "",
+                      positiveComments: [],
+                      negativeComments: [],
+                      suggested: [],
+                    },
+                    competitiveDiff: {
+                      name: "Competitive Diff",
+                      score: preview.pillars.positioning,
+                      current: "",
+                      positiveComments: [],
+                      negativeComments: [],
+                      suggested: [],
+                    },
+                    targetAudience: {
+                      name: "Target Audience",
+                      score: preview.pillars.positioning,
+                      current: "",
+                      positiveComments: [],
+                      negativeComments: [],
+                      suggested: [],
+                    },
+                    problemSolutionFit: {
+                      name: "Problem-Solution Fit",
+                      score: preview.pillars.positioning,
+                      current: "",
+                      positiveComments: [],
+                      negativeComments: [],
+                      suggested: [],
+                    },
+                    messagingConsistency: {
+                      name: "Messaging Consistency",
+                      score: preview.pillars.positioning,
+                      current: "",
+                      positiveComments: [],
+                      negativeComments: [],
+                      suggested: [],
+                    },
+                  },
+                },
+                clarity: {
+                  score: preview.pillars.clarity,
+                  statement: "Clarity analysis",
+                  overallCommentPositive: [],
+                  overallCommentNegative: [],
+                  summary: {
+                    current: "",
+                    positiveComments: [],
+                    negativeComments: [],
+                    suggested: [],
+                  },
+                  unclearSentences: [],
+                  subMetrics: {
+                    headlineClarity: {
+                      name: "Headline Clarity",
+                      score: preview.pillars.clarity,
+                      current: "",
+                      positiveComments: [],
+                      negativeComments: [],
+                      suggested: [],
+                      unclearTexts: [],
+                    },
+                    valueProposition: {
+                      name: "Value Proposition",
+                      score: preview.pillars.clarity,
+                      current: "",
+                      positiveComments: [],
+                      negativeComments: [],
+                      suggested: [],
+                      unclearTexts: [],
+                    },
+                    featureBenefitMapping: {
+                      name: "Feature-Benefit Mapping",
+                      score: preview.pillars.clarity,
+                      current: "",
+                      positiveComments: [],
+                      negativeComments: [],
+                      suggested: [],
+                      unclearTexts: [],
+                    },
+                    visualHierarchy: {
+                      name: "Visual Hierarchy",
+                      score: preview.pillars.clarity,
+                      current: "",
+                      positiveComments: [],
+                      negativeComments: [],
+                      suggested: [],
+                      unclearTexts: [],
+                    },
+                    ctaClarity: {
+                      name: "CTA Clarity",
+                      score: preview.pillars.clarity,
+                      current: "",
+                      positiveComments: [],
+                      negativeComments: [],
+                      suggested: [],
+                      unclearTexts: [],
+                    },
+                    proofPlacement: {
+                      name: "Proof Placement",
+                      score: preview.pillars.clarity,
+                      current: "",
+                      positiveComments: [],
+                      negativeComments: [],
+                      suggested: [],
+                      unclearTexts: [],
+                    },
+                  },
+                },
+                aeo: {
+                  score: preview.pillars.aeo,
+                  statement: "AEO analysis",
+                  aiPresence: { isPresent: false, engines: [], comment: "" },
+                  recommendations: [],
+                },
+                analyzedUrl: preview.website || "",
+                analyzedAt: preview.updatedAt,
+                band: {
+                  name: "Blended",
+                  scoreRange: "50-69",
+                  description: "Understandable but not distinctive",
+                },
+                url: preview.website || "",
+                createdAt: new Date(preview.createdAt),
+              } as SIOV5Report)
             : null,
         }),
       );
 
       // Build reports cache
-      const newReportsCache: Record<string, AuditReportV1 | null> = {};
+      const newReportsCache: Record<string, SIOV5Report | null> = {};
       productsWithReportsData.forEach((p) => {
         if (p.report) {
           newReportsCache[p.id] = p.report;
@@ -214,7 +404,7 @@ export function useProducts() {
 
   // Update product report after audit
   const updateProductReport = useCallback(
-    async (productId: string, report: AuditReportV1 | null) => {
+    async (productId: string, report: SIOV5Report | null) => {
       updateReportCache(productId, report);
     },
     [updateReportCache],

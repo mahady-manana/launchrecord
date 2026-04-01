@@ -3,7 +3,6 @@
 import { MissingDataBanner } from "@/components/missing-data-banner";
 import { ProductDashboardHeader } from "@/components/product-dashboard";
 import DashboardSIOReport from "@/components/sio-report/DashboardSIOReport";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -14,7 +13,7 @@ import {
 } from "@/components/ui/card";
 import { SIOV5Report } from "@/services/sio-report/schema";
 import { useProductStore } from "@/stores/product-store";
-import { BarChart3, CheckCircle, Clock, RefreshCcw } from "lucide-react";
+import { BarChart3, RefreshCcw } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -111,32 +110,6 @@ export default function ProductDashboard() {
       ) : (
         <>
           {/* Audit Date Badge */}
-          <div className="flex items-center justify-between bg-slate-50 border border-slate-200 rounded-lg p-4">
-            <div className="flex items-center gap-3">
-              <div className="p-2 bg-blue-100 rounded-lg">
-                <Clock className="h-5 w-5 text-blue-600" />
-              </div>
-              <div>
-                <p className="text-sm font-medium text-slate-700">
-                  Audit Report
-                </p>
-                <p className="text-xs text-slate-500">
-                  {report?.createdAt
-                    ? new Date(report.createdAt).toLocaleString()
-                    : "Date unavailable"}
-                </p>
-              </div>
-            </div>
-            <div className="flex items-center gap-2">
-              <Badge
-                variant="outline"
-                className="bg-green-50 text-green-700 border-green-200"
-              >
-                <CheckCircle className="h-3 w-3 mr-1" />
-                Completed
-              </Badge>
-            </div>
-          </div>
 
           <DashboardSIOReport {...report} />
         </>

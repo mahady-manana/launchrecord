@@ -8,8 +8,8 @@ import {
 } from "@/components/dashboard";
 import { Card, CardContent } from "@/components/ui/card";
 import { useProducts } from "@/hooks/use-products";
+import { SIOV5Report } from "@/services/sio-report/schema";
 import { useProductStore } from "@/stores/product-store";
-import { AuditReportV1 } from "@/types/audit-report-v1";
 import { Plus } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -39,38 +39,6 @@ export default function DashboardPage() {
 
   const handleViewProduct = (productId: string) => {
     router.push(`/dashboard/${productId}`);
-  };
-
-  const handleRunAudit = async (productId: string) => {
-    toast.info("Starting audit... This may take a few moments.");
-    try {
-      const product = productsWithReports.find(
-        (p) => p.id === productId || p._id === productId,
-      );
-      if (!product?.website) {
-        toast.error("Product website is required to run an audit");
-        return;
-      }
-
-      const response = await fetch("/api/sio-v5-audit", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ productId, url: product.website }),
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        toast.success("Audit completed successfully!");
-        // Update cache with new report
-        await refreshProductsReports();
-      } else {
-        const data = await response.json();
-        toast.error(data.error || "Failed to run audit");
-      }
-    } catch (error) {
-      toast.error("Failed to run audit");
-      console.error(error);
-    }
   };
 
   const handleUpgrade = (productId: string) => {
@@ -116,7 +84,7 @@ export default function DashboardPage() {
   // Prepare reports map for KPI
   const reportsMap = productsWithReports.reduce(
     (acc, p) => ({ ...acc, [p.id]: p.report || null }),
-    {} as Record<string, AuditReportV1 | null>,
+    {} as Record<string, SIOV5Report | null>,
   );
 
   const isLoading = isReportsLoading;
@@ -196,7 +164,6 @@ export default function DashboardPage() {
                 product={product}
                 report={product.report}
                 onViewProduct={() => handleViewProduct(product.id)}
-                onRunAudit={() => handleRunAudit(product.id)}
               />
             ))}
           </div>
@@ -204,8 +171,8 @@ export default function DashboardPage() {
       </div>
 
       {/* Billing Overview */}
-      <BillingOverview 
-        billings={billingData} 
+      <BillingOverview
+        billings={billingData}
         onUpgrade={handleUpgrade}
         onManageBilling={handleManageBilling}
       />

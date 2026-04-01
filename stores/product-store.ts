@@ -1,4 +1,4 @@
-import { AuditReportV1 } from "@/types/audit-report-v1";
+import { SIOV5Report } from "@/services/sio-report/schema";
 import { create } from "zustand";
 
 export interface Product {
@@ -20,13 +20,13 @@ export interface Product {
 }
 
 export interface ProductWithReport extends Product {
-  report?: AuditReportV1 | null;
+  report?: SIOV5Report | null;
 }
 
 interface ProductState {
   products: Product[];
   productsWithReports: ProductWithReport[];
-  reportsCache: Record<string, AuditReportV1 | null>;
+  reportsCache: Record<string, SIOV5Report | null>;
   selectedProduct: Product | null;
   isLoading: boolean;
   isReportsLoading: boolean;
@@ -35,8 +35,8 @@ interface ProductState {
   // Actions
   setProducts: (products: Product[]) => void;
   setProductsWithReports: (products: ProductWithReport[]) => void;
-  setReportsCache: (reports: Record<string, AuditReportV1 | null>) => void;
-  updateReportCache: (productId: string, report: AuditReportV1 | null) => void;
+  setReportsCache: (reports: Record<string, SIOV5Report | null>) => void;
+  updateReportCache: (productId: string, report: SIOV5Report | null) => void;
   addProduct: (product: Product) => void;
   updateProduct: (id: string, updates: Partial<Product>) => void;
   removeProduct: (id: string) => void;
