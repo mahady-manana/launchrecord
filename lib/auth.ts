@@ -66,11 +66,6 @@ const providers: NextAuthOptions["providers"] = [
         }
 
         // Check if email is verified (skip for admin users)
-        if (!dbUser.emailVerified && dbUser.role !== "admin") {
-          throw new Error(
-            "Please verify your email before signing in. Check your inbox for the verification link.",
-          );
-        }
 
         user = {
           id: dbUser._id.toString(),

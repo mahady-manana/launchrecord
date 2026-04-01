@@ -98,12 +98,10 @@ export async function GET(request: NextRequest) {
         tagline: product.tagline,
         logo: product.logo,
         website: product.website,
-        score: report.overallScore,
+        score: compositeScore,
         categoryPosition,
         compositeScore,
         statement: report?.statement || undefined,
-        biggestLeveragePoint:
-          report?.overall_assessment?.biggest_leverage_point || undefined,
         pillars: {
           aeo: report?.aeo?.score || 0,
           positioning: report?.positioning?.score || 0,
