@@ -13,7 +13,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useProducts } from "@/hooks/use-products";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 
 interface SuggestedProduct {
   website: string;
@@ -23,7 +23,7 @@ interface SuggestedProduct {
   logo: string;
 }
 
-export default function CompleteProductPage() {
+function CompleteProductForm() {
   const router = useRouter();
   const params = useSearchParams();
   const { fetchProducts } = useProducts();
@@ -237,5 +237,13 @@ export default function CompleteProductPage() {
         </form>
       </Card>
     </div>
+  );
+}
+
+export default function CompleteProductPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <CompleteProductForm />
+    </Suspense>
   );
 }
