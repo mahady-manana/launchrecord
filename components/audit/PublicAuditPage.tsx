@@ -14,6 +14,7 @@ export default function PublicAuditPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [report, setReport] = useState<ISanitizedSIOReport | null>(mockReport);
+  const [cachedWarning, setCachedWarning] = useState<string | null>(null);
   const pathname = usePathname() || "/audit";
   const redirectTarget = `${pathname}?url=${encodeURIComponent(url)}`;
   const signupHref = `/register?callbackUrl=${encodeURIComponent(redirectTarget)}`;
@@ -43,6 +44,7 @@ export default function PublicAuditPage() {
 
     setIsLoading(true);
     setError(null);
+    setCachedWarning(null);
 
     try {
       const response = await fetch("/api/sio-v5-audit", {
@@ -58,6 +60,16 @@ export default function PublicAuditPage() {
       }
 
       setReport(data.data);
+      if (data?.warning) {
+        setCachedWarning(data.warning);
+      } else if (data?.metadata?.cached && data?.metadata?.reportGeneratedAt) {
+        const formattedDate = new Date(
+          data.metadata.reportGeneratedAt,
+        ).toLocaleDateString();
+        setCachedWarning(
+          `This is a report generated on ${formattedDate}. Please sign up to get the latest report.`,
+        );
+      }
     } catch (err: any) {
       setError(err.message || "Failed to generate audit report");
     } finally {
@@ -107,6 +119,11 @@ export default function PublicAuditPage() {
       </div>
 
       <main className="max-w-7xl mx-auto px-4 py-8 space-y-8">
+        {cachedWarning && (
+          <div className="max-w-5xl mx-auto border border-amber-200 bg-amber-50 text-amber-800 rounded-lg p-4">
+            <p className="text-sm">{cachedWarning}</p>
+          </div>
+        )}
         {/* Hero Section */}
         {!report && (
           <div className="text-center py-12">

@@ -3,6 +3,8 @@ import { connectToDatabase } from "@/lib/db";
 import { getOpenRouterClient } from "@/lib/openrouter";
 import Product from "@/models/product";
 import SIOReport from "@/models/sio-report";
+import Subscription from "@/models/subscription";
+import Usage from "@/models/usage";
 import { getWebsiteContent } from "@/services/getWebsiteContent";
 import { mapToSIOReport } from "@/services/sio-report/mappers";
 import { sanitizeReportForGuest } from "@/services/sio-report/sanitizer";
@@ -22,6 +24,97 @@ const sioV5AuditSchema = z.object({
   productId: z.string().optional(),
 });
 
+function getWeekBounds(date: Date) {
+  const now = new Date(date);
+  const dayOfWeek = now.getDay(); // 0 = Sunday
+  const diff = now.getDate() - dayOfWeek;
+
+  const weekStart = new Date(now);
+  weekStart.setDate(diff);
+  weekStart.setHours(0, 0, 0, 0);
+
+  const weekEnd = new Date(weekStart);
+  weekEnd.setDate(weekStart.getDate() + 7);
+  weekEnd.setMilliseconds(-1);
+
+  return { weekStart, weekEnd };
+}
+
+function getMonthBounds(date: Date) {
+  const now = new Date(date);
+  const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+  const monthEnd = new Date(
+    now.getFullYear(),
+    now.getMonth() + 1,
+    0,
+    23,
+    59,
+    59,
+    999,
+  );
+
+  return { monthStart, monthEnd };
+}
+
+async function getOrCreateSioUsage(
+  productId: string,
+  monthlyLimit: number,
+  weeklyLimit: number,
+) {
+  const now = new Date();
+  const { weekStart, weekEnd } = getWeekBounds(now);
+  const { monthStart, monthEnd } = getMonthBounds(now);
+
+  let usage = await Usage.findOne({
+    productId,
+    periodStart: { $gte: monthStart, $lte: monthEnd },
+  });
+
+  if (!usage) {
+    usage = await Usage.create({
+      productId,
+      periodStart: monthStart,
+      periodEnd: monthEnd,
+      sioAuditsUsed: 0,
+      sioAuditsLimit: monthlyLimit,
+      sioWeeklyAuditUsed: 0,
+      sioWeeklyAuditLimit: weeklyLimit,
+      positioningAuditsUsed: 0,
+      positioningAuditsLimit: monthlyLimit,
+      positioningWeeklyAuditUsed: 0,
+      positioningWeeklyAuditLimit: weeklyLimit,
+      clarityAuditsUsed: 0,
+      clarityAuditsLimit: monthlyLimit,
+      clarityWeeklyAuditUsed: 0,
+      clarityWeeklyAuditLimit: weeklyLimit,
+      weekStart,
+      weekEnd,
+      resetAt: weekEnd,
+    });
+  } else {
+    if (usage.weekEnd < now) {
+      usage.sioWeeklyAuditUsed = 0;
+      usage.positioningWeeklyAuditUsed = 0;
+      usage.clarityWeeklyAuditUsed = 0;
+      usage.weekStart = weekStart;
+      usage.weekEnd = weekEnd;
+      usage.resetAt = weekEnd;
+    }
+
+    usage.sioAuditsLimit = monthlyLimit;
+    usage.sioWeeklyAuditLimit = weeklyLimit;
+    usage.positioningAuditsLimit = monthlyLimit;
+    usage.positioningWeeklyAuditLimit = weeklyLimit;
+    usage.clarityAuditsLimit = monthlyLimit;
+    usage.clarityWeeklyAuditLimit = weeklyLimit;
+    usage.periodEnd = monthEnd;
+
+    await usage.save();
+  }
+
+  return usage;
+}
+
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
@@ -35,12 +128,23 @@ export async function POST(request: NextRequest) {
     }
 
     const { url, productId } = validation.data;
-
-    const validhost = normalizeUrl(url, {
-      stripWWW: false,
-      forceHttps: true,
-      removePath: true,
-    });
+    let normalizedUrl: string;
+    let hostUrl: string;
+    try {
+      normalizedUrl = normalizeUrl(url, {
+        stripWWW: false,
+        defaultProtocol: "https",
+        forceHttps: true,
+      });
+      hostUrl = normalizeUrl(url, {
+        stripWWW: false,
+        defaultProtocol: "https",
+        forceHttps: true,
+        removePath: true,
+      });
+    } catch {
+      return NextResponse.json({ error: "Invalid URL" }, { status: 400 });
+    }
     // Check if user is authenticated
     const session = await getServerSession(authOptions);
     const isGuest = !session?.user;
@@ -60,6 +164,28 @@ export async function POST(request: NextRequest) {
 
     await connectToDatabase();
 
+    if (isGuest) {
+      const existingReport = await SIOReport.findOne({ url: hostUrl })
+        .sort({
+          createdAt: -1,
+        })
+        .lean();
+
+      if (existingReport) {
+        const responseReport = sanitizeReportForGuest(existingReport);
+        return NextResponse.json({
+          success: true,
+          data: responseReport,
+          isGuest: true,
+          metadata: {
+            cached: true,
+            reportId: existingReport._id,
+            reportGeneratedAt: existingReport.createdAt,
+          },
+        });
+      }
+    }
+
     if (!isGuest && productId) {
       const product = await Product.findOne({ _id: productId, users: userId });
 
@@ -71,11 +197,62 @@ export async function POST(request: NextRequest) {
       }
     }
 
+    let usage: Awaited<ReturnType<typeof getOrCreateSioUsage>> | null = null;
+    let monthlyLimit = 0;
+    let weeklyLimit = 0;
+    let isFreePlan = true;
+
+    if (!isGuest && productId) {
+      const subscription = await Subscription.findOne({
+        productId,
+        status: "active",
+        deletedAt: null,
+      }).sort({ createdAt: -1 });
+
+      monthlyLimit = subscription?.monthlyAuditLimit || 1;
+      weeklyLimit = subscription?.weeklyAuditLimit || 0;
+      isFreePlan = !subscription || subscription.planType === "free";
+
+      usage = await getOrCreateSioUsage(productId, monthlyLimit, weeklyLimit);
+
+      if (usage.sioAuditsUsed >= monthlyLimit) {
+        return NextResponse.json(
+          {
+            error: isFreePlan
+              ? "You've reached your monthly SIO audit limit (1/month). Please upgrade to a paid plan for more audits."
+              : `You've reached your monthly SIO audit limit (${monthlyLimit}/month).`,
+            limitReached: true,
+            limitType: "monthly",
+            used: usage.sioAuditsUsed,
+            limit: monthlyLimit,
+            resetAt: usage.periodEnd,
+          },
+          { status: 403 },
+        );
+      }
+
+      if (!isFreePlan && weeklyLimit > 0) {
+        if (usage.sioWeeklyAuditUsed >= weeklyLimit) {
+          return NextResponse.json(
+            {
+              error: `You've reached your weekly SIO audit limit (${weeklyLimit}/week). Next reset on ${usage.resetAt.toLocaleDateString()}.`,
+              limitReached: true,
+              limitType: "weekly",
+              used: usage.sioWeeklyAuditUsed,
+              limit: weeklyLimit,
+              resetAt: usage.resetAt,
+            },
+            { status: 403 },
+          );
+        }
+      }
+    }
+
     // Get OpenRouter client
     const client = getOpenRouterClient();
 
     // Extract website content
-    const websiteContent = await getWebsiteContent(url, true);
+    const websiteContent = await getWebsiteContent(normalizedUrl, true);
 
     if (!websiteContent) {
       return NextResponse.json(
@@ -230,7 +407,7 @@ export async function POST(request: NextRequest) {
     const savedReport = await SIOReport.create({
       ...reportData,
       product: isGuest ? null : productId || null,
-      url: validhost,
+      url: hostUrl,
       auditDuration: 0, // Can be calculated from timestamps
       // tokenUsage:
       //   (initialResponse.usage?.totalTokens || 0) +
@@ -245,6 +422,12 @@ export async function POST(request: NextRequest) {
       ? sanitizeReportForGuest(savedReport.toObject())
       : savedReport.toObject();
 
+    if (usage) {
+      usage.sioAuditsUsed += 1;
+      usage.sioWeeklyAuditUsed += 1;
+      await usage.save();
+    }
+
     return NextResponse.json({
       success: true,
       data: responseReport,
@@ -253,6 +436,8 @@ export async function POST(request: NextRequest) {
         verified: true,
         savedToDb: true,
         reportId: savedReport._id,
+        cached: false,
+        reportGeneratedAt: savedReport.createdAt,
         // tokenUsage: {
         //   initial: initialResponse.usage,
         //   verification: verificationResponse.usage,
