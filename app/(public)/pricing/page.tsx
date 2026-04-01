@@ -1,21 +1,16 @@
 "use client";
 
-import {
-  PricingCard,
-  coreSystemFeatures,
-  pricingTiers,
-} from "@/components/pricing/pricing-card";
+import { PricingCard, pricingTiers } from "@/components/pricing/pricing-card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import {
+  Award,
   Brain,
-  Target,
+  CheckCircle,
+  Layers,
   Shield,
+  Target,
   TrendingUp,
   Zap,
-  Layers,
-  Award,
-  CheckCircle,
 } from "lucide-react";
 import Link from "next/link";
 
@@ -57,20 +52,13 @@ export default function PricingPage() {
     <div className="min-h-screen bg-black text-white py-20 px-4">
       {/* Hero Section */}
       <section className="max-w-6xl mx-auto text-center mb-20">
-        <Badge
-          variant="outline"
-          className="font-mono text-xs tracking-[0.2em] uppercase py-1.5 px-6 border-primary/50 text-primary bg-primary/5 mb-6"
-        >
-          ● PRICING: INVEST IN YOUR SOVEREIGNTY
-        </Badge>
-
         <h1 className="text-5xl md:text-6xl font-black tracking-tighter text-white leading-[0.9] mb-6">
-          Choose Your <span className="text-primary">War Room</span>
+          Pricing
         </h1>
 
         <p className="text-xl text-slate-400 max-w-3xl mx-auto leading-relaxed">
-          Every plan includes the Core System. Upgrade to unlock competitive
-          intelligence and strategic warfare capabilities.
+          Start with the Free plan. Upgrade to Founder to unlock competitive
+          intelligence and weekly mission control.
         </p>
       </section>
 
@@ -111,11 +99,11 @@ export default function PricingPage() {
             Select Your Tier
           </h2>
           <p className="text-slate-400 max-w-2xl mx-auto">
-            Start with Founder. Upgrade as you scale. Cancel anytime.
+            Start free. Upgrade to Founder as you scale. Cancel anytime.
           </p>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-8">
+        <div className="grid md:grid-cols-2 gap-8">
           {pricingTiers.map((tier, index) => (
             <PricingCard key={index} tier={tier} />
           ))}
@@ -137,14 +125,9 @@ export default function PricingPage() {
                 <th className="text-left p-4 text-slate-400 font-medium">
                   Feature
                 </th>
-                <th className="text-center p-4 text-white font-bold">
+                <th className="text-center p-4 text-white font-bold">Free</th>
+                <th className="text-center p-4 text-primary font-bold">
                   Founder
-                </th>
-                <th className="text-center p-4 text-primary font-bold">
-                  Growth
-                </th>
-                <th className="text-center p-4 text-primary font-bold">
-                  Sovereign
                 </th>
               </tr>
             </thead>
@@ -153,61 +136,28 @@ export default function PricingPage() {
                 <td className="p-4 text-slate-300">Products</td>
                 <td className="text-center p-4 text-slate-400">1</td>
                 <td className="text-center p-4 text-slate-400">1</td>
-                <td className="text-center p-4 text-slate-400">1</td>
               </tr>
               <tr className="border-b border-slate-800/50">
                 <td className="p-4 text-slate-300">Team Members</td>
+                <td className="text-center p-4 text-slate-400">1</td>
                 <td className="text-center p-4 text-slate-400">5</td>
-                <td className="text-center p-4 text-slate-400">10</td>
-                <td className="text-center p-4 text-slate-400">20</td>
               </tr>
               <tr className="border-b border-slate-800/50">
                 <td className="p-4 text-slate-300">Competitors Monitored</td>
+                <td className="text-center p-4 text-slate-400">1</td>
                 <td className="text-center p-4 text-slate-400">5</td>
-                <td className="text-center p-4 text-slate-400">10</td>
-                <td className="text-center p-4 text-slate-400">20</td>
               </tr>
               <tr className="border-b border-slate-800/50">
                 <td className="p-4 text-slate-300">Weekly Auto Audit</td>
                 <td className="text-center p-4">
-                  <CheckCircle className="w-5 h-5 text-primary mx-auto" />
-                </td>
-                <td className="text-center p-4">
-                  <CheckCircle className="w-5 h-5 text-primary mx-auto" />
+                  <X className="w-5 h-5 text-slate-700 mx-auto" />
                 </td>
                 <td className="text-center p-4">
                   <CheckCircle className="w-5 h-5 text-primary mx-auto" />
                 </td>
               </tr>
               <tr className="border-b border-slate-800/50">
-                <td className="p-4 text-slate-300">Competitor Change Alerts</td>
-                <td className="text-center p-4">
-                  <X className="w-5 h-5 text-slate-700 mx-auto" />
-                </td>
-                <td className="text-center p-4">
-                  <CheckCircle className="w-5 h-5 text-primary mx-auto" />
-                </td>
-                <td className="text-center p-4">
-                  <CheckCircle className="w-5 h-5 text-primary mx-auto" />
-                </td>
-              </tr>
-              <tr className="border-b border-slate-800/50">
-                <td className="p-4 text-slate-300">Investor Report Generator</td>
-                <td className="text-center p-4">
-                  <X className="w-5 h-5 text-slate-700 mx-auto" />
-                </td>
-                <td className="text-center p-4">
-                  <CheckCircle className="w-5 h-5 text-primary mx-auto" />
-                </td>
-                <td className="text-center p-4">
-                  <CheckCircle className="w-5 h-5 text-primary mx-auto" />
-                </td>
-              </tr>
-              <tr className="border-b border-slate-800/50">
-                <td className="p-4 text-slate-300">Strategy Sandbox</td>
-                <td className="text-center p-4">
-                  <X className="w-5 h-5 text-slate-700 mx-auto" />
-                </td>
+                <td className="p-4 text-slate-300">Competitor Spy</td>
                 <td className="text-center p-4">
                   <X className="w-5 h-5 text-slate-700 mx-auto" />
                 </td>
@@ -216,34 +166,7 @@ export default function PricingPage() {
                 </td>
               </tr>
               <tr className="border-b border-slate-800/50">
-                <td className="p-4 text-slate-300">Defensibility Delta Engine</td>
-                <td className="text-center p-4">
-                  <X className="w-5 h-5 text-slate-700 mx-auto" />
-                </td>
-                <td className="text-center p-4">
-                  <X className="w-5 h-5 text-slate-700 mx-auto" />
-                </td>
-                <td className="text-center p-4">
-                  <CheckCircle className="w-5 h-5 text-primary mx-auto" />
-                </td>
-              </tr>
-              <tr className="border-b border-slate-800/50">
-                <td className="p-4 text-slate-300">Founder War Room</td>
-                <td className="text-center p-4">
-                  <X className="w-5 h-5 text-slate-700 mx-auto" />
-                </td>
-                <td className="text-center p-4">
-                  <X className="w-5 h-5 text-slate-700 mx-auto" />
-                </td>
-                <td className="text-center p-4">
-                  <CheckCircle className="w-5 h-5 text-primary mx-auto" />
-                </td>
-              </tr>
-              <tr className="border-b border-slate-800/50">
-                <td className="p-4 text-slate-300">Strategic Moat Generator</td>
-                <td className="text-center p-4">
-                  <X className="w-5 h-5 text-slate-700 mx-auto" />
-                </td>
+                <td className="p-4 text-slate-300">Private Audit Mode</td>
                 <td className="text-center p-4">
                   <X className="w-5 h-5 text-slate-700 mx-auto" />
                 </td>
@@ -252,10 +175,7 @@ export default function PricingPage() {
                 </td>
               </tr>
               <tr>
-                <td className="p-4 text-slate-300">VC-Ready Strategic Dossier</td>
-                <td className="text-center p-4">
-                  <X className="w-5 h-5 text-slate-700 mx-auto" />
-                </td>
+                <td className="p-4 text-slate-300">Historical Analytics</td>
                 <td className="text-center p-4">
                   <X className="w-5 h-5 text-slate-700 mx-auto" />
                 </td>
@@ -273,18 +193,18 @@ export default function PricingPage() {
         <div className="p-12 bg-gradient-to-b from-primary/10 to-transparent rounded-xl border border-primary/20">
           <Award className="w-16 h-16 text-primary mx-auto mb-6" />
           <h2 className="text-3xl font-black uppercase tracking-tighter text-white mb-4">
-            Ready to Claim Your Sovereignty?
+            Ready to Upgrade?
           </h2>
           <p className="text-slate-400 mb-8 max-w-2xl mx-auto">
-            Join 100+ Sovereign Founders who refuse to be commoditized. Start
-            your free trial today.
+            Start free, then unlock the Founder plan when you are ready for
+            weekly mission control.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button
               asChild
               className="h-14 px-10 bg-primary hover:bg-primary/90 text-primary-foreground font-bold uppercase tracking-widest"
             >
-              <Link href="/register">Start Free Trial</Link>
+              <Link href="/register">Upgrade to Founder</Link>
             </Button>
             <Button
               asChild
@@ -321,8 +241,8 @@ export default function PricingPage() {
               Is there a free trial?
             </h3>
             <p className="text-slate-400">
-              Yes, all plans come with a 14-day free trial. No credit card
-              required to start.
+              Yes, the Founder plan comes with a 14-day free trial. No credit
+              card required to start.
             </p>
           </div>
 

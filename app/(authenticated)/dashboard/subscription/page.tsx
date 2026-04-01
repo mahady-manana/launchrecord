@@ -20,11 +20,9 @@ import {
   Check,
   ChevronRight,
   CreditCard,
-  Crown,
   Loader2,
   Package,
   Plus,
-  Shield,
   Zap,
 } from "lucide-react";
 import Link from "next/link";
@@ -33,6 +31,21 @@ import { Suspense, useEffect, useState } from "react";
 import { toast } from "sonner";
 
 const plans = [
+  {
+    id: "free",
+    name: "Free",
+    price: "$0",
+    period: "/month",
+    description: "Run a full SIO-V5 audit and get your war briefing.",
+    icon: Package,
+    features: [
+      "SIO-V5 audit",
+      "Global score + war briefing",
+      "5-pillar scoring breakdown",
+      "Positioning + clarity insights",
+      "AEO visibility check",
+    ],
+  },
   {
     id: "founder",
     name: "Founder Plan",
@@ -55,54 +68,6 @@ const plans = [
       "Competitor Spy",
       "Private Audit Mode",
       "Historical Analytics",
-    ],
-  },
-  {
-    id: "growth",
-    name: "Growth Plan",
-    price: "$99",
-    period: "/month",
-    description: "Competitive intelligence unlocked.",
-    icon: Shield,
-    comingSoon: true,
-    limits: {
-      monthly: 30,
-      weekly: 5,
-    },
-    features: [
-      "5 Auto Audits / Week",
-      "30 Audits / Month",
-      "Everything in Founder +",
-      "10 Team Members",
-      "10 Competitors",
-      "Competitor Change Alerts",
-      "Launch Readiness Score",
-      "Investor Report Generator",
-      "Market Intelligence Reports",
-    ],
-  },
-  {
-    id: "sovereign",
-    name: "Sovereign Plan",
-    price: "$299",
-    period: "/month",
-    description: "The strategic command center.",
-    icon: Crown,
-    comingSoon: true,
-    limits: {
-      monthly: "Unlimited",
-      weekly: "Unlimited",
-    },
-    features: [
-      "Unlimited Audits",
-      "Everything in Growth +",
-      "20 Team Members",
-      "20 Competitors",
-      "Strategy Sandbox",
-      "Defensibility Delta Engine",
-      "Founder War Room",
-      "Strategic Moat Generator",
-      "VC-Ready Strategic Dossier",
     ],
   },
 ];
@@ -153,9 +118,7 @@ function SubscriptionContent() {
     setError(null);
   };
 
-  const handleSubscribe = async (
-    planType: "founder" | "growth" | "sovereign",
-  ) => {
+  const handleSubscribe = async (planType: "founder") => {
     if (!selectedProductId) {
       setError("Please select a product first");
       return;
@@ -212,7 +175,7 @@ function SubscriptionContent() {
   const selectedSubscription = subscriptions.find(
     (s) => s.productId === selectedProductId,
   );
-  const currentPlan = selectedSubscription?.planType || null;
+  const currentPlan = selectedSubscription?.planType || "free";
 
   return (
     <div className="space-y-6">
@@ -298,7 +261,7 @@ function SubscriptionContent() {
                                 {productSubscription.planType}
                               </Badge>
                             ) : (
-                              "No subscription"
+                              "Free plan"
                             )}
                           </p>
                         </div>
@@ -424,14 +387,10 @@ function SubscriptionContent() {
               </div>
             </CardHeader>
             <CardContent>
-              <div className="grid gap-6 md:grid-cols-3">
+              <div className="grid gap-6 md:grid-cols-2">
                 {plans.map((plan) => {
                   const isCurrentPlan = currentPlan === plan.id;
-                  const isUpgrade =
-                    plan.id === "growth" && currentPlan === "founder";
-                  const isDowngrade =
-                    plan.id === "founder" && currentPlan === "growth";
-                  const isComingSoon = plan.comingSoon;
+                  const PlanIcon = plan.icon;
 
                   return (
                     <Card
@@ -440,15 +399,9 @@ function SubscriptionContent() {
                         plan.isFeatured
                           ? "border-primary shadow-xl scale-105 bg-gradient-to-b from-primary/10 via-primary/5 to-transparent hover:shadow-2xl hover:scale-[1.07]"
                           : "border-border"
-                      } ${isCurrentPlan ? "opacity-60" : ""} ${
-                        isComingSoon ? "opacity-75 grayscale" : ""
-                      }`}
+                      } ${isCurrentPlan ? "opacity-60" : ""}`}
                     >
-                      {isComingSoon ? (
-                        <Badge className="absolute -top-2 left-1/2 -translate-x-1/2 bg-slate-600">
-                          Coming Soon
-                        </Badge>
-                      ) : plan.isFeatured ? (
+                      {plan.isFeatured ? (
                         <Badge className="absolute -top-2 left-1/2 -translate-x-1/2 bg-gradient-to-r from-primary to-primary/80 text-white shadow-lg">
                           ⭐ Most Popular
                         </Badge>
@@ -462,7 +415,7 @@ function SubscriptionContent() {
                                 : "bg-primary/10 text-primary"
                             }`}
                           >
-                            <Shield className="h-5 w-5" />
+                            <PlanIcon className="h-5 w-5" />
                           </div>
                           <CardTitle
                             className={`text-lg ${
@@ -520,15 +473,17 @@ function SubscriptionContent() {
                               : ""
                           }`}
                           variant={
-                            plan.isFeatured && !isComingSoon
-                              ? "default"
-                              : "outline"
+                            plan.isFeatured ? "default" : "outline"
                           }
-                          disabled={isCurrentPlan || isLoading || isComingSoon}
+                          disabled={
+                            isCurrentPlan ||
+                            isLoading ||
+                            plan.id === "free"
+                          }
                           onClick={() =>
-                            handleSubscribe(
-                              plan.id as "founder" | "growth" | "sovereign",
-                            )
+                            plan.id === "founder"
+                              ? handleSubscribe("founder")
+                              : null
                           }
                         >
                           {isLoading && selectedPlan === plan.id ? (
@@ -538,16 +493,8 @@ function SubscriptionContent() {
                             </>
                           ) : isCurrentPlan ? (
                             "Current Plan"
-                          ) : isComingSoon ? (
-                            "Coming Soon"
                           ) : (
-                            <>
-                              {isUpgrade
-                                ? "🚀 Upgrade"
-                                : isDowngrade
-                                  ? "Downgrade"
-                                  : "✨ Get Started"}
-                            </>
+                            "Upgrade to Founder"
                           )}
                         </Button>
                       </CardContent>

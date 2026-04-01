@@ -13,13 +13,28 @@ import { useCancelSubscription } from "@/hooks/use-cancel-subscription";
 import { useSubscribe } from "@/hooks/use-subscribe";
 import { useSubscription } from "@/hooks/use-subscription";
 import { useProductStore } from "@/stores/product-store";
-import { AlertCircle, Check, Crown, Loader2, Shield, Zap } from "lucide-react";
+import { AlertCircle, Check, Loader2, Package, Zap } from "lucide-react";
 import Link from "next/link";
 import { useParams, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
 const plans = [
+  {
+    id: "free",
+    name: "Free",
+    price: "$0",
+    period: "/month",
+    description: "Run a full SIO-V5 audit and get your war briefing.",
+    icon: Package,
+    features: [
+      "SIO-V5 audit",
+      "Global score + war briefing",
+      "5-pillar scoring breakdown",
+      "Positioning + clarity insights",
+      "AEO visibility check",
+    ],
+  },
   {
     id: "founder",
     name: "Founder Plan",
@@ -42,54 +57,6 @@ const plans = [
       "Competitor Spy",
       "Private Audit Mode",
       "Historical Analytics",
-    ],
-  },
-  {
-    id: "growth",
-    name: "Growth Plan",
-    price: "$99",
-    period: "/month",
-    description: "Competitive intelligence unlocked.",
-    icon: Shield,
-    comingSoon: true,
-    limits: {
-      monthly: 30,
-      weekly: 5,
-    },
-    features: [
-      "5 Auto Audits / Week",
-      "30 Audits / Month",
-      "Everything in Founder +",
-      "10 Team Members",
-      "10 Competitors",
-      "Competitor Change Alerts",
-      "Launch Readiness Score",
-      "Investor Report Generator",
-      "Market Intelligence Reports",
-    ],
-  },
-  {
-    id: "sovereign",
-    name: "Sovereign Plan",
-    price: "$299",
-    period: "/month",
-    description: "The strategic command center.",
-    icon: Crown,
-    comingSoon: true,
-    limits: {
-      monthly: "Unlimited",
-      weekly: "Unlimited",
-    },
-    features: [
-      "Unlimited Audits",
-      "Everything in Growth +",
-      "20 Team Members",
-      "20 Competitors",
-      "Strategy Sandbox",
-      "Defensibility Delta Engine",
-      "Founder War Room",
-      "Strategic Moat Generator",
-      "VC-Ready Strategic Dossier",
     ],
   },
 ];
@@ -134,9 +101,7 @@ export default function ProductSubscriptionPage() {
     }
   }, [searchParams, fetchSubscription, productId]);
 
-  const handleSubscribe = async (
-    planType: "founder" | "growth" | "sovereign",
-  ) => {
+  const handleSubscribe = async (planType: "founder") => {
     setError(null);
     setSelectedPlan(planType);
 
@@ -166,7 +131,7 @@ export default function ProductSubscriptionPage() {
     }
   };
 
-  const currentPlan = subscription?.planType || null;
+  const currentPlan = subscription?.planType || "free";
 
   return (
     <div className="space-y-6">
@@ -275,14 +240,10 @@ export default function ProductSubscriptionPage() {
         <h2 className="text-xl font-semibold mb-4">
           {subscription ? "Change Plan" : "Choose a Plan"}
         </h2>
-        <div className="grid gap-6 md:grid-cols-3">
+        <div className="grid gap-6 md:grid-cols-2">
           {plans.map((plan) => {
             const isCurrentPlan = currentPlan === plan.id;
-            const isUpgrade = plan.id === "growth" && currentPlan === "founder";
-            const isDowngrade =
-              plan.id === "founder" && currentPlan === "growth";
             const PlanIcon = plan.icon;
-            const isComingSoon = plan.comingSoon;
 
             return (
               <Card
@@ -291,15 +252,9 @@ export default function ProductSubscriptionPage() {
                   plan.isFeatured
                     ? "border-primary shadow-xl scale-105 bg-gradient-to-b from-primary/10 via-primary/5 to-transparent hover:shadow-2xl hover:scale-[1.07]"
                     : "border-border"
-                } ${isCurrentPlan ? "opacity-60" : ""} ${
-                  isComingSoon ? "opacity-75 grayscale" : ""
-                }`}
+                } ${isCurrentPlan ? "opacity-60" : ""}`}
               >
-                {isComingSoon ? (
-                  <Badge className="absolute -top-2 left-1/2 -translate-x-1/2 bg-slate-600">
-                    Coming Soon
-                  </Badge>
-                ) : plan.isFeatured ? (
+                {plan.isFeatured ? (
                   <Badge className="absolute -top-2 left-1/2 -translate-x-1/2 bg-gradient-to-r from-primary to-primary/80 text-white shadow-lg">
                     ⭐ Most Popular
                   </Badge>
@@ -355,43 +310,31 @@ export default function ProductSubscriptionPage() {
                     ))}
                   </ul>
 
-                  <Button
-                    className={`w-full mt-auto h-12 font-bold uppercase tracking-wide transition-all ${
-                      plan.isFeatured
-                        ? "bg-gradient-to-r from-primary to-primary/90 hover:from-primary hover:to-primary/80 text-white shadow-lg hover:shadow-xl hover:scale-[1.02]"
-                        : ""
-                    }`}
-                    variant={
-                      plan.isFeatured && !isComingSoon ? "default" : "outline"
-                    }
-                    disabled={isCurrentPlan || isLoading || isComingSoon}
-                    onClick={() =>
-                      handleSubscribe(
-                        plan.id as "founder" | "growth" | "sovereign",
-                      )
-                    }
-                  >
-                    {isLoading && selectedPlan === plan.id ? (
-                      <>
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Processing...
-                      </>
-                    ) : isCurrentPlan ? (
-                      "Current Plan"
-                    ) : isComingSoon ? (
-                      "Coming Soon"
-                    ) : (
-                      <>
-                        {isUpgrade
-                          ? "🚀 Upgrade"
-                          : isDowngrade
-                            ? "Downgrade"
-                            : "✨ Get Started"}
-                      </>
-                    )}
-                  </Button>
-                </CardContent>
-              </Card>
+                <Button
+                  className={`w-full mt-auto h-12 font-bold uppercase tracking-wide transition-all ${
+                    plan.isFeatured
+                      ? "bg-gradient-to-r from-primary to-primary/90 hover:from-primary hover:to-primary/80 text-white shadow-lg hover:shadow-xl hover:scale-[1.02]"
+                      : ""
+                  }`}
+                  variant={plan.isFeatured ? "default" : "outline"}
+                  disabled={isCurrentPlan || isLoading || plan.id === "free"}
+                  onClick={() =>
+                    plan.id === "founder" ? handleSubscribe("founder") : null
+                  }
+                >
+                  {isLoading && selectedPlan === plan.id ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Processing...
+                    </>
+                  ) : isCurrentPlan ? (
+                    "Current Plan"
+                  ) : (
+                    "Upgrade to Founder"
+                  )}
+                </Button>
+              </CardContent>
+            </Card>
             );
           })}
         </div>

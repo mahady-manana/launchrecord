@@ -1,6 +1,5 @@
 "use client";
 
-import { GradeBadge } from "@/components/GradeBadge";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { appLogo } from "@/lib/logo";
@@ -122,8 +121,6 @@ export function ProductCard({
                 </p>
               )}
             </div>
-
-            <GradeBadge score={score} grade={product.grade} size="sm" />
           </div>
         </CardContent>
       </Link>
@@ -184,9 +181,6 @@ export function ProductCard({
                 )}
               </div>
             </div>
-
-            {/* Grade */}
-            <GradeBadge score={score} grade={product.grade} size="md" />
           </div>
         </div>
       </CardContent>

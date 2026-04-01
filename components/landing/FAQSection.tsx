@@ -42,7 +42,7 @@ const faqs: FAQ[] = [
   {
     question: "Is there a free tier?",
     answer:
-      "Yes. The Core System is free forever and includes: SIO-V5 audit, Global Score, 5-pillar scoring, positioning analysis, and score evolution tracking. Upgrade to Founder ($49/mo), Growth ($99/mo), or Sovereign ($299/mo) for competitive intelligence, weekly auto audits, investor reports, and strategic architect sessions.",
+      "Yes. The Free plan includes the SIO-V5 audit, Global Score, 5-pillar scoring, positioning analysis, and score evolution tracking. Upgrade to Founder ($49/mo) for competitive intelligence, weekly auto audits, and deeper strategy insights.",
   },
   {
     question: "What happens after I get my War Briefing?",

@@ -1,6 +1,5 @@
 "use client";
 
-import { GradeBadge } from "@/components/GradeBadge";
 import { JSONLD } from "@/components/JsonLd";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -93,9 +92,6 @@ function ProductCard({ product }: ProductCardProps) {
                 </p>
               )}
             </div>
-          </div>
-          <div className="absolute z-50 top-1 right-1 flex items-center gap-2">
-            <GradeBadge score={product.score} grade={product.grade} size="sm" />
           </div>
         </CardContent>
       </Card>
@@ -220,17 +216,6 @@ export default function ProductPageClient({
               </div>
 
               {/* Grade Display */}
-              <div className="text-center md:relative absolute md:top-[unset] md:right-[unset] top-2 right-5">
-                <GradeBadge
-                  score={product.score}
-                  grade={product.grade}
-                  size="md"
-                  className="md:w-20 w-10 h-10 md:h-20 md:text-4xl border-4 bg-white"
-                />
-                <div className="text-xs font-bold uppercase tracking-wider mt-2">
-                  <span className="md:inline hidden">Sovereignty</span> Grade
-                </div>
-              </div>
             </div>
           </div>
         </div>

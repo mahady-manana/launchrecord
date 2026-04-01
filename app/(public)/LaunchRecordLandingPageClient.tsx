@@ -36,15 +36,15 @@ export default function LaunchRecordLandingPageClient() {
         <div className="max-w-7xl space-y-12  mx-auto ">
           <div className="text-center space-y-4 pb-20">
             <h2 className="text-4xl font-bold text-slate-100">
-              Choose Your War Room
+              Choose Your Plan
             </h2>
             <p className="text-lg text-slate-200 max-w-2xl mx-auto">
-              Every plan includes the Core System. Upgrade to unlock competitive
-              intelligence and strategic warfare capabilities.
+              Start free, then upgrade to Founder for competitive intelligence
+              and weekly mission control.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {pricingTiers.map((tier, idx) => (
               <PricingCard key={idx} tier={tier} variant="compact" />
             ))}

@@ -10,13 +10,12 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Check } from "lucide-react";
-import Link from "next/link";
 import { useState } from "react";
 import { useSubscribe } from "@/hooks/use-subscribe";
 
 export interface PricingTier {
   name: string;
-  planType: "core" | "founder" | "growth" | "sovereign";
+  planType: "free" | "founder";
   price: string;
   period?: string;
   description: string;
@@ -42,13 +41,12 @@ interface PricingCardProps {
 export function PricingCard({ tier, variant = "default", productId }: PricingCardProps) {
   const [isCheckingOut, setIsCheckingOut] = useState(false);
   const { startSubscription } = useSubscribe();
-  const isCore = tier.planType === "core";
-  const isSovereign = tier.planType === "sovereign";
-  const isFeatured = tier.isFeatured || isSovereign;
+  const isFree = tier.planType === "free";
+  const isFeatured = tier.isFeatured || tier.planType === "founder";
 
   const handleSubscribe = async () => {
-    if (tier.planType === "core") {
-      window.location.href = tier.ctaLink || "/register";
+    if (tier.planType === "free") {
+      window.location.href = tier.ctaLink || "/sio-audit";
       return;
     }
 
@@ -56,7 +54,7 @@ export function PricingCard({ tier, variant = "default", productId }: PricingCar
     try {
       const result = await startSubscription({
         productId,
-        planType: tier.planType as "founder" | "growth" | "sovereign",
+        planType: tier.planType as "founder",
       });
 
       if (result.ok && result.url) {
@@ -72,7 +70,7 @@ export function PricingCard({ tier, variant = "default", productId }: PricingCar
       className={`relative flex flex-col h-full transition-all duration-300 hover:shadow-lg ${
         isFeatured
           ? "border-primary shadow-lg scale-105 bg-gradient-to-b from-primary/5 to-transparent"
-          : isCore
+          : isFree
             ? "border-slate-700 bg-slate-900/50"
             : "border-slate-800 bg-slate-950/50"
       } ${variant === "compact" ? "text-sm" : ""}`}
@@ -80,7 +78,7 @@ export function PricingCard({ tier, variant = "default", productId }: PricingCar
       {isFeatured && (
         <div className="absolute -top-4 left-1/2 -translate-x-1/2">
           <span className="bg-primary text-primary-foreground text-xs font-bold px-4 py-1 rounded-full uppercase tracking-wider">
-            {isSovereign ? "Most Powerful" : "Best Value"}
+            Best Value
           </span>
         </div>
       )}
@@ -94,7 +92,7 @@ export function PricingCard({ tier, variant = "default", productId }: PricingCar
           >
             {tier.name}
           </CardTitle>
-          {tier.planType !== "core" && (
+          {tier.planType !== "free" && (
             <div className="flex items-baseline gap-2">
               <span className="text-4xl font-black text-white">
                 {tier.price}
@@ -106,7 +104,7 @@ export function PricingCard({ tier, variant = "default", productId }: PricingCar
               )}
             </div>
           )}
-          {tier.planType === "core" && (
+          {tier.planType === "free" && (
             <p className="text-primary font-bold text-lg">
               {tier.price} {tier.period}
             </p>
@@ -119,7 +117,7 @@ export function PricingCard({ tier, variant = "default", productId }: PricingCar
 
       <CardContent className="flex-1 space-y-6">
         {/* Limits Section */}
-        {tier.planType !== "core" && (
+        {tier.planType !== "free" && (
           <div className="space-y-3 border-b border-slate-800 pb-4">
             <p className="text-xs font-mono text-slate-500 uppercase tracking-widest">
               Limits
@@ -143,10 +141,10 @@ export function PricingCard({ tier, variant = "default", productId }: PricingCar
 
         {/* Features Section */}
         <div className="space-y-4">
-          {tier.planType === "core" && (
+          {tier.planType === "free" && (
             <div>
               <p className="text-xs font-mono text-slate-500 uppercase tracking-widest mb-3">
-                Core System Features
+                Free Plan Includes
               </p>
               <div className="space-y-2">
                 {tier.features.map((feature, index) => (
@@ -159,7 +157,7 @@ export function PricingCard({ tier, variant = "default", productId }: PricingCar
             </div>
           )}
 
-          {tier.planType !== "core" && (
+          {tier.planType !== "free" && (
             <>
               <div className="space-y-2">
                 {tier.features.map((feature, index) => (
@@ -214,11 +212,32 @@ export function PricingCard({ tier, variant = "default", productId }: PricingCar
 
 export const pricingTiers: PricingTier[] = [
   {
+    name: "Free",
+    planType: "free",
+    price: "$0",
+    period: "/ month",
+    description: "Run a full SIO-V5 audit and get your war briefing.",
+    limits: {
+      products: 1,
+      teamMembers: 1,
+      competitors: 1,
+    },
+    features: [
+      "SIO-V5 audit",
+      "Global score + war briefing",
+      "5-pillar scoring breakdown",
+      "Positioning + clarity insights",
+      "AEO visibility check",
+    ],
+    ctaText: "Get Free Audit",
+    ctaLink: "/sio-audit",
+  },
+  {
     name: "Founder Plan",
     planType: "founder",
     price: "$49",
     period: "/ month",
-    description: "Good enough to get hooked.",
+    description: "Competitive intelligence + weekly mission control.",
     limits: {
       products: 1,
       teamMembers: 5,
@@ -233,67 +252,15 @@ export const pricingTiers: PricingTier[] = [
       "Basic Market Snapshot",
       "Execution Timeline",
     ],
-    ctaText: "Start Free Trial",
-  },
-  {
-    name: "Growth Plan",
-    planType: "growth",
-    price: "$99",
-    period: "/ month",
-    description: "Now the platform becomes competitive intelligence.",
-    limits: {
-      products: 1,
-      teamMembers: 10,
-      competitors: 10,
-    },
-    features: [
-      "Everything in Founder Plan +",
-      "Competitor Change Alerts",
-      "Launch Readiness Score",
-      "Investor Report Generator",
-      "Hide Score Option",
-      "Featured Product Rotation",
-      "Competitive Gap Analysis",
-      "Market Intelligence Reports",
-    ],
-    ctaText: "Start Free Trial",
+    ctaText: "Start Founder Plan",
     isFeatured: true,
-  },
-  {
-    name: "Sovereign Plan",
-    planType: "sovereign",
-    price: "$299",
-    period: "/ month",
-    description: "The strategic command center for serious founders.",
-    limits: {
-      products: 1,
-      teamMembers: 20,
-      competitors: 20,
-    },
-    features: [
-      "Everything in Growth Plan +",
-      "Priority Support",
-      "Strategic Architect Sessions",
-      "Emergency Pivot Calls",
-      "White-Glove Proof Curation",
-    ],
-    killerFeatures: [
-      "Strategy Sandbox - Simulate decisions before building",
-      "Defensibility Delta Engine - See exact gap vs category leader",
-      "Founder War Room - Real-time competitive dashboard",
-      "Strategic Moat Generator - AI creates new moat strategies",
-      "VC-Ready Strategic Dossier - Full investor intelligence report",
-      "Market Intelligence Briefs - Monthly deep niche reports",
-      "Sovereign Founder Profile - Public credibility score",
-    ],
-    ctaText: "Start Free Trial",
   },
 ];
 
 export const coreSystemFeatures: PricingTier = {
-  name: "Core System",
-  planType: "core",
-  price: "Included in all plans",
+  name: "Free Plan",
+  planType: "free",
+  price: "Free",
   description: "The foundation features that power every audit.",
   limits: {
     products: 0,
@@ -310,6 +277,6 @@ export const coreSystemFeatures: PricingTier = {
     "Timeline of improvements",
     "AI suggests: moat creation, positioning shifts, pricing & distribution strategy",
   ],
-  ctaText: "Get Started",
-  ctaLink: "/register",
+  ctaText: "Get Free Audit",
+  ctaLink: "/sio-audit",
 };

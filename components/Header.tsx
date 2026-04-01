@@ -334,11 +334,19 @@ export function Header() {
           >
             Pricing
           </Link>
-          <Link href="/sio-audit">
-            <Button className="bg-green-600 hover:bg-green-700 text-slate-200 font-bold">
-              Get Audited for Free
-            </Button>
-          </Link>
+          {isAuthenticated ? (
+            <Link href="/dashboard">
+              <Button className="bg-primary hover:bg-green-700 text-slate-200 font-bold">
+                Access dashboard
+              </Button>
+            </Link>
+          ) : (
+            <Link href="/sio-audit">
+              <Button className="bg-primary hover:bg-green-700 text-slate-200 font-bold">
+                Get Audited for Free
+              </Button>
+            </Link>
+          )}
         </nav>
 
         {/* Mobile Menu Button */}

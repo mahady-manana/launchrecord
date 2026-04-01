@@ -2,7 +2,7 @@ import { useState } from "react";
 
 interface SubscribeInput {
   productId?: string;
-  planType?: "founder" | "growth" | "sovereign";
+  planType?: "founder";
   priceId?: string;
 }
 
