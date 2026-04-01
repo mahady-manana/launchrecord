@@ -21,7 +21,10 @@ function RegisterContent() {
   const { register, isLoading } = useAuth();
   const params = useSearchParams();
 
-  const callbackUrl = params.get("callbackUrl") || "/dashboard/survey";
+  const productUrl = params.get("productUrl");
+  const callbackUrl =
+    params.get("callbackUrl") ||
+    `/dashboard/complete-product${productUrl ? `?productUrl=${encodeURIComponent(productUrl)}` : ""}`;
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -30,12 +33,17 @@ function RegisterContent() {
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setError(null);
-    const result = await register({ name, email, password, callbackUrl });
+    const result = await register({
+      name,
+      email,
+      password,
+      callbackUrl,
+    });
     if (!result.ok) {
       setError(result.error || "Registration failed.");
       return;
     }
-    router.push("/login");
+    router.push(callbackUrl);
   };
 
   return (
@@ -124,7 +132,10 @@ function RegisterContent() {
         </CardContent>
         <CardFooter className="justify-center text-sm text-muted-foreground">
           Already have an account?{" "}
-          <Link href="/login" className="text-primary hover:underline">
+          <Link
+            href={`/login?callbackUrl=${encodeURIComponent(callbackUrl)}`}
+            className="text-primary hover:underline"
+          >
             Sign in
           </Link>
         </CardFooter>

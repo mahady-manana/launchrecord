@@ -20,9 +20,9 @@ function SurveyRedirectContent() {
       if (url) params.set("url", url);
       if (pillar) params.set("pillar", pillar);
       const callbackUrl = params.toString()
-        ? `/dashboard/survey?${params.toString()}`
-        : "/dashboard/survey";
-      router.push(`/register?callbackUrl=${encodeURIComponent(callbackUrl)}`);
+        ? `/sio-audit?${params.toString()}`
+        : "/sio-audit";
+      router.push(callbackUrl);
     } else if (status === "authenticated") {
       // Already logged in - redirect to dashboard survey
       const url = searchParams.get("url");

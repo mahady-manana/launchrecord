@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { useProducts } from "@/hooks/use-products";
 import { useProductStore } from "@/stores/product-store";
-import { AuditReportV1 } from "@/types/audit-report-v1";
+import type { ISIOReport } from "@/models/sio-report";
 import { ArrowLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -29,7 +29,7 @@ export default function ProductAuditPage({ params }: AuditPageProps) {
   const { fetchProducts } = useProducts();
 
   const [product, setProduct] = useState<typeof selectedProduct>(null);
-  const [existingReport, setExistingReport] = useState<AuditReportV1 | null>(
+  const [existingReport, setExistingReport] = useState<ISIOReport | null>(
     null,
   );
   const [isLoading, setIsLoading] = useState(true);
@@ -83,12 +83,12 @@ export default function ProductAuditPage({ params }: AuditPageProps) {
 
   const checkExistingAudit = async (productId: string) => {
     try {
-      const response = await fetch(`/api/products/${productId}/audit/latest`);
+      const response = await fetch(
+        `/api/products/${productId}/sio-v5-reports/latest`,
+      );
       if (response.ok) {
         const data = await response.json();
-        if (data.report) {
-          setExistingReport(data.report);
-        }
+        setExistingReport(data.report || null);
       }
     } catch (error) {
       console.error("Error checking existing audit:", error);
@@ -112,12 +112,18 @@ export default function ProductAuditPage({ params }: AuditPageProps) {
     }, 2000);
 
     try {
-      const response = await fetch(
-        `/api/products/${product.id}/audit?new=true`,
-        {
-          method: "POST",
-        },
-      );
+      if (!product.website) {
+        throw new Error("Product website is required to run an audit");
+      }
+
+      const response = await fetch("/api/sio-v5-audit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          productId: product.id,
+          url: product.website,
+        }),
+      });
 
       clearInterval(progressInterval);
       setProgress(100);
@@ -126,9 +132,12 @@ export default function ProductAuditPage({ params }: AuditPageProps) {
 
       if (response.ok) {
         setAuditStatus("success");
-        setExistingReport(data.report || null);
+        setExistingReport(data.data || null);
         await fetchProducts();
         router.push("/dashboard/" + product.id);
+      } else if (response.status === 403) {
+        setAuditStatus("rate-limited");
+        setErrorMessage(data.error || "Audit limit reached");
       } else if (response.status === 429) {
         setAuditStatus("rate-limited");
         setErrorMessage(data.error || "Rate limit exceeded");

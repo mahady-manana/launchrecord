@@ -22,6 +22,11 @@ export function AuditRunningCard({ progress }: AuditRunningCardProps) {
             Running Your SIO-V5 Audit
           </CardTitle>
         </div>
+        <div className="flex justify-center mb-8">
+          <div className="relative">
+            <p className="text-xl">It may take 2 to 5 minutes to complete</p>
+          </div>
+        </div>
         <CardDescription className="text-orange-700 text-base">
           Our AI is analyzing your SaaS across 6 critical dimensions. This deep
           analysis typically takes 30-60 seconds to ensure comprehensive

@@ -71,13 +71,19 @@ export function useAuth(required?: boolean) {
     async ({ name, email, password, callbackUrl }: RegisterInput) => {
       setIsLoading(true);
       try {
-        await signIn("credentials", {
+        const result = await signIn("credentials", {
           email,
           password,
           name,
           signup: "true",
           callbackUrl: callbackUrl || " /dashboard",
+          redirect: false,
         });
+
+        if (result?.error) {
+          setIsLoading(false);
+          return { ok: false, error: result.error };
+        }
 
         setIsLoading(false);
         return { ok: true };

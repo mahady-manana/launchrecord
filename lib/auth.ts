@@ -20,6 +20,7 @@ const providers: NextAuthOptions["providers"] = [
       console.log("====================================");
       console.log({ credentials });
       console.log("====================================");
+      await connectToDatabase();
       const email = sanitizeText(credentials?.email || "").toLowerCase();
       const password = credentials?.password || "";
 
@@ -51,7 +52,6 @@ const providers: NextAuthOptions["providers"] = [
           role: "user" as any,
         };
       } else {
-        await connectToDatabase();
         const dbUser = await User.findOne({ email, deletedAt: null }).select(
           "+password",
         );

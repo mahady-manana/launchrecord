@@ -57,7 +57,7 @@ export function OutcomeSection() {
         </div>
 
         {/* Outcomes Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {outcomes.map((outcome, index) => (
             <div
               key={index}
@@ -94,21 +94,6 @@ export function OutcomeSection() {
         </div>
 
         {/* Testimonial / Social Proof */}
-        <div className="bg-slate-800/50 border border-slate-700 rounded-xl p-8 md:p-12">
-          <div className="max-w-4xl mx-auto text-center space-y-6">
-            <blockquote className="text-2xl md:text-3xl font-medium text-slate-100 leading-relaxed">
-              "LaunchRecord showed us we were invisible to AI and our
-              positioning was commodity trash. Three months later, we're in the
-              Sovereign 100 and our demo rate doubled."
-            </blockquote>
-            <div className="flex items-center justify-center gap-4">
-              <div className="text-left">
-                <p className="font-bold text-slate-100">Sarah Chen</p>
-                <p className="text-slate-400 text-sm">Founder, Series A SaaS</p>
-              </div>
-            </div>
-          </div>
-        </div>
       </div>
     </section>
   );

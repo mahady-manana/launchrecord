@@ -151,11 +151,12 @@ export default function AuthenticatedLayout({
                   </div>
                   <div className="flex-1">
                     <h3 className="font-bold text-white">
-                      AEO Audit and Positioining Audit are now available
+                      New SIO V5 Audit Experience, Try it now !!!
                     </h3>
                     <p className="text-sm text-slate-100 mt-1.5">
-                      Start auditing our Startup's AI Visibility, Positioning
-                      your Startup to the right niche
+                      Delivering deep insights in just 2-5 minutes. Experience
+                      the future of SaaS evaluation with our new SIO V5 Audit,
+                      more insightful than ever!
                     </p>
                   </div>
                 </div>

@@ -4,8 +4,8 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useProducts } from "@/hooks/use-products";
-import { useProductStore } from "@/stores/product-store";
 import type { ISIOReport } from "@/models/sio-report";
+import { useProductStore } from "@/stores/product-store";
 import {
   AlertCircle,
   BarChart3,
@@ -282,11 +282,7 @@ function DashboardAuditContent() {
           <CardContent className="pt-12 pb-8">
             <div className="flex justify-center mb-8">
               <div className="relative">
-                <div className="w-24 h-24 border-4 border-orange-200 rounded-full"></div>
-                <div className="absolute top-0 left-0 w-24 h-24 border-4 border-orange-600 rounded-full border-t-transparent animate-spin"></div>
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="w-12 h-12 bg-orange-600 rounded-full animate-pulse"></div>
-                </div>
+                <p>It may take 2 to 5 minutes to complete</p>
               </div>
             </div>
 

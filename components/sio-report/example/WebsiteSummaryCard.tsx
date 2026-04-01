@@ -98,13 +98,25 @@ export function WebsiteSummaryCard({ summary }: WebsiteSummaryCardProps) {
 
       {/* Grid Layout */}
       <div className="grid md:grid-cols-2 gap-4 mb-4">
-        <SectionWithComments title="Problems" section={summary.problems} />
-        <SectionWithComments title="Outcomes" section={summary.outcomes} />
+        <SectionWithComments
+          title="What problems you solve ?"
+          section={summary.problems}
+        />
+        <SectionWithComments
+          title="The Outcomes you promise"
+          section={summary.outcomes}
+        />
       </div>
 
       <div className="grid md:grid-cols-2 gap-4 mb-4">
-        <SectionWithComments title="Solutions" section={summary.solutions} />
-        <SectionWithComments title="Features" section={summary.features} />
+        <SectionWithComments
+          title="Solutions you offer"
+          section={summary.solutions}
+        />
+        <SectionWithComments
+          title="What Features do you offer?"
+          section={summary.features}
+        />
       </div>
 
       {/* Status Badges */}

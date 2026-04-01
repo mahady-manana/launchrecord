@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { SIOV5Report } from "@/services/sio-report/schema";
 import { CheckCircle2, Loader2, Sparkles } from "lucide-react";
-import { usePathname, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import DashboardSIOReport from "../sio-report/DashboardSIOReport";
 import { Input } from "../ui/input";
@@ -16,10 +16,7 @@ export default function PublicAuditPage() {
   const [cachedWarning, setCachedWarning] = useState<string | null>(null);
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
   const autoRunRef = useRef(false);
-  const pathname = usePathname() || "/audit";
   const searchParams = useSearchParams();
-  const redirectTarget = `${pathname}?url=${encodeURIComponent(url)}`;
-  const signupHref = `/register?callbackUrl=${encodeURIComponent(redirectTarget)}`;
 
   const analysisSteps = useMemo(
     () => [

@@ -133,8 +133,21 @@ export function AuditProgressModal({
 
   const runAudit = async () => {
     try {
-      const response = await fetch(`/api/products/${productId}/audit`, {
+      const productResponse = await fetch(`/api/products/${productId}`);
+      const productData = await productResponse.json();
+      if (!productResponse.ok) {
+        throw new Error(productData.error || "Failed to load product");
+      }
+
+      const websiteUrl = productData.product?.website;
+      if (!websiteUrl) {
+        throw new Error("Product website is required to run an audit");
+      }
+
+      const response = await fetch("/api/sio-v5-audit", {
         method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ productId, url: websiteUrl }),
       });
 
       const data = await response.json();

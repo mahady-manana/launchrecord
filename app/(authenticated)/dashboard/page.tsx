@@ -44,8 +44,18 @@ export default function DashboardPage() {
   const handleRunAudit = async (productId: string) => {
     toast.info("Starting audit... This may take a few moments.");
     try {
-      const response = await fetch(`/api/products/${productId}/audit`, {
+      const product = productsWithReports.find(
+        (p) => p.id === productId || p._id === productId,
+      );
+      if (!product?.website) {
+        toast.error("Product website is required to run an audit");
+        return;
+      }
+
+      const response = await fetch("/api/sio-v5-audit", {
         method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ productId, url: product.website }),
       });
 
       if (response.ok) {

@@ -130,6 +130,20 @@ export function Header() {
 
   return (
     <>
+      <aside className="py-4 text-center bg-gradient-to-b from-green-900 via-green-9500 to-green-800 text-white text-sm font-medium py-2 px-4">
+        <p>
+          <span className="pr-4">
+            Try our new comprehensive Positioning & Clarity Audit, the most
+            complete audit available!
+          </span>
+          <Link
+            href="/sio-audit"
+            className="underline text-white font-bold py-2 rounded-lg transition-colors"
+          >
+            Try now, no signup required!
+          </Link>
+        </p>
+      </aside>
       <header
         className={clsx(
           "relative left-0 right-0 translate-x-0 backdrop-blur-xl z-50 w-full",
@@ -477,7 +491,10 @@ export function Header() {
               </div>
 
               <div className="border-t border-slate-800 pt-2 flex flex-col gap-2">
-                <Link href="/sio-audit" onClick={() => setIsMobileMenuOpen(false)}>
+                <Link
+                  href="/sio-audit"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
                   <Button
                     size="sm"
                     className="w-full bg-orange-500 hover:bg-orange-400 text-slate-900 font-bold"

@@ -231,7 +231,7 @@ export function ClarityCard({ report, isGuest }: ClarityCardProps) {
         <div>
           <div className="space-y-4">
             <SubMetricCard
-              name={report.subMetrics.headlineClarity.name}
+              name='Headline Clarity ("Can Visitors Instantly Understand What You Do?")'
               score={report.subMetrics.headlineClarity.score}
               current={report.subMetrics.headlineClarity.current}
               positiveComments={
@@ -244,7 +244,7 @@ export function ClarityCard({ report, isGuest }: ClarityCardProps) {
               unclearTexts={report.subMetrics.headlineClarity.unclearTexts}
             />
             <SubMetricCard
-              name={report.subMetrics.valueProposition.name}
+              name='Value Proposition Clarity ("How Clearly You Communicate Your Unique Value")'
               score={report.subMetrics.valueProposition.score}
               current={report.subMetrics.valueProposition.current}
               positiveComments={
@@ -257,7 +257,7 @@ export function ClarityCard({ report, isGuest }: ClarityCardProps) {
               unclearTexts={report.subMetrics.valueProposition.unclearTexts}
             />
             <SubMetricCard
-              name={report.subMetrics.featureBenefitMapping.name}
+              name='Feature-Benefit Mapping ("How Well You Link Features To Benefits")'
               score={report.subMetrics.featureBenefitMapping.score}
               current={report.subMetrics.featureBenefitMapping.current}
               positiveComments={
@@ -272,7 +272,7 @@ export function ClarityCard({ report, isGuest }: ClarityCardProps) {
               }
             />
             <SubMetricCard
-              name={report.subMetrics.visualHierarchy.name}
+              name='Visual Hierarchy & Readability ("How Easily Visitors Can Scan & Digest Your Content")'
               score={report.subMetrics.visualHierarchy.score}
               current={report.subMetrics.visualHierarchy.current}
               positiveComments={
@@ -285,7 +285,7 @@ export function ClarityCard({ report, isGuest }: ClarityCardProps) {
               unclearTexts={report.subMetrics.visualHierarchy.unclearTexts}
             />
             <SubMetricCard
-              name={report.subMetrics.ctaClarity.name}
+              name='CTA Clarity ("How Clear & Compelling Your Calls-To-Action Are")'
               score={report.subMetrics.ctaClarity.score}
               current={report.subMetrics.ctaClarity.current}
               positiveComments={report.subMetrics.ctaClarity.positiveComments}
@@ -294,7 +294,7 @@ export function ClarityCard({ report, isGuest }: ClarityCardProps) {
               unclearTexts={report.subMetrics.ctaClarity.unclearTexts}
             />
             <SubMetricCard
-              name={report.subMetrics.proofPlacement.name}
+              name='Proof Placement & Clarity ("How Well You Use Social Proof To Enhance Clarity")'
               score={report.subMetrics.proofPlacement.score}
               current={report.subMetrics.proofPlacement.current}
               positiveComments={

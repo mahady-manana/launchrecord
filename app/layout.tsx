@@ -5,15 +5,15 @@ import { ThemeProvider } from "@/providers/theme-provider";
 import { GoogleAnalytics } from "@next/third-parties/google";
 import { Analytics } from "@vercel/analytics/next";
 import type { Metadata } from "next";
-import { Akshar, Space_Grotesk } from "next/font/google";
+import { Geist } from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
 
-const spaceGrotesk = Space_Grotesk({
+const spaceGrotesk = Geist({
   subsets: ["latin"],
   variable: "--font-sans",
 });
-const belanosima = Akshar({
+const belanosima = Geist({
   weight: ["400", "600", "700"],
   subsets: ["latin"],
   variable: "--font-mono",

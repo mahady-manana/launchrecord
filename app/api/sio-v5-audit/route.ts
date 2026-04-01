@@ -1,6 +1,6 @@
-import { authOptions } from "@/lib/auth";
 import { connectToDatabase } from "@/lib/db";
 import { getOpenRouterClient } from "@/lib/openrouter";
+import { getUserSession } from "@/lib/session";
 import Product from "@/models/product";
 import SIOReport from "@/models/sio-report";
 import Subscription from "@/models/subscription";
@@ -14,7 +14,6 @@ import {
   sioV5SchemaPrompt,
   sioV5SystemPrompt,
 } from "@/services/sio-v5-system-prompt";
-import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
 import normalizeUrl from "normalize-url";
 import { z } from "zod";
@@ -22,6 +21,7 @@ import { z } from "zod";
 const sioV5AuditSchema = z.object({
   url: z.string(),
   productId: z.string().optional(),
+  isGuest: z.boolean().optional(),
 });
 
 function getWeekBounds(date: Date) {
@@ -127,7 +127,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { url, productId } = validation.data;
+    const { url, productId, isGuest: guest } = validation.data;
     let normalizedUrl: string;
     let hostUrl: string;
     try {
@@ -146,9 +146,9 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Invalid URL" }, { status: 400 });
     }
     // Check if user is authenticated
-    const session = await getServerSession(authOptions);
-    const isGuest = !session?.user;
-    const userId = session?.user?.id;
+    const { user } = await getUserSession({ required: false });
+    const isGuest = !user?._id || guest;
+    const userId = user?.id;
 
     // For logged-in users, productId is required
     if (!isGuest && !productId) {

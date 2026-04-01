@@ -12,7 +12,6 @@ import { Button } from "@/components/ui/button";
 import { SIOV5Report } from "@/services/sio-report/schema";
 import { Lock } from "lucide-react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
 import { WebsiteSummaryCard } from "./example";
 
 interface LockedOverlayProps {
@@ -69,9 +68,8 @@ export default function DashboardSIOReport({
   isGuest = false,
   ...report
 }: DashboardSIOReportProps) {
-  const pathname = usePathname() || "/audit";
-  const redirectTarget = `${pathname}?url=${encodeURIComponent(report.url || "")}`;
-  const signupHref = `/register?callbackUrl=${encodeURIComponent(redirectTarget)}`;
+  const reportUrl = report.url || "";
+  const signupHref = `/register?productUrl=${encodeURIComponent(reportUrl)}`;
 
   const positioningMetricLabels = [
     "Category Ownership",
@@ -188,7 +186,7 @@ export default function DashboardSIOReport({
               </p>
             </div>
             {isGuest && (
-              <Link href="/register">
+              <Link href={signupHref}>
                 <Button variant="outline">Sign Up Free</Button>
               </Link>
             )}

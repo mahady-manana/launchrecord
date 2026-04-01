@@ -14,26 +14,21 @@ export function HeroSection() {
   };
 
   return (
-    <section className="py-12 relative bg-slate-800 min-h-screen flex items-center justify-center">
+    <section className="pb-12 relative bg-slate-800 min-h-screen flex items-center justify-center">
       <div className="space-y-8 relative px-4 max-w-6xl mx-auto text-center">
-        <div className="space-y-4 max-w-4xl">
-          <h1 className="text-4xl font-mono md:text-7xl font-semibold tracking-tighter text-slate-100 leading-[1.1]">
-            Get a Free Audit to Clarify Your Startup's{" "}
-            <span className="text-orange-400">Positioning</span> and <br />
-            <span className="text-green-400"> Boost Conversions</span>
+        <div className="space-y-4">
+          <h1 className="text-4xl font-mono md:text-6xl font-semibold tracking-tighter text-slate-100 leading-[1.1]">
+            Confused visitors don’t convert. <br /> Clear{" "}
+            <span className="text-primary">Positioning</span> and{" "}
+            <span className="text-primary"> Messaging</span> do.
             <br />
           </h1>
 
           <div className="space-y-2">
-            <p className="font-bold text-2xl text-slate-300 tracking-wide">
-              Clear positioning and messaging turn confusion into conversions.
-            </p>
-            <p className="block text-lg max-w-2xl mx-auto text-slate-200 font-mono tracking-normal normal-case">
-              LaunchRecord helps you spot the blind spots in your startup. We
-              audit your positioning, product clarity, AEO visibility,
-              differentiation, and strategic moat — benchmarking against 10,000+
-              startups so you can make your product obvious and convert more
-              users.
+            <p className="block text-xl max-w-2xl mx-auto text-slate-200 font-mono tracking-normal normal-case">
+              Launchrecord audits your saas messaging clarity, spots positioning
+              gaps, tests AI visibility and gives you exact copy fixes to turn
+              confusion into conversions.
             </p>
           </div>
         </div>
@@ -45,7 +40,7 @@ export function HeroSection() {
           >
             <input
               type="text"
-              placeholder="www.website_url.com"
+              placeholder="Paste your website URL here"
               value={websiteUrl}
               onChange={(e) => setWebsiteUrl(e.target.value)}
               className="flex-1 px-6 py-4 bg-white border border-slate-800 text-foreground rounded-none font-mono focus:border-red-600 focus:ring-0 transition-all outline-none"
@@ -55,16 +50,16 @@ export function HeroSection() {
               type="submit"
               className="h-14 px-10 bg-primary text-background text-sm hover:opacity-90 rounded-none font-black uppercase tracking-widest transition-all"
             >
-              Audit My Record
+              Run audit
             </Button>
           </form>
 
           <div className="">
             <p className="inline-block rounded-md text-blue-400 font-medium text-sm">
               <span className="px-2 text-blue-300 font-bold">
-                No credit card required.
+                No signup required.
               </span>{" "}
-              Audit takes 2-4 minutes.
+              Audit takes 2-5 minutes.
             </p>
           </div>
         </div>

@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/card";
 import { SIOV5Report } from "@/services/sio-report/schema";
 import { useProductStore } from "@/stores/product-store";
-import { BarChart3, CheckCircle, Clock, Info, RefreshCcw } from "lucide-react";
+import { BarChart3, CheckCircle, Clock, RefreshCcw } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -49,7 +49,7 @@ export default function ProductDashboard() {
 
   const handleRunAudit = () => {
     if (!selectedProduct) return;
-    router.push(`/dashboard/audit?product=${selectedProduct.id}`);
+    router.push(`/dashboard/${selectedProduct.id}/select-tool`);
   };
 
   const handleExport = () => {
@@ -86,22 +86,6 @@ export default function ProductDashboard() {
       <MissingDataBanner />
 
       {/* Info Banner */}
-      <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg p-4">
-        <div className="flex items-start gap-3">
-          <div className="p-2 bg-blue-100 rounded-lg">
-            <Info className="h-5 w-5 text-blue-600" />
-          </div>
-          <div className="flex-1">
-            <h3 className="font-semibold text-blue-800">
-              Intelligence Command Center
-            </h3>
-            <p className="text-sm text-blue-700 mt-1">
-              Complete SIO-V5 analysis for {selectedProduct.name}. Quick
-              overview with score + what it means.
-            </p>
-          </div>
-        </div>
-      </div>
 
       {!report ? (
         /* No Report State */

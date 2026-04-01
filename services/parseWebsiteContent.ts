@@ -3,6 +3,7 @@ import type { FetchWebsiteContentResult } from "./fetchWebsiteContent";
 
 export interface MetaInfo {
   title: string;
+  name: string;
   description: string;
   keywords: string;
   canonical: string;
@@ -61,6 +62,10 @@ export function parseWebsiteContent(
   const twitterExists = !!(twitterCard || twitterTitle || twitterImage);
 
   const meta: MetaInfo = {
+    name:
+      getMetaProperty("og:site_name") ||
+      getMetaContent("application-name") ||
+      "",
     title: $("title").text().trim() || "",
     description: getMetaContent("description"),
     keywords: getMetaContent("keywords"),

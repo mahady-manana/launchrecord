@@ -1,36 +1,12 @@
-import { saveAnalysis } from "@/lib/analysis-service";
 import { connectToDatabase } from "@/lib/db";
 import { getUserSession } from "@/lib/session";
 import Product from "@/models/product";
-import Report from "@/models/report";
-import { fullAuditWithOpenAI } from "@/services/full_audit_with_openai";
-import type { AuditReportV1 } from "@/types/audit-report-v1";
 import { NextRequest, NextResponse } from "next/server";
-import normalizeUrl from "normalize-url";
-
-interface SurveyData {
-  email: string;
-  founderName: string;
-  saasName: string;
-  saasUrl: string;
-  role: string;
-  teamSize: string;
-  revenue: string;
-  biggestChallenge: string;
-  aeoAwareness: string;
-  description: string;
-  willingToInvest: string;
-}
 
 export async function POST(request: NextRequest) {
   try {
-    await connectToDatabase();
-    const { user, response } = await getUserSession({ required: true });
-    if (response) {
-      return response;
-    }
     const body = await request.json();
-    const { productId } = body;
+    const { productId, url } = body || {};
 
     if (!productId) {
       return NextResponse.json(
@@ -39,184 +15,63 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Find the product
-    const product = await Product.findById(productId);
-    if (!product) {
-      return NextResponse.json({ error: "Product not found" }, { status: 404 });
+    await connectToDatabase();
+    const { user, response } = await getUserSession({ required: true });
+    if (response) {
+      return response;
     }
 
-    // Check if product already has an audit report
-    const existingReport = await Report.findOne({
-      product: productId,
-      "overall_assessment.composite_score": { $exists: true },
-    }).sort({ createdAt: -1 });
+    let websiteUrl: string | null = url || null;
 
-    if (existingReport) {
-      // Return existing report to prevent duplicate audits
-      return NextResponse.json({
-        success: true,
-        data: {
-          report: existingReport,
-          analysis: {
-            meta: existingReport.meta,
-            aeo_index: existingReport.aeo_index,
-            positioning_sharpness: existingReport.positioning_sharpness,
-            clarity_velocity: existingReport.clarity_velocity,
-            momentum_signal: existingReport.momentum_signal,
-            founder_proof_vault: existingReport.founder_proof_vault,
-            top_competitors: existingReport.top_competitors,
-            overall_assessment: existingReport.overall_assessment,
-            the_ego_stab: existingReport.the_ego_stab,
-            category_weights: existingReport.category_weights,
-          },
-          existing: true,
-        },
-      });
+    if (!websiteUrl) {
+      const product = await Product.findOne({
+        _id: productId,
+        users: user?.id,
+        deletedAt: null,
+      }).lean();
+
+      if (!product) {
+        return NextResponse.json(
+          { error: "Product not found or access denied" },
+          { status: 404 },
+        );
+      }
+
+      websiteUrl = product.website || null;
     }
 
-    // Get survey data from product
-    const surveyData = product.surveyData || {
-      email: "",
-      founderName: product.name || "Unknown",
-      saasName: product.name || "Unknown",
-      saasUrl: product.website || "",
-      role: "solo-founder",
-      teamSize: "just-me",
-      revenue: "pre-revenue",
-      biggestChallenge: "invisible-llms",
-      aeoAwareness: "never-heard",
-      description: "Not provided",
-      willingToInvest: "49-tier",
-    };
-
-    // Validate survey data has email
-    if (!user?.email) {
+    if (!websiteUrl) {
       return NextResponse.json(
-        { error: "Email required. Please complete the survey first." },
+        { error: "Product website is required to run an audit" },
         { status: 400 },
       );
     }
 
-    let auditReport: AuditReportV1 | null = null;
-    let errorMessage: string | null = null;
-
-    try {
-      const response = await fullAuditWithOpenAI({
-        description: surveyData.description,
-        tagline: surveyData.tagline,
-        name: surveyData.saasName,
-        website: normalizeUrl(product.website!, {
-          stripWWW: false,
-          defaultProtocol: "https",
-          forceHttps: true,
-        }),
-        founder: surveyData.founderName,
-        revenueStage: surveyData.revenue,
-      });
-
-      if (!response) {
-        throw new Error("No formatted content returned from OpenAI");
-      }
-
-      auditReport = JSON.parse(response) as AuditReportV1;
-    } catch (aiError: any) {
-      console.error("AI analysis error:", aiError);
-
-      // Check for capacity errors
-      if (
-        aiError.message?.includes("capacity") ||
-        aiError.message?.includes("rate_limit") ||
-        aiError.message?.includes("overloaded")
-      ) {
-        errorMessage =
-          "System is currently at capacity. We will rerun the audit automatically when it resumes.";
-
-        // Mark product for retry
-        product.markModified("surveyData");
-        if (!product.surveyData) {
-          product.surveyData = {};
-        }
-        product.surveyData.retryAudit = true;
-        product.surveyData.retryReason = "capacity_error";
-        product.surveyData.retryAt = new Date(Date.now() + 5 * 60 * 1000); // Retry in 5 minutes
-        // Add user to owners array if not already present
-        if (!product.users) {
-          product.users = [];
-        }
-        if (user?._id) {
-          const userId = user._id;
-          const isAlreadyOwner = product.users.some(
-            (u: any) => u.toString() === userId.toString(),
-          );
-          if (!isAlreadyOwner) {
-            product.users.push(userId as any);
-          }
-        }
-        await product.save();
-
-        return NextResponse.json(
-          {
-            error: errorMessage,
-            retry: true,
-            retryAt: product.surveyData.retryAt,
-          },
-          { status: 503 },
-        );
-      }
-
-      // For other errors, throw to be caught by outer catch
-      throw aiError;
-    }
-
-    if (!auditReport) {
-      throw new Error("Failed to generate audit report");
-    }
-
-    // Save the analysis to database
-    const savedReport = await saveAnalysis({
-      product,
-      report: auditReport,
-    });
-
-    return NextResponse.json({
-      success: true,
-      data: {
-        report: savedReport,
-        analysis: auditReport,
-        existing: false,
-      },
-    });
-  } catch (error: any) {
-    console.error("Audit API error:", error);
-
-    // Handle capacity errors
-    if (
-      error.message?.includes("capacity") ||
-      error.message?.includes("rate_limit") ||
-      error.message?.includes("overloaded")
-    ) {
-      return NextResponse.json(
-        {
-          error:
-            "System is currently at capacity. We will rerun the audit automatically when it resumes.",
-          retry: true,
+    const auditResponse = await fetch(
+      `${request.nextUrl.origin}/api/sio-v5-audit`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          cookie: request.headers.get("cookie") ?? "",
         },
-        { status: 503 },
-      );
-    }
+        body: JSON.stringify({ productId, url: websiteUrl }),
+      },
+    );
 
+    const data = await auditResponse.json();
+    return NextResponse.json(data, { status: auditResponse.status });
+  } catch (error) {
+    console.error("Proxy audit API error:", error);
     return NextResponse.json(
-      { error: "Failed to generate audit report" },
+      { error: "Failed to run SIO-V5 audit" },
       { status: 500 },
     );
   }
 }
 
-// GET endpoint to check audit status
 export async function GET(request: NextRequest) {
   try {
-    await connectToDatabase();
-
     const productId = request.nextUrl.searchParams.get("productId");
     if (!productId) {
       return NextResponse.json(
@@ -225,59 +80,21 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    const product = await Product.findById(productId);
-    if (!product) {
-      return NextResponse.json({ error: "Product not found" }, { status: 404 });
-    }
-
-    // Check if product has an existing audit
-    const existingReport = await Report.findOne({
-      product: productId,
-      "overall_assessment.composite_score": { $exists: true },
-    }).sort({ createdAt: -1 });
-
-    if (existingReport) {
-      return NextResponse.json({
-        success: true,
-        data: {
-          report: existingReport,
-          analysis: {
-            meta: existingReport.meta,
-            aeo_index: existingReport.aeo_index,
-            positioning_sharpness: existingReport.positioning_sharpness,
-            clarity_velocity: existingReport.clarity_velocity,
-            momentum_signal: existingReport.momentum_signal,
-            founder_proof_vault: existingReport.founder_proof_vault,
-            top_competitors: existingReport.top_competitors,
-            overall_assessment: existingReport.overall_assessment,
-            the_ego_stab: existingReport.the_ego_stab,
-            category_weights: existingReport.category_weights,
-          },
-          existing: true,
+    const reportResponse = await fetch(
+      `${request.nextUrl.origin}/api/products/${productId}/sio-v5-reports/latest`,
+      {
+        headers: {
+          cookie: request.headers.get("cookie") ?? "",
         },
-      });
-    }
+      },
+    );
 
-    // Check if retry is scheduled
-    const retryScheduled = product.surveyData?.retryAudit;
-    if (retryScheduled) {
-      return NextResponse.json({
-        success: true,
-        retry: true,
-        retryAt: product.surveyData?.retryAt,
-        message: "Audit is scheduled for retry",
-      });
-    }
-
-    return NextResponse.json({
-      success: true,
-      audited: false,
-      message: "No audit found for this product",
-    });
+    const data = await reportResponse.json();
+    return NextResponse.json(data, { status: reportResponse.status });
   } catch (error) {
-    console.error("Get audit API error:", error);
+    console.error("Proxy audit status error:", error);
     return NextResponse.json(
-      { error: "Failed to retrieve audit" },
+      { error: "Failed to fetch latest SIO report" },
       { status: 500 },
     );
   }
