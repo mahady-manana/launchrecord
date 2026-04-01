@@ -424,7 +424,7 @@ export default function SIOV5EnginePage() {
         </div>
 
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <Link href="/survey">
+          <Link href="/sio-audit">
             <Button className="h-14 px-10 bg-blue-600 hover:bg-blue-700 text-white rounded-none font-black uppercase tracking-widest transition-all">
               Start SIO-V5 Audit
             </Button>

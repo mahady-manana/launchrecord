@@ -12,7 +12,7 @@ export const metadata: Metadata = {
     template: "%s | LaunchRecord",
   },
   description:
-    "Free founder proof audit. Analyze your authority, credibility, and social proof signals. Get your founder proof score in 2-3 minutes.",
+    "Free founder proof audit. Analyze your authority, credibility, and social proof signals. Get your founder proof score in 2-4 minutes.",
   keywords: [
     "founder proof audit",
     "founder authority",

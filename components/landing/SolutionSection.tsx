@@ -116,11 +116,11 @@ export function SolutionSection() {
                 Ready to fix your positioning?
               </p>
               <p className="text-slate-500 text-sm">
-                Get your War Briefing in 2-3 minutes. Free forever.
+                Get your War Briefing in 2-4 minutes. Free forever.
               </p>
             </div>
             <Link
-              href="/survey"
+              href="/sio-audit"
               className="inline-flex items-center gap-2 bg-orange-500 text-slate-900 px-8 py-4 rounded-lg font-bold uppercase tracking-widest hover:bg-orange-400 transition-colors whitespace-nowrap"
             >
               Start Your Free Audit

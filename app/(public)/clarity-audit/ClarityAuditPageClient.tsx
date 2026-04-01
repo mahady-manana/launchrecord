@@ -22,7 +22,7 @@ export default function ClarityAuditPageClient() {
   const handleStartAudit = (e: React.FormEvent) => {
     e.preventDefault();
     if (websiteUrl) {
-      window.location.href = `/survey?url=${encodeURIComponent(websiteUrl)}&pillar=clarity`;
+      window.location.href = `/sio-audit?url=${encodeURIComponent(websiteUrl)}&pillar=clarity`;
     }
   };
 

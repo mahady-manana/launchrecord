@@ -211,7 +211,7 @@ export default function CategoriesPageClient({
             <p className="text-muted-foreground">
               Add your product and create a new category.
             </p>
-            <Link href="/survey">
+            <Link href="/sio-audit">
               <Button size="lg" className="gap-2">
                 <Zap className="h-5 w-5" />
                 Add Your Product

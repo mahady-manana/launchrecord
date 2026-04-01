@@ -9,7 +9,7 @@ export function HeroSection() {
   const handleStartAudit = (e: React.FormEvent) => {
     e.preventDefault();
     if (websiteUrl) {
-      window.location.href = `/survey?url=${encodeURIComponent(websiteUrl)}`;
+      window.location.href = `/sio-audit?url=${encodeURIComponent(websiteUrl)}`;
     }
   };
 
@@ -64,7 +64,7 @@ export function HeroSection() {
               <span className="px-2 text-blue-300 font-bold">
                 No credit card required.
               </span>{" "}
-              Free audit in a minute.
+              Audit takes 2-4 minutes.
             </p>
           </div>
         </div>

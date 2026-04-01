@@ -1,11 +1,11 @@
 "use client";
 
-import { OverallScoreCard, FirstImpressionCard } from "@/components/sio-report";
+import { FirstImpressionCard, OverallScoreCard } from "@/components/sio-report";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useProducts } from "@/hooks/use-products";
+import { SIOV5Report } from "@/services/sio-report/schema";
 import { useProductStore } from "@/stores/product-store";
-import { ISIOReport } from "@/models/sio-report";
 import { Loader2, Sparkles } from "lucide-react";
 import { useState } from "react";
 
@@ -15,7 +15,7 @@ export default function SIOAuditPage() {
   const [url, setUrl] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [report, setReport] = useState<ISIOReport | null>(null);
+  const [report, setReport] = useState<SIOV5Report | null>(null);
 
   const handleAudit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -38,7 +38,7 @@ export default function SIOAuditPage() {
       }
 
       setReport(data.data);
-      
+
       // TODO: Save report to database
       // await fetch(`/api/products/${selectedProduct.id}/sio-reports`, {
       //   method: "POST",
@@ -64,9 +64,7 @@ export default function SIOAuditPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-slate-800">
-            SIO-V5 Audit
-          </h1>
+          <h1 className="text-3xl font-bold text-slate-800">SIO-V5 Audit</h1>
           <p className="text-slate-500 mt-1">
             Comprehensive startup positioning, clarity, and AI visibility audit
           </p>
@@ -87,11 +85,7 @@ export default function SIOAuditPage() {
             className="flex-1"
             required
           />
-          <Button
-            type="submit"
-            disabled={isLoading}
-            className="min-w-[200px]"
-          >
+          <Button type="submit" disabled={isLoading} className="min-w-[200px]">
             {isLoading ? (
               <>
                 <Loader2 className="h-4 w-4 mr-2 animate-spin" />
@@ -117,11 +111,12 @@ export default function SIOAuditPage() {
         <div className="space-y-6">
           <OverallScoreCard report={report} />
           <FirstImpressionCard report={report.firstImpression} />
-          
+
           {/* TODO: Add remaining report sections */}
           <div className="bg-slate-50 border border-slate-200 rounded-xl p-6 text-center">
             <p className="text-slate-600">
-              Additional report sections (Positioning, Clarity, AEO) coming soon...
+              Additional report sections (Positioning, Clarity, AEO) coming
+              soon...
             </p>
           </div>
         </div>

@@ -110,7 +110,7 @@ export default function ProductPageWrapper({
             <a href="/leaderboard" className="text-primary hover:underline">
               View Leaderboard
             </a>
-            <a href="/survey" className="text-primary hover:underline">
+            <a href="/sio-audit" className="text-primary hover:underline">
               Audit a Product
             </a>
           </div>

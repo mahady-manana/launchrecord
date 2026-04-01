@@ -185,6 +185,8 @@ export interface PositioningReport {
 export interface SIOV5Report {
   /** Overall score 0-100 */
   score: number;
+  /** Overall score 0-100 */
+  overallScore: number;
   /** Overall assessment (2-3 sentences) */
   statement: string;
 
@@ -213,6 +215,8 @@ export interface SIOV5Report {
   analyzedUrl: string;
   analyzedAt: string;
   band: ReportBand;
+  url: string;
+  createdAt: Date;
 }
 
 /**

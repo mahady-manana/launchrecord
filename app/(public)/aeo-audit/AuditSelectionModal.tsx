@@ -68,7 +68,7 @@ export function AuditSelectionModal({
   };
 
   const handleAdvancedAudit = () => {
-    window.location.href = `/survey?url=${encodeURIComponent(websiteUrl)}&pillar=aeo`;
+    window.location.href = `/sio-audit?url=${encodeURIComponent(websiteUrl)}&pillar=aeo`;
   };
 
   return (

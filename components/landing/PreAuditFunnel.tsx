@@ -8,7 +8,7 @@ const funnelSteps: FunnelStep[] = [
   {
     step: "1",
     title: "Free Genericity Score",
-    desc: "Enter your URL. Get a 1-page roast of your positioning in 2 minutes.",
+    desc: "Enter your URL. Get a 1-page roast of your positioning in 2-4 minutes.",
   },
   {
     step: "2",

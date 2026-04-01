@@ -25,7 +25,7 @@ function SectionWithComments({
         {section.currents.map((item, idx) => (
           <div
             key={idx}
-            className="text-slate-700 text-xs bg-slate-50 rounded p-2 border border-slate-200"
+            className="text-slate-700 text-xs bg-white rounded p-2 border border-slate-200"
           >
             {item}
           </div>
@@ -41,7 +41,7 @@ function SectionWithComments({
               as="li"
               variant="positive"
               text={comment}
-              className="text-xs italic"
+              className="text-xs"
             />
           ))}
         </ul>
@@ -56,7 +56,7 @@ function SectionWithComments({
               as="li"
               variant="negative"
               text={comment}
-              className="text-xs italic"
+              className="text-xs"
             />
           ))}
         </ul>
@@ -67,10 +67,10 @@ function SectionWithComments({
 
 export function WebsiteSummaryCard({ summary }: WebsiteSummaryCardProps) {
   return (
-    <div className="border border-slate-200 rounded-xl p-6 bg-white">
+    <div className="border border-slate-200 rounded-xl p-6 bg-blue-50">
       <div className="mb-4">
         <h2 className="text-lg font-bold text-slate-800 mb-1">
-          Website Summary
+          Startup's summary
         </h2>
         <p className="text-slate-500 text-xs">
           What your website says + audit comments
@@ -82,7 +82,7 @@ export function WebsiteSummaryCard({ summary }: WebsiteSummaryCardProps) {
         <div className="text-xs font-semibold text-slate-500 uppercase mb-2">
           Summary / Tagline
         </div>
-        <div className="bg-slate-50 rounded-lg p-3 border border-slate-200">
+        <div className="bg-white rounded-lg p-3 border border-slate-200">
           <p className="text-slate-700 text-sm">{summary.summary}</p>
         </div>
         {summary.summaryComment && (
@@ -90,7 +90,7 @@ export function WebsiteSummaryCard({ summary }: WebsiteSummaryCardProps) {
             <CommentItem
               variant="negative"
               text={summary.summaryComment}
-              className="text-xs italic"
+              className="text-xs"
             />
           </div>
         )}

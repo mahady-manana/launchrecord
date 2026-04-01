@@ -1,15 +1,19 @@
 "use client";
 
-import { FirstImpressionCard, OverallScoreCard } from "@/components/sio-report";
+import {
+  FirstImpressionCard,
+  HowToReadReport,
+  OverallScoreCard,
+} from "@/components/sio-report";
 import { AEOCard } from "@/components/sio-report/example/AEOCard";
 import { ClarityCard } from "@/components/sio-report/example/ClarityCard";
 import { PositioningCard } from "@/components/sio-report/example/PositioningCard";
 import { Button } from "@/components/ui/button";
-import type { ISIOReport } from "@/models/sio-report";
-import type { ISanitizedSIOReport } from "@/services/sio-report/sanitizer";
+import { SIOV5Report } from "@/services/sio-report/schema";
 import { Lock } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { WebsiteSummaryCard } from "./example";
 
 interface LockedOverlayProps {
   title: string;
@@ -55,7 +59,7 @@ function LockedOverlay({
   );
 }
 
-type DashboardReport = ISIOReport | ISanitizedSIOReport;
+type DashboardReport = SIOV5Report;
 
 interface DashboardSIOReportProps extends DashboardReport {
   isGuest?: boolean;
@@ -195,8 +199,15 @@ export default function DashboardSIOReport({
       <main className="max-w-5xl mx-auto py-8">
         <div>
           {/* Full Report Sections */}
+          <div className="px-8 pb-8">
+            <HowToReadReport />
+          </div>
           <div className="p-8">
             <OverallScoreCard report={report} />
+          </div>
+
+          <div className="p-8">
+            <WebsiteSummaryCard summary={report.websiteSummary} />
           </div>
 
           {/* First Impression */}

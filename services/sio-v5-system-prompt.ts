@@ -43,6 +43,9 @@ Raw HTML (h1, p, a tags only).
 6. Problem-solution fit
 7. Messaging consistency (note differences across pages)
 
+Reporting rule: Some website may not have clear positioning. If you can't find clear statements, 
+Dont just return 'Not cearly stated' or something similar. Please create report and fixes based on available content 
+
 ### Clarity
 **Exact words:**
 
@@ -52,6 +55,9 @@ Raw HTML (h1, p, a tags only).
 4. Visual hierarchy (order)
 5. All CTAs
 6. Proof placement (testimonials, logos, numbers)
+
+Reporting rule: Some website may not have unlcear messaging. If you can't find clear statements, 
+Dont just return 'Not cearly stated' or something similar. Please create report and fixes based on available content
 
 ---
 

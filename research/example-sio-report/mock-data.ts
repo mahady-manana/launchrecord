@@ -10,6 +10,7 @@ export const mockStartup = {
 };
 
 export const mockReport: SIOV5Report = {
+  score: 58,
   overallScore: 58,
   statement:
     "Your startup is stuck in the 'Blended' zone—visitors understand what you do after 8-10 seconds, but you're not distinctive enough to be memorable or recommended. Your positioning uses generic SaaS language that blends with 20+ competitors, and your AI visibility is nearly non-existent. The core issue: you're describing features before establishing what specific problem you solve and for whom.",

@@ -22,7 +22,7 @@ export default function MomentumAuditPageClient() {
   const handleStartAudit = (e: React.FormEvent) => {
     e.preventDefault();
     if (websiteUrl) {
-      window.location.href = `/survey?url=${encodeURIComponent(websiteUrl)}&pillar=momentum`;
+      window.location.href = `/sio-audit?url=${encodeURIComponent(websiteUrl)}&pillar=momentum`;
     }
   };
 
@@ -81,7 +81,7 @@ export default function MomentumAuditPageClient() {
                     <CheckCircle2 className="h-3 w-3 text-orange-500" /> Free
                   </span>
                   <span className="flex items-center gap-1">
-                    <CheckCircle2 className="h-3 w-3 text-orange-500" /> 2-3 min
+                    <CheckCircle2 className="h-3 w-3 text-orange-500" /> 2-4 min
                   </span>
                 </div>
               </form>

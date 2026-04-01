@@ -130,7 +130,7 @@ export function ForWhoSection() {
         {/* CTA */}
         <div className="mt-12 text-center">
           <Link
-            href="/survey"
+            href="/sio-audit"
             className="inline-flex items-center gap-2 bg-orange-500 text-slate-900 px-8 py-4 rounded-lg font-bold uppercase tracking-widest hover:bg-orange-400 transition-colors"
           >
             See If You're Sovereign

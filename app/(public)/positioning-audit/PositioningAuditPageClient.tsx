@@ -28,7 +28,7 @@ export default function PositioningAuditPageClient() {
   const handleStartAudit = (e: React.FormEvent) => {
     e.preventDefault();
     if (websiteUrl) {
-      window.location.href = `/survey?url=${encodeURIComponent(websiteUrl)}&pillar=positioning`;
+      window.location.href = `/sio-audit?url=${encodeURIComponent(websiteUrl)}&pillar=positioning`;
     }
   };
 
@@ -155,7 +155,7 @@ export default function PositioningAuditPageClient() {
                     <CheckCircle2 className="h-3 w-3" /> Free
                   </span>
                   <span className="flex items-center gap-1">
-                    <CheckCircle2 className="h-3 w-3" /> 2-3 min
+                    <CheckCircle2 className="h-3 w-3" /> 2-4 min
                   </span>
                   <span className="flex items-center gap-1">
                     <CheckCircle2 className="h-3 w-3" /> No card

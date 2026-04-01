@@ -1,11 +1,11 @@
 "use client";
 
-import type { ISIOReport } from "@/models/sio-report";
-import type { ISanitizedSIOReport } from "@/services/sio-report/sanitizer";
+import { getReportBand } from "@/services/sio-report/mappers";
+import { SIOV5Report } from "@/services/sio-report/schema";
 import { CommentItem } from "./CommentItem";
 
 interface OverallScoreCardProps {
-  report: ISIOReport | ISanitizedSIOReport;
+  report: SIOV5Report;
 }
 
 export function OverallScoreCard({ report }: OverallScoreCardProps) {
@@ -35,6 +35,7 @@ export function OverallScoreCard({ report }: OverallScoreCardProps) {
     Ghost: "bg-red-100 text-red-800",
   };
 
+  const band = getReportBand(report.overallScore);
   return (
     <section className="py-8 border-b border-slate-200 space-y-6">
       <div className="flex flex-col md:flex-row md:items-center gap-6">
@@ -87,9 +88,9 @@ export function OverallScoreCard({ report }: OverallScoreCardProps) {
           {/* Band Badge */}
           <div className="flex items-center gap-3">
             <div
-              className={`px-3 py-1.5 rounded-lg text-sm font-bold ${bandColors[report.reportBand]}`}
+              className={`px-3 py-1.5 rounded-lg text-sm font-bold ${bandColors[band]}`}
             >
-              {report.reportBand}
+              {band}
             </div>
             <div className="text-xs text-slate-500">
               <span className="font-semibold">Analyzed:</span>{" "}

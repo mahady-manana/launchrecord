@@ -12,7 +12,7 @@ export const metadata: Metadata = {
     template: "%s | LaunchRecord",
   },
   description:
-    "Free AEO (Answer Engine Optimization) audit. Analyze your startup's visibility in ChatGPT, Claude, and Gemini. Get your AI visibility score and defensibility report in 2-3 minutes.",
+    "Free AEO (Answer Engine Optimization) audit. Analyze your startup's visibility in ChatGPT, Claude, and Gemini. Get your AI visibility score and defensibility report in 2-4 minutes.",
   keywords: [
     "AEO audit",
     "Answer Engine Optimization",
@@ -127,7 +127,7 @@ export default function AeoAuditPage() {
         url: pageUrl,
         name: "AEO Audit - Check If AI Recommends Your Startup | LaunchRecord",
         description:
-          "Free AEO (Answer Engine Optimization) audit. Analyze your startup's visibility in ChatGPT, Claude, and Gemini. Get your AI visibility score in 2-3 minutes.",
+          "Free AEO (Answer Engine Optimization) audit. Analyze your startup's visibility in ChatGPT, Claude, and Gemini. Get your AI visibility score in 2-4 minutes.",
         isPartOf: {
           "@id": `${appUrl}/#website`,
         },
@@ -270,7 +270,7 @@ export default function AeoAuditPage() {
             name: "How long does the audit take?",
             acceptedAnswer: {
               "@type": "Answer",
-              text: "The initial scan takes 2-3 minutes. You'll receive immediate scores and a high-level overview. A comprehensive War Briefing report with detailed recommendations is generated within 24 hours.",
+              text: "The initial scan takes 2-4 minutes. You'll receive immediate scores and a high-level overview. A comprehensive War Briefing report with detailed recommendations is generated within 24 hours.",
             },
           },
           {

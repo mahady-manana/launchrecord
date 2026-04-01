@@ -246,7 +246,7 @@ export default function AeoVsSeoPage() {
           {
             "@type": "LinkRelation",
             name: "SIO-V5 Engine",
-            url: `${appUrl}/sio-v5-engine`,
+            url: `${appUrl}/sio-audit`,
           },
         ],
       },

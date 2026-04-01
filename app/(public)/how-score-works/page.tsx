@@ -37,7 +37,7 @@ export default function HowScoreWorksPage() {
             doesn&apos;t.
           </p>
           <div className="pt-4">
-            <Link href="/survey">
+            <Link href="/sio-audit">
               <Button
                 size="lg"
                 className="gap-2 bg-orange-600 hover:bg-orange-700"
@@ -443,10 +443,10 @@ export default function HowScoreWorksPage() {
           <div className="space-y-2">
             <h2 className="text-3xl font-bold">Ready to See Your Score?</h2>
             <p className="text-xl text-muted-foreground">
-              Get your free audit in under 5 minutes
+              Get your free audit in 2-4 minutes
             </p>
           </div>
-          <Link href="/survey">
+          <Link href="/sio-audit">
             <Button
               size="lg"
               className="gap-2 bg-orange-600 hover:bg-orange-700"
@@ -456,7 +456,7 @@ export default function HowScoreWorksPage() {
             </Button>
           </Link>
           <p className="text-sm text-muted-foreground pt-4">
-            No credit card required • Results in 5 minutes • 100% free
+            No credit card required • Results in 2-4 minutes • 100% free
           </p>
         </section>
       </div>

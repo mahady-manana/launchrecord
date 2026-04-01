@@ -11,7 +11,7 @@ export const metadata: Metadata = {
     template: "%s | LaunchRecord",
   },
   description:
-    "Free product clarity audit. Analyze how quickly visitors understand your product's value. Get your clarity score and actionable recommendations in 2-3 minutes.",
+    "Free product clarity audit. Analyze how quickly visitors understand your product's value. Get your clarity score and actionable recommendations in 2-4 minutes.",
   keywords: [
     "product clarity audit",
     "message clarity",

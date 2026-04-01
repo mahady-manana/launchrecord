@@ -217,7 +217,7 @@ export default function CategoryPageClient({
               <p className="text-slate-500 mt-2">
                 Be the first to add a product in this category!
               </p>
-              <Link href="/survey" className="mt-4 inline-block">
+              <Link href="/sio-audit" className="mt-4 inline-block">
                 <Button>Add Product</Button>
               </Link>
             </CardContent>

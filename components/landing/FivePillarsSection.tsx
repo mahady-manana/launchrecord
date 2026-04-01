@@ -141,7 +141,7 @@ export function FivePillarsSection() {
       {/* Bottom CTA */}
       <div className="mt-12 text-center">
         <Link
-          href="/survey"
+          href="/sio-audit"
           className="inline-flex items-center gap-2 bg-white text-slate-900 px-8 py-4 rounded-lg font-bold uppercase tracking-tight hover:bg-slate-200 transition-colors"
         >
           Start Full Sovereignty Audit

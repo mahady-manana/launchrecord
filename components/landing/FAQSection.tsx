@@ -17,7 +17,7 @@ const faqs: FAQ[] = [
   {
     question: "How does the audit work?",
     answer:
-      "Submit your URL. Our SIO-V5 Engine scrapes your site and cross-references your positioning against 1,400+ competitors to detect Commodity Convergence. We simulate AEO visibility and run a clarity scan. Within 2-3 minutes, you receive your War Briefing with status: JUNK, VULNERABLE, or SOVEREIGN. Then complete weekly missions to fix your record and climb the Sovereign Leaderboard.",
+      "Submit your URL. Our SIO-V5 Engine scrapes your site and cross-references your positioning against 1,400+ competitors to detect Commodity Convergence. We simulate AEO visibility and run a clarity scan. Within 2-4 minutes, you receive your War Briefing with status: JUNK, VULNERABLE, or SOVEREIGN. Then complete weekly missions to fix your record and climb the Sovereign Leaderboard.",
   },
   {
     question: "What is SIO-V5?",

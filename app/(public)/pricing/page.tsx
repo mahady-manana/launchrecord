@@ -291,7 +291,7 @@ export default function PricingPage() {
               variant="outline"
               className="h-14 px-10 border-slate-700 text-white hover:bg-slate-800 font-bold uppercase tracking-widest"
             >
-              <Link href="/survey">Get Free Audit</Link>
+              <Link href="/sio-audit">Get Free Audit</Link>
             </Button>
           </div>
         </div>

@@ -32,7 +32,7 @@ export async function Footer() {
   const resources = [
     { href: "/aeo-vs-seo", label: "AEO vs SEO Guide" },
     { href: "/how-score-works", label: "How Scoring Works" },
-    { href: "/sio-v5-engine", label: "SIO-V5 Engine" },
+    { href: "/sio-audit", label: "SIO-V5 Engine" },
     {
       href: "/blog/will-aeo-commoditize-seo",
       label: "Will AEO Commoditize SEO?",
@@ -60,7 +60,7 @@ export async function Footer() {
 
   const companyLinks = [
     { href: "/", label: "About Us" },
-    { href: "/survey", label: "Contact" },
+    { href: "/sio-audit", label: "Contact" },
   ];
 
   const accountLinks = [

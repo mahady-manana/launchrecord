@@ -12,7 +12,7 @@ export const metadata: Metadata = {
     template: "%s | LaunchRecord",
   },
   description:
-    "Free positioning strategy tool for startups. Analyze your market differentiation, category definition, and competitive positioning. Get your positioning score and action plan in 2-3 minutes.",
+    "Free positioning strategy tool for startups. Analyze your market differentiation, category definition, and competitive positioning. Get your positioning score and action plan in 2-4 minutes.",
   keywords: [
     "positioning tool",
     "category king",

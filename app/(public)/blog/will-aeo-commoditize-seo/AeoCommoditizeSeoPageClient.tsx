@@ -32,7 +32,7 @@ export default function AeoCommoditizeSeoPageClient() {
   const handleStartAudit = (e: React.FormEvent) => {
     e.preventDefault();
     if (websiteUrl) {
-      window.location.href = `/survey?url=${encodeURIComponent(websiteUrl)}`;
+      window.location.href = `/sio-audit?url=${encodeURIComponent(websiteUrl)}`;
     }
   };
 
@@ -849,7 +849,7 @@ export default function AeoCommoditizeSeoPageClient() {
           </Link>
 
           <Link
-            href="/sio-v5-engine"
+            href="/sio-audit"
             className="group bg-white border border-slate-200 rounded-xl p-6 hover:shadow-md hover:border-blue-200 transition-all"
           >
             <div className="flex items-center gap-3 mb-4">

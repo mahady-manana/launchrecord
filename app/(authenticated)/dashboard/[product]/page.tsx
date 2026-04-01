@@ -12,7 +12,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { ISIOReport } from "@/models/sio-report";
+import { SIOV5Report } from "@/services/sio-report/schema";
 import { useProductStore } from "@/stores/product-store";
 import { BarChart3, CheckCircle, Clock, Info, RefreshCcw } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -22,7 +22,7 @@ export default function ProductDashboard() {
   const router = useRouter();
   const { selectedProduct } = useProductStore();
 
-  const [report, setReport] = useState<ISIOReport | null>(null);
+  const [report, setReport] = useState<SIOV5Report | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {

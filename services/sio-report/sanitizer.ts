@@ -52,7 +52,7 @@ export interface ISanitizedSIOReport {
  * Removes sensitive/detailed data that requires signup to view
  * But keeps enough to show value and encourage signup
  */
-export function sanitizeReportForGuest(report: ISIOReport): ISanitizedSIOReport {
+export function sanitizeReportForGuest(report: ISIOReport) {
   return {
     // Overall - Full data shown
     overallScore: report.overallScore,
@@ -73,6 +73,28 @@ export function sanitizeReportForGuest(report: ISIOReport): ISanitizedSIOReport 
       overallCommentPositive: report.firstImpression.overallCommentPositive,
       overallCommentNegative: report.firstImpression.overallCommentNegative,
       // Omitted: headline, subheadline, cta (detailed suggestions)
+      headline: {
+        current: report.firstImpression?.headline?.current || "",
+        positiveComments:
+          report.firstImpression?.headline?.positiveComments || [],
+        negativeComments:
+          report.firstImpression?.headline?.negativeComments || [],
+        suggested: report.firstImpression?.headline?.suggested || [],
+      },
+      subheadline: {
+        current: report.firstImpression?.subheadline?.current || "",
+        positiveComments:
+          report.firstImpression?.subheadline?.positiveComments || [],
+        negativeComments:
+          report.firstImpression?.subheadline?.negativeComments || [],
+        suggested: report.firstImpression?.subheadline?.suggested || [],
+      },
+      cta: {
+        current: report.firstImpression?.cta?.current || "",
+        positiveComments: report.firstImpression?.cta?.positiveComments || [],
+        negativeComments: report.firstImpression?.cta?.negativeComments || [],
+        suggested: report.firstImpression?.cta?.suggested || [],
+      },
     },
 
     // Positioning - Only high-level info

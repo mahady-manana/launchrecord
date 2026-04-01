@@ -23,7 +23,7 @@ export default function FounderProofAuditPageClient() {
   const handleStartAudit = (e: React.FormEvent) => {
     e.preventDefault();
     if (websiteUrl) {
-      window.location.href = `/survey?url=${encodeURIComponent(websiteUrl)}&pillar=founder-proof`;
+      window.location.href = `/sio-audit?url=${encodeURIComponent(websiteUrl)}&pillar=founder-proof`;
     }
   };
 
@@ -76,7 +76,7 @@ export default function FounderProofAuditPageClient() {
                 <CheckCircle2 className="h-4 w-4 text-purple-500" /> Free
               </span>
               <span className="flex items-center gap-2">
-                <CheckCircle2 className="h-4 w-4 text-purple-500" /> 2-3 minutes
+                <CheckCircle2 className="h-4 w-4 text-purple-500" /> 2-4 minutes
               </span>
               <span className="flex items-center gap-2">
                 <CheckCircle2 className="h-4 w-4 text-purple-500" /> Actionable

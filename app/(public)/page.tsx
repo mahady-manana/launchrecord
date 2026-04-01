@@ -351,7 +351,7 @@ export default function LaunchRecordLandingPage() {
             name: "How does the audit work?",
             acceptedAnswer: {
               "@type": "Answer",
-              text: "Submit your URL. Our SIO-V5 Engine scrapes your site and cross-references your positioning against 1,400+ competitors. Within 2-3 minutes, you receive your War Briefing with status: JUNK, VULNERABLE, or SOVEREIGN.",
+              text: "Submit your URL. Our SIO-V5 Engine scrapes your site and cross-references your positioning against 1,400+ competitors. Within 2-4 minutes, you receive your War Briefing with status: JUNK, VULNERABLE, or SOVEREIGN.",
             },
           },
           {

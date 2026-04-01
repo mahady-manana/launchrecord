@@ -12,7 +12,7 @@ export const metadata: Metadata = {
     template: "%s | LaunchRecord",
   },
   description:
-    "Free momentum audit for startups. Analyze your growth signals, market traction, and velocity indicators. Get your momentum score in 2-3 minutes.",
+    "Free momentum audit for startups. Analyze your growth signals, market traction, and velocity indicators. Get your momentum score in 2-4 minutes.",
   keywords: [
     "momentum audit",
     "growth signals",

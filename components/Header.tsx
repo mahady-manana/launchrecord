@@ -69,7 +69,7 @@ const pillars: Pillar[] = [
   },
   {
     name: "SIO-V5 Engine",
-    href: "/sio-v5-engine",
+    href: "/sio-audit",
     description: "The Engine behind everything",
     icon: "",
     color: "purple",
@@ -320,7 +320,7 @@ export function Header() {
           >
             Pricing
           </Link>
-          <Link href="/survey">
+          <Link href="/sio-audit">
             <Button className="bg-green-600 hover:bg-green-700 text-slate-200 font-bold">
               Get Audited for Free
             </Button>
@@ -391,7 +391,7 @@ export function Header() {
               </div>
 
               <Link
-                href="/sio-v5-engine"
+                href="/sio-audit"
                 onClick={() => setIsMobileMenuOpen(false)}
                 className="font-bold text p-3 bg-orange-500/10 text-orange-500 rounded-xl"
               >
@@ -477,7 +477,7 @@ export function Header() {
               </div>
 
               <div className="border-t border-slate-800 pt-2 flex flex-col gap-2">
-                <Link href="/survey" onClick={() => setIsMobileMenuOpen(false)}>
+                <Link href="/sio-audit" onClick={() => setIsMobileMenuOpen(false)}>
                   <Button
                     size="sm"
                     className="w-full bg-orange-500 hover:bg-orange-400 text-slate-900 font-bold"

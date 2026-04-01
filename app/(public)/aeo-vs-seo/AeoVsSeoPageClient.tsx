@@ -30,7 +30,7 @@ export default function AeoVsSeoPageClient() {
   const handleStartAudit = (e: React.FormEvent) => {
     e.preventDefault();
     if (websiteUrl) {
-      window.location.href = `/survey?url=${encodeURIComponent(websiteUrl)}`;
+      window.location.href = `/sio-audit?url=${encodeURIComponent(websiteUrl)}`;
     }
   };
 
@@ -984,7 +984,7 @@ export default function AeoVsSeoPageClient() {
             </span>
             <span className="flex items-center gap-2">
               <CheckCircle2 className="h-4 w-4" />
-              2-3 minute results
+              2-4 minute results
             </span>
           </div>
         </div>
@@ -1033,7 +1033,7 @@ export default function AeoVsSeoPageClient() {
           </Link>
 
           <Link
-            href="/sio-v5-engine"
+            href="/sio-audit"
             className="bg-white border border-slate-200 rounded-xl p-6 hover:shadow-md hover:border-orange-200 transition-all group"
           >
             <div className="flex items-center gap-3 mb-3">

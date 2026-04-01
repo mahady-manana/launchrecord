@@ -150,7 +150,7 @@ export default function AeoAuditPageClient() {
           </form>
 
           <p className="text-sm text-slate-500">
-            Free initial audit • No credit card required • Results in 2-3
+            Free initial audit • No credit card required • Results in 2-4
             minutes
           </p>
         </div>
@@ -397,7 +397,7 @@ export default function AeoAuditPageClient() {
               </span>
             </summary>
             <div className="px-6 pb-6 text-slate-600 leading-relaxed">
-              The initial scan takes 2-3 minutes. You'll receive immediate
+              The initial scan takes 2-4 minutes. You'll receive immediate
               scores and a high-level overview. A comprehensive War Briefing
               report with detailed recommendations is generated within 24 hours.
             </div>

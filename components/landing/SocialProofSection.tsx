@@ -13,7 +13,7 @@ export function SocialProofSection() {
         commoditization. Join founding members before the leaderboard fills.
       </p>
       <div className="flex flex-col items-center gap-6">
-        <Link href="/survey">
+        <Link href="/sio-audit">
           <Button className="h-14 px-10 bg-orange-600 hover:bg-orange-700 rounded-none font-bold uppercase tracking-wide text-lg">
             Get Started Now
           </Button>

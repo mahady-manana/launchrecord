@@ -147,7 +147,7 @@ export default function FreeAuditResultPage() {
                 semantic authority, external mentions, or competitive
                 positioning.
               </p>
-              <Link href="/survey/audit">
+              <Link href="/sio-audit">
                 <Button className="bg-orange-600 hover:bg-orange-700 text-white mt-2">
                   Get Complete AI-Powered Audit
                   <TrendingUp className="h-4 w-4 ml-2" />
@@ -226,7 +226,7 @@ export default function FreeAuditResultPage() {
             and competitive insights.
           </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center pt-2">
-            <Link href="/survey/audit">
+            <Link href="/sio-audit">
               <Button className="h-12 px-8 bg-white text-orange-600 hover:bg-orange-50 font-semibold">
                 Get Advanced AI Audit
                 <TrendingUp className="h-4 w-4 ml-2" />

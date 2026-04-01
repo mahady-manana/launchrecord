@@ -59,7 +59,7 @@ export default function FiveThingsAeoPageClient() {
   const handleStartAudit = (e: React.FormEvent) => {
     e.preventDefault();
     if (websiteUrl) {
-      window.location.href = `/survey?url=${encodeURIComponent(websiteUrl)}`;
+      window.location.href = `/sio-audit?url=${encodeURIComponent(websiteUrl)}`;
     }
   };
 
@@ -700,7 +700,7 @@ export default function FiveThingsAeoPageClient() {
             </span>
             <span className="flex items-center gap-2">
               <CheckCircle2 className="h-4 w-4" />
-              2-3 minute results
+              2-4 minute results
             </span>
           </div>
         </div>
