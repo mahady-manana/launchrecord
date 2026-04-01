@@ -428,6 +428,11 @@ export async function POST(request: NextRequest) {
       await usage.save();
     }
 
+    if (productId) {
+      await Product.findByIdAndUpdate(productId, {
+        score: reportData.overallScore,
+      });
+    }
     return NextResponse.json({
       success: true,
       data: responseReport,

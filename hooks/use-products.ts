@@ -92,7 +92,7 @@ export function useProducts() {
             ? ({
                 overallScore: preview.compositeScore,
                 score: preview.compositeScore,
-                statement: preview.biggestLeveragePoint || "Overall assessment",
+                statement: preview.statement || "Overall assessment",
                 overallCommentPositive: [],
                 overallCommentNegative: [],
                 websiteSummary: {

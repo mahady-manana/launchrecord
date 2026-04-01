@@ -1,7 +1,7 @@
 import { connectToDatabase } from "@/lib/db";
 import { getUserSession } from "@/lib/session";
 import Product from "@/models/product";
-import Report from "@/models/report";
+import SIOReport from "@/models/sio-report";
 import { NextRequest, NextResponse } from "next/server";
 
 export interface ProductPreview {
@@ -14,14 +14,13 @@ export interface ProductPreview {
   score?: number | null;
   categoryPosition: "leader" | "challenger" | "replicable" | "invisible";
   compositeScore: number;
-  primaryConstraint?: string;
+  statement?: string;
   biggestLeveragePoint?: string;
   pillars: {
     aeo: number;
     positioning: number;
     clarity: number;
-    momentum: number;
-    proof: number;
+    firstImpression: number;
   };
   hasReport: boolean;
   createdAt: string;
@@ -54,9 +53,8 @@ export async function GET(request: NextRequest) {
 
     // Find latest reports for all user products
     const productIds = products.map((p) => p._id);
-    const reports = await Report.find({
+    const reports = await SIOReport.find({
       product: { $in: productIds },
-      "overall_assessment.composite_score": { $exists: true },
     })
       .sort({ createdAt: -1 })
       .lean();
@@ -64,7 +62,7 @@ export async function GET(request: NextRequest) {
     // Create a map of product ID to latest report
     const reportMap = new Map();
     for (const report of reports) {
-      const productId = report.product.toString();
+      const productId = report.product?.toString();
       if (!reportMap.has(productId)) {
         reportMap.set(productId, report);
       }
@@ -73,11 +71,18 @@ export async function GET(request: NextRequest) {
     // Transform products with report data
     const productPreviews: ProductPreview[] = products.map((product) => {
       const report = reportMap.get(product._id.toString());
-      
-      const compositeScore = report?.overall_assessment?.composite_score || product.score || 0;
-      
+
+      const compositeScore =
+        report?.overallScore !== undefined
+          ? report.overallScore
+          : product.score || 0;
+
       // Determine category position based on score
-      let categoryPosition: "leader" | "challenger" | "replicable" | "invisible" = "invisible";
+      let categoryPosition:
+        | "leader"
+        | "challenger"
+        | "replicable"
+        | "invisible" = "invisible";
       if (compositeScore >= 80) {
         categoryPosition = "leader";
       } else if (compositeScore >= 60) {
@@ -93,17 +98,17 @@ export async function GET(request: NextRequest) {
         tagline: product.tagline,
         logo: product.logo,
         website: product.website,
-        score: product.score,
+        score: report.overallScore,
         categoryPosition,
         compositeScore,
-        primaryConstraint: report?.overall_assessment?.primary_constraint || undefined,
-        biggestLeveragePoint: report?.overall_assessment?.biggest_leverage_point || undefined,
+        statement: report?.statement || undefined,
+        biggestLeveragePoint:
+          report?.overall_assessment?.biggest_leverage_point || undefined,
         pillars: {
-          aeo: report?.aeo_index?.score || 0,
-          positioning: report?.positioning_sharpness?.score || 0,
-          clarity: report?.clarity_velocity?.score || 0,
-          momentum: report?.momentum_signal?.score || 0,
-          proof: report?.founder_proof_vault?.score || 0,
+          aeo: report?.aeo?.score || 0,
+          positioning: report?.positioning?.score || 0,
+          clarity: report?.clarity?.score || 0,
+          firstImpression: report?.firstImpression?.score || 0,
         },
         hasReport: !!report,
         createdAt: product.createdAt.toISOString(),

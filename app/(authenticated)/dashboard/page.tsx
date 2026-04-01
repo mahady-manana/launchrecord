@@ -13,25 +13,12 @@ import { useProductStore } from "@/stores/product-store";
 import { Plus } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
-import { toast } from "sonner";
+import { useEffect } from "react";
 
 export default function DashboardPage() {
   const router = useRouter();
   const { productsWithReports, isReportsLoading } = useProductStore();
-  const {
-    loadAllProductsData,
-    createProduct,
-    refreshProductsReports,
-    isMutating,
-  } = useProducts();
-  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
-  const [newProduct, setNewProduct] = useState({
-    name: "",
-    website: "",
-    description: "",
-    tagline: "",
-  });
+  const { loadAllProductsData } = useProducts();
 
   useEffect(() => {
     loadAllProductsData();
@@ -47,30 +34,6 @@ export default function DashboardPage() {
 
   const handleManageBilling = (productId: string) => {
     router.push(`/dashboard/${productId}/subscription`);
-  };
-
-  const handleAddProduct = async () => {
-    if (!newProduct.name || !newProduct.website) {
-      toast.error("Please fill in required fields");
-      return;
-    }
-
-    try {
-      await createProduct({
-        name: newProduct.name,
-        website: newProduct.website,
-        description: newProduct.description || undefined,
-        tagline: newProduct.tagline || undefined,
-      });
-
-      toast.success("Product added successfully!");
-      setIsAddDialogOpen(false);
-      setNewProduct({ name: "", website: "", description: "", tagline: "" });
-      await refreshProductsReports();
-    } catch (error) {
-      toast.error("Failed to add product");
-      console.error(error);
-    }
   };
 
   // Prepare billing data

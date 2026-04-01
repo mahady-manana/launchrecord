@@ -72,8 +72,9 @@ export function WebsiteSummaryCard({ summary }: WebsiteSummaryCardProps) {
         <h2 className="text-lg font-bold text-slate-800 mb-1">
           Startup's summary
         </h2>
-        <p className="text-slate-500 text-xs">
-          What your website says + audit comments
+        <p className="text-slate-500 text-md font-medium">
+          What your website says to your audience about your product and its
+          value proposition.
         </p>
       </div>
 

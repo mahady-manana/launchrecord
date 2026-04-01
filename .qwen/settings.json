@@ -3,7 +3,8 @@
     "allow": [
       "Bash(npx *)",
       "Bash(mkdir *)",
-      "Bash(npm run *)"
+      "Bash(npm run *)",
+      "Bash(sed *)"
     ]
   },
   "$version": 3

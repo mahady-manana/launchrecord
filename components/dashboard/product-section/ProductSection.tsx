@@ -1,7 +1,6 @@
 "use client";
 
 import {
-  AwardIcon,
   CircularScore,
   GlobeIcon,
   TargetIcon,
@@ -235,57 +234,51 @@ export function ProductSection({
               {/* Elegant divider */}
               <div className="w-px h-24 bg-gradient-to-b from-slate-200 via-slate-300 to-slate-200" />
 
-              {/* 5 Pillar Scores - Enhanced cards with insights */}
               <div className="flex-1">
-                <div className="grid grid-cols-5 gap-3">
-                  <PillarScoreCard
-                    score={report.aeo.score}
-                    label="AEO Presence"
-                    insight={report.aeo.statement}
-                    icon={GlobeIcon}
-                    description="Track your AEO presence accross multiple AI"
-                    productId={product._id}
-                    pillar="aeo"
-                  />
-                  <PillarScoreCard
-                    score={report.positioning.score}
-                    label="Positioning"
-                    insight={report.positioning.statement}
-                    icon={TargetIcon}
-                    description="Keep an eye on your positioning"
-                    productId={product._id}
-                    pillar="positioning"
-                  />
-                  <PillarScoreCard
-                    score={report.clarity.score}
-                    label="Product Clarity"
-                    insight={report.clarity.statement}
-                    icon={ZapIcon}
-                    description="Pay attention to Time-To-Aha"
-                    productId={product._id}
-                    pillar="clarity"
-                  />
-                  <PillarScoreCard
-                    score={report.overallScore}
-                    label="Momentum"
-                    insight={report.statement}
-                    icon={TrendingUpIcon}
-                    description="Find the best momentum to gear up your product"
-                    productId={product._id}
-                    pillar="momentum"
-                  />
-                  <PillarScoreCard
-                    score={report.overallScore}
-                    label="Proof Vault"
-                    insight={
-                      report.overallCommentPositive[0] ||
-                      "Build your proof vault"
-                    }
-                    icon={AwardIcon}
-                    description="Prove we are wrong"
-                    productId={product._id}
-                    pillar="proof"
-                  />
+                <p className="line-clamp-2">{report.statement}</p>
+
+                {/* 5 Pillar Scores - Enhanced cards with insights */}
+                <div className="pt-4">
+                  <div className="grid grid-cols-4 gap-3">
+                    <PillarScoreCard
+                      score={report.firstImpression.score}
+                      label="First Impression"
+                      insight={report.statement}
+                      icon={TrendingUpIcon}
+                      description="Find the best momentum to gear up your product"
+                      productId={product._id}
+                      pillar="firstImpression"
+                    />
+
+                    <PillarScoreCard
+                      score={report.positioning.score}
+                      label="Positioning"
+                      insight={report.positioning.statement}
+                      icon={TargetIcon}
+                      description="Keep an eye on your positioning"
+                      productId={product._id}
+                      pillar="positioning"
+                    />
+                    <PillarScoreCard
+                      score={report.clarity.score}
+                      label="Product Clarity"
+                      insight={report.clarity.statement}
+                      icon={ZapIcon}
+                      description="Pay attention to Time-To-Aha"
+                      productId={product._id}
+                      pillar="clarity"
+                    />
+
+                    <PillarScoreCard
+                      score={report.aeo.score}
+                      label="AEO Presence"
+                      insight={report.aeo.statement}
+                      icon={GlobeIcon}
+                      description="Track your AEO presence accross multiple AI"
+                      productId={product._id}
+                      pillar="aeo"
+                    />
+                  </div>
                 </div>
               </div>
             </div>
@@ -333,7 +326,7 @@ interface PillarScoreCardProps {
   icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
   description: string;
   productId: string;
-  pillar: "aeo" | "positioning" | "clarity" | "momentum" | "proof";
+  pillar: "aeo" | "positioning" | "clarity" | "firstImpression";
 }
 
 function PillarScoreCard({
@@ -417,30 +410,8 @@ function PillarScoreCard({
       </span>
 
       {/* Score Number */}
-      <span className={cn("relative text-xs text-center mt-2 text-slate-600")}>
-        {description}
-      </span>
-
-      {/* Insight Text */}
-      {insight && (
-        <div className="relative mt-2.5 pt-2.5 border-t border-slate-100 w-full">
-          <p className="text-[9px] leading-tight text-slate-500 font-medium text-center line-clamp-2">
-            {insight}
-          </p>
-        </div>
-      )}
 
       {/* Full Audit CTA Button */}
-      <Link
-        href={`/dashboard/${productId}/${pillarUrlMap[pillar]}`}
-        className={cn(
-          "relative mt-2.5 w-full px-2 py-1.5 rounded-md text-[9px] font-bold uppercase tracking-wide transition-all duration-300 hover:shadow-md",
-          style.bg,
-          "text-white",
-        )}
-      >
-        Full Audit
-      </Link>
     </div>
   );
 }
