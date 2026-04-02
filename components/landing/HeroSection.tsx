@@ -20,8 +20,8 @@ export function HeroSection() {
           <h1 className="text-4xl font-mono md:text-6xl font-semibold tracking-tighter text-slate-100 leading-[1.1]">
             Confused visitors don’t convert <br /> Fix your{" "}
             <span className="text-primary">positioning</span> and{" "}
-            <span className="text-primary"> messaging</span> <br />
-            Turn them into customers
+            <span className="text-primary"> messaging</span> <br /> to turn them
+            into customers.
           </h1>
 
           <div className="space-y-2">
