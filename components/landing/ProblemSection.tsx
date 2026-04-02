@@ -40,7 +40,7 @@ export function ProblemSection() {
         {/* Section Header */}
         <div className="text-center space-y-4 mb-16">
           <h2 className="text-4xl md:text-5xl font-black text-slate-100 tracking-tighter">
-            The Brutal Truth About Your Startup
+            The Reality About Your Startup
           </h2>
           <p className="text-xl text-slate-400 max-w-3xl mx-auto">
             Most founders are building features. The market is deleting them.

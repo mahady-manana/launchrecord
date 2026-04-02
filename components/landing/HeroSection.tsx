@@ -18,10 +18,10 @@ export function HeroSection() {
       <div className="space-y-8 relative px-4 max-w-6xl mx-auto text-center">
         <div className="space-y-4">
           <h1 className="text-4xl font-mono md:text-6xl font-semibold tracking-tighter text-slate-100 leading-[1.1]">
-            Confused visitors don’t convert. <br /> Clear{" "}
-            <span className="text-primary">Positioning</span> and{" "}
-            <span className="text-primary"> Messaging</span> do.
-            <br />
+            Confused visitors don’t convert <br /> Fix your{" "}
+            <span className="text-primary">positioning</span> and{" "}
+            <span className="text-primary"> messaging</span> <br />
+            Turn them into customers
           </h1>
 
           <div className="space-y-2">
@@ -50,7 +50,7 @@ export function HeroSection() {
               type="submit"
               className="h-14 px-10 bg-primary text-background text-sm hover:opacity-90 rounded-none font-black uppercase tracking-widest transition-all"
             >
-              Run audit
+              Run free audit
             </Button>
           </form>
 

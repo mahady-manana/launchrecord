@@ -133,7 +133,7 @@ export function Header() {
       <aside className="py-4 text-center bg-gradient-to-b from-green-900 via-green-9500 to-green-800 text-white text-sm font-medium py-2 px-4">
         <p>
           <span className="pr-4">
-            Try our new comprehensive Positioning & Clarity Audit, the most
+            🚀 Try our new comprehensive Positioning & Clarity Audit, the most
             complete audit available!
           </span>
           <Link

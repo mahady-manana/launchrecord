@@ -10,7 +10,7 @@ export function SolutionSection() {
         {/* Section Header */}
         <div className="text-center space-y-4 mb-16">
           <h2 className="text-4xl md:text-5xl font-black text-slate-100 tracking-tighter">
-            How We Fix It
+            How It Works
           </h2>
           <p className="text-xl text-slate-400 max-w-3xl mx-auto">
             We don't just identify problems. We give you the exact fixes to make
@@ -32,11 +32,11 @@ export function SolutionSection() {
                 We Detect Your Blind Spots
               </h3>
               <p className="text-slate-400 text-lg leading-relaxed">
-                Our SIO-V5 Engine analyzes your startup against 10,000+ records
-                to find what you can't see: positioning that sounds like
-                everyone else, messaging that confuses prospects, and AI
-                invisibility that's killing your discovery. You get cold,
-                clinical data—no opinions, no fluff.
+                Our engine analyzes your startup against 10,000+ records to find
+                what you can't see: positioning that sounds like everyone else,
+                messaging that confuses prospects, and AI invisibility that's
+                killing your discovery. You get cold, clinical data—no opinions,
+                no fluff.
               </p>
             </div>
           </div>
@@ -53,14 +53,11 @@ export function SolutionSection() {
                 We Tell You What's Broken
               </h3>
               <p className="text-slate-400 text-lg leading-relaxed">
-                Your War Briefing shows your Global Score, Survival Probability,
-                and a brutal truth summary. You'll know your exact status:{" "}
-                <span className="text-slate-100 font-semibold">JUNK</span>,{" "}
-                <span className="text-slate-100 font-semibold">VULNERABLE</span>
-                , or{" "}
-                <span className="text-orange-500 font-semibold">SOVEREIGN</span>
-                . No sugarcoating. No generic advice. Just the raw data you need
-                to prioritize fixes.
+                Your report shows your score, strong points, and weaknesses
+                across different pillars of defensibility. Each weakness comes
+                with specific examples and a truth summary. You'll know what
+                works, what doesn't and how to fixes. No generic advice. Just
+                the raw data you need to prioritize fixes.
               </p>
             </div>
           </div>
@@ -115,15 +112,12 @@ export function SolutionSection() {
               <p className="text-slate-300 font-medium">
                 Ready to fix your positioning?
               </p>
-              <p className="text-slate-500 text-sm">
-                Get your War Briefing in 2-4 minutes. Free forever.
-              </p>
             </div>
             <Link
               href="/sio-audit"
               className="inline-flex items-center gap-2 bg-orange-500 text-slate-900 px-8 py-4 rounded-lg font-bold uppercase tracking-widest hover:bg-orange-400 transition-colors whitespace-nowrap"
             >
-              Start Your Free Audit
+              Run Free Audit
               <CheckCircle2 className="w-5 h-5" />
             </Link>
           </div>
