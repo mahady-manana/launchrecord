@@ -2,8 +2,8 @@
 
 import { Button } from "@/components/ui/button";
 import { useProducts } from "@/hooks/use-products";
-import { useProductStore } from "@/stores/product-store";
 import type { ISIOReport } from "@/models/sio-report";
+import { useProductStore } from "@/stores/product-store";
 import { ArrowLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -29,9 +29,7 @@ export default function ProductAuditPage({ params }: AuditPageProps) {
   const { fetchProducts } = useProducts();
 
   const [product, setProduct] = useState<typeof selectedProduct>(null);
-  const [existingReport, setExistingReport] = useState<ISIOReport | null>(
-    null,
-  );
+  const [existingReport, setExistingReport] = useState<ISIOReport | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [auditStatus, setAuditStatus] = useState<AuditStatus>("idle");
   const [progress, setProgress] = useState(0);
@@ -109,7 +107,7 @@ export default function ProductAuditPage({ params }: AuditPageProps) {
         if (prev >= 90) return prev;
         return prev + Math.random() * 10;
       });
-    }, 2000);
+    }, 10000);
 
     try {
       if (!product.website) {

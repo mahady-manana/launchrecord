@@ -269,15 +269,22 @@ export async function POST(request: NextRequest) {
       robotstxt: websiteContent.robottxts,
       sitemap: websiteContent.sitemap,
     };
-
+    const keyInfo = await client.apiKeys.getCurrentKeyMetadata();
+    console.log(keyInfo);
     // Step 1: Generate initial SIO-V5 audit report
     const initialResponse = await client.chat.send({
       chatGenerationParams: {
         models: [
-          "qwen/qwen3.6-plus-preview:free",
-          "nvidia/nemotron-3-super-120b-a12b:free",
-          "qwen/qwen3-next-80b-a3b-instruct:free",
+          "x-ai/grok-4.1-fast",
+          "qwen/qwen3.5-35b-a3b",
+          "qwen/qwen3-vl-8b-thinking",
+          // "inception/mercury-2",
+          // "qwen/qwen3.6-plus-preview:free",
+          // "openai/gpt-5.4-nano",
+          // "qwen/qwen2.5-coder-7b-instruct",
+          // "qwen/qwen3.5-9b",
         ],
+
         messages: [
           {
             role: "system",
@@ -310,8 +317,12 @@ export async function POST(request: NextRequest) {
         },
         provider: {
           requireParameters: true,
+          sort: "throughput",
         },
         stream: false,
+        reasoning: {
+          effort: "high",
+        },
       },
     });
 
@@ -392,10 +403,11 @@ export async function POST(request: NextRequest) {
     // console.log("====================================");
 
     // Parse and map the verified response
+
     let rawData;
     try {
       rawData = JSON.parse(verifiedContent);
-    } catch {
+    } catch (error) {
       // If verification failed to return JSON, use the initial report
       rawData = JSON.parse(initialContent);
     }
