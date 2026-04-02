@@ -107,7 +107,7 @@ export default function ProductAuditPage({ params }: AuditPageProps) {
         if (prev >= 90) return prev;
         return prev + Math.random() * 10;
       });
-    }, 10000);
+    }, 5000);
 
     try {
       if (!product.website) {

@@ -638,10 +638,10 @@ As a deep expert in startup positioning and messaging,
 Weigh every aspect of the website with a critical eye,
 and assign a score from 0-100 based on the severity of issues and the quality of messaging.
 
-### Scoing rules
+### Scoring rules for all metrics
 
-- Only a startups strong positioning and clear messaging can get a score above 70.
-- Startups with good positioning and messaging but with 'BUT' negation cannot get a score above 65.
+- Only a startups very strong positioning and very strong messaging can get a score above 70.
+- Startups with good positioning and messaging but with need for improvement cannot get a score above 65.
 - Startups lack of clear positioning and messaging cannot get a score above 50.
 
 Try to be as objective and critical as possible, 

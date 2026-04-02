@@ -3,6 +3,7 @@
 import clsx from "clsx";
 import { Check, Clock2, Copy, Sparkles } from "lucide-react";
 import { useState } from "react";
+import { Badge } from "../ui/badge";
 import { CommentItem } from "./CommentItem";
 
 interface MetricInsightProps {
@@ -13,6 +14,7 @@ interface MetricInsightProps {
   negativeComments?: string[];
   suggested?: string[];
   compact?: boolean;
+  score?: number;
 }
 
 export function MetricInsight({
@@ -23,6 +25,7 @@ export function MetricInsight({
   suggested,
   currentTitle,
   compact = false,
+  score,
 }: MetricInsightProps) {
   const currentText = current?.trim() ? current : "Not clearly stated.";
   const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
@@ -53,6 +56,11 @@ export function MetricInsight({
             <Clock2 size={18} />
             <p>{currentTitle || "Current"}</p>
           </div>
+          {score ? (
+            <Badge variant="outline" className="text-sm text-slate-500">
+              {score}
+            </Badge>
+          ) : null}
         </div>
         <p className="text-slate-500 leading-relaxed text-sm font-semibold">
           {currentText}
