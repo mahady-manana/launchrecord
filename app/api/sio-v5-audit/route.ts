@@ -1,6 +1,7 @@
 import { connectToDatabase } from "@/lib/db";
 import { getOpenRouterClient } from "@/lib/openrouter";
 import { getUserSession } from "@/lib/session";
+import ApiError from "@/models/api-error";
 import Product from "@/models/product";
 import SIOReport from "@/models/sio-report";
 import Subscription from "@/models/subscription";
@@ -116,6 +117,12 @@ async function getOrCreateSioUsage(
 }
 
 export async function POST(request: NextRequest) {
+  let website = "";
+  try {
+    await connectToDatabase();
+  } catch (error) {
+    // nothing we can do if DB connection fails, but we should log it
+  }
   try {
     const body = await request.json();
     const validation = sioV5AuditSchema.safeParse(body);
@@ -161,8 +168,6 @@ export async function POST(request: NextRequest) {
     if (!isGuest && !userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
-
-    await connectToDatabase();
 
     if (isGuest) {
       const existingReport = await SIOReport.findOne({ url: hostUrl })
@@ -250,7 +255,7 @@ export async function POST(request: NextRequest) {
 
     // Get OpenRouter client
     const client = getOpenRouterClient();
-
+    website = normalizedUrl;
     // Extract website content
     const websiteContent = await getWebsiteContent(normalizedUrl, true);
 
@@ -475,6 +480,14 @@ export async function POST(request: NextRequest) {
   } catch (error: any) {
     console.error("SIO-V5 Audit API error:", error);
 
+    const errordb = new ApiError({
+      path: "/api/sio-v5-audit",
+      content: JSON.stringify(error),
+      metadata: {
+        website: website,
+        stack: error.stack,
+      },
+    });
     // Handle API capacity errors
     if (
       error.message?.includes("capacity") ||
