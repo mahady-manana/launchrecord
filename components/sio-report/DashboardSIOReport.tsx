@@ -181,19 +181,21 @@ export default function DashboardSIOReport({
     <div className="max-w-5xl mx-auto border bg-white rounded-lg">
       {/* Header */}
       <header className="border-b border-slate-200 bg-slate-800 text-slate-200">
-        <div className="max-w-5xl mx-auto px-4 py-6">
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <h1 className="text-2xl font-bold">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 py-4 sm:py-6">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-4">
+            <div className="w-full sm:w-auto">
+              <h1 className="text-xl sm:text-2xl font-bold">
                 {isGuest ? "Free SIO-V5 Startup Audit" : "SIO-V5 Audit Report"}
               </h1>
-              <div className="pt-4">
-                <p className="text-slate-200 flex gap-4">
-                  Website:{" "}
-                  <span className="bg-slate-700 px-4 rounded-md">
-                    {report?.url || "URL unavailable"}
-                  </span>
+              <div className="pt-3 sm:pt-4">
+                <p className="text-slate-200 flex flex-col sm:flex-row gap-2 sm:gap-4">
                   <span>
+                    Website:{" "}
+                    <span className="bg-slate-700 px-3 py-0.5 rounded-md text-sm sm:text-base break-all">
+                      {report?.url || "URL unavailable"}
+                    </span>
+                  </span>
+                  <span className="text-xs sm:text-sm">
                     {report?.createdAt
                       ? new Date(report.createdAt).toLocaleString()
                       : "Date unavailable"}
@@ -202,8 +204,14 @@ export default function DashboardSIOReport({
               </div>
             </div>
             {isGuest && (
-              <Link href={signupHref}>
-                <Button variant="default">Sign Up For Full Report</Button>
+              <Link href={signupHref} className="shrink-0">
+                <Button
+                  variant="default"
+                  size="sm"
+                  className="w-full sm:w-auto"
+                >
+                  Sign Up For Full Report
+                </Button>
               </Link>
             )}
           </div>
@@ -211,8 +219,8 @@ export default function DashboardSIOReport({
           {/* View Toggle */}
         </div>
       </header>
-      <div className="px-8">
-        <div className="flex items-center gap-2 mt-6">
+      <div className="px-4 sm:px-8">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 mt-4 sm:mt-6">
           <Button
             variant={view === "full" ? "default" : "outline"}
             size="sm"
@@ -262,7 +270,7 @@ export default function DashboardSIOReport({
           </Button>
         </div>
       </div>
-      <main className="max-w-5xl mx-auto py-8">
+      <main className="max-w-5xl mx-auto py-4 sm:py-8">
         {/* Render appropriate view */}
         {view === "actionable" ? (
           <ActionableReport
@@ -286,24 +294,24 @@ export default function DashboardSIOReport({
         ) : (
           <div>
             {/* Full Report Sections */}
-            <div className="px-8 pb-8">
+            <div className="px-4 sm:px-8 pb-4 sm:pb-8">
               <HowToReadReport />
             </div>
-            <div className="p-8">
+            <div className="px-4 sm:px-8 py-4 sm:p-8">
               <OverallScoreCard report={report} />
             </div>
 
-            <div className="p-8">
+            <div className="px-4 sm:px-8 py-4 sm:p-8">
               <WebsiteSummaryCard summary={report.websiteSummary} />
             </div>
 
             {/* First Impression */}
-            <div className="relative p-8">
+            <div className="relative px-4 sm:px-8 py-4 sm:p-8">
               <FirstImpressionCard report={report.firstImpression} />
             </div>
 
             {/* Positioning */}
-            <div className="relative p-8">
+            <div className="relative px-4 sm:px-8 py-4 sm:p-8">
               <PositioningCard report={positioningReport} isGuest={isGuest} />
               {isGuest && (
                 <LockedOverlay
@@ -317,7 +325,7 @@ export default function DashboardSIOReport({
             </div>
 
             {/* Clarity */}
-            <div className="relative p-8">
+            <div className="relative px-4 sm:px-8 py-4 sm:p-8">
               <ClarityCard report={clarityReport} isGuest={isGuest} />
               {isGuest && (
                 <LockedOverlay
@@ -330,15 +338,15 @@ export default function DashboardSIOReport({
               )}
             </div>
 
-            <div className="p-8">
+            <div className="px-4 sm:px-8 py-4 sm:p-8">
               {/* AEO - Full data shown (free tier) */}
               <AEOCard report={report.aeo} />
             </div>
 
             {/* CTA to Sign Up */}
             {isGuest && (
-              <div className="bg-gradient-to-r from-orange-500 to-orange-600 p-8 text-center text-white">
-                <h2 className="text-2xl font-bold mb-4">
+              <div className="bg-gradient-to-r from-orange-500 to-orange-600 p-6 sm:p-8 text-center text-white">
+                <h2 className="text-xl sm:text-2xl font-bold mb-4">
                   Ready To Fix Your Startup's Messaging?
                 </h2>
                 <p className="text-orange-100 mb-6 max-w-2xl mx-auto">
