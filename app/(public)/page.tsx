@@ -7,8 +7,7 @@ const pageUrl = appUrl;
 
 export const metadata: Metadata = {
   title: {
-    default:
-      "Turn Confused Visitors Into Customers | Free SaaS Positioning & Messaging Audit | LaunchRecord",
+    default: "Free Positioning and Messaging Audit For Startups",
     template: "%s | LaunchRecord",
   },
   description:
@@ -38,8 +37,7 @@ export const metadata: Metadata = {
     canonical: pageUrl,
   },
   openGraph: {
-    title:
-      "Turn Confused Visitors Into Customers | Free SaaS Positioning & Messaging Audit | LaunchRecord",
+    title: "Free SaaS Positioning and Messaging Audit | LaunchRecord",
     description:
       "Audit your SaaS messaging clarity, spot positioning gaps, test AI visibility and get exact copy fixes to turn confusion into conversions.",
     url: pageUrl,
@@ -51,15 +49,14 @@ export const metadata: Metadata = {
         url: "/og-image.png",
         width: 1200,
         height: 630,
-        alt: "LaunchRecord - SaaS Positioning & Messaging Audit",
+        alt: "LaunchRecord - SaaS Positioning and Messaging Audit",
         type: "image/png",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title:
-      "Turn Confused Visitors Into Customers | Free SaaS Positioning & Messaging Audit | LaunchRecord",
+    title: "Free SaaS Positioning and Messaging Audit | LaunchRecord",
     description:
       "Audit your SaaS messaging clarity, spot positioning gaps, test AI visibility and get exact copy fixes.",
     images: ["/og-image.png"],
@@ -135,7 +132,7 @@ export default function LaunchRecordLandingPage() {
         "@type": "WebPage",
         "@id": pageUrl,
         url: pageUrl,
-        name: "LaunchRecord - SaaS Positioning & Messaging Audit Tools",
+        name: "Free SaaS Positioning and Messaging Audit | LaunchRecord",
         description:
           "LaunchRecord audits your SaaS messaging clarity, spots positioning gaps, tests AI visibility and gives you exact copy fixes to turn confusion into conversions.",
         isPartOf: {
@@ -374,8 +371,7 @@ export default function LaunchRecordLandingPage() {
       {
         "@type": "Article",
         "@id": `${pageUrl}#article`,
-        headline:
-          "Turn Confused Visitors Into Customers | Free SaaS Positioning & Messaging Audit | LaunchRecord",
+        headline: "Free SaaS Positioning and Messaging Audit | LaunchRecord",
         description:
           "LaunchRecord audits your SaaS messaging clarity, spots positioning gaps, tests AI visibility and gives you exact copy fixes to turn confusion into conversions.",
         image: [
