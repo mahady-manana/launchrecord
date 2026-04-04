@@ -130,7 +130,7 @@ export function Header() {
 
   return (
     <>
-      <aside className="py-4 text-center bg-gradient-to-b from-green-900 via-green-9500 to-green-800 text-white text-sm font-medium py-2 px-4">
+      <aside className="text-center bg-gradient-to-b from-primary/10 to-primary/5 text-slate-900 text-sm font-medium py-2 px-4">
         <p>
           <span className="pr-4">
             🚀 Try our new comprehensive Positioning & Clarity Audit, the most
@@ -138,7 +138,7 @@ export function Header() {
           </span>
           <Link
             href="/sio-audit"
-            className="underline text-white font-bold py-2 rounded-lg transition-colors"
+            className="underline text-primary font-bold py-2 rounded-lg transition-colors"
           >
             Try now, no signup required!
           </Link>
@@ -147,7 +147,7 @@ export function Header() {
       <header
         className={clsx(
           "relative left-0 right-0 translate-x-0 backdrop-blur-xl z-50 w-full",
-          "flex max-w-none gap-4 items-center justify-between bg-slate-900 border-b border-slate-800 px-8 py-4",
+          "flex max-w-none gap-4 items-center justify-between bg-white/95 border-b border-slate-200 px-8 py-4 shadow-sm",
         )}
       >
         <Link href="/" className="flex items-end gap-2">
@@ -158,7 +158,7 @@ export function Header() {
             height={30}
             priority
           />
-          <span className="text-xl md:block hidden font-bold text-slate-100 tracking-tight">
+          <span className="text-xl md:block hidden font-bold text-slate-900 tracking-tight">
             Launchrecord
           </span>
         </Link>
@@ -171,7 +171,7 @@ export function Header() {
             onMouseEnter={() => setIsPillarsOpen(true)}
             onMouseLeave={() => setIsPillarsOpen(false)}
           >
-            <button className="font-bold text-sm text-slate-300 hover:text-slate-100 hover:bg-slate-800 rounded-xl px-4 py-2 transition-colors flex items-center gap-1">
+            <button className="font-bold text-sm text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-xl px-4 py-2 transition-colors flex items-center gap-1">
               <span>🔧</span> Audit Tools
               <svg
                 className={`w-4 h-4 transition-transform duration-200 ${isPillarsOpen ? "rotate-180" : ""}`}
@@ -188,21 +188,21 @@ export function Header() {
               </svg>
             </button>
             {isPillarsOpen && (
-              <div className="absolute top-full left-0 mt-0 bg-slate-800 rounded-xl shadow-lg border border-slate-700 p-4 min-w-[500px] z-50">
+              <div className="absolute top-full left-0 mt-0 bg-white rounded-xl shadow-lg border border-slate-200 p-4 min-w-[500px] z-50">
                 <div className="grid grid-cols-2 gap-3">
                   {pillars.map((pillar) => (
                     <Link
                       key={pillar.name}
                       href={pillar.href}
-                      className="block p-3 rounded-lg hover:bg-slate-700 transition-colors"
+                      className="block p-3 rounded-lg hover:bg-slate-50 transition-colors"
                     >
                       <div className="flex items-center gap-2">
                         <span className="text-xl">{pillar.icon}</span>
                         <div>
-                          <div className="text-sm font-medium text-slate-100">
+                          <div className="text-sm font-medium text-slate-900">
                             {pillar.name}
                           </div>
-                          <div className="text-xs text-slate-400">
+                          <div className="text-xs text-slate-600">
                             {pillar.description}
                           </div>
                         </div>
@@ -220,7 +220,7 @@ export function Header() {
             onMouseEnter={() => setIsResourcesOpen(true)}
             onMouseLeave={() => setIsResourcesOpen(false)}
           >
-            <button className="font-bold text-sm text-slate-300 hover:text-slate-100 hover:bg-slate-800 rounded-xl px-4 py-2 transition-colors flex items-center gap-1">
+            <button className="font-bold text-sm text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-xl px-4 py-2 transition-colors flex items-center gap-1">
               <span>📚</span> Resources
               <svg
                 className={`w-4 h-4 transition-transform duration-200 ${isResourcesOpen ? "rotate-180" : ""}`}
@@ -237,10 +237,10 @@ export function Header() {
               </svg>
             </button>
             {isResourcesOpen && (
-              <div className="absolute top-full left-0 mt-0 bg-slate-800 rounded-xl shadow-lg border border-slate-700 p-4 min-w-[450px] z-50">
+              <div className="absolute top-full left-0 mt-0 bg-white rounded-xl shadow-lg border border-slate-200 p-4 min-w-[450px] z-50">
                 <div className="space-y-3">
                   <div>
-                    <h4 className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
+                    <h4 className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">
                       Guides
                     </h4>
                     <div className="space-y-1">
@@ -250,12 +250,12 @@ export function Header() {
                           <Link
                             key={resource.name}
                             href={resource.href}
-                            className="block p-2 rounded-lg hover:bg-slate-700 transition-colors"
+                            className="block p-2 rounded-lg hover:bg-slate-50 transition-colors"
                           >
-                            <div className="text-sm font-medium text-slate-100">
+                            <div className="text-sm font-medium text-slate-900">
                               {resource.name}
                             </div>
-                            <div className="text-xs text-slate-400">
+                            <div className="text-xs text-slate-600">
                               {resource.description}
                             </div>
                           </Link>
@@ -271,7 +271,7 @@ export function Header() {
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
           >
-            <button className="font-bold text-sm text-slate-300 hover:text-slate-100 hover:bg-slate-800 rounded-xl px-4 py-2 transition-colors flex items-center gap-1">
+            <button className="font-bold text-sm text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-xl px-4 py-2 transition-colors flex items-center gap-1">
               Startup directories
               <svg
                 className={`w-4 h-4 transition-transform duration-200 ${isHovered ? "rotate-180" : ""}`}
@@ -288,10 +288,10 @@ export function Header() {
               </svg>
             </button>
             {isHovered && (
-              <div className="absolute top-full left-0 mt-0 bg-slate-800 rounded-xl shadow-lg border border-slate-700 p-4 min-w-[400px] z-50">
+              <div className="absolute top-full left-0 mt-0 bg-white rounded-xl shadow-lg border border-slate-200 p-4 min-w-[400px] z-50">
                 <div className="grid grid-cols-2 gap-2">
                   {isLoading ? (
-                    <div className="col-span-2 px-3 py-2 text-sm text-slate-400 text-center">
+                    <div className="col-span-2 px-3 py-2 text-sm text-slate-500 text-center">
                       Loading...
                     </div>
                   ) : (
@@ -299,12 +299,12 @@ export function Header() {
                       <Link
                         key={category._id}
                         href={`/categories/${category.slug}`}
-                        className="block p-3 rounded-lg hover:bg-slate-700 transition-colors"
+                        className="block p-3 rounded-lg hover:bg-slate-50 transition-colors"
                       >
-                        <div className="text-sm font-medium text-slate-100">
+                        <div className="text-sm font-medium text-slate-900">
                           {category.name}
                         </div>
-                        <div className="text-xs text-slate-400">
+                        <div className="text-xs text-slate-600">
                           {category.count} products
                         </div>
                       </Link>
@@ -314,7 +314,7 @@ export function Header() {
                 <div>
                   <Link
                     href="/categories"
-                    className="block text-center rounded-full w-full p-2 bg-slate-700 text-slate-100"
+                    className="block text-center rounded-full w-full p-2 bg-slate-100 text-slate-900 hover:bg-slate-200"
                   >
                     All categories
                   </Link>
@@ -324,13 +324,13 @@ export function Header() {
           </div>
           <Link
             href="#features"
-            className="font-bold text-sm text-slate-300 hover:text-slate-100 hover:bg-slate-800 rounded-xl px-4 py-2 transition-colors"
+            className="font-bold text-sm text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-xl px-4 py-2 transition-colors"
           >
             Features
           </Link>
           <Link
             href="#pricing"
-            className="font-bold text-sm text-slate-300 hover:text-slate-100 hover:bg-slate-800 rounded-xl px-4 py-2 transition-colors"
+            className="font-bold text-sm text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-xl px-4 py-2 transition-colors"
           >
             Pricing
           </Link>
@@ -352,11 +352,11 @@ export function Header() {
         {/* Mobile Menu Button */}
         <button
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          className="md:hidden p-2 rounded-lg hover:bg-slate-800 transition-colors"
+          className="md:hidden p-2 rounded-lg hover:bg-slate-100 transition-colors"
           aria-label="Toggle menu"
         >
           <svg
-            className="w-6 h-6 text-slate-300"
+            className="w-6 h-6 text-slate-600"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -381,11 +381,11 @@ export function Header() {
 
         {/* Mobile Menu */}
         {isMobileMenuOpen && (
-          <div className="md:hidden absolute top-full left-0 right-0 bg-slate-900 border-b border-slate-800 shadow-lg mx-0 p-4 z-50">
+          <div className="md:hidden absolute top-full left-0 right-0 bg-white border-b border-slate-200 shadow-lg mx-0 p-4 z-50">
             <div className="flex flex-col gap-2">
               {/* Audit Tools Section */}
-              <div className="border-b border-slate-800 pb-3">
-                <div className="font-bold text-sm text-slate-300 px-3 py-2 flex items-center gap-2">
+              <div className="border-b border-slate-200 pb-3">
+                <div className="font-bold text-sm text-slate-900 px-3 py-2 flex items-center gap-2">
                   <span>🔧</span> Audit Tools
                 </div>
                 <div className="grid grid-cols-2 gap-2 px-2">
@@ -394,15 +394,15 @@ export function Header() {
                       key={pillar.name}
                       href={pillar.href}
                       onClick={() => setIsMobileMenuOpen(false)}
-                      className="block p-3 rounded-lg bg-slate-800 hover:bg-slate-700 transition-colors"
+                      className="block p-3 rounded-lg bg-slate-50 hover:bg-slate-100 transition-colors"
                     >
                       <div className="flex items-center gap-2">
                         <span className="text-lg">{pillar.icon}</span>
                         <div>
-                          <div className="text-sm font-medium text-slate-100">
+                          <div className="text-sm font-medium text-slate-900">
                             {pillar.name}
                           </div>
-                          <div className="text-xs text-slate-400 mb:block hidden">
+                          <div className="text-xs text-slate-600 mb:block hidden">
                             {pillar.description}
                           </div>
                         </div>
@@ -415,26 +415,26 @@ export function Header() {
               <Link
                 href="/sio-audit"
                 onClick={() => setIsMobileMenuOpen(false)}
-                className="font-bold text p-3 bg-orange-500/10 text-orange-500 rounded-xl"
+                className="font-bold text p-3 bg-primary/10 text-primary rounded-xl"
               >
                 SIO-V5 Engine
               </Link>
               <Link
                 href="/leaderboard"
                 onClick={() => setIsMobileMenuOpen(false)}
-                className="font-bold text p-3 bg-slate-800 text-slate-300 rounded-xl"
+                className="font-bold text p-3 bg-slate-100 text-slate-700 rounded-xl"
               >
                 Sovereign 100
               </Link>
 
               {/* Mobile Resources Section */}
-              <div className="border-t border-slate-800 pt-3">
-                <div className="font-bold text-sm text-slate-300 px-3 py-2 flex items-center gap-2">
+              <div className="border-t border-slate-200 pt-3">
+                <div className="font-bold text-sm text-slate-900 px-3 py-2 flex items-center gap-2">
                   <span>📚</span> Resources
                 </div>
                 <div className="space-y-3 px-3">
                   <div>
-                    <h4 className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
+                    <h4 className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">
                       Guides
                     </h4>
                     <div className="space-y-1">
@@ -445,12 +445,12 @@ export function Header() {
                             key={resource.name}
                             href={resource.href}
                             onClick={() => setIsMobileMenuOpen(false)}
-                            className="block p-2 rounded-lg hover:bg-slate-800 transition-colors"
+                            className="block p-2 rounded-lg hover:bg-slate-50 transition-colors"
                           >
-                            <div className="text-sm font-medium text-slate-100">
+                            <div className="text-sm font-medium text-slate-900">
                               {resource.name}
                             </div>
-                            <div className="text-xs text-slate-400">
+                            <div className="text-xs text-slate-600">
                               {resource.description}
                             </div>
                           </Link>
@@ -461,13 +461,13 @@ export function Header() {
               </div>
 
               {/* Mobile Categories Dropdown */}
-              <div className="border-t border-slate-800 pt-2">
-                <div className="font-bold text-sm text-slate-300 px-3 py-2">
+              <div className="border-t border-slate-200 pt-2">
+                <div className="font-bold text-sm text-slate-900 px-3 py-2">
                   Top Startups
                 </div>
                 <div className="grid grid-cols-2 gap-2 px-2">
                   {isLoading ? (
-                    <div className="col-span-2 px-3 py-2 text-sm text-slate-400 text-center">
+                    <div className="col-span-2 px-3 py-2 text-sm text-slate-500 text-center">
                       Loading...
                     </div>
                   ) : (
@@ -476,12 +476,12 @@ export function Header() {
                         key={category._id}
                         href={`/categories/${category.slug}`}
                         onClick={() => setIsMobileMenuOpen(false)}
-                        className="block p-3 rounded-lg bg-slate-800 hover:bg-slate-700 transition-colors"
+                        className="block p-3 rounded-lg bg-slate-50 hover:bg-slate-100 transition-colors"
                       >
-                        <div className="text-sm font-medium text-slate-100">
+                        <div className="text-sm font-medium text-slate-900">
                           {category.name}
                         </div>
-                        <div className="text-xs text-slate-400 mb:block hidden">
+                        <div className="text-xs text-slate-600 mb:block hidden">
                           {category.count} products
                         </div>
                       </Link>
@@ -491,21 +491,21 @@ export function Header() {
                 <div className="mt-4">
                   <Link
                     href="/categories"
-                    className="block text-center rounded-full w-full p-2 bg-slate-800 text-slate-100"
+                    className="block text-center rounded-full w-full p-2 bg-slate-100 text-slate-900 hover:bg-slate-200"
                   >
                     All categories
                   </Link>
                 </div>
               </div>
 
-              <div className="border-t border-slate-800 pt-2 flex flex-col gap-2">
+              <div className="border-t border-slate-200 pt-2 flex flex-col gap-2">
                 <Link
                   href="/sio-audit"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   <Button
                     size="sm"
-                    className="w-full bg-orange-500 hover:bg-orange-400 text-slate-900 font-bold"
+                    className="w-full bg-secondary hover:bg-secondary/90 text-white font-bold"
                   >
                     Get Started for Free
                   </Button>

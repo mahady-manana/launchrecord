@@ -35,14 +35,14 @@ const problems: Problem[] = [
 
 export function ProblemSection() {
   return (
-    <section className="py-20 bg-slate-900">
+    <section className="py-20 bg-white">
       <div className="max-w-7xl mx-auto px-4">
         {/* Section Header */}
         <div className="text-center space-y-4 mb-16">
-          <h2 className="text-4xl md:text-5xl font-black text-slate-100 tracking-tighter">
+          <h2 className="text-4xl md:text-5xl font-bold text-slate-900 tracking-tighter">
             The Reality About Your Startup
           </h2>
-          <p className="text-xl text-slate-400 max-w-3xl mx-auto">
+          <p className="text-xl text-slate-600 max-w-3xl mx-auto">
             Most founders are building features. The market is deleting them.
             Here's what's killing your defensibility.
           </p>
@@ -53,25 +53,25 @@ export function ProblemSection() {
           {problems.map((problem, index) => (
             <div
               key={index}
-              className="relative group bg-slate-800/50 border border-slate-700 hover:border-orange-500/50 rounded-xl p-8 transition-all duration-300"
+              className="relative group bg-white border border-slate-200 hover:border-secondary/50 rounded-xl p-8 transition-all duration-300 shadow-sm hover:shadow-md"
             >
               {/* Icon */}
-              <div className="w-16 h-16 rounded-lg bg-slate-900 text-orange-500 flex items-center justify-center mb-6">
+              <div className="w-16 h-16 rounded-lg bg-secondary/10 text-secondary flex items-center justify-center mb-6">
                 {problem.icon}
               </div>
 
               {/* Stat - Small, colored, supporting evidence */}
-              <p className="text-sm font-semibold text-orange-500 mb-3">
+              <p className="text-sm font-semibold text-secondary mb-3">
                 {problem.stat}
               </p>
 
               {/* Title - Large, clear, direct problem statement */}
-              <h3 className="text-2xl md:text-3xl font-bold text-slate-100 tracking-tight mb-4 leading-tight">
+              <h3 className="text-2xl md:text-3xl font-bold text-slate-900 tracking-tight mb-4 leading-tight">
                 {problem.title}
               </h3>
 
               {/* Description */}
-              <p className="text-slate-400 leading-relaxed">
+              <p className="text-slate-700 leading-relaxed">
                 {problem.description}
               </p>
             </div>
@@ -80,10 +80,10 @@ export function ProblemSection() {
 
         {/* Bottom CTA */}
         <div className="mt-16 text-center">
-          <p className="text-slate-300 text-lg mb-2">
+          <p className="text-slate-700 text-lg mb-2">
             The question isn't if you have these problems.
           </p>
-          <p className="text-orange-500 font-bold text-xl">
+          <p className="text-secondary font-bold text-xl">
             It's how bad they've already infected your conversion.
           </p>
         </div>

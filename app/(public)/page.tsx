@@ -8,28 +8,27 @@ const pageUrl = appUrl;
 export const metadata: Metadata = {
   title: {
     default:
-      "Get a Free Audit to Clarify Your Startup's Positioning and Boost Conversions | LaunchRecord",
+      "Turn Confused Visitors Into Customers | Free SaaS Positioning & Messaging Audit | LaunchRecord",
     template: "%s | LaunchRecord",
   },
   description:
-    "LaunchRecord analyzes your positioning, clarity, AEO presence, and strategic moat. The SIO-V5 engine benchmarks against 10,000+ startups to ensure you aren't just a feature waiting to be deleted.",
+    "LaunchRecord audits your SaaS messaging clarity, spots positioning gaps, tests AI visibility and gives you exact copy fixes to turn confusion into conversions.",
   keywords: [
-    "SaaS audit",
-    "positioning analysis",
+    "SaaS messaging audit",
+    "positioning clarity",
+    "conversion optimization",
     "AEO",
     "AI visibility",
-    "startup defensibility",
-    "product score",
-    "SIO-V5",
+    "startup positioning",
+    "messaging clarity",
+    "copywriting fixes",
     "LaunchRecord",
-    "startup sovereignty",
-    "competitive intelligence",
-    "strategic moat",
+    "SaaS copywriting",
+    "competitive positioning",
+    "website clarity",
+    "conversion rate optimization",
     "AI-powered audit",
-    "startup analysis tool",
-    "positioning audit",
-    "clarity audit",
-    "SaaS positioning",
+    "startup messaging",
   ],
   authors: [{ name: "LaunchRecord", url: appUrl }],
   creator: "LaunchRecord",
@@ -40,9 +39,9 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title:
-      "Get a Free Audit to Clarify Your Startup's Positioning and Boost Conversions | LaunchRecord",
+      "Turn Confused Visitors Into Customers | Free SaaS Positioning & Messaging Audit | LaunchRecord",
     description:
-      "Analyze your positioning, clarity, AEO presence, and strategic moat with AI-powered SIO-V5 engine.",
+      "Audit your SaaS messaging clarity, spot positioning gaps, test AI visibility and get exact copy fixes to turn confusion into conversions.",
     url: pageUrl,
     siteName: "LaunchRecord",
     locale: "en_US",
@@ -52,7 +51,7 @@ export const metadata: Metadata = {
         url: "/og-image.png",
         width: 1200,
         height: 630,
-        alt: "LaunchRecord - Startup Positioning Audit",
+        alt: "LaunchRecord - SaaS Positioning & Messaging Audit",
         type: "image/png",
       },
     ],
@@ -60,9 +59,9 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title:
-      "Get a Free Audit to Clarify Your Startup's Positioning and Boost Conversions | LaunchRecord",
+      "Turn Confused Visitors Into Customers | Free SaaS Positioning & Messaging Audit | LaunchRecord",
     description:
-      "Analyze your positioning, clarity, AEO presence, and strategic moat.",
+      "Audit your SaaS messaging clarity, spot positioning gaps, test AI visibility and get exact copy fixes.",
     images: ["/og-image.png"],
     creator: "@launchrecord",
   },
@@ -95,7 +94,7 @@ export default function LaunchRecordLandingPage() {
           height: 512,
         },
         description:
-          "The #1 Platform For Verified Sovereignty & Defensibility Ledger for Startups. The Strategic Architect's weapon against AI-driven commoditization.",
+          "LaunchRecord helps SaaS founders fix confused messaging and weak positioning. Our audit tools test clarity, spot gaps, and give exact copy fixes to turn visitors into customers.",
         sameAs: [
           "https://twitter.com/launchrecord",
           "https://linkedin.com/company/launchrecord",
@@ -118,7 +117,7 @@ export default function LaunchRecordLandingPage() {
         url: appUrl,
         name: "LaunchRecord",
         description:
-          "Get a Free Audit to Make Your Positioning and Product Clear | LaunchRecord",
+          "Turn confused visitors into customers with clear positioning and messaging | LaunchRecord",
         publisher: {
           "@id": `${appUrl}/#organization`,
         },
@@ -136,17 +135,17 @@ export default function LaunchRecordLandingPage() {
         "@type": "WebPage",
         "@id": pageUrl,
         url: pageUrl,
-        name: "LaunchRecord - Startup Positioning Audit",
+        name: "LaunchRecord - SaaS Positioning & Messaging Audit Tools",
         description:
-          "LaunchRecord analyzes your positioning, clarity, AEO presence, and strategic moat. The SIO-V5 engine benchmarks against 10,000+ startups.",
+          "LaunchRecord audits your SaaS messaging clarity, spots positioning gaps, tests AI visibility and gives you exact copy fixes to turn confusion into conversions.",
         isPartOf: {
           "@id": `${appUrl}/#website`,
         },
         about: {
           "@type": "Thing",
-          name: "Startup Defensibility Audit",
+          name: "SaaS Messaging & Positioning Audit",
           description:
-            "Comprehensive analysis of startup positioning, sovereignty, and defensibility using AI-powered SIO-V5 engine.",
+            "Comprehensive analysis of SaaS messaging clarity, positioning gaps, and AI visibility to turn confused visitors into customers.",
         },
         primaryImageOfPage: {
           "@type": "ImageObject",
@@ -179,7 +178,7 @@ export default function LaunchRecordLandingPage() {
         operatingSystem: "Web",
         url: pageUrl,
         description:
-          "AI-powered strategic intelligence engine that analyzes startup positioning against 10,000+ records to measure sovereignty and defensibility.",
+          "AI-powered messaging and positioning audit tool that analyzes SaaS clarity, spots positioning gaps, and provides exact copy fixes to turn confused visitors into customers.",
         offers: {
           "@type": "Offer",
           price: "0",
@@ -194,7 +193,7 @@ export default function LaunchRecordLandingPage() {
           worstRating: "1",
         },
         featureList:
-          "Positioning Analysis, Clarity Assessment, AEO Presence Check, Strategic Moat Analysis, Sovereignty Score, Defensibility Ledger, Competitive Intelligence",
+          "Messaging Clarity Analysis, Positioning Gap Detection, AI Visibility Testing, Copy Fixes for Conversions, Competitive Positioning, Website Clarity Score, Conversion Optimization",
         softwareVersion: "5.0",
         applicationSubCategory: "Startup Audit Platform",
         screenshot: `${appUrl}/og-image.png`,
@@ -221,14 +220,14 @@ export default function LaunchRecordLandingPage() {
             "Startup Founders, SaaS Companies, Entrepreneurs, Product Leaders, Strategic Planners",
         },
         description:
-          "Comprehensive startup audit service that analyzes positioning, clarity, AEO presence, and strategic moat using the SIO-V5 engine against 10,000+ records.",
+          "Comprehensive SaaS messaging and positioning audit that analyzes clarity, spots positioning gaps, tests AI visibility, and provides exact copy fixes to turn confusion into conversions.",
         offers: {
           "@type": "Offer",
           price: "0",
           priceCurrency: "USD",
           availability: "https://schema.org/InStock",
           description:
-            "Get a Free Audit to Make Your Positioning and Product Clear | LaunchRecord",
+            "Free SaaS Messaging & Positioning Audit | Turn Confused Visitors Into Customers | LaunchRecord",
         },
         hasOfferCatalog: {
           "@type": "OfferCatalog",
@@ -240,7 +239,7 @@ export default function LaunchRecordLandingPage() {
                 "@type": "Service",
                 name: "Core System",
                 description:
-                  "Basic sovereignty and defensibility audit with SIO-V5 analysis",
+                  "Free messaging and positioning audit with clarity scoring and copy fixes",
               },
             },
             {
@@ -249,7 +248,7 @@ export default function LaunchRecordLandingPage() {
                 "@type": "Service",
                 name: "Founder Plan",
                 description:
-                  "Weekly auto audits, competitive intelligence, and strategic recommendations",
+                  "Weekly auto audits, competitive positioning tracking, and messaging recommendations",
               },
             },
             {
@@ -274,9 +273,9 @@ export default function LaunchRecordLandingPage() {
         },
         serviceOutput: {
           "@type": "PropertyValue",
-          name: "Sovereignty & Defensibility Score",
+          name: "Messaging Clarity & Positioning Score",
           description:
-            "Comprehensive score measuring your startup's market position and AI-era defensibility",
+            "Comprehensive score measuring your SaaS messaging clarity, positioning strength, and conversion potential",
         },
       },
       {
@@ -284,25 +283,25 @@ export default function LaunchRecordLandingPage() {
         "@id": `${pageUrl}#product`,
         name: "LaunchRecord Platform",
         description:
-          "The #1 Platform For Verified Sovereignty & Defensibility Ledger for Startups",
+          "Turn confused visitors into customers with clear SaaS positioning and messaging audit tools",
         brand: {
           "@id": `${appUrl}/#organization`,
         },
         category: "Business Intelligence Software",
         features: [
-          "SIO-V5 Engine Analysis",
-          "Positioning Audit",
-          "Clarity Assessment",
-          "AEO Visibility Check",
-          "Competitive Intelligence",
-          "War Briefing Reports",
-          "Defensibility Scoring",
-          "Weekly Moat Missions",
+          "Messaging Clarity Analysis",
+          "Positioning Gap Detection",
+          "AI Visibility Testing",
+          "Copy Fixes for Conversions",
+          "Competitive Positioning Review",
+          "Website Clarity Score",
+          "Conversion Optimization",
+          "Weekly Messaging Audits",
         ],
         offers: {
           "@type": "AggregateOffer",
           lowPrice: "0",
-          highPrice: "299",
+          highPrice: "49",
           priceCurrency: "USD",
           offerCount: "4",
         },
@@ -335,7 +334,7 @@ export default function LaunchRecordLandingPage() {
             name: "What problem does LaunchRecord solve?",
             acceptedAnswer: {
               "@type": "Answer",
-              text: "Most startups are invisible to AI and sound like everyone else. LaunchRecord detects positioning blind spots with cold, clinical data and gives you a War Briefing with exact fixes before competitors or AI erase you from the market.",
+              text: "Confused visitors don't convert. LaunchRecord audits your SaaS messaging clarity, spots positioning gaps, tests AI visibility and gives you exact copy fixes to turn confusion into conversions.",
             },
           },
           {
@@ -343,7 +342,7 @@ export default function LaunchRecordLandingPage() {
             name: "What is LaunchRecord?",
             acceptedAnswer: {
               "@type": "Answer",
-              text: "LaunchRecord is the #1 platform for verified sovereignty and defensibility ledger for startups. Our SIO-V5 Engine analyzes your positioning, clarity, AEO presence, and strategic moat against 10,000+ records.",
+              text: "LaunchRecord is a SaaS positioning and messaging audit platform. It analyzes your website clarity, spots positioning gaps, tests AI visibility and provides exact copy fixes to turn confused visitors into customers.",
             },
           },
           {
@@ -351,7 +350,7 @@ export default function LaunchRecordLandingPage() {
             name: "How does the audit work?",
             acceptedAnswer: {
               "@type": "Answer",
-              text: "Submit your URL. Our SIO-V5 Engine scrapes your site and cross-references your positioning against 1,400+ competitors. Within 2-4 minutes, you receive your War Briefing with status: JUNK, VULNERABLE, or SOVEREIGN.",
+              text: "Submit your URL. Our engine analyzes your messaging clarity and positioning against competitors. Within 2-4 minutes, you receive a detailed audit with your clarity score, positioning gaps, and exact copy fixes to improve conversions.",
             },
           },
           {
@@ -359,7 +358,7 @@ export default function LaunchRecordLandingPage() {
             name: "Is there a free tier?",
             acceptedAnswer: {
               "@type": "Answer",
-              text: "Yes. The Core System is free forever and includes SIO-V5 audit, Global Score, 5-pillar scoring, and positioning analysis. Upgrade to unlock competitive intelligence and strategic warfare capabilities.",
+              text: "Yes. The Core System is free forever and includes a full messaging audit, clarity scoring, positioning analysis, and copy fixes. Upgrade to unlock weekly auto audits, competitive tracking, and advanced recommendations.",
             },
           },
           {
@@ -367,7 +366,7 @@ export default function LaunchRecordLandingPage() {
             name: "Who should use LaunchRecord?",
             acceptedAnswer: {
               "@type": "Answer",
-              text: "Startup founders, SaaS companies, product leaders, and strategic planners who refuse to be commoditized. If you're building a SaaS and care about being irreplaceable in the age of AI, this is your weapon.",
+              text: "SaaS founders, product leaders, and marketing teams who want to turn confused visitors into customers. If your website visitors aren't converting because your messaging is unclear, this is for you.",
             },
           },
         ],
@@ -376,9 +375,9 @@ export default function LaunchRecordLandingPage() {
         "@type": "Article",
         "@id": `${pageUrl}#article`,
         headline:
-          "Get a Free Audit to Clarify Your Startup's Positioning and Boost Conversions | LaunchRecord",
+          "Turn Confused Visitors Into Customers | Free SaaS Positioning & Messaging Audit | LaunchRecord",
         description:
-          "LaunchRecord analyzes your positioning, clarity, AEO presence, and strategic moat with the AI-powered SIO-V5 engine.",
+          "LaunchRecord audits your SaaS messaging clarity, spots positioning gaps, tests AI visibility and gives you exact copy fixes to turn confusion into conversions.",
         image: [
           {
             "@type": "ImageObject",
@@ -399,7 +398,7 @@ export default function LaunchRecordLandingPage() {
           "@id": pageUrl,
         },
         inLanguage: "en-US",
-        articleSection: "Startup Positioning & Strategic Intelligence",
+        articleSection: "SaaS Messaging, Positioning & Conversion Optimization",
         wordCount: "2500",
       },
     ],

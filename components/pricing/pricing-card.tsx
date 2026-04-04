@@ -9,9 +9,9 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { useSubscribe } from "@/hooks/use-subscribe";
 import { Check } from "lucide-react";
 import { useState } from "react";
-import { useSubscribe } from "@/hooks/use-subscribe";
 
 export interface PricingTier {
   name: string;
@@ -38,7 +38,11 @@ interface PricingCardProps {
   productId?: string;
 }
 
-export function PricingCard({ tier, variant = "default", productId }: PricingCardProps) {
+export function PricingCard({
+  tier,
+  variant = "default",
+  productId,
+}: PricingCardProps) {
   const [isCheckingOut, setIsCheckingOut] = useState(false);
   const { startSubscription } = useSubscribe();
   const isFree = tier.planType === "free";
@@ -69,15 +73,15 @@ export function PricingCard({ tier, variant = "default", productId }: PricingCar
     <Card
       className={`relative flex flex-col h-full transition-all duration-300 hover:shadow-lg ${
         isFeatured
-          ? "border-primary shadow-lg scale-105 bg-gradient-to-b from-primary/5 to-transparent"
+          ? "border-primary shadow-lg scale-105 bg-gradient-to-b from-primary/5 to-white"
           : isFree
-            ? "border-slate-700 bg-slate-900/50"
-            : "border-slate-800 bg-slate-950/50"
+            ? "border-slate-300 bg-white shadow-sm"
+            : "border-slate-300 bg-white shadow-sm"
       } ${variant === "compact" ? "text-sm" : ""}`}
     >
       {isFeatured && (
         <div className="absolute -top-4 left-1/2 -translate-x-1/2">
-          <span className="bg-primary text-primary-foreground text-xs font-bold px-4 py-1 rounded-full uppercase tracking-wider">
+          <span className="bg-primary text-white text-xs font-bold px-4 py-1 rounded-full uppercase tracking-wider shadow-md">
             Best Value
           </span>
         </div>
@@ -87,18 +91,18 @@ export function PricingCard({ tier, variant = "default", productId }: PricingCar
         <div className="space-y-2">
           <CardTitle
             className={`text-2xl font-black uppercase tracking-tighter ${
-              isFeatured ? "text-primary" : "text-white"
+              isFeatured ? "text-primary" : "text-slate-900"
             }`}
           >
             {tier.name}
           </CardTitle>
           {tier.planType !== "free" && (
             <div className="flex items-baseline gap-2">
-              <span className="text-4xl font-black text-white">
+              <span className="text-4xl font-black text-slate-900">
                 {tier.price}
               </span>
               {tier.period && (
-                <span className="text-slate-400 font-medium">
+                <span className="text-slate-500 font-medium">
                   {tier.period}
                 </span>
               )}
@@ -110,7 +114,7 @@ export function PricingCard({ tier, variant = "default", productId }: PricingCar
             </p>
           )}
         </div>
-        <CardDescription className="text-slate-400 leading-relaxed">
+        <CardDescription className="text-slate-600 leading-relaxed">
           {tier.description}
         </CardDescription>
       </CardHeader>
@@ -118,22 +122,30 @@ export function PricingCard({ tier, variant = "default", productId }: PricingCar
       <CardContent className="flex-1 space-y-6">
         {/* Limits Section */}
         {tier.planType !== "free" && (
-          <div className="space-y-3 border-b border-slate-800 pb-4">
+          <div className="space-y-3 border-b border-slate-200 pb-4">
             <p className="text-xs font-mono text-slate-500 uppercase tracking-widest">
               Limits
             </p>
             <div className="grid grid-cols-3 gap-2">
-              <div className="text-center p-2 bg-slate-900 rounded-md">
-                <p className="text-lg font-bold text-white">{tier.limits.products}</p>
+              <div className="text-center p-2 bg-slate-50 rounded-md border border-slate-200">
+                <p className="text-lg font-bold text-slate-900">
+                  {tier.limits.products}
+                </p>
                 <p className="text-[10px] text-slate-500 uppercase">Product</p>
               </div>
-              <div className="text-center p-2 bg-slate-900 rounded-md">
-                <p className="text-lg font-bold text-white">{tier.limits.teamMembers}</p>
+              <div className="text-center p-2 bg-slate-50 rounded-md border border-slate-200">
+                <p className="text-lg font-bold text-slate-900">
+                  {tier.limits.teamMembers}
+                </p>
                 <p className="text-[10px] text-slate-500 uppercase">Team</p>
               </div>
-              <div className="text-center p-2 bg-slate-900 rounded-md">
-                <p className="text-lg font-bold text-white">{tier.limits.competitors}</p>
-                <p className="text-[10px] text-slate-500 uppercase">Competitors</p>
+              <div className="text-center p-2 bg-slate-50 rounded-md border border-slate-200">
+                <p className="text-lg font-bold text-slate-900">
+                  {tier.limits.competitors}
+                </p>
+                <p className="text-[10px] text-slate-500 uppercase">
+                  Competitors
+                </p>
               </div>
             </div>
           </div>
@@ -150,7 +162,7 @@ export function PricingCard({ tier, variant = "default", productId }: PricingCar
                 {tier.features.map((feature, index) => (
                   <div key={index} className="flex items-start gap-2">
                     <Check className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
-                    <span className="text-slate-300 text-sm">{feature}</span>
+                    <span className="text-slate-700 text-sm">{feature}</span>
                   </div>
                 ))}
               </div>
@@ -163,13 +175,13 @@ export function PricingCard({ tier, variant = "default", productId }: PricingCar
                 {tier.features.map((feature, index) => (
                   <div key={index} className="flex items-start gap-2">
                     <Check className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
-                    <span className="text-slate-300 text-sm">{feature}</span>
+                    <span className="text-slate-700 text-sm">{feature}</span>
                   </div>
                 ))}
               </div>
 
               {tier.killerFeatures && tier.killerFeatures.length > 0 && (
-                <div className="space-y-3 pt-4 border-t border-slate-800">
+                <div className="space-y-3 pt-4 border-t border-slate-200">
                   <p className="text-xs font-mono text-primary uppercase tracking-widest">
                     Killer Features
                   </p>
@@ -180,7 +192,7 @@ export function PricingCard({ tier, variant = "default", productId }: PricingCar
                         className="flex items-start gap-2 p-2 bg-primary/5 rounded-md border border-primary/20"
                       >
                         <Check className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
-                        <span className="text-slate-200 text-sm font-medium">
+                        <span className="text-slate-700 text-sm font-medium">
                           {feature}
                         </span>
                       </div>
@@ -197,10 +209,10 @@ export function PricingCard({ tier, variant = "default", productId }: PricingCar
         <Button
           onClick={handleSubscribe}
           disabled={isCheckingOut}
-          className={`w-full h-12 font-bold uppercase tracking-widest transition-all ${
+          className={`w-full h-12 font-bold uppercase tracking-wider transition-all ${
             isFeatured
-              ? "bg-primary hover:bg-primary/90 text-primary-foreground"
-              : "bg-white hover:bg-slate-200 text-black"
+              ? "bg-primary hover:bg-primary/90 text-white"
+              : "bg-slate-900 hover:bg-slate-800 text-white"
           } ${variant === "compact" ? "text-xs" : "text-sm"}`}
         >
           {isCheckingOut ? "Processing..." : tier.ctaText}

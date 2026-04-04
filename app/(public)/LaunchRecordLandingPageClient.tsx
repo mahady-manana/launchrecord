@@ -32,13 +32,16 @@ export default function LaunchRecordLandingPageClient() {
       <ForWhoSection />
 
       {/* Pricing Section */}
-      <section className="bg-slate-900 px-4 py-16" id="pricing">
+      <section
+        className="bg-gradient-to-b from-white to-slate-50 px-4 py-16"
+        id="pricing"
+      >
         <div className="max-w-7xl space-y-12  mx-auto ">
           <div className="text-center space-y-4 pb-20">
-            <h2 className="text-4xl font-bold text-slate-100">
+            <h2 className="text-4xl font-bold text-slate-900">
               Choose Your Plan
             </h2>
-            <p className="text-lg text-slate-200 max-w-2xl mx-auto">
+            <p className="text-lg text-slate-600 max-w-2xl mx-auto">
               Start free, then upgrade to Founder for competitive intelligence
               and weekly mission control.
             </p>
@@ -53,7 +56,7 @@ export default function LaunchRecordLandingPageClient() {
           <div className="text-center mt-8">
             <Link
               href="/pricing"
-              className="text-orange-500 hover:underline font-medium"
+              className="text-primary hover:underline font-medium"
             >
               View detailed pricing comparison →
             </Link>

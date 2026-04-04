@@ -43,43 +43,43 @@ const audiences: Audience[] = [
 
 export function ForWhoSection() {
   return (
-    <section className="py-20 bg-slate-900">
+    <section className="py-20 bg-gradient-to-b from-slate-50 to-white">
       <div className="max-w-7xl mx-auto px-4">
         {/* Section Header */}
         <div className="text-center space-y-4 mb-16">
-          <h2 className="text-4xl md:text-5xl font-black text-slate-100 tracking-tighter">
+          <h2 className="text-4xl md:text-5xl font-bold text-slate-900 tracking-tighter">
             Who Is This For?
           </h2>
-          <p className="text-xl text-slate-400 max-w-3xl mx-auto">
+          <p className="text-xl text-slate-600 max-w-3xl mx-auto">
             LaunchRecord is built for founders who refuse to be deleted by AI or
             out-positioned by competitors.
           </p>
         </div>
 
         {/* Audience Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-16">
           {audiences.map((audience, index) => (
             <div
               key={index}
-              className="relative group bg-slate-800/50 border border-slate-700 hover:border-slate-600 rounded-xl p-8 transition-all duration-300"
+              className="relative group bg-white border border-slate-200 hover:border-primary/50 rounded-xl p-8 transition-all duration-300 shadow-sm hover:shadow-md"
             >
               {/* Icon */}
-              <div className="w-16 h-16 rounded-lg bg-slate-900 text-purple-400 flex items-center justify-center mb-6">
+              <div className="w-16 h-16 rounded-lg bg-primary/10 text-primary flex items-center justify-center mb-6">
                 {audience.icon}
               </div>
 
               {/* Title */}
-              <h3 className="text-xl font-bold text-slate-100 uppercase tracking-tight mb-3">
+              <h3 className="text-xl font-bold text-slate-900 uppercase tracking-tight mb-3">
                 {audience.title}
               </h3>
 
               {/* Pain Point Badge */}
-              <div className="inline-block px-3 py-1 rounded-full bg-red-500/10 text-red-400 text-xs font-bold uppercase tracking-wider mb-4">
+              <div className="inline-block px-3 py-1 rounded-full bg-secondary/10 text-secondary text-xs font-bold tracking-wider mb-4">
                 Pain: {audience.painPoint}
               </div>
 
               {/* Description */}
-              <p className="text-slate-400 leading-relaxed">
+              <p className="text-slate-700 leading-relaxed">
                 {audience.description}
               </p>
             </div>
@@ -87,39 +87,39 @@ export function ForWhoSection() {
         </div>
 
         {/* Who It's NOT For */}
-        <div className="bg-slate-800/50 border border-slate-700 rounded-xl p-8 md:p-12">
-          <h3 className="text-2xl font-bold text-slate-100 uppercase tracking-tight mb-6">
+        <div className="bg-white border border-slate-200 rounded-xl p-8 md:p-12 shadow-sm">
+          <h3 className="text-2xl font-bold text-slate-900 uppercase tracking-tight mb-6">
             Who This Is NOT For
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="space-y-3">
-              <div className="w-10 h-10 rounded-full bg-slate-900 flex items-center justify-center">
-                <X className="w-5 h-5 text-red-400" />
+              <div className="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center">
+                <X className="w-5 h-5 text-red-600" />
               </div>
-              <h4 className="font-bold text-slate-100">
+              <h4 className="font-bold text-slate-900">
                 Generic Advice Seekers
               </h4>
-              <p className="text-slate-400 text-sm">
+              <p className="text-slate-600 text-sm">
                 We don't do fluff. We give you cold data and brutal truths.
               </p>
             </div>
             <div className="space-y-3">
-              <div className="w-10 h-10 rounded-full bg-slate-900 flex items-center justify-center">
-                <X className="w-5 h-5 text-red-400" />
+              <div className="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center">
+                <X className="w-5 h-5 text-red-600" />
               </div>
-              <h4 className="font-bold text-slate-100">Growth Hackers Only</h4>
-              <p className="text-slate-400 text-sm">
+              <h4 className="font-bold text-slate-900">Growth Hackers Only</h4>
+              <p className="text-slate-600 text-sm">
                 Growth won't save bad positioning. Fix the foundation first.
               </p>
             </div>
             <div className="space-y-3">
-              <div className="w-10 h-10 rounded-full bg-slate-900 flex items-center justify-center">
-                <X className="w-5 h-5 text-red-400" />
+              <div className="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center">
+                <X className="w-5 h-5 text-red-600" />
               </div>
-              <h4 className="font-bold text-slate-100">
+              <h4 className="font-bold text-slate-900">
                 One-Time Audit Buyers
               </h4>
-              <p className="text-slate-400 text-sm">
+              <p className="text-slate-600 text-sm">
                 Defensibility is ongoing. If you want a PDF and goodbye, this
                 isn't for you.
               </p>
@@ -131,7 +131,7 @@ export function ForWhoSection() {
         <div className="mt-12 text-center">
           <Link
             href="/sio-audit"
-            className="inline-flex items-center gap-2 bg-orange-500 text-slate-900 px-8 py-4 rounded-lg font-bold uppercase tracking-widest hover:bg-orange-400 transition-colors"
+            className="inline-flex items-center gap-2 bg-secondary text-white px-8 py-4 rounded-lg font-bold uppercase tracking-wider hover:bg-secondary/90 transition-colors shadow-md"
           >
             See If You're Sovereign
           </Link>

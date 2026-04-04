@@ -38,13 +38,13 @@ const protocolSteps: ProtocolStep[] = [
 
 export function ProtocolSection() {
   return (
-    <section className="max-w-6xl mx-auto bg-slate-950 py-24 rounded-xl text-white px-6 border-t border-slate-900">
+    <section className="max-w-6xl mx-auto bg-white py-24 rounded-xl text-slate-900 px-6 border border-slate-200 shadow-sm">
       <div className="max-w-4xl mx-auto">
         <div className="space-y-2 mb-16">
-          <h2 className="text-3xl font-black uppercase tracking-tighter italic">
+          <h2 className="text-3xl font-black uppercase tracking-tighter">
             The Protocol
           </h2>
-          <p className="font-mono text-[10px] text-slate-500 uppercase tracking-widest">
+          <p className="font-mono text-xs text-slate-500 uppercase tracking-widest">
             Standardized Defensibility Testing v1.04
           </p>
         </div>
@@ -56,14 +56,14 @@ export function ProtocolSection() {
                 <div
                   className={`w-8 h-8 ${
                     index === 0
-                      ? "bg-white text-black"
-                      : `border border-slate-700 text-slate-500 group-hover:${step.activeColor} group-hover:text-white group-hover:border-${step.activeColor.replace("bg-", "")}`
-                  } flex items-center justify-center font-black text-xs transition-all`}
+                      ? "bg-primary text-white"
+                      : `border-2 border-slate-300 text-slate-500 group-hover:bg-primary group-hover:text-white group-hover:border-primary`
+                  } flex items-center justify-center font-black text-xs transition-all rounded-md`}
                 >
                   {step.step}
                 </div>
                 {index < protocolSteps.length - 1 && (
-                  <div className="w-px h-full bg-slate-800 my-2"></div>
+                  <div className="w-px h-full bg-slate-300 my-2"></div>
                 )}
               </div>
               <div
@@ -72,7 +72,7 @@ export function ProtocolSection() {
                 <h4 className="text-xl font-bold uppercase tracking-tight">
                   {step.title}
                 </h4>
-                <p className="text-slate-400 text-sm leading-relaxed">
+                <p className="text-slate-600 text-sm leading-relaxed">
                   {step.description}
                 </p>
               </div>

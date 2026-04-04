@@ -20,7 +20,8 @@ export function BlogSection() {
         "For 20 years, SEO has been a craft. But AEO is changing the rules. Mechanical optimization is being automated. Strategy won't be.",
       href: "/blog/will-aeo-commoditize-seo",
       category: "Strategic Analysis",
-      categoryColor: "bg-gradient-to-r from-purple-100 to-orange-100 text-purple-800",
+      categoryColor:
+        "bg-gradient-to-r from-purple-100 to-orange-100 text-purple-800",
       readTime: "8 min read",
     },
     {
@@ -99,7 +100,7 @@ export function BlogSection() {
         <div className="text-center">
           <Link
             href="/blog"
-            className="inline-flex items-center gap-2 bg-slate-900 hover:bg-slate-800 text-white px-6 py-3 rounded-lg font-semibold transition-colors"
+            className="inline-flex items-center gap-2 bg-primary hover:bg-primary/90 text-white px-6 py-3 rounded-lg font-semibold transition-colors shadow-sm"
           >
             View All Articles
             <ArrowRight className="h-4 w-4" />

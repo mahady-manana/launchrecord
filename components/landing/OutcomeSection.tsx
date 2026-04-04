@@ -43,14 +43,14 @@ const outcomes: Outcome[] = [
 
 export function OutcomeSection() {
   return (
-    <section className="py-20 bg-slate-900">
+    <section className="py-20 bg-gradient-to-b from-blue-50/30 to-white">
       <div className="max-w-7xl mx-auto px-4">
         {/* Section Header */}
         <div className="text-center space-y-4 mb-16">
-          <h2 className="text-4xl md:text-5xl font-black text-slate-100 tracking-tighter">
+          <h2 className="text-4xl md:text-5xl font-bold text-slate-900 tracking-tighter">
             The Outcome: Measurable Defensibility
           </h2>
-          <p className="text-xl text-slate-400 max-w-3xl mx-auto">
+          <p className="text-xl text-slate-600 max-w-3xl mx-auto">
             Founders who fix their positioning and clarity don't just survive.
             They compound advantage.
           </p>
@@ -61,31 +61,31 @@ export function OutcomeSection() {
           {outcomes.map((outcome, index) => (
             <div
               key={index}
-              className="relative group bg-slate-800/50 border border-slate-700 hover:border-slate-600 rounded-xl p-8 transition-all duration-300"
+              className="relative group bg-white border border-slate-200 hover:border-primary/50 rounded-xl p-8 transition-all duration-300 shadow-sm hover:shadow-md"
             >
               {/* Icon */}
-              <div className="w-16 h-16 rounded-lg bg-slate-900 text-emerald-500 flex items-center justify-center mb-6">
+              <div className="w-16 h-16 rounded-lg bg-primary/10 text-primary flex items-center justify-center mb-6">
                 {outcome.icon}
               </div>
 
               {/* Value */}
-              <p className="text-4xl font-black text-emerald-500 mb-2">
+              <p className="text-4xl font-black text-primary mb-2">
                 {outcome.value}
               </p>
 
               {/* Metric */}
-              <h3 className="text-lg font-bold text-slate-100 uppercase tracking-tight mb-2">
+              <h3 className="text-lg font-bold text-slate-900 uppercase tracking-tight mb-2">
                 {outcome.metric}
               </h3>
 
               {/* Description */}
-              <p className="text-slate-400 text-sm leading-relaxed">
+              <p className="text-slate-600 text-sm leading-relaxed">
                 {outcome.description}
               </p>
 
               {/* Trend indicator */}
               <div className="mt-4 flex items-center gap-2">
-                <div className="px-2 py-1 rounded text-xs font-bold uppercase bg-emerald-500/10 text-emerald-500">
+                <div className="px-2 py-1 rounded text-xs font-bold uppercase bg-primary/10 text-primary">
                   {outcome.trend === "up" ? "↑" : "↓"} Better
                 </div>
               </div>

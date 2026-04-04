@@ -70,10 +70,10 @@ export function FivePillarsSection() {
   return (
     <section className="max-w-7xl mx-auto px-4 py-10">
       <div className="space-y-4 mb-12">
-        <h2 className="text-4xl font-black uppercase tracking-tighter">
+        <h2 className="text-4xl font-black uppercase tracking-tighter text-slate-900">
           The Five Pillars of Sovereignty
         </h2>
-        <p className="text-lg text-slate-400 max-w-3xl">
+        <p className="text-lg text-slate-600 max-w-3xl">
           We are the sovereign. Every pillar is a weapon against
           commoditization. Audit your positioning across all five dimensions.
         </p>
@@ -84,7 +84,7 @@ export function FivePillarsSection() {
           <Link
             key={index}
             href={pillar.href}
-            className={`group relative bg-slate-900 border border-slate-800 hover:${pillar.borderColor} rounded-xl p-6 transition-all duration-300 hover:shadow-2xl hover:shadow-${pillar.color.replace("text-", "")}/10 overflow-hidden`}
+            className={`group relative bg-white border border-slate-200 hover:${pillar.borderColor} rounded-xl p-6 transition-all duration-300 hover:shadow-lg overflow-hidden`}
           >
             {/* Gradient overlay on hover */}
             <div
@@ -107,12 +107,12 @@ export function FivePillarsSection() {
               </h3>
 
               {/* Description */}
-              <p className="text-slate-400 text-sm leading-relaxed">
+              <p className="text-slate-700 text-sm leading-relaxed">
                 {pillar.description}
               </p>
 
               {/* CTA */}
-              <div className="flex items-center gap-2 text-sm font-medium text-slate-300 group-hover:text-white transition-colors">
+              <div className="flex items-center gap-2 text-sm font-medium text-slate-600 group-hover:text-slate-900 transition-colors">
                 <span>Run Audit</span>
                 <svg
                   className="w-4 h-4 transform group-hover:translate-x-1 transition-transform"
@@ -132,7 +132,7 @@ export function FivePillarsSection() {
 
             {/* Corner accent */}
             <div
-              className={`absolute top-0 right-0 w-20 h-20 ${pillar.bgColor} opacity-0 group-hover:opacity-20 rounded-bl-full transition-opacity duration-300`}
+              className={`absolute top-0 right-0 w-20 h-20 ${pillar.bgColor} opacity-0 group-hover:opacity-10 rounded-bl-full transition-opacity duration-300`}
             />
           </Link>
         ))}
@@ -142,7 +142,7 @@ export function FivePillarsSection() {
       <div className="mt-12 text-center">
         <Link
           href="/sio-audit"
-          className="inline-flex items-center gap-2 bg-white text-slate-900 px-8 py-4 rounded-lg font-bold uppercase tracking-tight hover:bg-slate-200 transition-colors"
+          className="inline-flex items-center gap-2 bg-secondary text-white px-8 py-4 rounded-lg font-bold uppercase tracking-wider hover:bg-secondary/90 transition-colors shadow-md"
         >
           Start Full Sovereignty Audit
           <svg

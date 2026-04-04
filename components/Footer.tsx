@@ -75,7 +75,7 @@ export async function Footer() {
   ];
 
   return (
-    <footer className="bg-slate-950 text-slate-300">
+    <footer className="bg-slate-50 text-slate-700 border-t border-slate-200">
       <div className="mx-auto w-full max-w-7xl px-6 py-12">
         {/* Main Footer Grid */}
         <div className="grid grid-cols-2 md:grid-cols-6 gap-8 mb-12">
@@ -90,12 +90,14 @@ export async function Footer() {
                   alt="Launch Record Logo"
                 />
               </div>
-              <span className="font-bold text-lg">Launch Record</span>
+              <span className="font-bold text-lg text-slate-900">
+                Launch Record
+              </span>
             </div>
-            <p className="text-sm ">
+            <p className="text-sm text-slate-600">
               The Strategic Architect&apos;s Weapon for the AI Era
             </p>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-xs text-slate-500">
               © {currentYear} LaunchRecord
             </p>
           </div>
@@ -193,7 +195,7 @@ export async function Footer() {
                   className="text-sm px-2 py-1 rounded transition-colors"
                 >
                   {category.name}
-                  <span className="text-xs text-slate-400 ml-1">
+                  <span className="text-xs text-slate-500 ml-1">
                     ({category.count})
                   </span>
                 </Link>
@@ -291,12 +293,12 @@ export async function Footer() {
         </div>
 
         {/* Bottom Bar */}
-        <div className="mt-8 pt-8 border-t border-border">
+        <div className="mt-8 pt-8 border-t border-slate-200">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-            <p className="text-xs  ">
+            <p className="text-xs text-slate-600">
               Built for sovereign founders who refuse to be commoditized.
             </p>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-xs text-slate-500">
               Made with ❤️ for the AI Era
             </p>
           </div>

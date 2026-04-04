@@ -53,13 +53,13 @@ const faqs: FAQ[] = [
 
 export function FAQSection() {
   return (
-    <section className="py-16 md:px-0 px-4 bg-slate-900">
+    <section className="py-16 md:px-0 px-4 bg-white">
       <div className="max-w-6xl mx-auto space-y-12 ">
         <div className="text-center space-y-4">
-          <h2 className="text-4xl font-bold text-slate-100">
+          <h2 className="text-4xl font-bold text-slate-900">
             Frequently Asked Questions
           </h2>
-          <p className="text-lg text-slate-400 max-w-2xl mx-auto">
+          <p className="text-lg text-slate-600 max-w-2xl mx-auto">
             Everything you need to know about LaunchRecord, SIO-V5, and the SIDL
             framework.
           </p>
@@ -69,15 +69,15 @@ export function FAQSection() {
           {faqs.map((faq, idx) => (
             <div
               key={idx}
-              className="border border-slate-700 bg-slate-800/50 rounded-xl overflow-hidden"
+              className="border border-slate-200 bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow"
             >
               <details className="group">
                 <summary className="flex items-center justify-between p-6 cursor-pointer list-none">
-                  <h3 className="text-lg font-semibold text-slate-100 pr-4">
+                  <h3 className="text-lg font-semibold text-slate-900 pr-4">
                     {faq.question}
                   </h3>
                   <svg
-                    className="w-5 h-5 text-slate-400 transform group-open:rotate-180 transition-transform flex-shrink-0"
+                    className="w-5 h-5 text-slate-500 transform group-open:rotate-180 transition-transform flex-shrink-0"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -91,7 +91,7 @@ export function FAQSection() {
                   </svg>
                 </summary>
                 <div className="px-6 pb-6 pt-0">
-                  <p className="text-slate-400 leading-relaxed">{faq.answer}</p>
+                  <p className="text-slate-600 leading-relaxed">{faq.answer}</p>
                 </div>
               </details>
             </div>
