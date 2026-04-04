@@ -1,18 +1,20 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { validateUrl } from "@/lib/url-validation";
 import { SIOV5Report } from "@/services/sio-report/schema";
 import { CheckCircle2, Loader2, Sparkles } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import DashboardSIOReport from "../sio-report/DashboardSIOReport";
+import { mockReport } from "../sio-report/example";
 import { Input } from "../ui/input";
 
 export default function PublicAuditPage() {
   const [url, setUrl] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [report, setReport] = useState<SIOV5Report | null>(null);
+  const [report, setReport] = useState<SIOV5Report | null>(mockReport);
   const [cachedWarning, setCachedWarning] = useState<string | null>(null);
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
   const autoRunRef = useRef(false);
@@ -54,6 +56,13 @@ export default function PublicAuditPage() {
   const runAudit = async (targetUrl: string) => {
     if (!targetUrl) return;
 
+    // Client-side URL validation
+    const validation = validateUrl(targetUrl);
+    if (!validation.isValid) {
+      setError(validation.error || "Invalid URL");
+      return;
+    }
+
     setIsLoading(true);
     setError(null);
     setCachedWarning(null);
@@ -63,7 +72,7 @@ export default function PublicAuditPage() {
       const response = await fetch("/api/sio-v5-audit", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ url: targetUrl, isGuest: true }),
+        body: JSON.stringify({ url: validation.normalizedUrl, isGuest: true }),
       });
 
       const data = await response.json();
@@ -130,6 +139,13 @@ export default function PublicAuditPage() {
   const handleAudit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!url) return;
+
+    // Client-side URL validation before submitting
+    const validation = validateUrl(url);
+    if (!validation.isValid) {
+      setError(validation.error || "Invalid URL");
+      return;
+    }
 
     await runAudit(url);
   };

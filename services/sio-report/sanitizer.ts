@@ -104,6 +104,12 @@ export function sanitizeReportForGuest(report: ISIOReport) {
       overallCommentPositive: report.positioning.overallCommentPositive,
       overallCommentNegative: report.positioning.overallCommentNegative,
       // Omitted: summary, subMetrics (detailed analysis)
+      summary: {
+        current: report.positioning?.summary?.current || "",
+        positiveComments: report.positioning?.summary?.positiveComments || [],
+        negativeComments: report.positioning?.summary?.negativeComments || [],
+        suggested: report.positioning?.summary?.suggested || [],
+      },
     },
 
     // Clarity - Only high-level info
@@ -113,6 +119,13 @@ export function sanitizeReportForGuest(report: ISIOReport) {
       overallCommentPositive: report.clarity.overallCommentPositive,
       overallCommentNegative: report.clarity.overallCommentNegative,
       // Omitted: summary, unclearSentences, subMetrics (detailed analysis)
+      summary: {
+        current: report.clarity?.summary?.current || "",
+        positiveComments: report.clarity?.summary?.positiveComments || [],
+        negativeComments: report.clarity?.summary?.negativeComments || [],
+        suggested: report.clarity?.summary?.suggested || [],
+      },
+      unclearSentences: report?.clarity?.unclearSentences || [],
     },
 
     // AEO - Full data shown (already simplified free tier)

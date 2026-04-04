@@ -1,6 +1,7 @@
 import { connectToDatabase } from "@/lib/db";
 import { getOpenRouterClient } from "@/lib/openrouter";
 import { getUserSession } from "@/lib/session";
+import { validateUrlServer } from "@/lib/url-validation";
 import ApiError from "@/models/api-error";
 import Product from "@/models/product";
 import SIOReport from "@/models/sio-report";
@@ -16,7 +17,6 @@ import {
   sioV5SystemPrompt,
 } from "@/services/sio-v5-system-prompt";
 import { NextRequest, NextResponse } from "next/server";
-import normalizeUrl from "normalize-url";
 import { z } from "zod";
 
 const sioV5AuditSchema = z.object({
@@ -135,23 +135,17 @@ export async function POST(request: NextRequest) {
     }
 
     const { url, productId, isGuest: guest } = validation.data;
-    let normalizedUrl: string;
-    let hostUrl: string;
-    try {
-      normalizedUrl = normalizeUrl(url, {
-        stripWWW: false,
-        defaultProtocol: "https",
-        forceHttps: true,
-      });
-      hostUrl = normalizeUrl(url, {
-        stripWWW: false,
-        defaultProtocol: "https",
-        forceHttps: true,
-        removePath: true,
-      });
-    } catch {
-      return NextResponse.json({ error: "Invalid URL" }, { status: 400 });
+
+    // Strong server-side URL validation
+    const urlValidation = validateUrlServer(url);
+    if (!urlValidation.isValid || !urlValidation.normalizedUrl) {
+      return NextResponse.json(
+        { error: urlValidation.error || "Invalid URL" },
+        { status: 400 },
+      );
     }
+
+    const { normalizedUrl, hostUrl } = urlValidation;
     // Check if user is authenticated
     const { user } = await getUserSession({ required: false });
     const isGuest = !user?._id || guest;
@@ -263,6 +257,19 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         { error: "Failed to fetch website content" },
         { status: 500 },
+      );
+    }
+
+    // Validate that we have enough content to audit
+    const contentLength = websiteContent.simplifiedContent?.trim().length || 0;
+    if (contentLength < 100) {
+      return NextResponse.json(
+        {
+          error:
+            "This website appears to be client-side rendered or has insufficient content for analysis. We don't support client-side rendered websites for now.",
+          contentLength,
+        },
+        { status: 400 },
       );
     }
 
