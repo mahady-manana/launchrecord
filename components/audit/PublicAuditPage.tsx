@@ -7,14 +7,13 @@ import { CheckCircle2, Loader2, Sparkles } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import DashboardSIOReport from "../sio-report/DashboardSIOReport";
-import { mockReport } from "../sio-report/example";
 import { Input } from "../ui/input";
 
 export default function PublicAuditPage() {
   const [url, setUrl] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [report, setReport] = useState<SIOV5Report | null>(mockReport);
+  const [report, setReport] = useState<SIOV5Report | null>(null);
   const [cachedWarning, setCachedWarning] = useState<string | null>(null);
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
   const autoRunRef = useRef(false);
