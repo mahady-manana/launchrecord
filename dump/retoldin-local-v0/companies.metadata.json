@@ -1,1 +1,0 @@
-{"indexes":[{"v":{"$numberInt":"2"},"key":{"_id":{"$numberInt":"1"}},"name":"_id_"},{"v":{"$numberInt":"2"},"key":{"slug":{"$numberInt":"1"}},"name":"slug_1","unique":true},{"v":{"$numberInt":"2"},"key":{"publishableKey":{"$numberInt":"1"}},"name":"publishableKey_1","unique":true}],"uuid":"bf0596c7012f4779aa5b5f4469c864ae","collectionName":"companies","type":"collection"}
