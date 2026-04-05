@@ -5,7 +5,8 @@
       "Bash(mkdir *)",
       "Bash(npm run *)",
       "Bash(sed *)",
-      "Bash(mv *)"
+      "Bash(mv *)",
+      "Bash(npm install *)"
     ]
   },
   "$version": 3

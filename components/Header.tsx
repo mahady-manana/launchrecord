@@ -147,7 +147,7 @@ export function Header() {
       <header
         className={clsx(
           "relative left-0 right-0 translate-x-0 backdrop-blur-xl z-50 w-full",
-          "flex max-w-none gap-4 items-center justify-between bg-white/95 border-b border-slate-200 px-8 py-4 shadow-sm",
+          "flex max-w-none gap-4 items-center justify-between bg-white px-8 py-4",
         )}
       >
         <Link href="/" className="flex items-end gap-2">

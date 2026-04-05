@@ -492,9 +492,9 @@ export async function POST(request: NextRequest) {
       content: JSON.stringify(error),
       metadata: {
         website: website,
-        stack: error.stack,
       },
     });
+    await errordb.save();
     // Handle API capacity errors
     if (
       error.message?.includes("capacity") ||
