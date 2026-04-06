@@ -3,43 +3,110 @@
 import { Button } from "@/components/ui/button";
 import { validateUrl } from "@/lib/url-validation";
 import { SIOV5Report } from "@/services/sio-report/schema";
-import { CheckCircle2, Loader2, Sparkles } from "lucide-react";
+import { Loader2, Sparkles } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import DashboardSIOReport from "../sio-report/DashboardSIOReport";
 import { Input } from "../ui/input";
+import { TerminalAuditLoader } from "./TerminalAuditLoader";
 
 export default function PublicAuditPage() {
   const [url, setUrl] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [report, setReport] = useState<SIOV5Report | null>(null);
   const [cachedWarning, setCachedWarning] = useState<string | null>(null);
-  const [currentStepIndex, setCurrentStepIndex] = useState(0);
   const autoRunRef = useRef(false);
   const searchParams = useSearchParams();
 
   const analysisSteps = useMemo(
     () => [
       {
-        title: "Collecting site content",
-        description: "Crawling key pages, metadata, and structured data",
+        id: "collect",
+        name: "Collecting site content",
+        metrics: [
+          "Crawling main page",
+          "Extracting metadata",
+          "Parsing structured data",
+          "Analyzing robots.txt",
+        ],
+        subMetrics: [
+          "Title tags",
+          "Meta descriptions",
+          "Open Graph tags",
+          "Schema markup",
+          "Canonical URLs",
+        ],
       },
       {
-        title: "Parsing positioning signals",
-        description: "Mapping value props, audience cues, and differentiation",
+        id: "positioning",
+        name: "Parsing positioning signals",
+        metrics: [
+          "Category Ownership",
+          "Unique Value Proposition",
+          "Competitive Differentiation",
+          "Target Audience Clarity",
+          "Problem-Solution Fit",
+          "Messaging Consistency",
+        ],
+        subMetrics: [
+          "Headline analysis",
+          "Subheadline clarity",
+          "Value prop clarity",
+          "Audience signals",
+          "Differentiation markers",
+        ],
       },
       {
-        title: "Scoring clarity & conversion",
-        description: "Measuring message clarity and friction points",
+        id: "clarity",
+        name: "Scoring clarity & conversion",
+        metrics: [
+          "Headline Clarity",
+          "Value Proposition",
+          "Feature-Benefit Mapping",
+          "Visual Hierarchy",
+          "CTA Clarity",
+          "Proof Placement",
+          "Unclear Sentences",
+        ],
+        subMetrics: [
+          "Reading level check",
+          "Sentence complexity",
+          "Jargon detection",
+          "Action-oriented language",
+          "Benefit statements",
+        ],
       },
       {
-        title: "Evaluating AEO visibility",
-        description: "Checking AI presence and answer-engine readiness",
+        id: "aeo",
+        name: "Evaluating AEO visibility",
+        metrics: [
+          "AI presence check",
+          "Answer engine readiness",
+          "Structured data completeness",
+          "FAQ optimization",
+        ],
+        subMetrics: [
+          "Featured snippet readiness",
+          "People also ask optimization",
+          "Knowledge graph signals",
+          "Entity markup",
+        ],
       },
       {
-        title: "Synthesizing audit report",
-        description: "Generating scores, findings, and recommendations",
+        id: "synthesize",
+        name: "Synthesizing audit report",
+        metrics: [
+          "Calculating scores",
+          "Generating recommendations",
+          "Building report",
+        ],
+        subMetrics: [
+          "Positioning score",
+          "Clarity score",
+          "AEO score",
+          "Priority actions",
+        ],
       },
     ],
     [],
@@ -65,7 +132,6 @@ export default function PublicAuditPage() {
     setIsLoading(true);
     setError(null);
     setCachedWarning(null);
-    setCurrentStepIndex(0);
 
     try {
       const response = await fetch("/api/sio-v5-audit", {
@@ -105,16 +171,6 @@ export default function PublicAuditPage() {
     setUrl(prefillUrl);
     void runAudit(prefillUrl);
   }, [searchParams]);
-
-  useEffect(() => {
-    if (!isLoading) return;
-    const interval = setInterval(() => {
-      setCurrentStepIndex((prev) =>
-        Math.min(prev + 1, analysisSteps.length - 1),
-      );
-    }, 30000);
-    return () => clearInterval(interval);
-  }, [analysisSteps.length, isLoading]);
 
   const positioningMetricLabels = [
     "Category Ownership",
@@ -192,78 +248,12 @@ export default function PublicAuditPage() {
 
       <main className="max-w-7xl mx-auto px-4 py-8 space-y-8">
         {isLoading && (
-          <div className="max-w-5xl mx-auto border border-slate-200 bg-white rounded-xl p-6 shadow-sm">
-            <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-              <div>
-                <div className="text-sm font-semibold text-slate-800">
-                  Audit in progress
-                </div>
-                <div className="text-xs text-slate-500">
-                  Estimated time: 2-4 minutes
-                </div>
-              </div>
-              <div className="text-xs text-slate-500">
-                Step {currentStepIndex + 1} of {analysisSteps.length}
-              </div>
-            </div>
-            <div className="mt-4 h-2 w-full rounded-full bg-slate-100">
-              <div
-                className="h-full rounded-full bg-orange-500 transition-all"
-                style={{
-                  width: `${Math.round(
-                    ((currentStepIndex + 1) / analysisSteps.length) * 100,
-                  )}%`,
-                }}
-              />
-            </div>
-            <div className="mt-5 grid gap-3">
-              {analysisSteps.map((step, index) => {
-                const isActive = index === currentStepIndex;
-                const isCompleted = index < currentStepIndex;
-                return (
-                  <div
-                    key={step.title}
-                    className={`flex items-start gap-3 rounded-lg border px-3 py-2 transition-colors ${
-                      isActive
-                        ? "border-orange-200 bg-orange-50"
-                        : isCompleted
-                          ? "border-emerald-200 bg-emerald-50"
-                          : "border-slate-200 bg-white"
-                    }`}
-                  >
-                    <div className="mt-1">
-                      {isCompleted ? (
-                        <CheckCircle2 className="h-4 w-4 text-emerald-600" />
-                      ) : (
-                        <div
-                          className={`h-4 w-4 rounded-full border ${
-                            isActive
-                              ? "border-orange-400 bg-orange-200"
-                              : "border-slate-300"
-                          }`}
-                        />
-                      )}
-                    </div>
-                    <div>
-                      <div
-                        className={`text-sm font-semibold ${
-                          isActive
-                            ? "text-orange-700"
-                            : isCompleted
-                              ? "text-emerald-700"
-                              : "text-slate-700"
-                        }`}
-                      >
-                        {step.title}
-                      </div>
-                      <div className="text-xs text-slate-500">
-                        {step.description}
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
+          <div className="max-w-5xl mx-auto">
+            <TerminalAuditLoader
+              command={`sio audit --full url '${url}'`}
+              steps={analysisSteps}
+              className="max-w-none"
+            />
           </div>
         )}
         {cachedWarning && (
