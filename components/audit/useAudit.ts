@@ -113,6 +113,90 @@ export function useAudit(options: UseAuditOptions = {}) {
     [clearPolling, onComplete, onError],
   );
 
+  // Run a single step (declared before startAudit)
+  const runStep = useCallback(
+    async (step: string, reportId: string) => {
+      try {
+        let response;
+        try {
+          response = await fetch(`/api/sio-audit/steps/${step}`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ reportId, isGuest }),
+          });
+        } catch (networkError: any) {
+          throw new Error(`Network error: Unable to connect during ${step}`);
+        }
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error || `Failed at ${step}`);
+        }
+
+        // Update progress
+        setStatus((prev) => ({
+          ...prev,
+          progress: data.progress,
+          overallScore: data.overallScore || prev.overallScore,
+        }));
+
+        // If not complete, run next step
+        if (
+          data.progress !== "complete" &&
+          data.progress !== "failed" &&
+          data.nextStep
+        ) {
+          const nextStepName = data.nextStep.split("/").pop();
+          if (nextStepName && nextStepName !== step) {
+            await runStep(nextStepName, reportId);
+          }
+        } else if (data.progress === "complete") {
+          isRunningRef.current = false;
+          clearPolling();
+          if (data.data) {
+            setStatus((prev) => ({
+              ...prev,
+              data: data.data,
+              overallScore: data.data.overallScore,
+            }));
+            onComplete?.(data.data);
+          }
+        } else if (data.progress === "failed") {
+          isRunningRef.current = false;
+          clearPolling();
+          const failedAt = data.failedAt || step;
+          setStatus((prev) => ({
+            ...prev,
+            progress: "failed",
+            error: data.error || "Audit failed",
+            failedAt,
+          }));
+          onError?.(data.error || "Audit failed");
+        }
+      } catch (error: any) {
+        isRunningRef.current = false;
+        clearPolling();
+        const errorMessage = error.message || "Audit failed";
+        const failedAtMap: Record<string, string> = {
+          summary: "summary_generation",
+          "positioning-clarity": "positioning_clarity_generation",
+          aeo: "aeo_generation",
+          scoring: "scoring",
+          refine: "refinement",
+        };
+        setStatus((prev) => ({
+          ...prev,
+          progress: "failed",
+          error: errorMessage,
+          failedAt: failedAtMap[step] || step,
+        }));
+        onError?.(errorMessage);
+      }
+    },
+    [isGuest, clearPolling, onComplete, onError],
+  );
+
   // Start audit
   const startAudit = useCallback(
     async (url: string) => {
@@ -200,98 +284,6 @@ export function useAudit(options: UseAuditOptions = {}) {
       }
     },
     [productId, isGuest, runStep, onComplete, onError],
-  );
-
-  // Run a single step (declared before startAudit to avoid circular reference)
-  const runStep = useCallback(
-    async (step: string, reportId: string) => {
-      try {
-        let response;
-        try {
-          response = await fetch(`/api/sio-audit/steps/${step}`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ reportId, isGuest }),
-          });
-        } catch (networkError: any) {
-          throw new Error(`Network error: Unable to connect during ${step}`);
-        }
-
-        const data = await response.json();
-
-        if (!response.ok) {
-          // Map API error to step-specific failedAt
-          const failedAtMap: Record<string, string> = {
-            summary: "summary_generation",
-            "positioning-clarity": "positioning_clarity_generation",
-            aeo: "aeo_generation",
-            scoring: "scoring",
-            refine: "refinement",
-          };
-          throw new Error(data.error || `Failed at ${step}`);
-        }
-
-        // Update progress
-        setStatus((prev) => ({
-          ...prev,
-          progress: data.progress,
-          overallScore: data.overallScore || prev.overallScore,
-        }));
-
-        // If not complete, run next step
-        if (
-          data.progress !== "complete" &&
-          data.progress !== "failed" &&
-          data.nextStep
-        ) {
-          const nextStepName = data.nextStep.split("/").pop();
-          if (nextStepName && nextStepName !== step) {
-            await runStep(nextStepName, reportId);
-          }
-        } else if (data.progress === "complete") {
-          isRunningRef.current = false;
-          clearPolling();
-          if (data.data) {
-            setStatus((prev) => ({
-              ...prev,
-              data: data.data,
-              overallScore: data.data.overallScore,
-            }));
-            onComplete?.(data.data);
-          }
-        } else if (data.progress === "failed") {
-          isRunningRef.current = false;
-          clearPolling();
-          const failedAt = data.failedAt || step;
-          setStatus((prev) => ({
-            ...prev,
-            progress: "failed",
-            error: data.error || "Audit failed",
-            failedAt,
-          }));
-          onError?.(data.error || "Audit failed");
-        }
-      } catch (error: any) {
-        isRunningRef.current = false;
-        clearPolling();
-        const errorMessage = error.message || "Audit failed";
-        const failedAtMap: Record<string, string> = {
-          summary: "summary_generation",
-          "positioning-clarity": "positioning_clarity_generation",
-          aeo: "aeo_generation",
-          scoring: "scoring",
-          refine: "refinement",
-        };
-        setStatus((prev) => ({
-          ...prev,
-          progress: "failed",
-          error: errorMessage,
-          failedAt: failedAtMap[step] || step,
-        }));
-        onError?.(errorMessage);
-      }
-    },
-    [isGuest, clearPolling, onComplete, onError],
   );
 
   // Cleanup on unmount
