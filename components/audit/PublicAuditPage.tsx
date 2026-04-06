@@ -170,7 +170,9 @@ export default function PublicAuditPage() {
         )}
 
         {/* Report Display */}
-        {isComplete && status.data && <DashboardSIOReport {...status.data} />}
+        {isComplete && status.data && (
+          <DashboardSIOReport {...status.data} isGuest />
+        )}
 
         {/* Footer */}
         <div className="border-t border-slate-200 pt-8 pb-12">

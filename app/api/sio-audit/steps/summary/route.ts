@@ -79,7 +79,11 @@ export async function POST(request: NextRequest) {
     // Call AI for summary and first impression analysis
     const aiResponse = await client.chat.send({
       chatGenerationParams: {
-        models: ["x-ai/grok-4.1-fast", "qwen/qwen3.5-35b-a3b"],
+        models: [
+          "qwen/qwen3.6-plus:free",
+          "x-ai/grok-4.1-fast",
+          "qwen/qwen3.5-35b-a3b",
+        ],
         messages: [
           {
             role: "system",
@@ -116,7 +120,8 @@ export async function POST(request: NextRequest) {
         },
         provider: {
           requireParameters: true,
-          sort: "throughput",
+          preferredMinThroughput: 38,
+          // sort: "throughput",
         },
         stream: false,
         reasoning: {

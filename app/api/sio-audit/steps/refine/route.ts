@@ -89,7 +89,11 @@ export async function POST(request: NextRequest) {
     // Call AI for quality assurance - returns complete refined report in SIO-V5 format
     const aiResponse = await client.chat.send({
       chatGenerationParams: {
-        models: ["qwen/qwen3.5-35b-a3b", "x-ai/grok-4.1-fast"],
+        models: [
+          "qwen/qwen3.6-plus:free",
+          "x-ai/grok-4.1-fast",
+          "qwen/qwen3.5-35b-a3b",
+        ],
         messages: [
           {
             role: "system",
@@ -118,7 +122,7 @@ export async function POST(request: NextRequest) {
         },
         provider: {
           requireParameters: true,
-          sort: "throughput",
+          // sort: "throughput",
         },
         stream: false,
         reasoning: {

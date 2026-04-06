@@ -206,23 +206,31 @@ export function ClarityCard({ report, isGuest }: ClarityCardProps) {
       {report.unclearSentences.length > 0 && (
         <div className="mb-6">
           <h3 className="text-sm font-semibold text-slate-700 uppercase tracking-wider mb-3">
-            Confusing Lines To Fix ({report.unclearSentences.length})
+            Confusing Paragraphs To Fix ({report.unclearSentences.length})
           </h3>
-          <div className="space-y-3">
-            {report.unclearSentences.map((item, idx) => (
-              <div key={idx} className="border-l-2 border-orange-200 pl-3">
-                <div className="text-orange-700 text-sm line-through mb-1">
-                  "{item.text}"
+          {!isGuest ? (
+            <div className="space-y-3">
+              {report.unclearSentences.map((item, idx) => (
+                <div key={idx} className="border-l-2 border-orange-200 pl-3">
+                  <div className="text-orange-700 text-sm line-through mb-1">
+                    "{item.text}"
+                  </div>
+                  <div className="text-orange-600 text-xs italic mb-2">
+                    ⚠ {item.issue}
+                  </div>
+                  <div className="text-green-700 text-sm font-medium">
+                    → {item.fix}
+                  </div>
                 </div>
-                <div className="text-orange-600 text-xs italic mb-2">
-                  ⚠ {item.issue}
-                </div>
-                <div className="text-green-700 text-sm font-medium">
-                  → {item.fix}
-                </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          ) : (
+            <div className="py-4">
+              <p className="text-blue-500 underline">
+                Please signup to continue reading
+              </p>
+            </div>
+          )}
         </div>
       )}
 

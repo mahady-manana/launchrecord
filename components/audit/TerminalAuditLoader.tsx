@@ -9,7 +9,9 @@ export interface AuditStep {
   id: string;
   name: string;
   progress: AuditProgress;
+  /** Metrics shown when step starts */
   metrics?: string[];
+  /** Sub-metrics shown under each metric */
   subMetrics?: string[];
 }
 
@@ -30,10 +32,14 @@ interface TerminalLine {
     | "error"
     | "metric"
     | "submetric"
-    | "separator";
+    | "separator"
+    | "detail";
   content: string;
   timestamp: number;
 }
+
+// Fixed duration per step (in ms)
+const STEP_DURATION_MS = 90000; // 1 minute per step
 
 export function TerminalAuditLoader({
   command = "sio audit --full url 'https://example.com'",
@@ -45,9 +51,12 @@ export function TerminalAuditLoader({
   const [lines, setLines] = useState<TerminalLine[]>([]);
   const [isComplete, setIsComplete] = useState(false);
   const [currentPrompt, setCurrentPrompt] = useState("");
+  const [progressBar, setProgressBar] = useState("");
   const terminalRef = useRef<HTMLDivElement>(null);
   const lineIdRef = useRef(0);
-  const processedStepsRef = useRef<Set<string>>(new Set());
+  const lastProcessedProgressRef = useRef<AuditProgress>("idle");
+  const stepStartTimeRef = useRef<number>(0);
+  const progressIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
   const addLine = useCallback((type: TerminalLine["type"], content: string) => {
     const newLine: TerminalLine = {
@@ -66,68 +75,167 @@ export function TerminalAuditLoader({
     }
   }, [lines]);
 
-  // Initial prompt
+  // Initial command
   useEffect(() => {
-    setCurrentPrompt("sio-v5@LAUNCHRECORD:~/sio-audit$");
+    setCurrentPrompt("sio-v5@LAUNCHRECORD:~/sio-audit$ ");
     addLine("command", command);
   }, [command, addLine]);
 
-  // Process steps based on current progress
+  // Start progress bar animation for each step
+  const startStepProgress = useCallback((stepId: string) => {
+    // Clear any existing interval
+    if (progressIntervalRef.current) {
+      clearInterval(progressIntervalRef.current);
+    }
+
+    stepStartTimeRef.current = Date.now();
+
+    // Update progress bar every 500ms
+    progressIntervalRef.current = setInterval(() => {
+      const elapsed = Date.now() - stepStartTimeRef.current;
+      const progressPercent = Math.min(
+        94,
+        Math.round((elapsed / STEP_DURATION_MS) * 100),
+      );
+
+      // Create progress bar: ####...............
+      const totalBars = 30;
+      const filledBars = Math.round((progressPercent / 100) * totalBars);
+      const emptyBars = totalBars - filledBars;
+
+      setProgressBar(
+        `[Step: ${stepId}] [${"#".repeat(filledBars)}${".".repeat(emptyBars)}] ${progressPercent}%`,
+      );
+
+      // If we hit 100%, keep it there until next step
+      if (progressPercent >= 100) {
+        setProgressBar(`[Step: ${stepId}] [${"#".repeat(totalBars)}] 100%`);
+      }
+    }, 500);
+  }, []);
+
+  // Clear progress interval on unmount
+  useEffect(() => {
+    return () => {
+      if (progressIntervalRef.current) {
+        clearInterval(progressIntervalRef.current);
+      }
+    };
+  }, []);
+
+  // Process progress changes verbosely
   useEffect(() => {
     if (currentProgress === "idle" || currentProgress === "failed") return;
+    if (currentProgress === lastProcessedProgressRef.current) return;
+
+    const prevProgress = lastProcessedProgressRef.current;
+    lastProcessedProgressRef.current = currentProgress;
 
     const currentStepIndex = steps.findIndex(
       (step) => step.progress === currentProgress,
     );
+    const prevStepIndex = steps.findIndex(
+      (step) => step.progress === prevProgress,
+    );
 
-    // Process all completed steps
-    steps.forEach((step, index) => {
-      if (processedStepsRef.current.has(step.id)) return;
+    // If this is the first real progress (from idle), show initial steps
+    if (prevProgress === "idle" && currentStepIndex >= 0) {
+      // Show all steps before current as completed
+      for (let i = 0; i < currentStepIndex; i++) {
+        const step = steps[i];
+        addLine("info", `\n▶ ${step.name}...`);
+        addLine(
+          "success",
+          `  ✓ Completed in ${(Math.random() * 2 + 1).toFixed(1)}s`,
+        );
+        addLine("separator", "─".repeat(60));
+      }
+    } else if (prevStepIndex >= 0 && currentStepIndex > prevStepIndex) {
+      // Show completion of previous step
+      const prevStep = steps[prevStepIndex];
+      addLine("success", `\n✔ Completed: ${prevStep.name}`);
+      addLine("separator", "─".repeat(60));
+    }
 
-      // If step is before or at current progress, show it
-      if (index <= currentStepIndex || step.progress === currentProgress) {
-        processedStepsRef.current.add(step.id);
+    // Show current step starting (if not already shown)
+    if (currentStepIndex >= 0) {
+      const currentStep = steps[currentStepIndex];
 
-        // Add step header
-        addLine("info", `\n▶ Starting: ${step.name}...`);
+      if (prevProgress === "idle" || currentStepIndex !== prevStepIndex) {
+        addLine("info", `\n▶ ${currentStep.name}...`);
 
-        // Add metrics if step is complete
-        if (index < currentStepIndex && step.metrics) {
-          step.metrics.forEach((metric) => {
-            addLine("metric", `  ✓ ${metric}`);
-            if (step.subMetrics) {
-              step.subMetrics.forEach((sub) => {
-                addLine("submetric", `    └─ ${sub}`);
-              });
-            }
-          });
-        } else if (index === currentStepIndex) {
-          // Currently running step - show some metrics progressively
-          if (step.metrics) {
-            step.metrics.slice(0, 2).forEach((metric) => {
-              addLine("metric", `  ⟳ ${metric}...`);
+        // Start progress bar for this step
+        startStepProgress(currentStep.id);
+      }
+
+      // Show ALL metrics and sub-metrics for this step verbosely
+      if (currentStep.metrics) {
+        currentStep.metrics.forEach((metric, idx) => {
+          // Add a slight delay feel by showing processing
+          addLine(
+            "metric",
+            `  [${idx + 1}/${currentStep.metrics!.length}] Analyzing: ${metric}`,
+          );
+
+          // Show sub-metrics if available
+          if (currentStep.subMetrics) {
+            const startIdx =
+              idx *
+              Math.floor(
+                currentStep.subMetrics!.length / currentStep.metrics!.length,
+              );
+            const endIdx =
+              idx === currentStep.metrics!.length - 1
+                ? currentStep.subMetrics!.length
+                : startIdx +
+                  Math.floor(
+                    currentStep.subMetrics!.length /
+                      currentStep.metrics!.length,
+                  );
+
+            const relevantSubMetrics = currentStep.subMetrics!.slice(
+              startIdx,
+              endIdx,
+            );
+            relevantSubMetrics.forEach((sub) => {
+              addLine("submetric", `      ├─ ${sub}... ✓`);
             });
           }
-        }
+        });
 
-        // Add step completion if before current
-        if (index < currentStepIndex) {
-          addLine("success", `✔ Completed: ${step.name}`);
-          if (index < currentStepIndex - 1) {
-            addLine("separator", "─".repeat(60));
-          }
+        // Show completion of all metrics
+        addLine("detail", `  Processed ${currentStep.metrics.length} metrics`);
+        if (currentStep.subMetrics) {
+          addLine(
+            "detail",
+            `  Analyzed ${currentStep.subMetrics.length} sub-metrics`,
+          );
         }
       }
-    });
+    }
 
     // Show complete message
     if (currentProgress === "complete" && !isComplete) {
+      // Clear progress interval
+      if (progressIntervalRef.current) {
+        clearInterval(progressIntervalRef.current);
+        progressIntervalRef.current = null;
+      }
+
       setIsComplete(true);
+      setProgressBar("[Complete] [##############################] 100%");
       addLine("separator", "═".repeat(60));
       addLine("success", "\n✔ Audit complete. Generating report...");
       onComplete?.();
     }
-  }, [currentProgress, steps, addLine, onComplete, isComplete]);
+  }, [
+    currentProgress,
+    steps,
+    addLine,
+    onComplete,
+    isComplete,
+    startStepProgress,
+  ]);
 
   const getLineColor = (type: TerminalLine["type"]): string => {
     switch (type) {
@@ -143,6 +251,8 @@ export function TerminalAuditLoader({
         return "text-slate-200";
       case "submetric":
         return "text-slate-400";
+      case "detail":
+        return "text-slate-500 text-xs";
       case "separator":
         return "text-slate-600";
       default:
@@ -195,6 +305,8 @@ export function TerminalAuditLoader({
           </div>
         )}
 
+        {/* Progress bar on last line of command */}
+
         {lines.slice(1).map((line) => (
           <div
             key={line.id}
@@ -209,6 +321,11 @@ export function TerminalAuditLoader({
           <span className="inline-block w-2 h-4 bg-emerald-400 animate-pulse ml-1" />
         )}
       </div>
+      {progressBar && (
+        <div className="mb-2 px-4 text-emerald-300 font-mono text-sm">
+          {progressBar}
+        </div>
+      )}
     </div>
   );
 }

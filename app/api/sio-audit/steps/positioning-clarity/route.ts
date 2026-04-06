@@ -108,7 +108,11 @@ export async function POST(request: NextRequest) {
     // Call AI for positioning and clarity analysis
     const aiResponse = await client.chat.send({
       chatGenerationParams: {
-        models: ["x-ai/grok-4.1-fast", "qwen/qwen3.5-35b-a3b"],
+        models: [
+          "qwen/qwen3.6-plus:free",
+          "x-ai/grok-4.1-fast",
+          "qwen/qwen3.5-35b-a3b",
+        ],
         messages: [
           {
             role: "system",
