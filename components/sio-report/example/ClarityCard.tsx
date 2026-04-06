@@ -227,7 +227,7 @@ export function ClarityCard({ report, isGuest }: ClarityCardProps) {
       )}
 
       {/* Sub-Metrics Grid */}
-      {isGuest ? null : (
+      {isGuest || !report.subMetrics ? null : (
         <div>
           <div className="space-y-4">
             <SubMetricCard

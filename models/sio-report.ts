@@ -255,6 +255,35 @@ export interface ISIOReport extends Document {
   rawAnalysis?: string;
   verifiedAnalysis?: string;
 
+  // Progress tracking (multi-step audit)
+  progress?:
+    | "initializing"
+    | "content_fetched"
+    | "summary_complete"
+    | "positioning_clarity_complete"
+    | "aeo_complete"
+    | "scoring_complete"
+    | "complete"
+    | "failed";
+
+  // Temporary storage for multi-step audit (deleted on completion)
+  tempData?: {
+    rawWebsiteContent?: string;
+    simplifiedContent?: string;
+    metadata?: any;
+    ldJson?: any;
+    robotsTxt?: string;
+    sitemap?: string;
+    contentLength?: number;
+    hasSitemap?: boolean;
+    hasRobots?: boolean;
+    metadataCount?: number;
+  };
+
+  // Error tracking for failed audits
+  failedAt?: string;
+  errorMessage?: string;
+
   // Timestamps
   createdAt: Date;
   updatedAt: Date;
@@ -285,14 +314,15 @@ const SIOReportSchema = new Schema<ISIOReport>(
       required: [true, "Overall score is required"],
       min: 0,
       max: 100,
+      default: 0,
     },
     statement: {
       type: String,
-      required: [true, "Statement is required"],
+      default: "",
     },
     reportBand: {
       type: String,
-      required: [true, "Report band is required"],
+      default: "Ghost",
       enum: {
         values: ["Dominant", "Strong", "Blended", "Weak", "Ghost"],
         message: "Invalid report band",
@@ -305,7 +335,7 @@ const SIOReportSchema = new Schema<ISIOReport>(
 
     // Website Summary
     websiteSummary: {
-      summary: { type: String, required: true },
+      summary: { type: String, default: "" },
       summaryComment: { type: String, default: "" },
       problems: {
         currents: { type: [String], default: [] },
@@ -327,31 +357,31 @@ const SIOReportSchema = new Schema<ISIOReport>(
         positiveComments: { type: [String], default: [] },
         negativeComments: { type: [String], default: [] },
       },
-      isPositioningClear: { type: Boolean, required: true },
-      isMessagingClear: { type: Boolean, required: true },
-      areUsersLeftGuessing: { type: Boolean, required: true },
+      isPositioningClear: { type: Boolean, default: false },
+      isMessagingClear: { type: Boolean, default: false },
+      areUsersLeftGuessing: { type: Boolean, default: true },
     },
 
     // First Impression
     firstImpression: {
-      score: { type: Number, required: true, min: 0, max: 100 },
-      statement: { type: String, required: true },
+      score: { type: Number, default: 0, min: 0, max: 100 },
+      statement: { type: String, default: "" },
       overallCommentPositive: { type: [String], default: [] },
       overallCommentNegative: { type: [String], default: [] },
       headline: {
-        current: { type: String, required: true },
+        current: { type: String, default: "" },
         positiveComments: { type: [String], default: [] },
         negativeComments: { type: [String], default: [] },
         suggested: { type: [String], default: [] },
       },
       subheadline: {
-        current: { type: String, required: true },
+        current: { type: String, default: "" },
         positiveComments: { type: [String], default: [] },
         negativeComments: { type: [String], default: [] },
         suggested: { type: [String], default: [] },
       },
       cta: {
-        current: { type: String, required: true },
+        current: { type: String, default: "" },
         positiveComments: { type: [String], default: [] },
         negativeComments: { type: [String], default: [] },
         suggested: { type: [String], default: [] },
@@ -360,61 +390,61 @@ const SIOReportSchema = new Schema<ISIOReport>(
 
     // Positioning
     positioning: {
-      score: { type: Number, required: true, min: 0, max: 100 },
-      statement: { type: String, required: true },
+      score: { type: Number, default: 0, min: 0, max: 100 },
+      statement: { type: String, default: "" },
       overallCommentPositive: { type: [String], default: [] },
       overallCommentNegative: { type: [String], default: [] },
       summary: {
-        current: { type: String, required: true },
+        current: { type: String, default: "" },
         positiveComments: { type: [String], default: [] },
         negativeComments: { type: [String], default: [] },
         suggested: { type: [String], default: [] },
       },
       subMetrics: {
         categoryOwnership: {
-          name: { type: String, required: true },
-          score: { type: Number, required: true, min: 0, max: 100 },
-          current: { type: String, required: true },
+          name: { type: String, default: "Category Ownership" },
+          score: { type: Number, default: 0, min: 0, max: 100 },
+          current: { type: String, default: "" },
           positiveComments: { type: [String], default: [] },
           negativeComments: { type: [String], default: [] },
           suggested: { type: [String], default: [] },
         },
         uniqueValueProp: {
-          name: { type: String, required: true },
-          score: { type: Number, required: true, min: 0, max: 100 },
-          current: { type: String, required: true },
+          name: { type: String, default: "Unique Value Proposition" },
+          score: { type: Number, default: 0, min: 0, max: 100 },
+          current: { type: String, default: "" },
           positiveComments: { type: [String], default: [] },
           negativeComments: { type: [String], default: [] },
           suggested: { type: [String], default: [] },
         },
         competitiveDiff: {
-          name: { type: String, required: true },
-          score: { type: Number, required: true, min: 0, max: 100 },
-          current: { type: String, required: true },
+          name: { type: String, default: "Competitive Differentiation" },
+          score: { type: Number, default: 0, min: 0, max: 100 },
+          current: { type: String, default: "" },
           positiveComments: { type: [String], default: [] },
           negativeComments: { type: [String], default: [] },
           suggested: { type: [String], default: [] },
         },
         targetAudience: {
-          name: { type: String, required: true },
-          score: { type: Number, required: true, min: 0, max: 100 },
-          current: { type: String, required: true },
+          name: { type: String, default: "Target Audience Clarity" },
+          score: { type: Number, default: 0, min: 0, max: 100 },
+          current: { type: String, default: "" },
           positiveComments: { type: [String], default: [] },
           negativeComments: { type: [String], default: [] },
           suggested: { type: [String], default: [] },
         },
         problemSolutionFit: {
-          name: { type: String, required: true },
-          score: { type: Number, required: true, min: 0, max: 100 },
-          current: { type: String, required: true },
+          name: { type: String, default: "Problem-Solution Fit" },
+          score: { type: Number, default: 0, min: 0, max: 100 },
+          current: { type: String, default: "" },
           positiveComments: { type: [String], default: [] },
           negativeComments: { type: [String], default: [] },
           suggested: { type: [String], default: [] },
         },
         messagingConsistency: {
-          name: { type: String, required: true },
-          score: { type: Number, required: true, min: 0, max: 100 },
-          current: { type: String, required: true },
+          name: { type: String, default: "Messaging Consistency" },
+          score: { type: Number, default: 0, min: 0, max: 100 },
+          current: { type: String, default: "" },
           positiveComments: { type: [String], default: [] },
           negativeComments: { type: [String], default: [] },
           suggested: { type: [String], default: [] },
@@ -424,12 +454,12 @@ const SIOReportSchema = new Schema<ISIOReport>(
 
     // Clarity
     clarity: {
-      score: { type: Number, required: true, min: 0, max: 100 },
-      statement: { type: String, required: true },
+      score: { type: Number, default: 0, min: 0, max: 100 },
+      statement: { type: String, default: "" },
       overallCommentPositive: { type: [String], default: [] },
       overallCommentNegative: { type: [String], default: [] },
       summary: {
-        current: { type: String, required: true },
+        current: { type: String, default: "" },
         positiveComments: { type: [String], default: [] },
         negativeComments: { type: [String], default: [] },
         suggested: { type: [String], default: [] },
@@ -437,117 +467,117 @@ const SIOReportSchema = new Schema<ISIOReport>(
       unclearSentences: {
         type: [
           {
-            text: { type: String, required: true },
-            issue: { type: String, required: true },
-            fix: { type: String, required: true },
+            text: { type: String, default: "" },
+            issue: { type: String, default: "" },
+            fix: { type: String, default: "" },
           },
         ],
         default: [],
       },
       subMetrics: {
         headlineClarity: {
-          name: { type: String, required: true },
-          score: { type: Number, required: true, min: 0, max: 100 },
-          current: { type: String, required: true },
+          name: { type: String, default: "Headline Clarity" },
+          score: { type: Number, default: 0, min: 0, max: 100 },
+          current: { type: String, default: "" },
           positiveComments: { type: [String], default: [] },
           negativeComments: { type: [String], default: [] },
           suggested: { type: [String], default: [] },
           unclearTexts: {
             type: [
               {
-                text: { type: String, required: true },
-                issue: { type: String, required: true },
-                fix: { type: String, required: true },
+                text: { type: String, default: "" },
+                issue: { type: String, default: "" },
+                fix: { type: String, default: "" },
               },
             ],
             default: [],
           },
         },
         valueProposition: {
-          name: { type: String, required: true },
-          score: { type: Number, required: true, min: 0, max: 100 },
-          current: { type: String, required: true },
+          name: { type: String, default: "Value Proposition" },
+          score: { type: Number, default: 0, min: 0, max: 100 },
+          current: { type: String, default: "" },
           positiveComments: { type: [String], default: [] },
           negativeComments: { type: [String], default: [] },
           suggested: { type: [String], default: [] },
           unclearTexts: {
             type: [
               {
-                text: { type: String, required: true },
-                issue: { type: String, required: true },
-                fix: { type: String, required: true },
+                text: { type: String, default: "" },
+                issue: { type: String, default: "" },
+                fix: { type: String, default: "" },
               },
             ],
             default: [],
           },
         },
         featureBenefitMapping: {
-          name: { type: String, required: true },
-          score: { type: Number, required: true, min: 0, max: 100 },
-          current: { type: String, required: true },
+          name: { type: String, default: "Feature-Benefit Mapping" },
+          score: { type: Number, default: 0, min: 0, max: 100 },
+          current: { type: String, default: "" },
           positiveComments: { type: [String], default: [] },
           negativeComments: { type: [String], default: [] },
           suggested: { type: [String], default: [] },
           unclearTexts: {
             type: [
               {
-                text: { type: String, required: true },
-                issue: { type: String, required: true },
-                fix: { type: String, required: true },
+                text: { type: String, default: "" },
+                issue: { type: String, default: "" },
+                fix: { type: String, default: "" },
               },
             ],
             default: [],
           },
         },
         visualHierarchy: {
-          name: { type: String, required: true },
-          score: { type: Number, required: true, min: 0, max: 100 },
-          current: { type: String, required: true },
+          name: { type: String, default: "Visual Hierarchy" },
+          score: { type: Number, default: 0, min: 0, max: 100 },
+          current: { type: String, default: "" },
           positiveComments: { type: [String], default: [] },
           negativeComments: { type: [String], default: [] },
           suggested: { type: [String], default: [] },
           unclearTexts: {
             type: [
               {
-                text: { type: String, required: true },
-                issue: { type: String, required: true },
-                fix: { type: String, required: true },
+                text: { type: String, default: "" },
+                issue: { type: String, default: "" },
+                fix: { type: String, default: "" },
               },
             ],
             default: [],
           },
         },
         ctaClarity: {
-          name: { type: String, required: true },
-          score: { type: Number, required: true, min: 0, max: 100 },
-          current: { type: String, required: true },
+          name: { type: String, default: "CTA Clarity" },
+          score: { type: Number, default: 0, min: 0, max: 100 },
+          current: { type: String, default: "" },
           positiveComments: { type: [String], default: [] },
           negativeComments: { type: [String], default: [] },
           suggested: { type: [String], default: [] },
           unclearTexts: {
             type: [
               {
-                text: { type: String, required: true },
-                issue: { type: String, required: true },
-                fix: { type: String, required: true },
+                text: { type: String, default: "" },
+                issue: { type: String, default: "" },
+                fix: { type: String, default: "" },
               },
             ],
             default: [],
           },
         },
         proofPlacement: {
-          name: { type: String, required: true },
-          score: { type: Number, required: true, min: 0, max: 100 },
-          current: { type: String, required: true },
+          name: { type: String, default: "Proof Placement" },
+          score: { type: Number, default: 0, min: 0, max: 100 },
+          current: { type: String, default: "" },
           positiveComments: { type: [String], default: [] },
           negativeComments: { type: [String], default: [] },
           suggested: { type: [String], default: [] },
           unclearTexts: {
             type: [
               {
-                text: { type: String, required: true },
-                issue: { type: String, required: true },
-                fix: { type: String, required: true },
+                text: { type: String, default: "" },
+                issue: { type: String, default: "" },
+                fix: { type: String, default: "" },
               },
             ],
             default: [],
@@ -558,12 +588,12 @@ const SIOReportSchema = new Schema<ISIOReport>(
 
     // AEO
     aeo: {
-      score: { type: Number, required: true, min: 0, max: 100 },
-      statement: { type: String, required: true },
+      score: { type: Number, default: 0, min: 0, max: 100 },
+      statement: { type: String, default: "" },
       aiPresence: {
-        isPresent: { type: Boolean, required: true },
+        isPresent: { type: Boolean, default: false },
         engines: { type: [String], default: [] },
-        comment: { type: String, required: true },
+        comment: { type: String, default: "" },
       },
       recommendations: { type: [String], default: [] },
     },
@@ -574,6 +604,41 @@ const SIOReportSchema = new Schema<ISIOReport>(
     modelUsed: { type: String, default: null },
     rawAnalysis: { type: String, default: null },
     verifiedAnalysis: { type: String, default: null },
+
+    // Progress tracking (multi-step audit)
+    progress: {
+      type: String,
+      enum: [
+        "initializing",
+        "content_fetched",
+        "summary_complete",
+        "positioning_clarity_complete",
+        "aeo_complete",
+        "scoring_complete",
+        "complete",
+        "failed",
+      ],
+      default: "initializing",
+      index: true,
+    },
+
+    // Temporary storage for multi-step audit
+    tempData: {
+      rawWebsiteContent: { type: String, default: null },
+      simplifiedContent: { type: String, default: null },
+      metadata: { type: Schema.Types.Mixed, default: null },
+      ldJson: { type: Schema.Types.Mixed, default: null },
+      robotsTxt: { type: String, default: null },
+      sitemap: { type: String, default: null },
+      contentLength: { type: Number, default: null },
+      hasSitemap: { type: Boolean, default: false },
+      hasRobots: { type: Boolean, default: false },
+      metadataCount: { type: Number, default: null },
+    },
+
+    // Error tracking for failed audits
+    failedAt: { type: String, default: null },
+    errorMessage: { type: String, default: null },
   },
   { timestamps: true },
 );

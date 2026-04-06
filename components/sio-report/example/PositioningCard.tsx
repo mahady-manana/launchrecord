@@ -175,7 +175,7 @@ export function PositioningCard({ report, isGuest }: PositioningCardProps) {
       {/* Sub-Metrics Grid */}
       <div>
         <div className="space-y-4">
-          {isGuest ? null : (
+          {isGuest || !report.subMetrics ? null : (
             <>
               <SubMetricCard
                 name="Niche Category Ownership"

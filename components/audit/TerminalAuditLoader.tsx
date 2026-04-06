@@ -1,5 +1,6 @@
 "use client";
 
+import { AuditProgress } from "@/components/audit/useAudit";
 import { cn } from "@/lib/utils";
 import { Terminal } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -7,6 +8,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 export interface AuditStep {
   id: string;
   name: string;
+  progress: AuditProgress;
   metrics?: string[];
   subMetrics?: string[];
 }
@@ -14,6 +16,7 @@ export interface AuditStep {
 export interface TerminalAuditLoaderProps {
   command?: string;
   steps: AuditStep[];
+  currentProgress: AuditProgress;
   onComplete?: () => void;
   className?: string;
 }
@@ -35,6 +38,7 @@ interface TerminalLine {
 export function TerminalAuditLoader({
   command = "sio audit --full url 'https://example.com'",
   steps,
+  currentProgress,
   onComplete,
   className,
 }: TerminalAuditLoaderProps) {
@@ -43,6 +47,7 @@ export function TerminalAuditLoader({
   const [currentPrompt, setCurrentPrompt] = useState("");
   const terminalRef = useRef<HTMLDivElement>(null);
   const lineIdRef = useRef(0);
+  const processedStepsRef = useRef<Set<string>>(new Set());
 
   const addLine = useCallback((type: TerminalLine["type"], content: string) => {
     const newLine: TerminalLine = {
@@ -61,112 +66,68 @@ export function TerminalAuditLoader({
     }
   }, [lines]);
 
-  // Simulate terminal output
+  // Initial prompt
   useEffect(() => {
-    let cancelled = false;
-    const delays: NodeJS.Timeout[] = [];
+    setCurrentPrompt("sio-v5@LAUNCHRECORD:~/sio-audit$");
+    addLine("command", command);
+  }, [command, addLine]);
 
-    const schedule = (fn: () => void, delay: number) => {
-      const timeout = setTimeout(() => {
-        if (!cancelled) fn();
-      }, delay);
-      delays.push(timeout);
-      return timeout;
-    };
+  // Process steps based on current progress
+  useEffect(() => {
+    if (currentProgress === "idle" || currentProgress === "failed") return;
 
-    // Initial prompt
-    schedule(() => {
-      setCurrentPrompt("sio-v5@LAUNCHRECORD:~/sio-audit$");
-      addLine("command", command);
-    }, 300);
+    const currentStepIndex = steps.findIndex(
+      (step) => step.progress === currentProgress,
+    );
 
-    // Process each step
-    // Total duration target: ~3.5 minutes (210,000ms)
-    let cumulativeDelay = 1000;
-    const totalSteps = steps.length;
-    const timePerStep = Math.floor(200000 / totalSteps); // ~40s per step for 5 steps
+    // Process all completed steps
+    steps.forEach((step, index) => {
+      if (processedStepsRef.current.has(step.id)) return;
 
-    steps.forEach((step, stepIndex) => {
-      const isLast = stepIndex === steps.length - 1;
-      const stepStartOffset = stepIndex * timePerStep;
+      // If step is before or at current progress, show it
+      if (index <= currentStepIndex || step.progress === currentProgress) {
+        processedStepsRef.current.add(step.id);
 
-      // Step header
-      schedule(
-        () => addLine("info", `\n▶ Starting: ${step.name}...`),
-        cumulativeDelay + stepStartOffset,
-      );
+        // Add step header
+        addLine("info", `\n▶ Starting: ${step.name}...`);
 
-      // Metrics
-      if (step.metrics) {
-        const timePerMetric = Math.floor(timePerStep / step.metrics.length);
-
-        step.metrics.forEach((metric, metricIndex) => {
-          const hasError = Math.random() < 0.08; // 8% chance of error for realism
-          const metricOffset =
-            stepStartOffset + 2000 + metricIndex * timePerMetric;
-
-          schedule(
-            () => addLine("metric", `  ${hasError ? "✗" : "✓"} ${metric}`),
-            cumulativeDelay + metricOffset,
-          );
-
-          // Sub-metrics
-          if (step.subMetrics && !hasError) {
-            const relevantSubMetrics = step.subMetrics.filter(
-              (_, i) => i % (step.metrics?.length || 1) === metricIndex,
-            );
-
-            relevantSubMetrics.forEach((sub, subIndex) => {
-              schedule(
-                () => addLine("submetric", `    └─ ${sub}`),
-                cumulativeDelay + metricOffset + 1500 + subIndex * 800,
-              );
+        // Add metrics if step is complete
+        if (index < currentStepIndex && step.metrics) {
+          step.metrics.forEach((metric) => {
+            addLine("metric", `  ✓ ${metric}`);
+            if (step.subMetrics) {
+              step.subMetrics.forEach((sub) => {
+                addLine("submetric", `    └─ ${sub}`);
+              });
+            }
+          });
+        } else if (index === currentStepIndex) {
+          // Currently running step - show some metrics progressively
+          if (step.metrics) {
+            step.metrics.slice(0, 2).forEach((metric) => {
+              addLine("metric", `  ⟳ ${metric}...`);
             });
           }
+        }
 
-          // Add occasional error with retry
-          if (hasError) {
-            schedule(
-              () =>
-                addLine("error", `    ⚠ Warning: Retry required for ${metric}`),
-              cumulativeDelay + metricOffset + 2000,
-            );
-            schedule(
-              () => addLine("success", `    ✓ Retry successful`),
-              cumulativeDelay + metricOffset + 3500,
-            );
+        // Add step completion if before current
+        if (index < currentStepIndex) {
+          addLine("success", `✔ Completed: ${step.name}`);
+          if (index < currentStepIndex - 1) {
+            addLine("separator", "─".repeat(60));
           }
-        });
-      }
-
-      // Step completion
-      schedule(
-        () => addLine("success", `✔ Completed: ${step.name}`),
-        cumulativeDelay + stepStartOffset + timePerStep - 1000,
-      );
-
-      // Separator between steps
-      if (!isLast) {
-        schedule(
-          () => addLine("separator", "─".repeat(60)),
-          cumulativeDelay + stepStartOffset + timePerStep - 500,
-        );
+        }
       }
     });
 
-    // Final completion at ~3.5 minutes
-    schedule(() => {
+    // Show complete message
+    if (currentProgress === "complete" && !isComplete) {
+      setIsComplete(true);
       addLine("separator", "═".repeat(60));
       addLine("success", "\n✔ Audit complete. Generating report...");
-      setIsComplete(true);
       onComplete?.();
-    }, 210000); // 3.5 minutes total
-
-    return () => {
-      cancelled = true;
-      delays.forEach(clearTimeout);
-    };
-  }, [command, steps, onComplete, addLine]);
+    }
+  }, [currentProgress, steps, addLine, onComplete, isComplete]);
 
   const getLineColor = (type: TerminalLine["type"]): string => {
     switch (type) {
@@ -244,7 +205,7 @@ export function TerminalAuditLoader({
         ))}
 
         {/* Blinking cursor */}
-        {!isComplete && (
+        {!isComplete && currentProgress !== "complete" && (
           <span className="inline-block w-2 h-4 bg-emerald-400 animate-pulse ml-1" />
         )}
       </div>
