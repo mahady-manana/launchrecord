@@ -160,7 +160,7 @@ function DashboardSurveyContent() {
     };
 
     if (toolId === "sio") {
-      router.push(`/dashboard/audit?product=${productId}`);
+      router.push(`/dashboard/${productId}/audit-page?auto=true`);
       return;
     }
     const route = toolRoutes[toolId];

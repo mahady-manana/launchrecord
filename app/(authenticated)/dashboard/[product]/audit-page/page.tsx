@@ -1,17 +1,17 @@
 "use client";
 
+import { AuditLoader, useAudit } from "@/components/audit";
 import { Button } from "@/components/ui/button";
 import { useProducts } from "@/hooks/use-products";
-import type { ISIOReport } from "@/models/sio-report";
+import type { SIOV5Report } from "@/services/sio-report/schema";
 import { useProductStore } from "@/stores/product-store";
 import { ArrowLeft } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Suspense, useEffect, useState } from "react";
 import {
   AuditErrorCard,
   AuditPreviewCard,
   AuditRateLimitedCard,
-  AuditRunningCard,
   AuditStartCard,
   AuditSuccessCard,
   ExistingAuditCard,
@@ -23,19 +23,61 @@ interface AuditPageProps {
 
 type AuditStatus = "idle" | "running" | "success" | "error" | "rate-limited";
 
-export default function ProductAuditPage({ params }: AuditPageProps) {
+function ProductAuditPageContent({ params }: AuditPageProps) {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const autoRun = searchParams.get("auto") === "true";
+
   const { products, selectedProduct, setSelectedProduct } = useProductStore();
   const { fetchProducts } = useProducts();
 
   const [product, setProduct] = useState<typeof selectedProduct>(null);
-  const [existingReport, setExistingReport] = useState<ISIOReport | null>(null);
+  const [existingReport, setExistingReport] = useState<SIOV5Report | null>(
+    null,
+  );
   const [isLoading, setIsLoading] = useState(true);
   const [auditStatus, setAuditStatus] = useState<AuditStatus>("idle");
-  const [progress, setProgress] = useState(0);
   const [errorMessage, setErrorMessage] = useState<string>("");
   const [retryAt, setRetryAt] = useState<Date | null>(null);
   const [countdown, setCountdown] = useState<string>("");
+  const [hasAutoRun, setHasAutoRun] = useState(false);
+
+  // Use the new multi-step audit hook
+  const {
+    status: auditProgress,
+    startAudit: startMultiStepAudit,
+    isRunning,
+    isComplete,
+    isFailed,
+  } = useAudit({
+    isGuest: false,
+    onComplete: async (report: SIOV5Report) => {
+      setAuditStatus("success");
+      setExistingReport(report);
+      await fetchProducts();
+      // Auto-redirect after short delay
+      setTimeout(() => {
+        if (product) {
+          router.push(`/dashboard/${product.id}`);
+        }
+      }, 3000);
+    },
+    onError: (error: string) => {
+      // Check if it's a rate limit error
+      if (
+        error.includes("limit") ||
+        error.includes("capacity") ||
+        error.includes("rate")
+      ) {
+        setAuditStatus("rate-limited");
+        setErrorMessage(error);
+        setRetryAt(new Date(Date.now() + 60000)); // 1 minute retry
+      } else {
+        setAuditStatus("error");
+        setErrorMessage(error);
+      }
+    },
+  });
 
   useEffect(() => {
     async function loadProduct() {
@@ -55,6 +97,17 @@ export default function ProductAuditPage({ params }: AuditPageProps) {
     }
     loadProduct();
   }, [params]);
+
+  // Auto-run audit if ?auto=true
+  useEffect(() => {
+    if (!autoRun || !product || !product.website || hasAutoRun) return;
+
+    // Don't auto-run if there's an existing recent report
+    if (existingReport) return;
+
+    setHasAutoRun(true);
+    handleStartAudit();
+  }, [autoRun, product, existingReport, hasAutoRun]);
 
   useEffect(() => {
     if (!retryAt) return;
@@ -96,67 +149,10 @@ export default function ProductAuditPage({ params }: AuditPageProps) {
   };
 
   const handleStartAudit = async () => {
-    if (!product) return;
+    if (!product || !product.website) return;
 
     setAuditStatus("running");
-    setProgress(0);
-
-    // Simulate progress
-    const progressInterval = setInterval(() => {
-      setProgress((prev) => {
-        if (prev >= 90) return prev;
-        return prev + Math.random() * 10;
-      });
-    }, 5000);
-
-    try {
-      if (!product.website) {
-        throw new Error("Product website is required to run an audit");
-      }
-
-      const response = await fetch("/api/sio-v5-audit", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          productId: product.id,
-          url: product.website,
-        }),
-      });
-
-      clearInterval(progressInterval);
-      setProgress(100);
-
-      const data = await response.json();
-
-      if (response.ok) {
-        setAuditStatus("success");
-        setExistingReport(data.data || null);
-        await fetchProducts();
-        router.push("/dashboard/" + product.id);
-      } else if (response.status === 403) {
-        setAuditStatus("rate-limited");
-        setErrorMessage(data.error || "Audit limit reached");
-      } else if (response.status === 429) {
-        setAuditStatus("rate-limited");
-        setErrorMessage(data.error || "Rate limit exceeded");
-        if (data.retryAt) {
-          setRetryAt(new Date(data.retryAt));
-        }
-      } else if (response.status === 503 && data.retry) {
-        setAuditStatus("rate-limited");
-        setErrorMessage(data.error || "System at capacity");
-        if (data.retryAt) {
-          setRetryAt(new Date(data.retryAt));
-        }
-      } else {
-        setAuditStatus("error");
-        setErrorMessage(data.error || "Failed to run audit");
-      }
-    } catch (err: any) {
-      clearInterval(progressInterval);
-      setAuditStatus("error");
-      setErrorMessage(err.message || "Failed to run audit");
-    }
+    await startMultiStepAudit(product.website, product.id);
   };
 
   const handleBack = () => {
@@ -230,8 +226,22 @@ export default function ProductAuditPage({ params }: AuditPageProps) {
           />
         )}
 
-        {/* Running State */}
-        {auditStatus === "running" && <AuditRunningCard progress={progress} />}
+        {/* Running State - Terminal Loader */}
+        {auditStatus === "running" && product.website && (
+          <AuditLoader
+            currentProgress={
+              isFailed
+                ? "failed"
+                : isComplete
+                  ? "complete"
+                  : auditProgress.progress === "idle"
+                    ? "content_fetched"
+                    : auditProgress.progress
+            }
+            url={product.website}
+            className="max-w-none"
+          />
+        )}
 
         {/* Main Content */}
         {!existingReport && auditStatus === "idle" ? (
@@ -248,5 +258,22 @@ export default function ProductAuditPage({ params }: AuditPageProps) {
         ) : null}
       </div>
     </div>
+  );
+}
+
+export default function ProductAuditPage(props: AuditPageProps) {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex items-center justify-center min-h-screen">
+          <div className="text-center space-y-4">
+            <div className="animate-spin h-8 w-8 border-4 border-orange-600 border-t-transparent rounded-full mx-auto" />
+            <p className="text-muted-foreground">Loading...</p>
+          </div>
+        </div>
+      }
+    >
+      <ProductAuditPageContent {...props} />
+    </Suspense>
   );
 }

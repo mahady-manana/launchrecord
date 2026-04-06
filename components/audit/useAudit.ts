@@ -37,7 +37,7 @@ export interface UseAuditOptions {
 
 export function useAudit(options: UseAuditOptions = {}) {
   const {
-    productId,
+    productId: defaultProductId,
     isGuest = true,
     pollInterval = 2000,
     onComplete,
@@ -115,14 +115,14 @@ export function useAudit(options: UseAuditOptions = {}) {
 
   // Run a single step (declared before startAudit)
   const runStep = useCallback(
-    async (step: string, reportId: string) => {
+    async (step: string, reportId: string, stepIsGuest: boolean) => {
       try {
         let response;
         try {
           response = await fetch(`/api/sio-audit/steps/${step}`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ reportId, isGuest }),
+            body: JSON.stringify({ reportId, isGuest: stepIsGuest }),
           });
         } catch (networkError: any) {
           throw new Error(`Network error: Unable to connect during ${step}`);
@@ -149,7 +149,7 @@ export function useAudit(options: UseAuditOptions = {}) {
         ) {
           const nextStepName = data.nextStep.split("/").pop();
           if (nextStepName && nextStepName !== step) {
-            await runStep(nextStepName, reportId);
+            await runStep(nextStepName, reportId, stepIsGuest);
           }
         } else if (data.progress === "complete") {
           isRunningRef.current = false;
@@ -194,14 +194,18 @@ export function useAudit(options: UseAuditOptions = {}) {
         onError?.(errorMessage);
       }
     },
-    [isGuest, clearPolling, onComplete, onError],
+    [clearPolling, onComplete, onError],
   );
 
   // Start audit
   const startAudit = useCallback(
-    async (url: string) => {
+    async (url: string, productId?: string) => {
       if (isRunningRef.current) return;
       isRunningRef.current = true;
+
+      // Use provided productId or fallback to default
+      const effectiveProductId = productId || defaultProductId;
+      const effectiveIsGuest = isGuest && !effectiveProductId;
 
       // Reset status
       setStatus({
@@ -221,7 +225,11 @@ export function useAudit(options: UseAuditOptions = {}) {
           initResponse = await fetch("/api/sio-audit/steps/init", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ url, productId, isGuest }),
+            body: JSON.stringify({
+              url,
+              productId: effectiveProductId,
+              isGuest: effectiveIsGuest,
+            }),
           });
         } catch (networkError: any) {
           throw new Error("Network error: Unable to connect to audit service");
@@ -270,7 +278,7 @@ export function useAudit(options: UseAuditOptions = {}) {
         }));
 
         // Also trigger next steps sequentially
-        await runStep("summary", reportId);
+        await runStep("summary", reportId, effectiveIsGuest);
       } catch (error: any) {
         isRunningRef.current = false;
         const errorMessage = error.message || "Failed to start audit";
@@ -283,7 +291,7 @@ export function useAudit(options: UseAuditOptions = {}) {
         onError?.(errorMessage);
       }
     },
-    [productId, isGuest, runStep, onComplete, onError],
+    [defaultProductId, isGuest, runStep, onComplete, onError],
   );
 
   // Cleanup on unmount

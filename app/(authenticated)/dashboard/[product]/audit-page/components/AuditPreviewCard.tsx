@@ -5,10 +5,10 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { ISIOReport } from "@/models/sio-report";
+import type { SIOV5Report } from "@/services/sio-report/schema";
 
 interface AuditPreviewCardProps {
-  report: ISIOReport;
+  report: SIOV5Report;
 }
 
 export function AuditPreviewCard({ report }: AuditPreviewCardProps) {
@@ -20,7 +20,11 @@ export function AuditPreviewCard({ report }: AuditPreviewCardProps) {
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-2 gap-4 md:grid-cols-5">
-          <ScoreCard label="Overall" score={report.overallScore} color="slate" />
+          <ScoreCard
+            label="Overall"
+            score={report.overallScore}
+            color="slate"
+          />
           <ScoreCard
             label="First Impression"
             score={report.firstImpression.score}
@@ -36,11 +40,7 @@ export function AuditPreviewCard({ report }: AuditPreviewCardProps) {
             score={report.clarity.score}
             color="green"
           />
-          <ScoreCard
-            label="AEO"
-            score={report.aeo.score}
-            color="red"
-          />
+          <ScoreCard label="AEO" score={report.aeo.score} color="red" />
         </div>
       </CardContent>
     </Card>

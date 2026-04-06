@@ -1,10 +1,5 @@
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Clock, Zap } from "lucide-react";
 import { useRouter } from "next/navigation";
 
@@ -53,19 +48,6 @@ export function AuditRateLimitedCard({
                 "Your audit will be available again shortly."}
           </p>
         </div>
-        {retryAt && (
-          <div className="bg-orange-100 rounded-lg p-4">
-            <div className="text-sm text-orange-600 mb-2 font-medium">
-              {isCapacityError ? "Automatic retry in" : "You can run another audit in"}
-            </div>
-            <div className="text-4xl font-bold text-orange-700 font-mono">
-              {countdown}
-            </div>
-            <p className="text-xs text-orange-600 mt-2">
-              This page will automatically refresh when ready
-            </p>
-          </div>
-        )}
 
         {/* Upgrade CTA - Only show for rate limits, not capacity */}
         {!isCapacityError && (
@@ -98,7 +80,9 @@ export function AuditRateLimitedCard({
             </div>
             <div className="mt-4">
               <Button
-                onClick={() => router.push(`/dashboard/${productId}/subscription`)}
+                onClick={() =>
+                  router.push(`/dashboard/${productId}/subscription`)
+                }
                 className="bg-purple-600 hover:bg-purple-700 w-full sm:w-auto"
               >
                 Upgrade Plan
@@ -113,7 +97,9 @@ export function AuditRateLimitedCard({
           variant="outline"
           className="w-full sm:w-auto"
         >
-          {countdown !== "Retry available" ? "Waiting for Retry..." : "Try Again Now"}
+          {countdown !== "Retry available"
+            ? "Waiting for Retry..."
+            : "Try Again Now"}
         </Button>
       </CardContent>
     </Card>
