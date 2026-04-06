@@ -33,11 +33,10 @@ export function SolutionSection() {
                 We Detect Your Blind Spots
               </h3>
               <p className="text-slate-600 text-lg leading-relaxed">
-                Our engine analyzes your startup against 10,000+ records to find
-                what you can't see: positioning that sounds like everyone else,
-                messaging that confuses prospects, and AI invisibility that's
-                killing your discovery. You get cold, clinical data—no opinions,
-                no fluff.
+                Our engine analyzes your startup against 10,000+ SaaS sites to
+                spot: commodity positioning, confusing messaging, and AI
+                invisibility killing discovery. You get cold, clinical data—no
+                opinions, no fluff.
               </p>
             </div>
           </div>
@@ -56,8 +55,8 @@ export function SolutionSection() {
               <p className="text-slate-600 text-lg leading-relaxed">
                 Your report shows your score, strong points, and weaknesses
                 across different pillars of defensibility. Each weakness comes
-                with specific examples and a truth summary. You'll know what
-                works, what doesn't and how to fixes. No generic advice. Just
+                with specific examples and a truth summary.You'll know what
+                works, what doesn't, and how to fix it. No generic advice. Just
                 the raw data you need to prioritize fixes.
               </p>
             </div>

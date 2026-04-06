@@ -18,7 +18,7 @@ export function HeroSection() {
       <div className="space-y-8 relative px-4 max-w-6xl mx-auto text-center">
         <div className="space-y-4">
           <h1 className="text-4xl font-mono md:text-6xl font-semibold tracking-tighter text-slate-900 leading-[1.1]">
-            Confused visitors don't convert <br /> Fix your{" "}
+            Confused visitors don't convert. <br /> Fix your{" "}
             <span className="text-primary">positioning</span> and{" "}
             <span className="text-primary"> messaging</span> <br /> to turn them
             into customers.
@@ -26,7 +26,7 @@ export function HeroSection() {
 
           <div className="space-y-2">
             <p className="block text-xl max-w-2xl mx-auto text-slate-600 font-mono tracking-normal normal-case">
-              Launchrecord audits your saas messaging clarity, spots positioning
+              Launchrecord audits your SaaS messaging clarity, spots positioning
               gaps, tests AI visibility and gives you exact copy fixes to turn
               confusion into conversions.
             </p>
@@ -56,7 +56,7 @@ export function HeroSection() {
 
           <div className="">
             <p className="inline-block rounded-md text-slate-600 font-medium text-sm">
-              Enter you website url.{" "}
+              Enter your website url.{" "}
               <span className="px-2 text-primary font-bold">
                 No signup required.
               </span>{" "}
