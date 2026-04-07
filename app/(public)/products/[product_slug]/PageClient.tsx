@@ -1,5 +1,6 @@
 "use client";
 
+import { InternalCTA } from "@/components/ads/InternalCTA";
 import { JSONLD } from "@/components/JsonLd";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -268,7 +269,9 @@ export default function ProductPageClient({
               </Link>
             )}
           </section>
-
+          <div>
+            <InternalCTA></InternalCTA>
+          </div>
           {/* Similar Products */}
           {similarProducts.length > 0 && (
             <section>
