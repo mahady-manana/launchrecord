@@ -63,8 +63,20 @@ export default function PublicAuditPage() {
   const getErrorMessage = () => {
     if (!status.error) return "An unknown error occurred";
 
+    // For init errors, show the actual API error message if it's descriptive
+    if (status.failedAt === "init" && status.error) {
+      // If it's a specific error like client-side rendering, show it directly
+      if (
+        status.error.includes("client-side") ||
+        status.error.includes("insufficient content") ||
+        status.error.includes("contentLength")
+      ) {
+        return status.error;
+      }
+    }
+
     const stepMessages: Record<string, string> = {
-      init: "Failed to initialize audit. Please check the URL and try again.",
+      init: status.error, // Show the actual error from API
       content_fetch:
         "Failed to fetch website content. The site may be unavailable or client-side rendered.",
       content_validation:
@@ -126,14 +138,9 @@ export default function PublicAuditPage() {
                   <h3 className="text-base font-semibold text-red-800 mb-2">
                     Audit Failed
                   </h3>
-                  <p className="text-sm text-red-700 mb-4">
+                  <p className="text-sm text-red-700 mb-4 whitespace-pre-line">
                     {getErrorMessage()}
                   </p>
-                  {status.failedAt && (
-                    <p className="text-xs text-red-500 mb-4 font-mono">
-                      Failed at: {status.failedAt}
-                    </p>
-                  )}
                   <button
                     onClick={handleRetry}
                     className="inline-flex items-center gap-2 px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-sm font-medium rounded-lg transition-colors"

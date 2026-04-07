@@ -1,10 +1,5 @@
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AlertCircle } from "lucide-react";
 
 interface AuditErrorCardProps {
@@ -33,12 +28,15 @@ export function AuditErrorCard({
           <p className="text-red-800 font-medium">
             We encountered an issue while analyzing your SaaS
           </p>
-          <p className="text-red-700 text-sm">
+          <p className="text-red-700 text-sm whitespace-pre-line">
             {errorMessage.includes("network") || errorMessage.includes("fetch")
               ? "We couldn&apos;t access your website. Please verify the URL is correct and publicly accessible."
               : errorMessage.includes("timeout")
                 ? "The analysis took too long to complete. This can happen with complex websites."
-                : "Something went wrong on our end. Our team has been notified."}
+                : errorMessage.includes("client-side") ||
+                    errorMessage.includes("insufficient content")
+                  ? errorMessage
+                  : "Something went wrong on our end. Our team has been notified."}
           </p>
         </div>
         <div className="bg-red-100 rounded-lg p-3">

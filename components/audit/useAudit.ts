@@ -266,7 +266,9 @@ export function useAudit(options: UseAuditOptions = {}) {
             }
           }
 
-          throw new Error(initData.error || "Failed to initialize audit");
+          throw new Error(
+            initData.error || initData.message || "Failed to initialize audit",
+          );
         }
 
         const reportId = initData.reportId;
