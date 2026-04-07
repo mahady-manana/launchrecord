@@ -17,11 +17,13 @@ export function HeroSection() {
     <section className="pb-12 relative bg-white min-h-screen flex items-center justify-center">
       <div className="space-y-8 relative px-4 max-w-6xl mx-auto text-center">
         <div className="space-y-4">
-          <h1 className="text-4xl font-mono md:text-6xl font-semibold tracking-tighter text-slate-900 leading-[1.1]">
-            Confused visitors don't convert. <br /> Fix your{" "}
-            <span className="text-primary">positioning</span> and{" "}
-            <span className="text-primary"> messaging</span> <br /> to turn them
-            into customers.
+          <h1 className="text-4xl md:text-6xl font-bold tracking-tighter text-slate-700 leading-[1.1] pb-8">
+            <span className="text-secondary text-5xl block leading-[1.5]">
+              Stop losing potential customers.
+            </span>
+            Get a free positioning and messaging audit
+            <br /> with exact fixes to
+            <span className="text-primary"> boost conversions.</span>{" "}
           </h1>
 
           <div className="space-y-2">
