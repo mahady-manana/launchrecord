@@ -1,12 +1,12 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { useProductStore } from "@/stores/product-store";
-import { ArrowLeft, Globe, Crown } from "lucide-react";
-import { useRouter } from "next/navigation";
-import Link from "next/link";
+import { Button } from "@/components/ui/button";
 import { useSubscription } from "@/hooks/use-subscription";
+import { useProductStore } from "@/stores/product-store";
+import { ArrowLeft, Crown, Globe } from "lucide-react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 interface ProductDashboardHeaderProps {
@@ -74,7 +74,10 @@ export function ProductDashboardHeader({
               <div className="flex items-center gap-3">
                 <h1 className="text-3xl font-bold">{selectedProduct?.name}</h1>
                 {!isLoading && (
-                  <Badge variant="outline" className={getPlanBadgeColor(planType)}>
+                  <Badge
+                    variant="outline"
+                    className={getPlanBadgeColor(planType)}
+                  >
                     {hasActiveSubscription ? (
                       <span className="capitalize">{planType}</span>
                     ) : (
@@ -84,7 +87,9 @@ export function ProductDashboardHeader({
                 )}
               </div>
               {selectedProduct?.tagline && (
-                <p className="text-muted-foreground">{selectedProduct.tagline}</p>
+                <p className="text-muted-foreground">
+                  {selectedProduct.tagline}
+                </p>
               )}
             </div>
           </div>
@@ -92,10 +97,14 @@ export function ProductDashboardHeader({
       </div>
       <div className="flex items-center gap-2">
         <Link href={`/dashboard/${selectedProduct?.id}/subscription`}>
-          <Button 
-            variant={hasActiveSubscription ? "outline" : "default"} 
+          <Button
+            variant={hasActiveSubscription ? "outline" : "default"}
             size="sm"
-            className={hasActiveSubscription ? "" : "bg-gradient-to-r from-primary to-primary/80"}
+            className={
+              hasActiveSubscription
+                ? ""
+                : "bg-gradient-to-r from-primary to-primary/80"
+            }
           >
             <Crown className="h-4 w-4 mr-2" />
             {hasActiveSubscription ? "Manage Plan" : "Upgrade"}
@@ -104,7 +113,7 @@ export function ProductDashboardHeader({
         <Button onClick={onRunAudit} size="sm">
           Run Audit
         </Button>
-        <Button variant="outline" size="sm" onClick={onExport}>
+        <Button variant="outline" size="sm" onClick={onExport} disabled>
           Export
         </Button>
         <Button variant="outline" size="sm" onClick={onSettings}>

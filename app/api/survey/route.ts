@@ -139,18 +139,21 @@ export async function POST(request: NextRequest) {
       slug,
     });
 
-    await SIOReport.updateMany(
+    const x = await SIOReport.updateMany(
       {
         url: normalizedUrl,
+        progress: "complete",
         $or: [{ product: null }, { product: { $exists: false } }],
       },
       { $set: { product: product._id } },
     );
+
     return NextResponse.json({
       message: "Survey started successfully",
       productId: product._id,
       existing: false,
       requiresClaim: false,
+      sioreport: x.modifiedCount,
     });
   } catch (error) {
     console.error("Survey API error:", error);

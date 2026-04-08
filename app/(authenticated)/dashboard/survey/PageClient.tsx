@@ -1,15 +1,7 @@
 "use client";
 
 import { useProducts } from "@/hooks/use-products";
-import {
-  ArrowRight,
-  BarChart3,
-  Check,
-  Eye,
-  Loader2,
-  Target,
-  Zap,
-} from "lucide-react";
+import { ArrowRight, BarChart3, Check, Loader2, Zap } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
@@ -30,22 +22,6 @@ const AUDIT_TOOLS = [
     description: "Optimize for AI search engines (ChatGPT, Claude, Perplexity)",
     icon: Zap,
     color: "from-cyan-500 to-blue-600",
-    recommended: false,
-  },
-  {
-    id: "positioning",
-    name: "Positioning Audit",
-    description: "Measure category ownership and market differentiation",
-    icon: Target,
-    color: "from-purple-500 to-pink-600",
-    recommended: false,
-  },
-  {
-    id: "clarity",
-    name: "Clarity Audit",
-    description: "5-second test for instant value comprehension",
-    icon: Eye,
-    color: "from-green-500 to-emerald-600",
     recommended: false,
   },
 ];
@@ -112,6 +88,10 @@ function DashboardSurveyContent() {
         await fetchProducts(data.productId);
         setProductId(data.productId);
 
+        if (data.sioreport) {
+          router.push(`/dashboard/${data.productId}`);
+          return;
+        }
         // If pillar is specified and valid, go directly to audit
         const pillarRoutes: Record<string, string> = {
           positioning: "positioning",
