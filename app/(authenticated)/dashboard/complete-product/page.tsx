@@ -223,13 +223,6 @@ function CompleteProductForm() {
             ) : null}
           </CardContent>
           <CardFooter className="flex justify-end gap-3">
-            <Button
-              type="button"
-              variant="ghost"
-              onClick={() => router.push("/dashboard")}
-            >
-              Skip for now
-            </Button>
             <Button type="submit" disabled={isSaving}>
               {isSaving ? "Saving..." : "Create product"}
             </Button>
