@@ -341,11 +341,18 @@ export function Header() {
               </Button>
             </Link>
           ) : (
-            <Link href="/sio-audit">
-              <Button className="bg-primary hover:bg-green-700 text-slate-200 font-bold">
-                Get Audited for Free
-              </Button>
-            </Link>
+            <>
+              <Link href="/login">
+                <Button className="border-none bg-white hover:bg-green-100 border text-primary font-bold">
+                  Login
+                </Button>
+              </Link>
+              <Link href="/sio-audit">
+                <Button className="bg-primary hover:bg-green-700 text-slate-200 font-bold">
+                  Get Audited for Free
+                </Button>
+              </Link>
+            </>
           )}
         </nav>
 

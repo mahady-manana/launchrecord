@@ -1,95 +1,168 @@
 "use client";
 
 import { DataInitializer } from "@/components/DataInitializer";
-import { ProductList } from "@/components/ProductList";
-import { ProductSidebar } from "@/components/ProductSidebar";
+import { ProductSwitcher } from "@/components/ProductSwitcher";
 import { UserActions } from "@/components/user-actions";
 import { useProductStore } from "@/stores/product-store";
-import { LayoutDashboard, Rocket } from "lucide-react";
+import {
+  BadgeCheck,
+  Bot,
+  ChevronRight,
+  CreditCard,
+  FileText,
+  LayoutDashboard,
+  LucideIcon,
+  Rocket,
+  Settings,
+} from "lucide-react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
-const navItems = [
-  { href: "/dashboard", label: "Overview", icon: LayoutDashboard },
+interface MenuItem {
+  label: string;
+  href: string;
+  icon: LucideIcon;
+}
+
+const productMenuItems: MenuItem[] = [
+  {
+    label: "Overview",
+    href: "",
+    icon: LayoutDashboard,
+  },
+  {
+    label: "Audit",
+    href: "/audit-page",
+    icon: BadgeCheck,
+  },
+
+  {
+    label: "Reports",
+    href: "/reports",
+    icon: FileText,
+  },
+  {
+    label: "Settings",
+    href: "/settings",
+    icon: Settings,
+  },
+  {
+    label: "Billing",
+    href: "/subscription",
+    icon: CreditCard,
+  },
 ];
 
-function FirstColumn({ compact }: { compact: boolean }) {
+const auditTools = [
+  {
+    name: "AEO Audit",
+    href: "/audit/aeo",
+    icon: Bot,
+    color: "text-cyan-600",
+    bg: "bg-cyan-100",
+  },
+];
+
+function Sidebar() {
+  const { selectedProduct } = useProductStore();
+  const pathname = usePathname();
+  const hasProduct = !!selectedProduct;
+
+  if (!hasProduct) return null;
+
+  const basePath = `/dashboard/${selectedProduct.id}`;
+
   return (
-    <aside
-      className={`hidden no-scrollbar flex-col border-r border-slate-200/60 bg-white/90 backdrop-blur-xl shadow-xl shadow-slate-200/20 lg:flex fixed left-0 top-0 h-full overflow-y-auto z-40 ${
-        compact ? "w-20 items-center p-4" : "w-72 p-4"
-      }`}
-    >
-      {/* Logo */}
-      <div
-        className={`flex items-center gap-3 pb-6 border-b border-slate-200/60 w-full ${
-          compact ? "flex-col justify-center" : ""
-        }`}
-      >
-        <div className="flex h-10 w-10 items-center justify-center flex-shrink-0">
-          <img
-            src={"/logo.svg"}
-            width={30}
-            height={30}
-            className="h-8 w-8 text-white"
-          />
-        </div>
-        {!compact && (
-          <div>
-            <Link
-              href="/"
-              className="text-sm font-bold bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent"
-            >
-              LaunchRecord
-            </Link>
-            <p className="text-[10px] font-medium text-slate-500 uppercase tracking-wider">
-              Dashboard
-            </p>
-          </div>
-        )}
+    <aside className="hidden no-scrollbar flex-col border-r border-slate-200/60 bg-white/90 backdrop-blur-xl shadow-xl shadow-slate-200/20 lg:flex fixed left-0 top-0 h-full overflow-y-auto z-40 w-72 p-4">
+      {/* 1. Logo Section */}
+      <div>
+        <ProductSwitcher />
       </div>
 
       {/* Navigation */}
-      <nav className="flex flex-col gap-2 text-sm flex-1 w-full mt-6">
-        <div>
-          {!compact && (
-            <p className="px-3 text-[10px] font-semibold text-slate-400 uppercase tracking-wider mb-3">
-              Menu
-            </p>
-          )}
-          {navItems.map((item) => {
-            const Icon = item.icon;
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={`group flex items-center gap-3 rounded-xl px-3 py-3 text-slate-600 transition-all duration-200 hover:bg-gradient-to-r hover:from-orange-50 hover:to-amber-50 hover:text-orange-600 hover:shadow-md hover:shadow-orange-500/10 ${
-                  compact ? "justify-center" : ""
-                }`}
-                title={compact ? item.label : undefined}
-              >
-                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-slate-100 transition-colors group-hover:bg-white group-hover:shadow-sm flex-shrink-0">
-                  <Icon className="h-5 w-5" />
-                </div>
-                {!compact && <span className="font-medium">{item.label}</span>}
-              </Link>
-            );
-          })}
+      <nav className="flex flex-col gap-2 text-sm flex-1 w-full mt-6 overflow-y-auto">
+        {/* Product Menu */}
+        <div className="pt-6 border-t border-slate-200/60">
+          <div className="space-y-1">
+            {productMenuItems.map((item) => {
+              const href = `${basePath}${item.href}`;
+              const isActive = pathname === href;
+              const Icon = item.icon;
+
+              return (
+                <Link
+                  key={item.label}
+                  href={href}
+                  className={`group flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm transition-all duration-200 ${
+                    isActive
+                      ? "bg-gradient-to-r from-orange-50 to-amber-50 shadow-sm"
+                      : "hover:bg-gradient-to-r hover:from-orange-50 hover:to-amber-50 hover:shadow-sm"
+                  }`}
+                >
+                  <div
+                    className={`flex h-9 w-9 items-center justify-center rounded-lg transition-colors ${
+                      isActive
+                        ? "bg-white shadow-sm"
+                        : "bg-slate-100 group-hover:bg-white group-hover:shadow-sm"
+                    }`}
+                  >
+                    <Icon
+                      className={`h-5 w-5 ${
+                        isActive ? "text-orange-600" : "text-slate-500"
+                      }`}
+                    />
+                  </div>
+                  <span
+                    className={`font-medium ${
+                      isActive ? "text-orange-700" : "text-slate-600"
+                    }`}
+                  >
+                    {item.label}
+                  </span>
+                  {isActive && (
+                    <ChevronRight className="h-4 w-4 text-orange-600 ml-auto" />
+                  )}
+                </Link>
+              );
+            })}
+          </div>
         </div>
 
-        {/* Products Section */}
-        <div className="pt-6 border-t border-slate-200/60 w-full">
-          {!compact && (
-            <p className="px-3 text-[10px] font-semibold text-slate-400 uppercase tracking-wider mb-3">
-              Products
-            </p>
-          )}
-          <ProductList compact={compact} />
+        {/* Audit Tools */}
+        <div className="pt-6 border-t border-slate-200/60">
+          <p className="px-3 text-[10px] font-semibold text-slate-400 uppercase tracking-wider mb-3">
+            Audit Tools
+          </p>
+          <div className="space-y-1">
+            {auditTools.map((tool) => {
+              const Icon = tool.icon;
+              const isActive = pathname.includes(tool.href.split("?")[0]);
+              return (
+                <Link
+                  key={tool.name}
+                  href={`${basePath}${tool.href}`}
+                  className={`group flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm transition-all duration-200 hover:bg-gradient-to-r hover:from-slate-50 hover:to-slate-100 hover:shadow-sm ${
+                    isActive ? "bg-slate-50 shadow-sm" : ""
+                  }`}
+                >
+                  <div
+                    className={`flex h-8 w-8 items-center justify-center rounded-lg ${tool.bg} group-hover:shadow-sm`}
+                  >
+                    <Icon className={`h-4 w-4 ${tool.color}`} />
+                  </div>
+                  <span className="font-medium text-slate-700">
+                    {tool.name}
+                  </span>
+                </Link>
+              );
+            })}
+          </div>
         </div>
       </nav>
 
       {/* User Actions */}
-      <div className="pt-6 border-t border-slate-200/60 w-full">
-        <UserActions compact={compact} />
+      <div className="pt-6 border-t border-slate-200/60 w-full mt-auto">
+        <UserActions />
       </div>
     </aside>
   );
@@ -100,29 +173,15 @@ export default function AuthenticatedLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const { selectedProduct } = useProductStore();
-  const hasProduct = !!selectedProduct;
-
   return (
     <DataInitializer>
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-orange-50/30">
         <div className="flex min-h-screen w-full">
-          {/* Sidebar Column 1 - Compact when product selected */}
-          <FirstColumn compact={hasProduct} />
-
-          {/* Sidebar Column 2 - Only visible when product selected */}
-          {hasProduct && (
-            <aside className="hidden w-64 shrink-0 border-r border-slate-200/60 bg-white/60 backdrop-blur-xl lg:flex fixed left-20 top-0 h-full overflow-y-auto z-30">
-              <ProductSidebar />
-            </aside>
-          )}
+          {/* Single Sidebar */}
+          <Sidebar />
 
           {/* Main Content */}
-          <main
-            className={`flex-1 min-h-screen ${
-              hasProduct ? "lg:ml-[336px]" : "lg:ml-72"
-            }`}
-          >
+          <main className="flex-1 min-h-screen lg:ml-72">
             {/* Mobile Header */}
             <div className="flex items-center justify-between border-b border-slate-200/60 bg-white/90 backdrop-blur-xl px-6 py-4 shadow-sm lg:hidden sticky top-0 z-50">
               <div className="flex items-center gap-2">
