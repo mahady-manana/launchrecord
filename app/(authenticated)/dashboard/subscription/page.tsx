@@ -32,18 +32,21 @@ import { toast } from "sonner";
 
 const plans = [
   {
-    id: "free",
-    name: "Free",
-    price: "$0",
-    period: "/month",
-    description: "Run a full SIO-V5 audit and get your war briefing.",
-    icon: Package,
+    id: "onetime",
+    name: "One-Time Pass",
+    price: "$29",
+    period: "one-time",
+    description: "5 full audits with positioning & messaging fixes.",
+    icon: CreditCard,
     features: [
-      "SIO-V5 audit",
-      "Global score + war briefing",
-      "5-pillar scoring breakdown",
-      "Positioning + clarity insights",
-      "AEO visibility check",
+      "5 full SIO-V5 audits",
+      "Complete reports with all insights",
+      "Positioning insights & fixes",
+      "PosiMessaging insights & fixes",
+      "Positioning analysis",
+      "Clarity analysis",
+      "AEO presence check",
+      "Actionable recommendations",
     ],
   },
   {
@@ -51,23 +54,24 @@ const plans = [
     name: "Founder Plan",
     price: "$49",
     period: "/month",
-    description: "Good enough to get hooked.",
+    description: "Continuous audits + weekly auto-audits + competitor intel.",
     icon: Zap,
     isFeatured: true,
     limits: {
-      monthly: 15,
+      monthly: 9999,
       weekly: 5,
     },
     features: [
-      "5 Positioning Audits / Week",
-      "15 Audits / Month",
-      "1 Product",
-      "5 Team Members",
-      "5 Competitors",
+      "Unlimited manual audits",
       "Weekly Auto Audit",
-      "Competitor Spy",
+      "Competitor Spy (score & positioning changes)",
       "Private Audit Mode",
       "Historical Analytics",
+      "Strategy Recommendations",
+      "Basic Market Snapshot",
+      "Execution Timeline",
+      "Positioning insights & fixes",
+      "PosiMessaging insights & fixes",
     ],
   },
 ];
@@ -118,7 +122,7 @@ function SubscriptionContent() {
     setError(null);
   };
 
-  const handleSubscribe = async (planType: "founder") => {
+  const handleSubscribe = async (planType: "onetime" | "founder") => {
     if (!selectedProductId) {
       setError("Please select a product first");
       return;
@@ -175,7 +179,7 @@ function SubscriptionContent() {
   const selectedSubscription = subscriptions.find(
     (s) => s.productId === selectedProductId,
   );
-  const currentPlan = selectedSubscription?.planType || "free";
+  const currentPlan = selectedSubscription?.planType || "onetime";
 
   return (
     <div className="space-y-6">
@@ -470,20 +474,22 @@ function SubscriptionContent() {
                           className={`w-full mt-auto h-12 font-bold uppercase tracking-wide transition-all ${
                             plan.isFeatured
                               ? "bg-gradient-to-r from-primary to-primary/90 hover:from-primary hover:to-primary/80 text-white shadow-lg hover:shadow-xl hover:scale-[1.02]"
-                              : ""
+                              : plan.id === "onetime"
+                                ? "bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white shadow-lg"
+                                : ""
                           }`}
                           variant={
-                            plan.isFeatured ? "default" : "outline"
+                            plan.isFeatured || plan.id === "onetime"
+                              ? "default"
+                              : "outline"
                           }
-                          disabled={
-                            isCurrentPlan ||
-                            isLoading ||
-                            plan.id === "free"
-                          }
+                          disabled={isCurrentPlan || isLoading}
                           onClick={() =>
                             plan.id === "founder"
                               ? handleSubscribe("founder")
-                              : null
+                              : plan.id === "onetime"
+                                ? handleSubscribe("onetime")
+                                : null
                           }
                         >
                           {isLoading && selectedPlan === plan.id ? (
@@ -493,6 +499,8 @@ function SubscriptionContent() {
                             </>
                           ) : isCurrentPlan ? (
                             "Current Plan"
+                          ) : plan.id === "onetime" ? (
+                            "Get 5 Audits - $29"
                           ) : (
                             "Upgrade to Founder"
                           )}

@@ -23,21 +23,13 @@ import { AlertCircle, CreditCard, TrendingUp } from "lucide-react";
 interface ProductBilling {
   productId: string;
   productName: string;
-  plan: "free" | "starter" | "pro" | "enterprise";
+  plan: "free" | "onetime" | "founder" | "growth" | "sovereign";
   status: "active" | "past_due" | "canceled" | "trialing";
   nextInvoiceDate?: string;
   nextInvoiceAmount?: number;
   usage?: {
-    // SIO Audit usage
-    sioAuditsUsed?: number;
-    sioAuditsLimit?: number;
-    // Positioning Audit usage
-    positioningAuditsUsed?: number;
-    positioningAuditsLimit?: number;
-    // Legacy fields for backward compatibility
     auditsUsed?: number;
     auditsLimit?: number;
-    // Common
     productsUsed?: number;
     productsLimit?: number;
   };
@@ -52,9 +44,10 @@ interface BillingOverviewProps {
 
 const planColors: Record<string, string> = {
   free: "bg-gray-100 text-gray-700",
-  starter: "bg-blue-100 text-blue-700",
-  pro: "bg-purple-100 text-purple-700",
-  enterprise: "bg-green-100 text-green-700",
+  onetime: "bg-orange-100 text-orange-700",
+  founder: "bg-primary/10 text-primary",
+  growth: "bg-purple-100 text-purple-700",
+  sovereign: "bg-green-100 text-green-700",
 };
 
 const statusColors: Record<string, string> = {
@@ -65,10 +58,11 @@ const statusColors: Record<string, string> = {
 };
 
 const planFeatures: Record<string, string> = {
-  free: "Free Tier",
-  starter: "Starter Plan",
-  pro: "Pro Plan",
-  enterprise: "Enterprise",
+  free: "Free",
+  onetime: "One-Time ($29)",
+  founder: "Founder ($49/mo)",
+  growth: "Growth",
+  sovereign: "Sovereign",
 };
 
 export function BillingOverview({
@@ -78,9 +72,9 @@ export function BillingOverview({
   className,
 }: BillingOverviewProps) {
   const totalMonthly = billings.reduce((sum, b) => {
-    if (b.plan === "starter") return sum + 29;
-    if (b.plan === "pro") return sum + 79;
-    if (b.plan === "enterprise") return sum + 199;
+    if (b.plan === "founder") return sum + 49;
+    if (b.plan === "growth") return sum + 79;
+    if (b.plan === "sovereign") return sum + 199;
     return sum;
   }, 0);
 
@@ -166,27 +160,18 @@ export function BillingOverview({
                             <div
                               className="h-full bg-green-600 rounded-full"
                               style={{
-                                width: `${
-                                  ((billing.usage.sioAuditsUsed ||
-                                    billing.usage.auditsUsed ||
-                                    0) /
-                                    (billing.usage.sioAuditsLimit ||
-                                      billing.usage.auditsLimit ||
-                                      1)) *
-                                  100
-                                }%`,
+                                width: `${Math.min(
+                                  ((billing.usage.auditsUsed || 0) /
+                                    (billing.usage.auditsLimit || 1)) *
+                                    100,
+                                  100,
+                                )}%`,
                               }}
                             />
                           </div>
                           <div className="text-xs text-muted-foreground mt-1">
-                            {billing.usage.sioAuditsUsed ||
-                              billing.usage.auditsUsed ||
-                              0}
-                            /
-                            {billing.usage.sioAuditsLimit ||
-                              billing.usage.auditsLimit ||
-                              1}{" "}
-                            audits
+                            {billing.usage.auditsUsed || 0}/
+                            {billing.usage.auditsLimit || 1} audits
                           </div>
                         </div>
                       </div>

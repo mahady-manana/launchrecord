@@ -57,8 +57,7 @@ export default function PricingPage() {
         </h1>
 
         <p className="text-xl text-slate-400 max-w-3xl mx-auto leading-relaxed">
-          Start with the Free plan. Upgrade to Founder to unlock competitive
-          intelligence and weekly mission control.
+          Get 5 audits for $29 one-time. Or go unlimited with Founder at $49/mo.
         </p>
       </section>
 
@@ -96,14 +95,14 @@ export default function PricingPage() {
       <section className="max-w-7xl mx-auto">
         <div className="text-center mb-12">
           <h2 className="text-3xl font-black uppercase tracking-tighter text-white mb-4">
-            Select Your Tier
+            Select Your Plan
           </h2>
           <p className="text-slate-400 max-w-2xl mx-auto">
-            Start free. Upgrade to Founder as you scale. Cancel anytime.
+            Get 5 audits for $29. Or go unlimited with Founder.
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-8">
+        <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
           {pricingTiers.map((tier, index) => (
             <PricingCard key={index} tier={tier} />
           ))}
@@ -111,7 +110,7 @@ export default function PricingPage() {
       </section>
 
       {/* Comparison Table */}
-      <section className="max-w-6xl mx-auto mt-24">
+      <section className="max-w-4xl mx-auto mt-24">
         <div className="text-center mb-12">
           <h2 className="text-3xl font-black uppercase tracking-tighter text-white mb-4">
             Feature Comparison
@@ -125,27 +124,54 @@ export default function PricingPage() {
                 <th className="text-left p-4 text-slate-400 font-medium">
                   Feature
                 </th>
-                <th className="text-center p-4 text-white font-bold">Free</th>
+                <th className="text-center p-4 text-orange-400 font-bold">
+                  One-Time $29
+                </th>
                 <th className="text-center p-4 text-primary font-bold">
-                  Founder
+                  Founder $49/mo
                 </th>
               </tr>
             </thead>
             <tbody>
               <tr className="border-b border-slate-800/50">
-                <td className="p-4 text-slate-300">Products</td>
-                <td className="text-center p-4 text-slate-400">1</td>
-                <td className="text-center p-4 text-slate-400">1</td>
+                <td className="p-4 text-slate-300">Audits Included</td>
+                <td className="text-center p-4 text-orange-400 font-semibold">
+                  5
+                </td>
+                <td className="text-center p-4 text-primary font-semibold">
+                  Unlimited
+                </td>
               </tr>
               <tr className="border-b border-slate-800/50">
-                <td className="p-4 text-slate-300">Team Members</td>
-                <td className="text-center p-4 text-slate-400">1</td>
-                <td className="text-center p-4 text-slate-400">5</td>
+                <td className="p-4 text-slate-300">Full Reports</td>
+                <td className="text-center p-4">
+                  <CheckCircle className="w-5 h-5 text-primary mx-auto" />
+                </td>
+                <td className="text-center p-4">
+                  <CheckCircle className="w-5 h-5 text-primary mx-auto" />
+                </td>
               </tr>
               <tr className="border-b border-slate-800/50">
-                <td className="p-4 text-slate-300">Competitors Monitored</td>
-                <td className="text-center p-4 text-slate-400">1</td>
-                <td className="text-center p-4 text-slate-400">5</td>
+                <td className="p-4 text-slate-300">
+                  Positioning Insights & Fixes
+                </td>
+                <td className="text-center p-4">
+                  <CheckCircle className="w-5 h-5 text-primary mx-auto" />
+                </td>
+                <td className="text-center p-4">
+                  <CheckCircle className="w-5 h-5 text-primary mx-auto" />
+                </td>
+              </tr>
+              <tr className="border-b border-slate-800/50">
+                <td className="p-4 text-slate-300">
+                  PosiMessaging Insights & Fixes
+                </td>
+                <td className="text-center p-4">
+                  <CheckCircle className="w-5 h-5 text-primary mx-auto" />
+                </td>
+                <td className="text-center p-4">
+                  <CheckCircle className="w-5 h-5 text-primary mx-auto" />
+                </td>
               </tr>
               <tr className="border-b border-slate-800/50">
                 <td className="p-4 text-slate-300">Weekly Auto Audit</td>
@@ -193,25 +219,25 @@ export default function PricingPage() {
         <div className="p-12 bg-gradient-to-b from-primary/10 to-transparent rounded-xl border border-primary/20">
           <Award className="w-16 h-16 text-primary mx-auto mb-6" />
           <h2 className="text-3xl font-black uppercase tracking-tighter text-white mb-4">
-            Ready to Upgrade?
+            Ready to Get Started?
           </h2>
           <p className="text-slate-400 mb-8 max-w-2xl mx-auto">
-            Start free, then unlock the Founder plan when you are ready for
-            weekly mission control.
+            Get 5 audits for $29 one-time, or unlock unlimited with Founder at
+            $49/mo.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button
               asChild
-              className="h-14 px-10 bg-primary hover:bg-primary/90 text-primary-foreground font-bold uppercase tracking-widest"
+              className="h-14 px-10 bg-orange-500 hover:bg-orange-600 text-white font-bold uppercase tracking-widest"
             >
-              <Link href="/register">Upgrade to Founder</Link>
+              <Link href="/register">Get 5 Audits - $29</Link>
             </Button>
             <Button
               asChild
               variant="outline"
               className="h-14 px-10 border-slate-700 text-white hover:bg-slate-800 font-bold uppercase tracking-widest"
             >
-              <Link href="/sio-audit">Get Free Audit</Link>
+              <Link href="/register">Start with Founder</Link>
             </Button>
           </div>
         </div>
@@ -228,21 +254,23 @@ export default function PricingPage() {
         <div className="space-y-6">
           <div className="p-6 bg-slate-900/50 rounded-lg border border-slate-800">
             <h3 className="text-lg font-bold text-white mb-2">
-              Can I change plans later?
+              What's included in the $29 one-time plan?
             </h3>
             <p className="text-slate-400">
-              Yes, you can upgrade or downgrade your plan at any time. Changes
-              take effect immediately and pricing is prorated.
+              You get 5 full SIO-V5 audits with complete reports, positioning
+              insights & fixes, and PosiMessaging insights & fixes. No
+              subscription needed - pay once, use forever.
             </p>
           </div>
 
           <div className="p-6 bg-slate-900/50 rounded-lg border border-slate-800">
             <h3 className="text-lg font-bold text-white mb-2">
-              Is there a free trial?
+              Can I change plans later?
             </h3>
             <p className="text-slate-400">
-              Yes, the Founder plan comes with a 14-day free trial. No credit
-              card required to start.
+              Yes, you can upgrade from One-Time to Founder at any time. If you
+              use all 5 audits on the One-Time plan, you can upgrade to Founder
+              for unlimited audits.
             </p>
           </div>
 
@@ -258,7 +286,7 @@ export default function PricingPage() {
 
           <div className="p-6 bg-slate-900/50 rounded-lg border border-slate-800">
             <h3 className="text-lg font-bold text-white mb-2">
-              Can I cancel anytime?
+              Can I cancel the Founder subscription anytime?
             </h3>
             <p className="text-slate-400">
               Absolutely. You can cancel your subscription at any time with no

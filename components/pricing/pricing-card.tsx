@@ -15,14 +15,15 @@ import { useState } from "react";
 
 export interface PricingTier {
   name: string;
-  planType: "free" | "founder";
+  planType: "onetime" | "founder";
   price: string;
   period?: string;
   description: string;
   limits: {
-    products: number;
-    teamMembers: number;
-    competitors: number;
+    audits: number | "unlimited";
+    products?: number;
+    teamMembers?: number;
+    competitors?: number;
   };
   features: string[];
   killerFeatures?: string[];
@@ -45,20 +46,14 @@ export function PricingCard({
 }: PricingCardProps) {
   const [isCheckingOut, setIsCheckingOut] = useState(false);
   const { startSubscription } = useSubscribe();
-  const isFree = tier.planType === "free";
   const isFeatured = tier.isFeatured || tier.planType === "founder";
 
   const handleSubscribe = async () => {
-    if (tier.planType === "free") {
-      window.location.href = tier.ctaLink || "/sio-audit";
-      return;
-    }
-
     setIsCheckingOut(true);
     try {
       const result = await startSubscription({
         productId,
-        planType: tier.planType as "founder",
+        planType: tier.planType as "onetime" | "founder",
       });
 
       if (result.ok && result.url) {
@@ -74,9 +69,7 @@ export function PricingCard({
       className={`relative flex flex-col h-full transition-all duration-300 hover:shadow-lg ${
         isFeatured
           ? "border-primary shadow-lg scale-105 bg-gradient-to-b from-primary/5 to-white"
-          : isFree
-            ? "border-slate-300 bg-white shadow-sm"
-            : "border-slate-300 bg-white shadow-sm"
+          : "border-slate-300 bg-white shadow-sm"
       } ${variant === "compact" ? "text-sm" : ""}`}
     >
       {isFeatured && (
@@ -96,23 +89,14 @@ export function PricingCard({
           >
             {tier.name}
           </CardTitle>
-          {tier.planType !== "free" && (
-            <div className="flex items-baseline gap-2">
-              <span className="text-4xl font-black text-slate-900">
-                {tier.price}
-              </span>
-              {tier.period && (
-                <span className="text-slate-500 font-medium">
-                  {tier.period}
-                </span>
-              )}
-            </div>
-          )}
-          {tier.planType === "free" && (
-            <p className="text-primary font-bold text-lg">
-              {tier.price} {tier.period}
-            </p>
-          )}
+          <div className="flex items-baseline gap-2">
+            <span className="text-4xl font-black text-slate-900">
+              {tier.price}
+            </span>
+            {tier.period && (
+              <span className="text-slate-500 font-medium">{tier.period}</span>
+            )}
+          </div>
         </div>
         <CardDescription className="text-slate-600 leading-relaxed">
           {tier.description}
@@ -120,87 +104,36 @@ export function PricingCard({
       </CardHeader>
 
       <CardContent className="flex-1 space-y-6">
-        {/* Limits Section */}
-        {tier.planType !== "free" && (
-          <div className="space-y-3 border-b border-slate-200 pb-4">
-            <p className="text-xs font-mono text-slate-500 uppercase tracking-widest">
-              Limits
-            </p>
-            <div className="grid grid-cols-3 gap-2">
-              <div className="text-center p-2 bg-slate-50 rounded-md border border-slate-200">
-                <p className="text-lg font-bold text-slate-900">
-                  {tier.limits.products}
-                </p>
-                <p className="text-[10px] text-slate-500 uppercase">Product</p>
-              </div>
-              <div className="text-center p-2 bg-slate-50 rounded-md border border-slate-200">
-                <p className="text-lg font-bold text-slate-900">
-                  {tier.limits.teamMembers}
-                </p>
-                <p className="text-[10px] text-slate-500 uppercase">Team</p>
-              </div>
-              <div className="text-center p-2 bg-slate-50 rounded-md border border-slate-200">
-                <p className="text-lg font-bold text-slate-900">
-                  {tier.limits.competitors}
-                </p>
-                <p className="text-[10px] text-slate-500 uppercase">
-                  Competitors
-                </p>
-              </div>
-            </div>
-          </div>
-        )}
-
         {/* Features Section */}
         <div className="space-y-4">
-          {tier.planType === "free" && (
-            <div>
-              <p className="text-xs font-mono text-slate-500 uppercase tracking-widest mb-3">
-                Free Plan Includes
+          <div className="space-y-2">
+            {tier.features.map((feature, index) => (
+              <div key={index} className="flex items-start gap-2">
+                <Check className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
+                <span className="text-slate-700 text-sm">{feature}</span>
+              </div>
+            ))}
+          </div>
+
+          {tier.killerFeatures && tier.killerFeatures.length > 0 && (
+            <div className="space-y-3 pt-4 border-t border-slate-200">
+              <p className="text-xs font-mono text-primary uppercase tracking-widest">
+                Killer Features
               </p>
               <div className="space-y-2">
-                {tier.features.map((feature, index) => (
-                  <div key={index} className="flex items-start gap-2">
+                {tier.killerFeatures.map((feature, index) => (
+                  <div
+                    key={index}
+                    className="flex items-start gap-2 p-2 bg-primary/5 rounded-md border border-primary/20"
+                  >
                     <Check className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
-                    <span className="text-slate-700 text-sm">{feature}</span>
+                    <span className="text-slate-700 text-sm font-medium">
+                      {feature}
+                    </span>
                   </div>
                 ))}
               </div>
             </div>
-          )}
-
-          {tier.planType !== "free" && (
-            <>
-              <div className="space-y-2">
-                {tier.features.map((feature, index) => (
-                  <div key={index} className="flex items-start gap-2">
-                    <Check className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
-                    <span className="text-slate-700 text-sm">{feature}</span>
-                  </div>
-                ))}
-              </div>
-
-              {tier.killerFeatures && tier.killerFeatures.length > 0 && (
-                <div className="space-y-3 pt-4 border-t border-slate-200">
-                  <p className="text-xs font-mono text-primary uppercase tracking-widest">
-                    Killer Features
-                  </p>
-                  <div className="space-y-2">
-                    {tier.killerFeatures.map((feature, index) => (
-                      <div
-                        key={index}
-                        className="flex items-start gap-2 p-2 bg-primary/5 rounded-md border border-primary/20"
-                      >
-                        <Check className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
-                        <span className="text-slate-700 text-sm font-medium">
-                          {feature}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </>
           )}
         </div>
       </CardContent>
@@ -212,7 +145,7 @@ export function PricingCard({
           className={`w-full h-12 font-bold uppercase tracking-wider transition-all ${
             isFeatured
               ? "bg-primary hover:bg-primary/90 text-white"
-              : "bg-slate-900 hover:bg-slate-800 text-white"
+              : "bg-orange-500 hover:bg-orange-600 text-white"
           } ${variant === "compact" ? "text-xs" : "text-sm"}`}
         >
           {isCheckingOut ? "Processing..." : tier.ctaText}
@@ -224,38 +157,45 @@ export function PricingCard({
 
 export const pricingTiers: PricingTier[] = [
   {
-    name: "Free",
-    planType: "free",
-    price: "$0",
-    period: "/ month",
-    description: "Run a full SIO-V5 audit and get your war briefing.",
+    name: "One-Time Pass",
+    planType: "onetime",
+    price: "$29",
+    period: "one-time",
+    description: "5 full audits with positioning & messaging fixes.",
     limits: {
-      products: 1,
-      teamMembers: 1,
-      competitors: 1,
+      audits: 5,
     },
     features: [
-      "SIO-V5 audit",
-      "Global score + war briefing",
-      "5-pillar scoring breakdown",
-      "Positioning + clarity insights",
-      "AEO visibility check",
+      "5 full SIO-V5 audits",
+      "Complete reports with all insights",
+      "Positioning insights & fixes",
+      "PosiMessaging insights & fixes",
+      "Positioning analysis",
+      "Clarity analysis",
+      "AEO presence check",
+      "Actionable recommendations",
     ],
-    ctaText: "Get Free Audit",
-    ctaLink: "/sio-audit",
+    killerFeatures: [
+      "No subscription needed",
+      "Pay once, use forever",
+      "Full report access",
+    ],
+    ctaText: "Get 5 Audits - $29",
   },
   {
     name: "Founder Plan",
     planType: "founder",
     price: "$49",
     period: "/ month",
-    description: "Competitive intelligence + weekly mission control.",
+    description: "Continuous audits + weekly auto-audits + competitor intel.",
     limits: {
+      audits: "unlimited",
       products: 1,
       teamMembers: 5,
       competitors: 5,
     },
     features: [
+      "Unlimited manual audits",
       "Weekly Auto Audit",
       "Competitor Spy (score & positioning changes)",
       "Private Audit Mode",
@@ -263,6 +203,13 @@ export const pricingTiers: PricingTier[] = [
       "Strategy Recommendations",
       "Basic Market Snapshot",
       "Execution Timeline",
+      "Positioning insights & fixes",
+      "PosiMessaging insights & fixes",
+    ],
+    killerFeatures: [
+      "Continuous monitoring",
+      "Competitor intelligence",
+      "Unlimited access",
     ],
     ctaText: "Start Founder Plan",
     isFeatured: true,
@@ -270,14 +217,12 @@ export const pricingTiers: PricingTier[] = [
 ];
 
 export const coreSystemFeatures: PricingTier = {
-  name: "Free Plan",
-  planType: "free",
-  price: "Free",
+  name: "Core System",
+  planType: "onetime",
+  price: "Included",
   description: "The foundation features that power every audit.",
   limits: {
-    products: 0,
-    teamMembers: 0,
-    competitors: 0,
+    audits: 0,
   },
   features: [
     "AI strategic audit",
@@ -289,6 +234,6 @@ export const coreSystemFeatures: PricingTier = {
     "Timeline of improvements",
     "AI suggests: moat creation, positioning shifts, pricing & distribution strategy",
   ],
-  ctaText: "Get Free Audit",
-  ctaLink: "/sio-audit",
+  ctaText: "Get Started",
+  ctaLink: "/register",
 };

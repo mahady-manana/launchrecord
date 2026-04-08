@@ -3,17 +3,18 @@ import { getUserSession } from "@/lib/session";
 import { stripe } from "@/lib/stripe";
 import Product from "@/models/product";
 import { isSameOrigin } from "@/utils/security";
-import { z } from "zod";
 import Stripe from "stripe";
+import { z } from "zod";
 
 const checkoutSchema = z.object({
   productId: z.string().optional(),
-  planType: z.enum(["founder", "growth", "sovereign"]).optional(),
+  planType: z.enum(["onetime", "founder", "growth", "sovereign"]).optional(),
   priceId: z.string().optional(),
 });
 
 // Map plan types to price IDs from environment
 const PLAN_PRICE_MAP: Record<string, string | undefined> = {
+  onetime: process.env.STRIPE_ONETIME_PRICE_ID,
   founder: process.env.STRIPE_FOUNDER_PRICE_ID,
   growth: process.env.STRIPE_GROWTH_PRICE_ID,
   sovereign: process.env.STRIPE_SOVEREIGN_PRICE_ID,
@@ -23,7 +24,7 @@ export async function POST(request: Request) {
   if (!isSameOrigin(request)) {
     return Response.json(
       { success: false, error: "Invalid origin" },
-      { status: 403 }
+      { status: 403 },
     );
   }
 
@@ -31,7 +32,7 @@ export async function POST(request: Request) {
   if (!session.user) {
     return Response.json(
       { success: false, error: "Unauthorized" },
-      { status: 401 }
+      { status: 401 },
     );
   }
 
@@ -40,7 +41,7 @@ export async function POST(request: Request) {
   if (!parsed.success) {
     return Response.json(
       { success: false, error: "Invalid request payload" },
-      { status: 400 }
+      { status: 400 },
     );
   }
 
@@ -60,7 +61,7 @@ export async function POST(request: Request) {
     if (!product) {
       return Response.json(
         { success: false, error: "Product not found or access denied" },
-        { status: 404 }
+        { status: 404 },
       );
     }
     targetProductId = product._id.toString();
@@ -77,7 +78,7 @@ export async function POST(request: Request) {
           success: false,
           error: "No products found. Please create a product first.",
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -96,11 +97,13 @@ export async function POST(request: Request) {
         success: false,
         error: "No price ID configured for this plan. Please contact support.",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 
   try {
+    const isOneTime = planType === "onetime";
+
     // Create Stripe Checkout Session
     const stripeSession = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
@@ -110,7 +113,7 @@ export async function POST(request: Request) {
           quantity: 1,
         },
       ],
-      mode: "subscription",
+      mode: isOneTime ? "payment" : "subscription",
       success_url: `${process.env.NEXT_PUBLIC_APP_URL}/dashboard/subscription?session_id={CHECKOUT_SESSION_ID}&success=true`,
       cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/dashboard/subscription?canceled=true`,
       metadata: {
@@ -136,9 +139,11 @@ export async function POST(request: Request) {
       {
         success: false,
         error:
-          error instanceof Error ? error.message : "Failed to create checkout session",
+          error instanceof Error
+            ? error.message
+            : "Failed to create checkout session",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

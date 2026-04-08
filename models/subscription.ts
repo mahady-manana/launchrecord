@@ -2,13 +2,16 @@ import mongoose, { Document, Model, Schema } from "mongoose";
 
 export interface ISubscription extends Document {
   productId: mongoose.Types.ObjectId;
-  stripeSubscriptionId: string;
+  stripeSubscriptionId?: string;
+  stripePaymentIntentId?: string;
   stripeCustomerId: string;
   status: string;
-  planType: "free" | "founder" | "growth" | "sovereign";
+  planType: "free" | "onetime" | "founder" | "growth" | "sovereign";
   monthlyAuditLimit: number;
   weeklyAuditLimit: number;
+  auditsUsed: number;
   currentPeriodEnd?: Date | null;
+  expiresAt?: Date | null;
   canceledAt?: Date | null;
   deletedAt?: Date | null;
   createdAt: Date;
@@ -25,7 +28,10 @@ const SubscriptionSchema = new Schema<ISubscription>(
     },
     stripeSubscriptionId: {
       type: String,
-      required: true,
+      index: true,
+    },
+    stripePaymentIntentId: {
+      type: String,
       index: true,
     },
     stripeCustomerId: {
@@ -34,25 +40,34 @@ const SubscriptionSchema = new Schema<ISubscription>(
     },
     planType: {
       type: String,
-      enum: ["free", "founder", "growth", "sovereign"],
+      enum: ["free", "onetime", "founder", "growth", "sovereign"],
       required: true,
       default: "free",
     },
     monthlyAuditLimit: {
       type: Number,
       required: true,
-      default: 1, // Free: 1/month, Founder: 15/month, Growth: 30/month, Sovereign: unlimited
+      default: 1, // Free: 1, OneTime: 5, Founder: 15/month, Growth: 30/month, Sovereign: unlimited
     },
     weeklyAuditLimit: {
       type: Number,
       required: true,
-      default: 0, // Free: 0/week, Founder: 5/week, Growth: 5/week, Sovereign: unlimited
+      default: 0, // Free: 0, OneTime: 0, Founder: 5/week, Growth: 5/week, Sovereign: unlimited
+    },
+    auditsUsed: {
+      type: Number,
+      required: true,
+      default: 0,
     },
     status: {
       type: String,
       required: true,
     },
     currentPeriodEnd: {
+      type: Date,
+      default: null,
+    },
+    expiresAt: {
       type: Date,
       default: null,
     },

@@ -2,7 +2,7 @@ import { useState } from "react";
 
 interface SubscribeInput {
   productId?: string;
-  planType?: "founder";
+  planType?: "onetime" | "founder";
   priceId?: string;
 }
 
@@ -17,17 +17,21 @@ export function useSubscribe() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(input),
       });
-      const result: { 
-        success: boolean; 
-        data?: { url: string; sessionId: string }; 
-        error?: string 
+      const result: {
+        success: boolean;
+        data?: { url: string; sessionId: string };
+        error?: string;
       } = await response.json();
-      
+
       if (!response.ok || !result.success) {
         return { ok: false, error: result.error || "Unable to start checkout" };
       }
-      
-      return { ok: true, url: result.data?.url, sessionId: result.data?.sessionId };
+
+      return {
+        ok: true,
+        url: result.data?.url,
+        sessionId: result.data?.sessionId,
+      };
     } catch (error) {
       console.error("Checkout error:", error);
       return { ok: false, error: "Unable to start checkout." };

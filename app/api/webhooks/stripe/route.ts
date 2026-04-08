@@ -34,8 +34,12 @@ async function readRawBody(request: NextRequest): Promise<string> {
 // Helper to get plan type from price ID
 function getPlanTypeFromPriceId(
   priceId: string,
-): "founder" | "growth" | "sovereign" {
-  const priceMap: Record<string, "founder" | "growth" | "sovereign"> = {
+): "onetime" | "founder" | "growth" | "sovereign" {
+  const priceMap: Record<
+    string,
+    "onetime" | "founder" | "growth" | "sovereign"
+  > = {
+    [process.env.STRIPE_ONETIME_PRICE_ID || ""]: "onetime",
     [process.env.STRIPE_FOUNDER_PRICE_ID || ""]: "founder",
     [process.env.STRIPE_GROWTH_PRICE_ID || ""]: "growth",
     [process.env.STRIPE_SOVEREIGN_PRICE_ID || ""]: "sovereign",
@@ -46,8 +50,9 @@ function getPlanTypeFromPriceId(
 // Helper to get audit limits based on plan type
 function getAuditLimits(planType: string): { monthly: number; weekly: number } {
   const limits: Record<string, { monthly: number; weekly: number }> = {
-    free: { monthly: 3, weekly: 0 },
-    founder: { monthly: 10, weekly: 1 },
+    free: { monthly: 1, weekly: 0 },
+    onetime: { monthly: 5, weekly: 0 },
+    founder: { monthly: 15, weekly: 5 },
     growth: { monthly: 30, weekly: 5 },
     sovereign: { monthly: 9999, weekly: 9999 },
   };
@@ -86,12 +91,11 @@ export async function POST(request: NextRequest) {
       case "checkout.session.completed": {
         const session = event.data.object as Stripe.Checkout.Session;
 
-        // Only handle subscription mode sessions
-        if (session.mode !== "subscription") {
+        // Handle both subscription and payment modes
+        if (session.mode !== "subscription" && session.mode !== "payment") {
           break;
         }
 
-        const subscriptionId = session.subscription as string;
         const { productId, planType } = session.metadata || {};
 
         if (!productId) {
@@ -99,36 +103,71 @@ export async function POST(request: NextRequest) {
           break;
         }
 
-        // Fetch the subscription details from Stripe
-        const stripeSubscription = await stripe.subscriptions.retrieve(
-          subscriptionId,
-          { expand: ["default_payment_method"] },
-        );
+        const isOneTime = session.mode === "payment";
+        const subscriptionId = isOneTime
+          ? null
+          : (session.subscription as string);
+        const sessionPlanType = (planType as string) || "onetime";
+        const limits = getAuditLimits(sessionPlanType);
 
+        // For one-time payments, use payment intent ID; for subscriptions, use subscription ID
+        const stripeReferenceId = isOneTime
+          ? session.payment_intent
+          : subscriptionId;
+
+        // Fetch the subscription details from Stripe if subscription mode
+        let stripeSubscription = null;
+        if (!isOneTime && subscriptionId) {
+          stripeSubscription = await stripe.subscriptions.retrieve(
+            subscriptionId,
+            { expand: ["default_payment_method"] },
+          );
+        }
+
+        // Get price ID from line items
         const lineItems = await stripe.checkout.sessions.listLineItems(
           session.id,
         );
         const priceId = lineItems.data[0]?.price?.id;
-        const sessionPlanType =
-          (planType as string) || getPlanTypeFromPriceId(priceId || "");
-        const limits = getAuditLimits(sessionPlanType);
+        const resolvedPlanType =
+          sessionPlanType || getPlanTypeFromPriceId(priceId || "");
+        const resolvedLimits = getAuditLimits(resolvedPlanType);
 
         // Upsert subscription in database
         const subscription = await Subscription.findOneAndUpdate(
           {
             productId,
-            stripeSubscriptionId: subscriptionId,
+            ...(isOneTime
+              ? { stripePaymentIntentId: stripeReferenceId }
+              : { stripeSubscriptionId: stripeReferenceId }),
           },
           {
             productId,
-            stripeSubscriptionId: subscriptionId,
+            stripeSubscriptionId: isOneTime ? undefined : stripeReferenceId,
+            stripePaymentIntentId: isOneTime ? stripeReferenceId : undefined,
             stripeCustomerId: session.customer as string,
-            status: stripeSubscription.status,
-            planType: sessionPlanType as "founder" | "growth" | "sovereign",
-            monthlyAuditLimit: limits.monthly,
-            weeklyAuditLimit: limits.weekly,
+            status: isOneTime
+              ? "active"
+              : stripeSubscription?.status || "active",
+            planType: resolvedPlanType as
+              | "onetime"
+              | "founder"
+              | "growth"
+              | "sovereign",
+            monthlyAuditLimit: resolvedLimits.monthly,
+            weeklyAuditLimit: resolvedLimits.weekly,
+            auditsUsed: 0,
             canceledAt: null,
             deletedAt: null,
+            ...(isOneTime
+              ? {}
+              : {
+                  currentPeriodEnd: stripeSubscription?.current_period_end
+                    ? new Date(
+                        (stripeSubscription as any).current_period_end * 1000,
+                      )
+                    : null,
+                }),
           },
           { new: true, upsert: true },
         );
@@ -139,7 +178,7 @@ export async function POST(request: NextRequest) {
         });
 
         console.log(
-          `Subscription created/updated for product ${productId}: ${subscriptionId}`,
+          `${isOneTime ? "One-time payment" : "Subscription"} processed for product ${productId}: ${stripeReferenceId}`,
         );
         break;
       }
