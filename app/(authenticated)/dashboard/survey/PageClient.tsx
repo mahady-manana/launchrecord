@@ -93,8 +93,6 @@ function DashboardSurveyContent() {
         body: JSON.stringify({
           saasName: startupName,
           saasUrl: startupUrl,
-          founderName: session?.user?.name || "",
-          pillar: pillar || undefined,
         }),
       });
 

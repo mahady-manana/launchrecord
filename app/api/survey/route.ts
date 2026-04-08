@@ -2,6 +2,7 @@ import { connectToDatabase } from "@/lib/db";
 import { getUserSession } from "@/lib/session";
 import { generateUniqueSlug } from "@/lib/utils";
 import Product from "@/models/product";
+import SIOReport from "@/models/sio-report";
 import { fetchWebsiteContent } from "@/services/fetchWebsiteContent";
 import { parseWebsiteContent } from "@/services/parseWebsiteContent";
 import { NextRequest, NextResponse } from "next/server";
@@ -12,7 +13,7 @@ export async function POST(request: NextRequest) {
     await connectToDatabase();
 
     const body = await request.json();
-    let { saasName, saasUrl, founderName } = body;
+    let { saasName, saasUrl } = body;
     const { response, user } = await getUserSession({ required: true });
 
     // Validate required fields
@@ -131,7 +132,6 @@ export async function POST(request: NextRequest) {
       earlyAccess: true,
       earlyAccessGrantedAt: new Date(),
       surveyData: {
-        founderName,
         saasName,
         saasUrl: normalizedUrl,
         ...body,
@@ -139,6 +139,13 @@ export async function POST(request: NextRequest) {
       slug,
     });
 
+    await SIOReport.updateMany(
+      {
+        url: normalizedUrl,
+        $or: [{ product: null }, { product: { $exists: false } }],
+      },
+      { $set: { product: product._id } },
+    );
     return NextResponse.json({
       message: "Survey started successfully",
       productId: product._id,
