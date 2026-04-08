@@ -90,6 +90,7 @@ export function useProducts() {
           updatedAt: preview.updatedAt,
           report: preview.hasReport
             ? ({
+                _id: preview._id,
                 overallScore: preview.compositeScore,
                 score: preview.compositeScore,
                 statement: preview.statement || "Overall assessment",
