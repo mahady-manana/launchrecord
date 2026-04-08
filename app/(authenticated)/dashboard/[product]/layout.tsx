@@ -1,6 +1,5 @@
 "use client";
 
-import { IncompleteDataModal } from "@/components/incomplete-data-modal";
 import { useProducts } from "@/hooks/use-products";
 import { useProductStore } from "@/stores/product-store";
 import { usePathname, useRouter } from "next/navigation";
@@ -93,13 +92,5 @@ export default function ProductLayout({
     return null;
   }
 
-  return (
-    <>
-      {children}
-      <IncompleteDataModal
-        open={showIncompleteModal}
-        onOpenChange={setShowIncompleteModal}
-      />
-    </>
-  );
+  return <>{children}</>;
 }

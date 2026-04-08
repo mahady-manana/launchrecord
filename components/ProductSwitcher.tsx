@@ -4,6 +4,7 @@ import { useProducts } from "@/hooks/use-products";
 import { useProductStore } from "@/stores/product-store";
 import { Check, ChevronDown, Globe, Loader2, Plus, X } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
 export function ProductSwitcher() {
@@ -11,7 +12,7 @@ export function ProductSwitcher() {
   const { fetchProducts, isMutating } = useProducts();
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
-
+  const router = useRouter();
   useEffect(() => {
     fetchProducts();
   }, [fetchProducts]);
@@ -19,19 +20,24 @@ export function ProductSwitcher() {
   // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
         setIsOpen(false);
       }
     };
 
     if (isOpen) {
       document.addEventListener("mousedown", handleClickOutside);
-      return () => document.removeEventListener("mousedown", handleClickOutside);
+      return () =>
+        document.removeEventListener("mousedown", handleClickOutside);
     }
   }, [isOpen]);
 
   const handleSelect = (product: any) => {
     setSelectedProduct(product);
+    router.push(`/dashboard/${product.id}`);
     setIsOpen(false);
   };
 
@@ -56,7 +62,9 @@ export function ProductSwitcher() {
         <span className="truncate flex-1 text-left text-slate-600 font-medium">
           {selectedProduct ? selectedProduct.name : "Switch Product"}
         </span>
-        <ChevronDown className={`h-4 w-4 text-slate-400 transition-transform ${isOpen ? "rotate-180" : ""}`} />
+        <ChevronDown
+          className={`h-4 w-4 text-slate-400 transition-transform ${isOpen ? "rotate-180" : ""}`}
+        />
       </button>
 
       {/* Dropdown Menu */}

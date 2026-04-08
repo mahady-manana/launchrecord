@@ -183,6 +183,7 @@ export interface PositioningReport {
 // ============================================================================
 
 export interface SIOV5Report {
+  _id: string;
   /** Overall score 0-100 */
   score: number;
   /** Overall score 0-100 */

@@ -12,7 +12,6 @@ import {
   FileText,
   LayoutDashboard,
   LucideIcon,
-  Rocket,
   Settings,
 } from "lucide-react";
 import Link from "next/link";
@@ -201,25 +200,7 @@ export default function AuthenticatedLayout({
             </div>
 
             {/* Content Area */}
-            <div className="bg-slate-100">
-              <div className="sticky top-0 z-50 overflow-hidden border border-orange-200/60 bg-gradient-to-r from-orange-500 via-amber-500 to-orange-500 p-5">
-                <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-orange-400/20 to-amber-400/20 rounded-full blur-2xl" />
-                <div className="relative flex items-start gap-4">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-orange-500 to-amber-500 shadow-lg shadow-orange-500/30 flex-shrink-0">
-                    <Rocket className="h-6 w-6 text-white" />
-                  </div>
-                  <div className="flex-1">
-                    <h3 className="font-bold text-white">
-                      New SIO V5 Audit Experience, Try it now !!!
-                    </h3>
-                    <p className="text-sm text-slate-100 mt-1.5">
-                      Delivering deep insights in just 2-5 minutes. Experience
-                      the future of SaaS evaluation with our new SIO V5 Audit,
-                      more insightful than ever!
-                    </p>
-                  </div>
-                </div>
-              </div>
+            <div className="bg-slate-100 min-h-screen">
               <div className="p-8 ">{children}</div>
             </div>
           </main>
