@@ -35,9 +35,6 @@ async function fetchCategory(slug: string, page: number) {
   try {
     const response = await fetch(
       `${appUrl}/api/categories/${slug}/products?page=1&limit=100`,
-      {
-        next: { revalidate: 60 },
-      },
     );
 
     if (!response.ok) {
@@ -59,9 +56,7 @@ async function fetchCategory(slug: string, page: number) {
 
 async function fetchTopTopics(limit: number = 10) {
   try {
-    const response = await fetch(`${appUrl}/api/topics?top=${limit}`, {
-      next: { revalidate: 3600 },
-    });
+    const response = await fetch(`${appUrl}/api/topics?top=${limit}`);
 
     if (!response.ok) {
       return null;

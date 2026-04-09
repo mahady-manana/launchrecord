@@ -66,9 +66,6 @@ async function fetchLeaderboard(pageNum: number): Promise<{
   try {
     const response = await fetch(
       `${appUrl}/api/leaderboard?limit=100&page=${pageNum}`,
-      {
-        next: { revalidate: 60 },
-      },
     );
 
     if (!response.ok) {

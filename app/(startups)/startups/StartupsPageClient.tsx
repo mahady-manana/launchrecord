@@ -57,7 +57,7 @@ export default function StartupsPageClient({
           </div>
           <div className="h-8 w-px bg-slate-200" />
           <div>
-            <div className="text-xl font-black text-slate-900">250+</div>
+            <div className="text-xl font-black text-slate-900">230+</div>
             <div className="text-xs text-slate-600 font-medium">Categories</div>
           </div>
         </div>
