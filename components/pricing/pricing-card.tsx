@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/card";
 import { useSubscribe } from "@/hooks/use-subscribe";
 import { Check } from "lucide-react";
+import Link from "next/link";
 import { useState } from "react";
 
 export interface PricingTier {
@@ -54,6 +55,7 @@ export function PricingCard({
       const result = await startSubscription({
         productId,
         planType: tier.planType as "onetime" | "founder",
+        redirectToSubscription: true,
       });
 
       if (result.ok && result.url) {
@@ -139,17 +141,30 @@ export function PricingCard({
       </CardContent>
 
       <CardFooter className="pt-6">
-        <Button
-          onClick={handleSubscribe}
-          disabled={isCheckingOut}
-          className={`w-full h-12 font-bold uppercase tracking-wider transition-all ${
-            isFeatured
-              ? "bg-primary hover:bg-primary/90 text-white"
-              : "bg-orange-500 hover:bg-orange-600 text-white"
-          } ${variant === "compact" ? "text-xs" : "text-sm"}`}
-        >
-          {isCheckingOut ? "Processing..." : tier.ctaText}
-        </Button>
+        {tier.ctaLink ? (
+          <Button
+            asChild
+            className={`w-full h-12 font-bold uppercase tracking-wider transition-all ${
+              isFeatured
+                ? "bg-primary hover:bg-primary/90 text-white"
+                : "bg-orange-500 hover:bg-orange-600 text-white"
+            } ${variant === "compact" ? "text-xs" : "text-sm"}`}
+          >
+            <Link href={tier.ctaLink}>{tier.ctaText}</Link>
+          </Button>
+        ) : (
+          <Button
+            onClick={handleSubscribe}
+            disabled={isCheckingOut}
+            className={`w-full h-12 font-bold uppercase tracking-wider transition-all ${
+              isFeatured
+                ? "bg-primary hover:bg-primary/90 text-white"
+                : "bg-orange-500 hover:bg-orange-600 text-white"
+            } ${variant === "compact" ? "text-xs" : "text-sm"}`}
+          >
+            {isCheckingOut ? "Processing..." : tier.ctaText}
+          </Button>
+        )}
       </CardFooter>
     </Card>
   );
@@ -181,6 +196,7 @@ export const pricingTiers: PricingTier[] = [
       "Full report access",
     ],
     ctaText: "Get 5 Audits - $29",
+    ctaLink: "/register?redirectToSubscription=true",
   },
   {
     name: "Founder Plan",
@@ -213,6 +229,7 @@ export const pricingTiers: PricingTier[] = [
     ],
     ctaText: "Start Founder Plan",
     isFeatured: true,
+    ctaLink: "/register?redirectToSubscription=true",
   },
 ];
 

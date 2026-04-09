@@ -10,11 +10,12 @@ const checkoutSchema = z.object({
   productId: z.string().optional(),
   planType: z.enum(["onetime", "founder", "growth", "sovereign"]).optional(),
   priceId: z.string().optional(),
+  redirectToSubscription: z.boolean().optional(),
 });
 
 // Map plan types to price IDs from environment
 const PLAN_PRICE_MAP: Record<string, string | undefined> = {
-  onetime: process.env.STRIPE_ONETIME_PRICE_ID,
+  onetime: process.env.STRIPE_ONETIMEPASS_PRICE_ID,
   founder: process.env.STRIPE_FOUNDER_PRICE_ID,
   growth: process.env.STRIPE_GROWTH_PRICE_ID,
   sovereign: process.env.STRIPE_SOVEREIGN_PRICE_ID,
@@ -47,7 +48,12 @@ export async function POST(request: Request) {
 
   await connectToDatabase();
 
-  const { productId, planType = "founder", priceId } = parsed.data;
+  const {
+    productId,
+    planType = "founder",
+    priceId,
+    redirectToSubscription = false,
+  } = parsed.data;
 
   // If productId is provided, verify user has access
   let targetProductId = productId;
@@ -103,6 +109,9 @@ export async function POST(request: Request) {
 
   try {
     const isOneTime = planType === "onetime";
+    const successUrl = redirectToSubscription
+      ? `${process.env.NEXT_PUBLIC_APP_URL}/dashboard/${targetProductId}/subscription?session_id={CHECKOUT_SESSION_ID}&success=true`
+      : `${process.env.NEXT_PUBLIC_APP_URL}/dashboard/${targetProductId}?session_id={CHECKOUT_SESSION_ID}&success=true`;
 
     // Create Stripe Checkout Session
     const stripeSession = await stripe.checkout.sessions.create({
@@ -114,12 +123,13 @@ export async function POST(request: Request) {
         },
       ],
       mode: isOneTime ? "payment" : "subscription",
-      success_url: `${process.env.NEXT_PUBLIC_APP_URL}/dashboard/subscription?session_id={CHECKOUT_SESSION_ID}&success=true`,
+      success_url: successUrl,
       cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/dashboard/subscription?canceled=true`,
       metadata: {
         userId: session.user.id,
         productId: targetProductId,
         planType: planType,
+        redirectToSubscription: redirectToSubscription.toString(),
       },
       allow_promotion_codes: true,
       billing_address_collection: "auto",

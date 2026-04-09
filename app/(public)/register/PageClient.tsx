@@ -22,9 +22,11 @@ function RegisterContent() {
   const params = useSearchParams();
 
   const productUrl = params.get("productUrl");
+  const redirectToSubscription =
+    params.get("redirectToSubscription") === "true";
   const callbackUrl =
     params.get("callbackUrl") ||
-    `/dashboard/complete-product${productUrl ? `?productUrl=${encodeURIComponent(productUrl)}` : ""}`;
+    `/dashboard/complete-product${productUrl ? `?productUrl=${encodeURIComponent(productUrl)}${redirectToSubscription ? "&redirectToSubscription=true" : ""}` : ""}`;
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");

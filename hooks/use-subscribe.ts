@@ -4,6 +4,7 @@ interface SubscribeInput {
   productId?: string;
   planType?: "onetime" | "founder";
   priceId?: string;
+  redirectToSubscription?: boolean;
 }
 
 export function useSubscribe() {

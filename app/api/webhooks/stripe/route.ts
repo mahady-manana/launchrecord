@@ -39,7 +39,7 @@ function getPlanTypeFromPriceId(
     string,
     "onetime" | "founder" | "growth" | "sovereign"
   > = {
-    [process.env.STRIPE_ONETIME_PRICE_ID || ""]: "onetime",
+    [process.env.STRIPE_ONETIMEPASS_PRICE_ID || ""]: "onetime",
     [process.env.STRIPE_FOUNDER_PRICE_ID || ""]: "founder",
     [process.env.STRIPE_GROWTH_PRICE_ID || ""]: "growth",
     [process.env.STRIPE_SOVEREIGN_PRICE_ID || ""]: "sovereign",
@@ -48,13 +48,20 @@ function getPlanTypeFromPriceId(
 }
 
 // Helper to get audit limits based on plan type
-function getAuditLimits(planType: string): { monthly: number; weekly: number } {
-  const limits: Record<string, { monthly: number; weekly: number }> = {
-    free: { monthly: 1, weekly: 0 },
-    onetime: { monthly: 5, weekly: 0 },
-    founder: { monthly: 15, weekly: 5 },
-    growth: { monthly: 30, weekly: 5 },
-    sovereign: { monthly: 9999, weekly: 9999 },
+function getAuditLimits(planType: string): {
+  monthly: number;
+  weekly: number;
+  total: number;
+} {
+  const limits: Record<
+    string,
+    { monthly: number; weekly: number; total: number }
+  > = {
+    free: { monthly: 1, weekly: 0, total: 0 },
+    onetime: { monthly: 0, weekly: 0, total: 5 }, // 5 audits forever
+    founder: { monthly: 15, weekly: 5, total: 0 },
+    growth: { monthly: 30, weekly: 5, total: 0 },
+    sovereign: { monthly: 9999, weekly: 9999, total: 0 },
   };
   return limits[planType] || limits.free;
 }
@@ -91,12 +98,21 @@ export async function POST(request: NextRequest) {
       case "checkout.session.completed": {
         const session = event.data.object as Stripe.Checkout.Session;
 
+        console.log("Checkout session completed:", {
+          mode: session.mode,
+          metadata: session.metadata,
+          customerId: session.customer,
+        });
+
         // Handle both subscription and payment modes
         if (session.mode !== "subscription" && session.mode !== "payment") {
+          console.log("Skipping session - not subscription or payment mode");
           break;
         }
 
-        const { productId, planType } = session.metadata || {};
+        const metadata = session.metadata || {};
+        const productId = metadata.productId;
+        const planType = metadata.planType;
 
         if (!productId) {
           console.error("No productId in checkout session metadata");
@@ -104,73 +120,92 @@ export async function POST(request: NextRequest) {
         }
 
         const isOneTime = session.mode === "payment";
-        const subscriptionId = isOneTime
-          ? null
-          : (session.subscription as string);
-        const sessionPlanType = (planType as string) || "onetime";
-        const limits = getAuditLimits(sessionPlanType);
+        const resolvedPlanType =
+          planType ||
+          getPlanTypeFromPriceId((session.metadata as any)?.priceId || "") ||
+          (isOneTime ? "onetime" : "founder");
 
-        // For one-time payments, use payment intent ID; for subscriptions, use subscription ID
-        const stripeReferenceId = isOneTime
-          ? session.payment_intent
-          : subscriptionId;
+        const limits = getAuditLimits(resolvedPlanType);
+
+        console.log("Processing checkout:", {
+          productId,
+          planType: resolvedPlanType,
+          isOneTime,
+          limits,
+        });
 
         // Fetch the subscription details from Stripe if subscription mode
         let stripeSubscription = null;
-        if (!isOneTime && subscriptionId) {
-          stripeSubscription = await stripe.subscriptions.retrieve(
-            subscriptionId,
-            { expand: ["default_payment_method"] },
-          );
+        if (!isOneTime && session.subscription) {
+          try {
+            stripeSubscription = await stripe.subscriptions.retrieve(
+              session.subscription as string,
+            );
+            console.log("Retrieved Stripe subscription:", {
+              id: stripeSubscription.id,
+              status: stripeSubscription.status,
+              current_period_end: stripeSubscription.current_period_end,
+            });
+          } catch (err) {
+            console.error("Failed to retrieve Stripe subscription:", err);
+          }
         }
 
-        // Get price ID from line items
-        const lineItems = await stripe.checkout.sessions.listLineItems(
-          session.id,
-        );
-        const priceId = lineItems.data[0]?.price?.id;
-        const resolvedPlanType =
-          sessionPlanType || getPlanTypeFromPriceId(priceId || "");
-        const resolvedLimits = getAuditLimits(resolvedPlanType);
+        // Build subscription data
+        const subscriptionData: any = {
+          productId,
+          stripeCustomerId: session.customer as string,
+          status: isOneTime ? "active" : stripeSubscription?.status || "active",
+          planType: resolvedPlanType,
+          monthlyAuditLimit: limits.monthly,
+          weeklyAuditLimit: limits.weekly,
+          totalAuditLimit: limits.total,
+          auditsUsed: 0,
+          canceledAt: null,
+          deletedAt: null,
+        };
 
-        // Upsert subscription in database
-        const subscription = await Subscription.findOneAndUpdate(
-          {
+        if (isOneTime) {
+          subscriptionData.stripePaymentIntentId =
+            session.payment_intent as string;
+          subscriptionData.stripeSubscriptionId = undefined;
+        } else {
+          subscriptionData.stripeSubscriptionId =
+            session.subscription as string;
+          subscriptionData.stripePaymentIntentId = undefined;
+          if (stripeSubscription?.current_period_end) {
+            subscriptionData.currentPeriodEnd = new Date(
+              stripeSubscription.current_period_end * 1000,
+            );
+          }
+        }
+
+        console.log("Subscription data:", subscriptionData);
+
+        // Check if subscription already exists
+        let subscription;
+        if (isOneTime) {
+          subscription = await Subscription.findOne({
             productId,
-            ...(isOneTime
-              ? { stripePaymentIntentId: stripeReferenceId }
-              : { stripeSubscriptionId: stripeReferenceId }),
-          },
-          {
+            stripePaymentIntentId: session.payment_intent as string,
+          });
+        } else {
+          subscription = await Subscription.findOne({
             productId,
-            stripeSubscriptionId: isOneTime ? undefined : stripeReferenceId,
-            stripePaymentIntentId: isOneTime ? stripeReferenceId : undefined,
-            stripeCustomerId: session.customer as string,
-            status: isOneTime
-              ? "active"
-              : stripeSubscription?.status || "active",
-            planType: resolvedPlanType as
-              | "onetime"
-              | "founder"
-              | "growth"
-              | "sovereign",
-            monthlyAuditLimit: resolvedLimits.monthly,
-            weeklyAuditLimit: resolvedLimits.weekly,
-            auditsUsed: 0,
-            canceledAt: null,
-            deletedAt: null,
-            ...(isOneTime
-              ? {}
-              : {
-                  currentPeriodEnd: stripeSubscription?.current_period_end
-                    ? new Date(
-                        (stripeSubscription as any).current_period_end * 1000,
-                      )
-                    : null,
-                }),
-          },
-          { new: true, upsert: true },
-        );
+            stripeSubscriptionId: session.subscription as string,
+          });
+        }
+
+        if (subscription) {
+          // Update existing
+          Object.assign(subscription, subscriptionData);
+          await subscription.save();
+          console.log("Updated existing subscription:", subscription._id);
+        } else {
+          // Create new
+          subscription = await Subscription.create(subscriptionData);
+          console.log("Created new subscription:", subscription._id);
+        }
 
         // Update product's subscription reference
         await Product.findByIdAndUpdate(productId, {
@@ -178,13 +213,18 @@ export async function POST(request: NextRequest) {
         });
 
         console.log(
-          `${isOneTime ? "One-time payment" : "Subscription"} processed for product ${productId}: ${stripeReferenceId}`,
+          `Successfully processed ${isOneTime ? "one-time payment" : "subscription"} for product ${productId}`,
         );
         break;
       }
 
       case "customer.subscription.updated": {
         const stripeSubscription = event.data.object as Stripe.Subscription;
+
+        console.log("Subscription updated:", {
+          id: stripeSubscription.id,
+          status: stripeSubscription.status,
+        });
 
         const subscription = await Subscription.findOne({
           stripeSubscriptionId: stripeSubscription.id,
@@ -198,9 +238,11 @@ export async function POST(request: NextRequest) {
         }
 
         subscription.status = stripeSubscription.status;
-        subscription.currentPeriodEnd = new Date(
-          (stripeSubscription as any).current_period_end * 1000,
-        );
+        if ((stripeSubscription as any).current_period_end) {
+          subscription.currentPeriodEnd = new Date(
+            (stripeSubscription as any).current_period_end * 1000,
+          );
+        }
 
         if ((stripeSubscription as any).canceled_at) {
           subscription.canceledAt = new Date(
@@ -210,12 +252,18 @@ export async function POST(request: NextRequest) {
 
         await subscription.save();
 
-        console.log(`Subscription updated: ${stripeSubscription.id}`);
+        console.log(
+          `Subscription updated successfully: ${stripeSubscription.id}`,
+        );
         break;
       }
 
       case "customer.subscription.deleted": {
         const stripeSubscription = event.data.object as Stripe.Subscription;
+
+        console.log("Subscription deleted:", {
+          id: stripeSubscription.id,
+        });
 
         const subscription = await Subscription.findOne({
           stripeSubscriptionId: stripeSubscription.id,
@@ -231,7 +279,13 @@ export async function POST(request: NextRequest) {
             subscription: null,
           });
 
-          console.log(`Subscription deleted: ${stripeSubscription.id}`);
+          console.log(
+            `Subscription deleted and product updated: ${stripeSubscription.id}`,
+          );
+        } else {
+          console.warn(
+            `Subscription not found for deletion: ${stripeSubscription.id}`,
+          );
         }
         break;
       }
@@ -239,6 +293,11 @@ export async function POST(request: NextRequest) {
       case "invoice.payment_failed": {
         const invoice = event.data.object as Stripe.Invoice;
         const subscriptionId = (invoice as any).subscription as string;
+
+        console.log("Payment failed:", {
+          subscriptionId,
+          amount: invoice.amount_due,
+        });
 
         const subscription = await Subscription.findOne({
           stripeSubscriptionId: subscriptionId,
@@ -248,16 +307,8 @@ export async function POST(request: NextRequest) {
           subscription.status = "past_due";
           await subscription.save();
 
-          console.log(`Payment failed for subscription: ${subscriptionId}`);
+          console.log(`Subscription marked as past_due: ${subscriptionId}`);
         }
-        break;
-      }
-
-      case "customer.subscription.created": {
-        // Subscription will be created when checkout.session.completed fires
-        console.log(
-          `Subscription created event received (waiting for checkout completion)`,
-        );
         break;
       }
 
@@ -274,6 +325,3 @@ export async function POST(request: NextRequest) {
     );
   }
 }
-
-// Note: bodyParser is disabled for this route via next.config.mjs
-// Stripe needs the raw body for signature verification

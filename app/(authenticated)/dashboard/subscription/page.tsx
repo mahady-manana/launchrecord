@@ -78,7 +78,7 @@ const plans = [
 
 function SubscriptionContent() {
   const searchParams = useSearchParams();
-  const { productsWithReports } = useProductStore();
+  const { productsWithReports, selectedProduct } = useProductStore();
   const { loadAllProductsData } = useProducts();
   const { subscriptions, fetchSubscription } = useSubscription();
   const { startSubscription, isLoading } = useSubscribe();
@@ -90,6 +90,9 @@ function SubscriptionContent() {
   );
   const [currentStep, setCurrentStep] = useState<1 | 2>(1);
   const [error, setError] = useState<string | null>(null);
+
+  const redirectToSubscription =
+    searchParams.get("redirectToSubscription") === "true";
 
   useEffect(() => {
     loadAllProductsData();
@@ -109,6 +112,18 @@ function SubscriptionContent() {
     }
   }, [searchParams, fetchSubscription]);
 
+  // Auto-select product if coming from complete-product flow
+  useEffect(() => {
+    if (
+      redirectToSubscription &&
+      selectedProduct &&
+      productsWithReports.length > 0
+    ) {
+      setSelectedProductId(selectedProduct.id);
+      setCurrentStep(2);
+    }
+  }, [redirectToSubscription, selectedProduct, productsWithReports]);
+
   const handleProductSelect = (productId: string) => {
     setSelectedProductId(productId);
     setCurrentStep(2);
@@ -116,6 +131,10 @@ function SubscriptionContent() {
   };
 
   const handleBackToProducts = () => {
+    if (redirectToSubscription) {
+      router.push("/dashboard");
+      return;
+    }
     setSelectedProductId(null);
     setSelectedPlan(null);
     setCurrentStep(1);
@@ -181,52 +200,74 @@ function SubscriptionContent() {
   );
   const currentPlan = selectedSubscription?.planType || "onetime";
 
+  // Show loading when waiting for product selection in redirect flow
+  if (redirectToSubscription && !selectedProductId) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="text-center space-y-4">
+          <div className="animate-spin h-8 w-8 border-4 border-orange-600 border-t-transparent rounded-full mx-auto" />
+          <p className="text-muted-foreground">Loading your product...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6">
       <div>
         <p className="text-xs uppercase tracking-[0.3em] text-muted-foreground">
           Billing
         </p>
-        <h1 className="mt-2 text-2xl font-semibold">Subscription</h1>
+        <h1 className="mt-2 text-2xl font-semibold">
+          {redirectToSubscription ? "Choose Your Plan" : "Subscription"}
+        </h1>
+        {redirectToSubscription && (
+          <p className="text-sm text-muted-foreground mt-1">
+            Complete your purchase to unlock full access for{" "}
+            {selectedProduct?.name}
+          </p>
+        )}
       </div>
 
-      {/* Stepper */}
-      <Card>
-        <CardContent className="pt-6">
-          <div className="flex items-center justify-center gap-4">
-            <div
-              className={`flex items-center gap-2 ${currentStep === 1 ? "text-primary" : "text-muted-foreground"}`}
-            >
+      {/* Stepper - Hide when coming from complete-product */}
+      {!redirectToSubscription && (
+        <Card>
+          <CardContent className="pt-6">
+            <div className="flex items-center justify-center gap-4">
               <div
-                className={`h-8 w-8 rounded-full flex items-center justify-center font-bold ${
-                  currentStep === 1 ? "bg-primary text-white" : "bg-muted"
-                }`}
+                className={`flex items-center gap-2 ${currentStep === 1 ? "text-primary" : "text-muted-foreground"}`}
               >
-                1
+                <div
+                  className={`h-8 w-8 rounded-full flex items-center justify-center font-bold ${
+                    currentStep === 1 ? "bg-primary text-white" : "bg-muted"
+                  }`}
+                >
+                  1
+                </div>
+                <Package className="h-4 w-4" />
+                <span className="font-medium">Select Product</span>
               </div>
-              <Package className="h-4 w-4" />
-              <span className="font-medium">Select Product</span>
-            </div>
-            <ChevronRight className="h-4 w-4 text-muted-foreground" />
-            <div
-              className={`flex items-center gap-2 ${currentStep === 2 ? "text-primary" : "text-muted-foreground"}`}
-            >
+              <ChevronRight className="h-4 w-4 text-muted-foreground" />
               <div
-                className={`h-8 w-8 rounded-full flex items-center justify-center font-bold ${
-                  currentStep === 2 ? "bg-primary text-white" : "bg-muted"
-                }`}
+                className={`flex items-center gap-2 ${currentStep === 2 ? "text-primary" : "text-muted-foreground"}`}
               >
-                2
+                <div
+                  className={`h-8 w-8 rounded-full flex items-center justify-center font-bold ${
+                    currentStep === 2 ? "bg-primary text-white" : "bg-muted"
+                  }`}
+                >
+                  2
+                </div>
+                <CreditCard className="h-4 w-4" />
+                <span className="font-medium">Select Plan</span>
               </div>
-              <CreditCard className="h-4 w-4" />
-              <span className="font-medium">Select Plan</span>
             </div>
-          </div>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+      )}
 
-      {/* Step 1: Product Selection */}
-      {currentStep === 1 && (
+      {/* Step 1: Product Selection - Skip when coming from complete-product */}
+      {currentStep === 1 && !redirectToSubscription && (
         <Card>
           <CardHeader>
             <CardTitle>Step 1: Select Product</CardTitle>
@@ -294,10 +335,10 @@ function SubscriptionContent() {
       )}
 
       {/* Step 2: Plan Selection */}
-      {currentStep === 2 && selectedProductId && (
+      {(currentStep === 2 || redirectToSubscription) && selectedProductId && (
         <>
-          {/* Current Subscription Status */}
-          {selectedSubscription && (
+          {/* Current Subscription Status - Hide for new users */}
+          {!redirectToSubscription && selectedSubscription && (
             <Card className="border-border">
               <CardHeader>
                 <CardTitle>Current Subscription</CardTitle>

@@ -33,6 +33,14 @@ export interface UseAuditOptions {
   pollInterval?: number;
   onComplete?: (report: SIOV5Report) => void;
   onError?: (error: string) => void;
+  onLimitReached?: (error: {
+    message: string;
+    limitType?: string;
+    used?: number;
+    limit?: number;
+    resetAt?: string | null;
+    upgradeRequired?: boolean;
+  }) => void;
 }
 
 export function useAudit(options: UseAuditOptions = {}) {
@@ -42,7 +50,20 @@ export function useAudit(options: UseAuditOptions = {}) {
     pollInterval = 2000,
     onComplete,
     onError,
+    onLimitReached,
   } = options;
+
+  // Use refs to always have latest callbacks
+  const onCompleteRef = useRef(onComplete);
+  const onErrorRef = useRef(onError);
+  const onLimitReachedRef = useRef(onLimitReached);
+  const hasCalledLimitReachedRef = useRef(false);
+
+  useEffect(() => {
+    onCompleteRef.current = onComplete;
+    onErrorRef.current = onError;
+    onLimitReachedRef.current = onLimitReached;
+  }, [onComplete, onError, onLimitReached]);
 
   const [status, setStatus] = useState<AuditStatus>({
     progress: "idle",
@@ -87,15 +108,29 @@ export function useAudit(options: UseAuditOptions = {}) {
           error: data.progress === "failed" ? data.errorMessage : prev.error,
         }));
 
-        // Check if complete or failed
         if (data.progress === "complete") {
           clearPolling();
           isRunningRef.current = false;
-          onComplete?.(data.data);
+          onCompleteRef.current?.(data.data);
         } else if (data.progress === "failed") {
           clearPolling();
           isRunningRef.current = false;
-          onError?.(data.errorMessage);
+          // Check if this is a limit error
+          if (data.failedAt === "limit_reached" || data.limitReached) {
+            if (!hasCalledLimitReachedRef.current) {
+              hasCalledLimitReachedRef.current = true;
+              onLimitReachedRef.current?.({
+                message: data.errorMessage || "Audit limit reached",
+                limitType: data.limitType,
+                used: data.used,
+                limit: data.limit,
+                resetAt: data.resetAt,
+                upgradeRequired: data.upgradeRequired,
+              });
+            }
+          } else {
+            onErrorRef.current?.(data.errorMessage);
+          }
         }
       } catch (error: any) {
         console.error("Poll error:", error);
@@ -107,7 +142,7 @@ export function useAudit(options: UseAuditOptions = {}) {
           error: error.message || "Failed to check audit status",
           failedAt: "polling",
         }));
-        onError?.(error.message);
+        onErrorRef.current?.(error.message);
       }
     },
     [clearPolling, onComplete, onError],
@@ -131,6 +166,30 @@ export function useAudit(options: UseAuditOptions = {}) {
         const data = await response.json();
 
         if (!response.ok) {
+          // Check if this is a limit error
+          if (data.limitReached) {
+            isRunningRef.current = false;
+            clearPolling();
+            hasCalledLimitReachedRef.current = true;
+            setStatus({
+              progress: "failed",
+              reportId: null,
+              overallScore: null,
+              data: null,
+              error: null,
+              failedAt: "limit_reached",
+              contentSummary: null,
+            });
+            onLimitReachedRef.current?.({
+              message: data.error || data.message || "Audit limit reached",
+              limitType: data.limitType,
+              used: data.used,
+              limit: data.limit,
+              resetAt: data.resetAt,
+              upgradeRequired: data.upgradeRequired,
+            });
+            return;
+          }
           throw new Error(data.error || `Failed at ${step}`);
         }
 
@@ -160,7 +219,7 @@ export function useAudit(options: UseAuditOptions = {}) {
               data: data.data,
               overallScore: data.data.overallScore,
             }));
-            onComplete?.(data.data);
+            onCompleteRef.current?.(data.data);
           }
         } else if (data.progress === "failed") {
           isRunningRef.current = false;
@@ -172,7 +231,7 @@ export function useAudit(options: UseAuditOptions = {}) {
             error: data.error || "Audit failed",
             failedAt,
           }));
-          onError?.(data.error || "Audit failed");
+          onErrorRef.current?.(data.error || "Audit failed");
         }
       } catch (error: any) {
         isRunningRef.current = false;
@@ -191,7 +250,7 @@ export function useAudit(options: UseAuditOptions = {}) {
           error: errorMessage,
           failedAt: failedAtMap[step] || step,
         }));
-        onError?.(errorMessage);
+        onErrorRef.current?.(errorMessage);
       }
     },
     [clearPolling, onComplete, onError],
@@ -202,6 +261,7 @@ export function useAudit(options: UseAuditOptions = {}) {
     async (url: string, productId?: string) => {
       if (isRunningRef.current) return;
       isRunningRef.current = true;
+      hasCalledLimitReachedRef.current = false;
 
       // Use provided productId or fallback to default
       const effectiveProductId = productId || defaultProductId;
@@ -238,6 +298,32 @@ export function useAudit(options: UseAuditOptions = {}) {
         const initData = await initResponse.json();
 
         if (!initResponse.ok) {
+          // Check if this is a limit error first
+          if (initData.limitReached) {
+            isRunningRef.current = false;
+            clearPolling();
+            hasCalledLimitReachedRef.current = true;
+            setStatus({
+              progress: "failed",
+              reportId: null,
+              overallScore: null,
+              data: null,
+              error: null,
+              failedAt: "limit_reached",
+              contentSummary: null,
+            });
+            onLimitReachedRef.current?.({
+              message:
+                initData.error || initData.message || "Audit limit reached",
+              limitType: initData.limitType,
+              used: initData.used,
+              limit: initData.limit,
+              resetAt: initData.resetAt,
+              upgradeRequired: initData.upgradeRequired,
+            });
+            return;
+          }
+
           // Check if it's a cached report
           if (initResponse.status === 409 && initData.cached) {
             // Fetch the cached report
@@ -257,7 +343,7 @@ export function useAudit(options: UseAuditOptions = {}) {
                   failedAt: null,
                   contentSummary: null,
                 });
-                onComplete?.(statusData.data);
+                onCompleteRef.current?.(statusData.data);
                 isRunningRef.current = false;
                 return;
               }
@@ -290,7 +376,7 @@ export function useAudit(options: UseAuditOptions = {}) {
           error: errorMessage,
           failedAt: prev.failedAt || "init",
         }));
-        onError?.(errorMessage);
+        onErrorRef.current?.(errorMessage);
       }
     },
     [defaultProductId, isGuest, runStep, onComplete, onError],

@@ -208,7 +208,8 @@ export async function POST(request: NextRequest) {
     let usage: Awaited<ReturnType<typeof getOrCreateSioUsage>> | null = null;
     let monthlyLimit = 0;
     let weeklyLimit = 0;
-    let isFreePlan = true;
+    let totalLimit = 0;
+    let planType = "free";
 
     if (!isGuest && productId) {
       const subscription = await Subscription.findOne({
@@ -217,30 +218,50 @@ export async function POST(request: NextRequest) {
         deletedAt: null,
       }).sort({ createdAt: -1 });
 
-      monthlyLimit = subscription?.monthlyAuditLimit || 1;
+      monthlyLimit = subscription?.monthlyAuditLimit || 0;
       weeklyLimit = subscription?.weeklyAuditLimit || 0;
-      isFreePlan = !subscription || subscription.planType === "free";
+      totalLimit = subscription?.totalAuditLimit || 0;
+      planType = subscription?.planType || "free";
 
-      usage = await getOrCreateSioUsage(productId, monthlyLimit, weeklyLimit);
+      // Check total audit limit (for one-time payments)
+      if (totalLimit > 0) {
+        usage = await getOrCreateSioUsage(productId, totalLimit, 0);
 
-      if (usage.sioAuditsUsed >= monthlyLimit) {
-        return NextResponse.json(
-          {
-            error: isFreePlan
-              ? "You've reached your monthly SIO audit limit (1/month). Please upgrade to a paid plan for more audits."
-              : `You've reached your monthly SIO audit limit (${monthlyLimit}/month).`,
-            limitReached: true,
-            limitType: "monthly",
-            used: usage.sioAuditsUsed,
-            limit: monthlyLimit,
-            resetAt: usage.periodEnd,
-          },
-          { status: 403 },
-        );
+        if (usage.sioAuditsUsed >= totalLimit) {
+          return NextResponse.json(
+            {
+              error: `You've used all ${totalLimit} audits included in your one-time pass. Upgrade to Founder for unlimited audits.`,
+              limitReached: true,
+              limitType: "total",
+              used: usage.sioAuditsUsed,
+              limit: totalLimit,
+              resetAt: null,
+              upgradeRequired: true,
+            },
+            { status: 403 },
+          );
+        }
       }
+      // Check monthly limit (for subscriptions)
+      else if (monthlyLimit > 0) {
+        usage = await getOrCreateSioUsage(productId, monthlyLimit, weeklyLimit);
 
-      if (!isFreePlan && weeklyLimit > 0) {
-        if (usage.sioWeeklyAuditUsed >= weeklyLimit) {
+        if (usage.sioAuditsUsed >= monthlyLimit) {
+          return NextResponse.json(
+            {
+              error: `You've reached your monthly SIO audit limit (${monthlyLimit}/month). Next reset on ${usage.periodEnd.toLocaleDateString()}.`,
+              limitReached: true,
+              limitType: "monthly",
+              used: usage.sioAuditsUsed,
+              limit: monthlyLimit,
+              resetAt: usage.periodEnd,
+            },
+            { status: 403 },
+          );
+        }
+
+        // Check weekly limit
+        if (weeklyLimit > 0 && usage.sioWeeklyAuditUsed >= weeklyLimit) {
           return NextResponse.json(
             {
               error: `You've reached your weekly SIO audit limit (${weeklyLimit}/week). Next reset on ${usage.resetAt.toLocaleDateString()}.`,
@@ -253,6 +274,32 @@ export async function POST(request: NextRequest) {
             { status: 403 },
           );
         }
+      }
+      // Free plan - check if they already have any reports (only 1 allowed ever)
+      else {
+        const existingReports = await SIOReport.countDocuments({
+          product: productId,
+          progress: "complete",
+        });
+
+        if (existingReports >= 1) {
+          return NextResponse.json(
+            {
+              error:
+                "Free plan includes 1 audit only. Upgrade to a paid plan for more audits.",
+              limitReached: true,
+              limitType: "free",
+              used: existingReports,
+              limit: 1,
+              resetAt: null,
+              upgradeRequired: true,
+            },
+            { status: 403 },
+          );
+        }
+
+        // Initialize usage for tracking
+        usage = await getOrCreateSioUsage(productId, 1, 0);
       }
     }
 
@@ -494,7 +541,17 @@ export async function POST(request: NextRequest) {
       metadata: {
         url: hostUrl,
         isGuest,
-        usageRemaining: usage ? monthlyLimit - usage.sioAuditsUsed : null,
+        planType,
+        usageRemaining:
+          totalLimit > 0
+            ? totalLimit - (usage?.sioAuditsUsed || 0)
+            : monthlyLimit > 0
+              ? monthlyLimit - (usage?.sioAuditsUsed || 0)
+              : usage
+                ? 1 - usage.sioAuditsUsed
+                : null,
+        limitType:
+          totalLimit > 0 ? "total" : monthlyLimit > 0 ? "monthly" : null,
       },
     });
   } catch (error: any) {

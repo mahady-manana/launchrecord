@@ -14,6 +14,7 @@ import {
   AuditRateLimitedCard,
   AuditStartCard,
   AuditSuccessCard,
+  AuditUpgradeCard,
   ExistingAuditCard,
 } from "./components";
 
@@ -21,7 +22,22 @@ interface AuditPageProps {
   params: Promise<{ product: string }>;
 }
 
-type AuditStatus = "idle" | "running" | "success" | "error" | "rate-limited";
+type AuditStatus =
+  | "idle"
+  | "running"
+  | "success"
+  | "error"
+  | "rate-limited"
+  | "upgrade-required";
+
+interface AuditLimitError {
+  message: string;
+  limitType?: "monthly" | "weekly" | "total" | "free";
+  used?: number;
+  limit?: number;
+  resetAt?: string | null;
+  upgradeRequired?: boolean;
+}
 
 function ProductAuditPageContent({ params }: AuditPageProps) {
   const router = useRouter();
@@ -38,6 +54,7 @@ function ProductAuditPageContent({ params }: AuditPageProps) {
   const [isLoading, setIsLoading] = useState(true);
   const [auditStatus, setAuditStatus] = useState<AuditStatus>("idle");
   const [errorMessage, setErrorMessage] = useState<string>("");
+  const [limitError, setLimitError] = useState<AuditLimitError | null>(null);
   const [retryAt, setRetryAt] = useState<Date | null>(null);
   const [countdown, setCountdown] = useState<string>("");
   const [hasAutoRun, setHasAutoRun] = useState(false);
@@ -76,6 +93,10 @@ function ProductAuditPageContent({ params }: AuditPageProps) {
         setAuditStatus("error");
         setErrorMessage(error);
       }
+    },
+    onLimitReached: (error) => {
+      setLimitError(error as any);
+      setAuditStatus("upgrade-required");
     },
   });
 
@@ -222,6 +243,17 @@ function ProductAuditPageContent({ params }: AuditPageProps) {
           <AuditErrorCard
             errorMessage={errorMessage}
             onRetry={handleRetry}
+            onBack={handleBack}
+          />
+        )}
+
+        {auditStatus === "upgrade-required" && (
+          <AuditUpgradeCard
+            planType={limitError?.limitType === "free" ? "free" : "onetime"}
+            used={limitError?.used || 0}
+            limit={limitError?.limit || 1}
+            errorMessage={limitError?.message || errorMessage}
+            productId={product.id}
             onBack={handleBack}
           />
         )}

@@ -111,7 +111,7 @@ function CompleteProductForm() {
       const productId = data.productId as string | undefined;
       if (productId) {
         await fetchProducts(productId);
-        router.push(`/dashboard/${productId}`);
+        router.push(`/dashboard/${productId}/subscription`);
         return;
       }
 

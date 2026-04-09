@@ -44,7 +44,9 @@ export async function GET(request: Request) {
     const subscription = await Subscription.findOne({
       productId: product._id,
       deletedAt: null,
-    }).sort({ createdAt: -1 }).populate("productId");
+    })
+      .sort({ createdAt: -1 })
+      .populate("productId");
 
     if (!subscription) {
       return jsonSuccess({ data: { subscription: null } });
@@ -56,10 +58,16 @@ export async function GET(request: Request) {
           id: subscription._id.toString(),
           productId: subscription.productId.toString(),
           stripeSubscriptionId: subscription.stripeSubscriptionId,
+          stripePaymentIntentId: subscription.stripePaymentIntentId,
           stripeCustomerId: subscription.stripeCustomerId,
           planType: subscription.planType,
           status: subscription.status,
-          currentPeriodEnd: subscription.currentPeriodEnd?.toISOString() || null,
+          currentPeriodEnd:
+            subscription.currentPeriodEnd?.toISOString() || null,
+          monthlyAuditLimit: subscription.monthlyAuditLimit,
+          weeklyAuditLimit: subscription.weeklyAuditLimit,
+          totalAuditLimit: subscription.totalAuditLimit,
+          auditsUsed: subscription.auditsUsed,
         },
       },
     });
@@ -82,10 +90,15 @@ export async function GET(request: Request) {
     id: subscription._id.toString(),
     productId: subscription.productId.toString(),
     stripeSubscriptionId: subscription.stripeSubscriptionId,
+    stripePaymentIntentId: subscription.stripePaymentIntentId,
     stripeCustomerId: subscription.stripeCustomerId,
     planType: subscription.planType,
     status: subscription.status,
     currentPeriodEnd: subscription.currentPeriodEnd?.toISOString() || null,
+    monthlyAuditLimit: subscription.monthlyAuditLimit,
+    weeklyAuditLimit: subscription.weeklyAuditLimit,
+    totalAuditLimit: subscription.totalAuditLimit,
+    auditsUsed: subscription.auditsUsed,
   }));
 
   return jsonSuccess({

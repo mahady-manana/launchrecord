@@ -4,11 +4,12 @@ export interface ISubscription extends Document {
   productId: mongoose.Types.ObjectId;
   stripeSubscriptionId?: string;
   stripePaymentIntentId?: string;
-  stripeCustomerId: string;
+  stripeCustomerId?: string;
   status: string;
   planType: "free" | "onetime" | "founder" | "growth" | "sovereign";
   monthlyAuditLimit: number;
   weeklyAuditLimit: number;
+  totalAuditLimit: number;
   auditsUsed: number;
   currentPeriodEnd?: Date | null;
   expiresAt?: Date | null;
@@ -36,7 +37,6 @@ const SubscriptionSchema = new Schema<ISubscription>(
     },
     stripeCustomerId: {
       type: String,
-      required: true,
     },
     planType: {
       type: String,
@@ -53,6 +53,11 @@ const SubscriptionSchema = new Schema<ISubscription>(
       type: Number,
       required: true,
       default: 0, // Free: 0, OneTime: 0, Founder: 5/week, Growth: 5/week, Sovereign: unlimited
+    },
+    totalAuditLimit: {
+      type: Number,
+      required: true,
+      default: 0, // Free: 0, OneTime: 5 (forever), Founder: 0 (uses monthly), Sovereign: 0 (unlimited)
     },
     auditsUsed: {
       type: Number,
