@@ -194,6 +194,7 @@ export function ClarityCard({ report, isGuest }: ClarityCardProps) {
       {/* Overall Clarity Summary */}
       <div className="mb-6 space-y-3">
         <MetricInsight
+          isGuest={isGuest}
           title="Messaging Clarity"
           current={report.summary.current}
           positiveComments={report.summary.positiveComments}

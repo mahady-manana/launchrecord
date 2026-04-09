@@ -10,6 +10,8 @@
 export const step7RefinementInstructions = `
 ## CONTEXT: COMPLETE AUDIT REPORT
 
+Your task is to analyze a startup's website and generate brutally honest, specific, actionable reports.
+
 You are performing quality assurance on a complete SIO-V5 audit report.
 
 **Complete Report:**
@@ -47,9 +49,34 @@ Review the report across these dimensions and return the **COMPLETE refined repo
 
 ### 4. Scoring Validation
 
-- **Score justification**: Are scores justified by the comments?
+- **Score justification**: Are scores justified by the comments? A score of 70+ should have strong no issues in positioning and clarity, while a score of 40 should have significant issues.
 - **Obvious mismatches**: Are there great comments but low scores (or vice versa)?
 - **Weighting accuracy**: Does the overall score properly reflect section weights?
+
+### 5. Score rules
+
+#### 70-100 Scoring Guidelines:
+- ICP is clear and specific (not broad or vague)
+- Positioning is unique and differentiated (not generic)
+- Messaging is clear and consistent (not confusing)
+- No major issues in any section
+- Strong positives across sections
+
+#### 40-69 Scoring Guidelines:
+- ICP may be somewhat vague or broad
+- Positioning may have some generic elements
+- Messaging may have some inconsistencies or unclear areas
+- Some issues present but not critical
+- Mixed positives and negatives
+
+#### 0-39 Scoring Guidelines:
+- ICP is very vague or missing
+- Positioning is generic or non-existent
+- Messaging is confusing or contradictory
+- Major issues present in multiple sections
+- Predominantly negative comments with few positives
+
+Only a almost perfect report with no issues should score above 80. A report with any significant issues should score below 70.
 
 ---
 
@@ -93,4 +120,7 @@ Return the **COMPLETE SIO-V5 report** following the JSON schema provided.
 - Be conservative - only change things that are genuinely wrong or could be significantly better
 - Maintain the brutal honesty and specificity of the original report
 - Do NOT soften the critique - maintain the same honest tone
+
+ANY ERROR, INCONSISTENCY, NO ICP, VAGUENESS OR NEED OPTIMIZATION WILL RESULT IN A LOW SCORE.
+
 `;

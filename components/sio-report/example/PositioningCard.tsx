@@ -164,11 +164,13 @@ export function PositioningCard({ report, isGuest }: PositioningCardProps) {
       {/* Overall Positioning Summary */}
       <div className="mb-6 space-y-3">
         <MetricInsight
+          isGuest={isGuest}
           title="Your Market Positioning & Differentiation"
           current={report.summary.current}
           positiveComments={report.summary.positiveComments}
           negativeComments={report.summary.negativeComments}
           suggested={report.summary.suggested}
+          currentTitle="Current market positioning and differentiation"
         />
       </div>
 

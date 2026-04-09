@@ -9,7 +9,9 @@
 export const step4PositioningClarityInstructions = `
 ## CONTEXT FROM PREVIOUS STEPS
 
-You have access to analysis from Step 3 (Summary & First Impressions):
+Your task is to analyze a startup's website and generate brutally honest, specific, actionable reports.
+
+Now, you have access to analysis from Step 3 (Summary & First Impressions):
 
 **Website Summary Context: Audited**
 {WEBSITE_SUMMARY_CONTEXT}
@@ -148,4 +150,7 @@ Return ONLY valid JSON matching this structure:
 - If positioning isn't clearly stated, create suggestions based on available content
 - Every unclear sentence must have a specific fix
 - Aggregate unclear sentences across sub-metrics for the overall unclearSentences array
+
+ANY ERROR, INCONSISTENCY, NO ICP, VAGUENESS OR NEED OPTIMIZATION WILL RESULT IN A LOW SCORE.
+
 `;

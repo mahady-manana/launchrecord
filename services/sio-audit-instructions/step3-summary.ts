@@ -85,4 +85,7 @@ Return ONLY valid JSON matching this structure:
 - Suggested rewrites must be copy-paste ready
 - Be brutally honest in negative comments
 - Score based on specificity, ICP clarity, and conversion optimization
+
+ANY ERROR, INCONSISTENCY, NO ICP, VAGUENESS OR NEED OPTIMIZATION WILL RESULT IN A LOW SCORE.
+
 `;

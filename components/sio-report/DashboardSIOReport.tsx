@@ -454,7 +454,10 @@ export default function DashboardSIOReport({
 
               {/* First Impression */}
               <div id="first-impression" className="px-0">
-                <FirstImpressionCard report={report.firstImpression} />
+                <FirstImpressionCard
+                  report={report.firstImpression}
+                  isGuest={isGuest}
+                />
               </div>
 
               {/* Positioning Section */}

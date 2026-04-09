@@ -15,6 +15,8 @@ interface MetricInsightProps {
   suggested?: string[];
   compact?: boolean;
   score?: number;
+  isGuest?: boolean;
+  statement?: string;
 }
 
 export function MetricInsight({
@@ -26,6 +28,8 @@ export function MetricInsight({
   currentTitle,
   compact = false,
   score,
+  isGuest,
+  statement,
 }: MetricInsightProps) {
   const currentText = current?.trim() ? current : "Not clearly stated.";
   const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
@@ -62,12 +66,13 @@ export function MetricInsight({
             </Badge>
           ) : null}
         </div>
+
         <p className="text-slate-500 leading-relaxed text-sm font-semibold">
           {currentText}
         </p>
       </div>
 
-      {suggested && suggested.length > 0 && (
+      {!isGuest && suggested && suggested.length > 0 && (
         <div className="space-y-2 border-2 border-green-200 rounded-lg p-4">
           <div className="flex items-center justify-between gap-3">
             <div className="flex items-center gap-4 text-sm text-green-700 font-bold bg-green-200 px-4 py-1 rounded-full ml-2">
@@ -110,7 +115,7 @@ export function MetricInsight({
           </ul>
         </div>
       )}
-      {positiveComments && positiveComments.length > 0 && (
+      {!isGuest && positiveComments && positiveComments.length > 0 && (
         <div className="space-y-2 border-2 border-green-200 rounded-lg p-4">
           <div className="text-xs font-semibold uppercase tracking-wide text-green-500">
             Strengths To Keep
@@ -123,7 +128,7 @@ export function MetricInsight({
         </div>
       )}
 
-      {negativeComments && negativeComments.length > 0 && (
+      {!isGuest && negativeComments && negativeComments.length > 0 && (
         <div className="space-y-2 border-2 border-red-200 rounded-lg p-4">
           <div className="text-xs font-semibold uppercase tracking-wide text-red-500">
             Conversion Blockers
@@ -135,6 +140,12 @@ export function MetricInsight({
           </ul>
         </div>
       )}
+
+      {isGuest ? (
+        <div className="text-slate-500">
+          <p>Please sign up to read more details.</p>
+        </div>
+      ) : null}
     </div>
   );
 }
