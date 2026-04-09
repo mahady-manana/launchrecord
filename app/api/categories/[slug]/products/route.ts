@@ -1,9 +1,9 @@
 import { connectToDatabase } from "@/lib/db";
+import { getGrade } from "@/lib/utils";
 import Product from "@/models/product";
 import Topic from "@/models/topic";
 import { jsonError, jsonSuccess } from "@/utils/response";
 import { NextRequest } from "next/server";
-import { getGrade } from "@/lib/utils";
 
 export async function GET(
   request: NextRequest,
@@ -112,7 +112,7 @@ export async function GET(
       pagination: {
         page,
         limit,
-        totalPages,
+        pages: totalPages,
         totalProducts,
         hasNextPage: page < totalPages,
         hasPrevPage: page > 1,

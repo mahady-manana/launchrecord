@@ -59,12 +59,11 @@ export default function InfiniteScrollProducts({
     if (existingProducts.length === 0 && initialLoad > 0) {
       fetchProducts(1, initialLoad);
     } else if (existingProducts.length > 0) {
-      // Calculate if there are more products to load
-      const totalPages = Math.ceil(total / loadMoreCount);
-      // We've loaded initialLoad products, start from page 2
-      // If total > initialLoad, there are more to load
+      // Calculate correct starting page based on already-loaded products
+      // e.g., if server loaded 100 products and we load 20 at a time, start from page 6
+      const nextPage = Math.ceil(existingProducts.length / loadMoreCount) + 1;
       setHasMore(total > existingProducts.length);
-      setPage(2);
+      setPage(nextPage);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [apiUrl, JSON.stringify(queryParams)]);
@@ -104,10 +103,10 @@ export default function InfiniteScrollProducts({
           data.data.pagination?.totalProducts ??
           0;
         setTotal(apiTotal);
-        setHasMore(
-          data.data.pagination?.page < data.data.pagination?.totalPages ||
-            false,
-        );
+        // Handle both "pages" and "totalPages" from different APIs
+        const totalPages =
+          data.data.pagination?.pages ?? data.data.pagination?.totalPages ?? 1;
+        setHasMore(data.data.pagination?.page < totalPages);
 
         // Notify parent
         if (pageNum === 1 && onProductsLoaded) {
