@@ -1,6 +1,6 @@
 /**
  * SIO-V5 Multi-Step Audit - Base System Instructions
- * 
+ *
  * This file contains the CORE instructions that apply to ALL audit steps.
  * Each step has its own specific instruction file that builds on this base.
  */
@@ -65,8 +65,8 @@ Every issue = copy-paste fix with numbers + ICP. Ready to use.
 
 | Score  | When                                      |
 | ------ | ----------------------------------------- |
-| 90-100 | Specific ICP, quantified outcomes, names competitors |
-| 70-89  | Clear but minor gaps                      |
+| 85-100 | GOATED positioning & messaging, AEO       |
+| 70-89  | ICP, Outcomes, Strong positioning & clear |
 | 50-69  | Understandable but generic                |
 | 30-49  | Vague, no metrics, no ICP                 |
 | 0-29   | Critical issues, invisible                |
