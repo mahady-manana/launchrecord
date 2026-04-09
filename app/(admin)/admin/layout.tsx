@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { FileText, LogOut, Menu, Shield, X } from "lucide-react";
+import { FileText, LogOut, Menu, Shield, Users, X } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -46,6 +46,8 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
 
   const navItems = [
     { href: "/admin/sio-v5", label: "SIO-V5 Audit", icon: FileText },
+    { href: "/admin/users", label: "Users", icon: Users },
+    { href: "/admin/sio-reports", label: "SIO Reports", icon: FileText },
   ];
 
   return (
