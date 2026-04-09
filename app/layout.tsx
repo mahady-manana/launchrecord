@@ -23,7 +23,7 @@ const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
 
 export const metadata: Metadata = {
   title: {
-    default: "LaunchRecord",
+    default: "Get a free positioning and messaging audit for your startup",
     template: "%s | LaunchRecord",
   },
   description:
@@ -44,7 +44,7 @@ export const metadata: Metadata = {
     },
   },
   openGraph: {
-    title: "LaunchRecord",
+    title: "Get a free positioning and messaging audit for your startup",
     description: "Stop Being a Commodity. Become a Category King.",
     url: appUrl,
     siteName: "LaunchRecord",
@@ -59,7 +59,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "LaunchRecord",
+    title: "Get a free positioning and messaging audit for your startup",
     description: "Stop Being a Commodity. Become a Category King.",
     images: ["/og-image.png"],
   },

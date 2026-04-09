@@ -34,6 +34,18 @@ export async function Footer() {
       href: "/blog/why-traffic-but-no-signup",
       label: "Traffic But No Signup?",
     },
+    {
+      href: "/positioning-audit-tools",
+      label: "Positioning Audit Tools",
+    },
+    {
+      href: "/messaging-audit",
+      label: "Messaging Audit Tool",
+    },
+    {
+      href: "/aeo-audit-tool",
+      label: "AEO Audit Tool",
+    },
     { href: "/aeo-vs-seo", label: "AEO vs SEO Guide" },
     { href: "/how-score-works", label: "How Scoring Works" },
     { href: "/sio-audit", label: "SIO-V5 Engine" },

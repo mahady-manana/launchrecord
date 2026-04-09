@@ -12,7 +12,7 @@ import Link from "next/link";
 
 export default function LaunchRecordLandingPageClient() {
   return (
-    <div className="">
+    <div className="bg-green-50">
       {/* Hero - Unchanged */}
       <HeroSection />
 

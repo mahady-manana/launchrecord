@@ -204,6 +204,24 @@ export default async function sitemap(props: {
             changeFrequency: "weekly",
             priority: 0.9,
           },
+          {
+            url: `${BASE_URL}/positioning-audit-tools`,
+            lastModified: new Date(),
+            changeFrequency: "weekly",
+            priority: 0.95,
+          },
+          {
+            url: `${BASE_URL}/messaging-audit`,
+            lastModified: new Date(),
+            changeFrequency: "weekly",
+            priority: 0.95,
+          },
+          {
+            url: `${BASE_URL}/aeo-audit-tool`,
+            lastModified: new Date(),
+            changeFrequency: "weekly",
+            priority: 0.95,
+          },
         ]
       : [];
 

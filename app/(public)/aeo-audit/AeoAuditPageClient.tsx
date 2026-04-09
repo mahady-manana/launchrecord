@@ -114,7 +114,7 @@ export default function AeoAuditPageClient() {
           </div>
 
           <h1 className="text-4xl md:text-6xl font-bold text-secondary leading-tight">
-            AEO Website Audit, <br />{" "}
+            AEO Website Audit Tool, <br />{" "}
             <span className="text-3xl md:text-5xl text-slate-700">
               Start Optimizing for AI Answers.
             </span>
