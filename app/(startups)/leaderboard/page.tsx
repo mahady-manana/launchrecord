@@ -52,6 +52,7 @@ interface LeaderboardEntry {
   website?: string | null;
   logo?: string | null;
   score?: number | null;
+  grade?: string;
   rank: number;
   topics?: Array<{ _id: string; name: string }>;
   slug: string;
@@ -66,7 +67,7 @@ async function fetchLeaderboard(pageNum: number): Promise<{
     const response = await fetch(
       `${appUrl}/api/leaderboard?limit=100&page=${pageNum}`,
       {
-        cache: "no-store",
+        next: { revalidate: 60 },
       },
     );
 
@@ -91,24 +92,16 @@ async function fetchLeaderboard(pageNum: number): Promise<{
   }
 }
 
-export default async function LeaderboardPage({
-  searchParams,
-}: {
-  searchParams: Promise<{ page?: string }>;
-}) {
-  const page = parseInt((await searchParams).page || "1", 10);
-  const leaderboardData = await fetchLeaderboard(page);
+export default async function LeaderboardPage() {
+  const leaderboardData = await fetchLeaderboard(1);
 
   const initialProducts = leaderboardData?.products || [];
-  const initialTotalPages = leaderboardData?.totalPages || 1;
   const initialTotalProducts = leaderboardData?.totalProducts || 0;
 
   return (
     <LeaderboardPageClient
       initialProducts={initialProducts}
-      initialPage={page}
-      initialTotalPages={initialTotalPages}
-      initialTotalProducts={initialTotalProducts}
+      total={initialTotalProducts}
     />
   );
 }

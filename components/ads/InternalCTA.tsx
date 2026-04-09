@@ -15,7 +15,7 @@ export function InternalCTA() {
   };
 
   return (
-    <section className="bg-slate-50 relative flex border border-primary rounded-lg shadow-md py-4">
+    <section className="bg-white relative flex border border-primary rounded-lg shadow-md py-4">
       <div className="space-y-8 relative px-4">
         <div className="space-y-4">
           <Link
@@ -67,8 +67,7 @@ export function InternalCTA() {
               Enter your website url.{" "}
               <span className="px-2 text-primary font-bold">
                 No signup required.
-              </span>{" "}
-              Audit takes 2-5 minutes.
+              </span>
             </p>
           </div>
         </div>

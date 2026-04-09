@@ -34,9 +34,9 @@ export async function generateMetadata({
 async function fetchCategory(slug: string, page: number) {
   try {
     const response = await fetch(
-      `${appUrl}/api/categories/${slug}/products?page=${page}&limit=20`,
+      `${appUrl}/api/categories/${slug}/products?page=1&limit=100`,
       {
-        cache: "no-store",
+        next: { revalidate: 60 },
       },
     );
 
@@ -60,7 +60,7 @@ async function fetchCategory(slug: string, page: number) {
 async function fetchTopTopics(limit: number = 10) {
   try {
     const response = await fetch(`${appUrl}/api/topics?top=${limit}`, {
-      cache: "no-store",
+      next: { revalidate: 3600 },
     });
 
     if (!response.ok) {
@@ -85,9 +85,8 @@ export default async function CategoryPage({
   searchParams,
 }: CategoryPageProps) {
   const { slug } = await params;
-  const page = parseInt((await searchParams).page || "1", 10);
   const [categoryData, topTopics] = await Promise.all([
-    fetchCategory(slug, page),
+    fetchCategory(slug, 1),
     fetchTopTopics(10),
   ]);
 
@@ -104,12 +103,25 @@ export default async function CategoryPage({
     );
   }
 
+  const initialProducts = categoryData.products.map((product: any) => ({
+    _id: product.id,
+    name: product.name,
+    tagline: product.tagline,
+    website: product.website,
+    logo: product.logo,
+    score: product.score,
+    rank: product.rank,
+    topics: product.topics,
+    slug: product.slug,
+  }));
+
   return (
     <CategoryPageClient
-      initialData={categoryData}
+      initialProducts={initialProducts}
+      total={categoryData.pagination.totalProducts}
       slug={slug}
       topTopics={topTopics || []}
-      currentPage={page}
+      categoryData={categoryData}
     />
   );
 }

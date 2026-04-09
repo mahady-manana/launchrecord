@@ -37,7 +37,7 @@ export async function GET(request: NextRequest) {
         score: { $ne: null },
       })
         .sort({ score: -1 })
-        .limit(30)
+        .limit(10)
         .lean();
     }
 

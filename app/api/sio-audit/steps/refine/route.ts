@@ -90,9 +90,9 @@ export async function POST(request: NextRequest) {
     const aiResponse = await client.chat.send({
       chatGenerationParams: {
         models: [
-          "qwen/qwen3.6-plus:free",
-          "x-ai/grok-4.1-fast",
           "qwen/qwen3.5-35b-a3b",
+          "x-ai/grok-4.1-fast",
+          "google/gemma-4-31b-it:free",
         ],
         messages: [
           {

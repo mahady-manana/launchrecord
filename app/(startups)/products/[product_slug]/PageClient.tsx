@@ -129,9 +129,9 @@ export default function ProductPageClient({
         // Shuffle and take 10
         const shuffle = (arr: any[]) => arr.sort(() => Math.random() - 0.5);
 
-        setSimilarProducts(shuffle(similarData.products || []).slice(0, 10));
-        setNewProducts(shuffle(newData.products || []).slice(0, 10));
-        setTopProducts(shuffle(topData.products || []).slice(0, 10));
+        setSimilarProducts(shuffle(similarData.products || []).slice(0, 9));
+        setNewProducts(shuffle(newData.products || []).slice(0, 9));
+        setTopProducts(shuffle(topData.products || []).slice(0, 9));
       } catch (error) {
         console.error("Error fetching recommendations:", error);
       }
@@ -144,7 +144,7 @@ export default function ProductPageClient({
   return (
     <>
       {jsonLd && <JSONLD data={jsonLd} />}
-      <div className="min-h-screen bg-gradient-to-br pt-20 from-slate-50 via-white to-primary/5">
+      <div className="min-h-screen">
         {/* Header */}
         <div className="relative bg-slate-100 max-w-6xl mx-auto rounded-xl">
           <div className="max-w-6xl mx-auto px-4 py-8">
@@ -279,7 +279,7 @@ export default function ProductPageClient({
                 <Target className="h-6 w-6" />
                 Similar Products
               </h2>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 {similarProducts.map((p) => (
                   <ProductCard key={p.id} product={p} />
                 ))}
@@ -294,7 +294,7 @@ export default function ProductPageClient({
                 <Zap className="h-6 w-6" />
                 New Products
               </h2>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 {newProducts.map((p) => (
                   <ProductCard key={p.id} product={p} />
                 ))}
@@ -309,7 +309,7 @@ export default function ProductPageClient({
                 <Crown className="h-6 w-6" />
                 Top Products
               </h2>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 {topProducts.map((p) => (
                   <ProductCard key={p.id} product={p} />
                 ))}

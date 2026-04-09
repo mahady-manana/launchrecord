@@ -49,17 +49,17 @@ export default function CategoriesPageClient({
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-primary/5">
+    <div className="min-h-screen">
       {/* Hero Section */}
       <div className="">
-        <div className="max-w-6xl mx-auto px-4 py-16">
-          <div className="text-center space-y-6">
+        <div className="max-w-6xl mx-auto px-4">
+          <div className="text-center space-y-2">
             <Badge className="bg-white/20 text-white border-0 text-sm px-4 py-1.5">
               <BarChart3 className="h-4 w-4 mr-2" />
               Browse by Category
             </Badge>
 
-            <h1 className="text-5xl md:text-6xl font-black tracking-tighter">
+            <h1 className="text-2xl md:text-4xl font-black tracking-tighter">
               Explore Categories
             </h1>
 

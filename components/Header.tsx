@@ -266,62 +266,7 @@ export function Header() {
               </div>
             )}
           </div>
-          <div
-            className="relative"
-            onMouseEnter={() => setIsHovered(true)}
-            onMouseLeave={() => setIsHovered(false)}
-          >
-            <button className="font-bold text-sm text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-xl px-4 py-2 transition-colors flex items-center gap-1">
-              Startup directories
-              <svg
-                className={`w-4 h-4 transition-transform duration-200 ${isHovered ? "rotate-180" : ""}`}
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M19 9l-7 7-7-7"
-                />
-              </svg>
-            </button>
-            {isHovered && (
-              <div className="absolute top-full left-0 mt-0 bg-white rounded-xl shadow-lg border border-slate-200 p-4 min-w-[400px] z-50">
-                <div className="grid grid-cols-2 gap-2">
-                  {isLoading ? (
-                    <div className="col-span-2 px-3 py-2 text-sm text-slate-500 text-center">
-                      Loading...
-                    </div>
-                  ) : (
-                    categories.map((category) => (
-                      <Link
-                        key={category._id}
-                        href={`/categories/${category.slug}`}
-                        className="block p-3 rounded-lg hover:bg-slate-50 transition-colors"
-                      >
-                        <div className="text-sm font-medium text-slate-900">
-                          {category.name}
-                        </div>
-                        <div className="text-xs text-slate-600">
-                          {category.count} products
-                        </div>
-                      </Link>
-                    ))
-                  )}
-                </div>
-                <div>
-                  <Link
-                    href="/categories"
-                    className="block text-center rounded-full w-full p-2 bg-slate-100 text-slate-900 hover:bg-slate-200"
-                  >
-                    All categories
-                  </Link>
-                </div>
-              </div>
-            )}
-          </div>
+
           <Link
             href="#features"
             className="font-bold text-sm text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-xl px-4 py-2 transition-colors"
@@ -333,6 +278,12 @@ export function Header() {
             className="font-bold text-sm text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-xl px-4 py-2 transition-colors"
           >
             Pricing
+          </Link>
+          <Link
+            href="/startups"
+            className="font-bold text-sm text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-xl px-4 py-2 transition-colors"
+          >
+            Startups directories
           </Link>
           {isAuthenticated ? (
             <Link href="/dashboard">

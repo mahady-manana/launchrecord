@@ -8,7 +8,9 @@
       "Bash(mv *)",
       "Bash(npm install *)",
       "Bash(rm *)",
-      "Bash(find *)"
+      "Bash(find *)",
+      "Bash(git checkout *)",
+      "Bash(ls *)"
     ]
   },
   "$version": 3
