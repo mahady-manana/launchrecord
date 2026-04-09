@@ -144,12 +144,15 @@ export async function POST(request: NextRequest) {
             console.log("Retrieved Stripe subscription:", {
               id: stripeSubscription.id,
               status: stripeSubscription.status,
-              current_period_end: stripeSubscription.current_period_end,
             });
           } catch (err) {
             console.error("Failed to retrieve Stripe subscription:", err);
           }
         }
+
+        console.log("====================================");
+        console.log(stripeSubscription);
+        console.log("====================================");
 
         // Build subscription data
         const subscriptionData: any = {
@@ -173,11 +176,6 @@ export async function POST(request: NextRequest) {
           subscriptionData.stripeSubscriptionId =
             session.subscription as string;
           subscriptionData.stripePaymentIntentId = undefined;
-          if (stripeSubscription?.current_period_end) {
-            subscriptionData.currentPeriodEnd = new Date(
-              stripeSubscription.current_period_end * 1000,
-            );
-          }
         }
 
         console.log("Subscription data:", subscriptionData);

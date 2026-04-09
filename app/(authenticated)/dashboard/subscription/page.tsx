@@ -26,7 +26,7 @@ import {
   Zap,
 } from "lucide-react";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
 import { toast } from "sonner";
 
@@ -90,7 +90,7 @@ function SubscriptionContent() {
   );
   const [currentStep, setCurrentStep] = useState<1 | 2>(1);
   const [error, setError] = useState<string | null>(null);
-
+  const router = useRouter();
   const redirectToSubscription =
     searchParams.get("redirectToSubscription") === "true";
 

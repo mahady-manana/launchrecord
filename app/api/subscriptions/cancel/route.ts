@@ -66,7 +66,7 @@ export async function POST(request: Request) {
     }).sort({ createdAt: -1 });
   }
 
-  if (!subscription) {
+  if (!subscription?.stripeSubscriptionId) {
     return jsonError("No active subscription found", 404);
   }
 
@@ -101,7 +101,7 @@ export async function POST(request: Request) {
     console.error("Error canceling subscription:", error);
     return jsonError(
       error instanceof Error ? error.message : "Failed to cancel subscription",
-      500
+      500,
     );
   }
 }
