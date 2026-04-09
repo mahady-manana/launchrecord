@@ -41,7 +41,7 @@ const plans = [
       "5 full SIO-V5 audits",
       "Complete reports with all insights",
       "Positioning insights & fixes",
-      "PosiMessaging insights & fixes",
+      "Messaging insights & fixes",
       "Positioning analysis",
       "Clarity analysis",
       "AEO presence check",
@@ -70,7 +70,7 @@ const plans = [
       "Basic Market Snapshot",
       "Execution Timeline",
       "Positioning insights & fixes",
-      "PosiMessaging insights & fixes",
+      "Messaging insights & fixes",
     ],
   },
 ];

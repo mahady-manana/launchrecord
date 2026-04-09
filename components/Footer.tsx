@@ -30,6 +30,10 @@ export async function Footer() {
   const categories = await fetchCategories();
 
   const resources = [
+    {
+      href: "/blog/why-traffic-but-no-signup",
+      label: "Traffic But No Signup?",
+    },
     { href: "/aeo-vs-seo", label: "AEO vs SEO Guide" },
     { href: "/how-score-works", label: "How Scoring Works" },
     { href: "/sio-audit", label: "SIO-V5 Engine" },

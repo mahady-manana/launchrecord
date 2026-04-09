@@ -70,7 +70,7 @@ export function PricingCard({
     <Card
       className={`relative flex flex-col h-full transition-all duration-300 hover:shadow-lg ${
         isFeatured
-          ? "border-primary shadow-lg scale-105 bg-gradient-to-b from-primary/5 to-white"
+          ? "border-primary shadow-lg scale-105 bg-gradient-to-b from-green-50 to-white"
           : "border-slate-300 bg-white shadow-sm"
       } ${variant === "compact" ? "text-sm" : ""}`}
     >
@@ -195,7 +195,7 @@ export const pricingTiers: PricingTier[] = [
       "Pay once, use forever",
       "Full report access",
     ],
-    ctaText: "Get 5 Audits - $29",
+    ctaText: "Get One Time Pass - $29",
     ctaLink: "/register?redirectToSubscription=true",
   },
   {

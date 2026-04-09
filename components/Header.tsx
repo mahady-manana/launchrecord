@@ -78,6 +78,13 @@ const pillars: Pillar[] = [
 
 const resources: Resource[] = [
   {
+    name: "Traffic But No Signup?",
+    href: "/blog/why-traffic-but-no-signup",
+    description:
+      "Why visitors aren't converting and how to fix positioning, messaging & AI visibility.",
+    category: "guide",
+  },
+  {
     name: "AEO vs SEO Guide",
     href: "/aeo-vs-seo",
     description:

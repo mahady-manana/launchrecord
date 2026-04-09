@@ -27,7 +27,7 @@ const planBenefits = {
     "5 full SIO-V5 audits",
     "Complete reports with all insights",
     "Positioning insights & fixes",
-    "PosiMessaging insights & fixes",
+    "Messaging insights & fixes",
     "Pay once, use forever",
   ],
   founder: [

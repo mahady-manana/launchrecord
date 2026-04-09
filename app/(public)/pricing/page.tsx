@@ -98,7 +98,7 @@ export default function PricingPage() {
             Select Your Plan
           </h2>
           <p className="text-slate-400 max-w-2xl mx-auto">
-            Get 5 audits for $29. Or go unlimited with Founder.
+            Get one time pass or go unlimited with Founder.
           </p>
         </div>
 
@@ -164,7 +164,7 @@ export default function PricingPage() {
               </tr>
               <tr className="border-b border-slate-800/50">
                 <td className="p-4 text-slate-300">
-                  PosiMessaging Insights & Fixes
+                  Messaging Insights & Fixes
                 </td>
                 <td className="text-center p-4">
                   <CheckCircle className="w-5 h-5 text-primary mx-auto" />
@@ -258,8 +258,8 @@ export default function PricingPage() {
             </h3>
             <p className="text-slate-400">
               You get 5 full SIO-V5 audits with complete reports, positioning
-              insights & fixes, and PosiMessaging insights & fixes. No
-              subscription needed - pay once, use forever.
+              insights & fixes, and Messaging insights & fixes. No subscription
+              needed - pay once, use forever.
             </p>
           </div>
 
