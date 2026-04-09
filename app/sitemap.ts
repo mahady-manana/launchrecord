@@ -198,6 +198,12 @@ export default async function sitemap(props: {
             changeFrequency: "weekly",
             priority: 0.9,
           },
+          {
+            url: `${BASE_URL}/blog/why-traffic-but-no-signup`,
+            lastModified: new Date(),
+            changeFrequency: "weekly",
+            priority: 0.9,
+          },
         ]
       : [];
 
