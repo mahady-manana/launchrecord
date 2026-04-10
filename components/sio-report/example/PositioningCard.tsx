@@ -1,8 +1,8 @@
 "use client";
 
-import { CommentItem } from "@/components/sio-report/CommentItem";
 import { MetricInsight } from "@/components/sio-report/MetricInsight";
 import { SIOV5Report } from "@/research/sio-v5-report-schema";
+import { StrengthAndWeakness } from "../StrengthAndWeakness";
 
 interface PositioningCardProps {
   report: SIOV5Report["positioning"];
@@ -117,49 +117,13 @@ export function PositioningCard({ report, isGuest }: PositioningCardProps) {
       </div>
 
       <p className="text-slate-600 leading-relaxed mb-6">{report.statement}</p>
-
+      <StrengthAndWeakness
+        postiveTitle="Positive positioning signs"
+        negativeTitle="Where You Lose Clarity"
+        commentNegative={report.overallCommentNegative}
+        commentPositive={report.overallCommentPositive}
+      ></StrengthAndWeakness>
       {/* Overall Comments Grid */}
-      <div className="space-y-4 mb-6">
-        {/* Positive Comments */}
-        {report.overallCommentPositive &&
-          report.overallCommentPositive.length > 0 && (
-            <div className="space-y-2">
-              <div className="text-sm font-semibold text-slate-700">
-                Strengths To Double Down
-              </div>
-              <ul className="space-y-2">
-                {report.overallCommentPositive.map((comment, idx) => (
-                  <CommentItem
-                    key={idx}
-                    as="li"
-                    variant="positive"
-                    text={comment}
-                  />
-                ))}
-              </ul>
-            </div>
-          )}
-
-        {/* Negative Comments */}
-        {report.overallCommentNegative &&
-          report.overallCommentNegative.length > 0 && (
-            <div className="space-y-2">
-              <div className="text-sm font-semibold text-slate-700">
-                Where You Lose Clarity
-              </div>
-              <ul className="space-y-2">
-                {report.overallCommentNegative.map((comment, idx) => (
-                  <CommentItem
-                    key={idx}
-                    as="li"
-                    variant="negative"
-                    text={comment}
-                  />
-                ))}
-              </ul>
-            </div>
-          )}
-      </div>
 
       {/* Overall Positioning Summary */}
       <div className="mb-6 space-y-3">

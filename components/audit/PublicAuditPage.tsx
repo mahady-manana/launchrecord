@@ -96,7 +96,7 @@ export default function PublicAuditPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white">
+    <div className="min-h-screen bg-white">
       {/* Header */}
       <div className="bg-white border border-slate-200 rounded-xl p-6 shadow-sm max-w-5xl mx-auto mt-10">
         <h2 className="text-lg font-bold text-slate-800 mb-4">

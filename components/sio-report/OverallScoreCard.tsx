@@ -2,7 +2,7 @@
 
 import { getReportBand } from "@/services/sio-report/mappers";
 import { SIOV5Report } from "@/services/sio-report/schema";
-import { CommentItem } from "./CommentItem";
+import { StrengthAndWeakness } from "./StrengthAndWeakness";
 
 interface OverallScoreCardProps {
   report: SIOV5Report;
@@ -100,45 +100,10 @@ export function OverallScoreCard({ report }: OverallScoreCardProps) {
         </div>
       </div>
 
-      {/* Positive Comments */}
-      {report.overallCommentPositive &&
-        report.overallCommentPositive.length > 0 && (
-          <div className="space-y-2">
-            <div className="text-sm font-semibold text-slate-700">
-              Strengths To Double Down
-            </div>
-            <ul className="space-y-2">
-              {report.overallCommentPositive.map((comment, idx) => (
-                <CommentItem
-                  key={idx}
-                  as="li"
-                  variant="positive"
-                  text={comment}
-                />
-              ))}
-            </ul>
-          </div>
-        )}
-
-      {/* Negative Comments */}
-      {report.overallCommentNegative &&
-        report.overallCommentNegative.length > 0 && (
-          <div className="space-y-2">
-            <div className="text-sm font-semibold text-slate-700">
-              Conversion Blockers
-            </div>
-            <ul className="space-y-2">
-              {report.overallCommentNegative.map((comment, idx) => (
-                <CommentItem
-                  key={idx}
-                  as="li"
-                  variant="negative"
-                  text={comment}
-                />
-              ))}
-            </ul>
-          </div>
-        )}
+      <StrengthAndWeakness
+        commentNegative={report.overallCommentNegative}
+        commentPositive={report.overallCommentPositive}
+      ></StrengthAndWeakness>
     </section>
   );
 }
