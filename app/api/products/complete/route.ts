@@ -124,6 +124,12 @@ export async function POST(request: NextRequest) {
       website: suggested.website,
     });
 
+    const sioreport = await SIOReport.findOne({
+      url: suggested.website,
+    })
+      .sort({ createdAt: -1 })
+      .lean();
+
     if (existingProduct) {
       const isOwner = existingProduct.users?.some(
         (u: any) => u.toString() === user?.id,
@@ -178,6 +184,9 @@ export async function POST(request: NextRequest) {
       if (suggested.logo) {
         existingProduct.logo = suggested.logo;
       }
+      if (sioreport?.overallScore) {
+        existingProduct.score = sioreport.overallScore;
+      }
 
       existingProduct.earlyAccess = true;
       existingProduct.earlyAccessGrantedAt =
@@ -211,7 +220,7 @@ export async function POST(request: NextRequest) {
       tagline: suggested.tagline || null,
       logo: suggested.logo || null,
       users: user?.id ? [user.id] : [],
-      score: null,
+      score: sioreport?.overallScore || null,
       earlyAccess: true,
       earlyAccessGrantedAt: new Date(),
       addedByAdmin: false,

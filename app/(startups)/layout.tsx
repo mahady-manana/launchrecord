@@ -198,7 +198,7 @@ async function RecentAudits() {
                   <p className="text-sm font-medium text-slate-900 group-hover:text-blue-600 truncate">
                     {product.name}
                   </p>
-                  {product.score && (
+                  {product.tagline && (
                     <p className="text-xs text-slate-500 line-clamp-1">
                       {product.tagline}
                     </p>
