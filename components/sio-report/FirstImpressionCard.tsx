@@ -15,6 +15,7 @@ interface FirstImpressionCardProps {
         overallCommentNegative: string[];
       };
   isGuest?: boolean;
+  ctaHref?: string;
 }
 
 interface LockedMetricProps {
@@ -40,7 +41,8 @@ function LockedMetric({ title }: LockedMetricProps) {
 
 export function FirstImpressionCard({
   report,
-  isGuest,
+  isGuest = false,
+  ctaHref,
 }: FirstImpressionCardProps) {
   const scoreColor =
     report.score >= 70
@@ -106,6 +108,8 @@ export function FirstImpressionCard({
         negativeTitle="Where You Lose Visitors"
         commentNegative={report.overallCommentNegative}
         commentPositive={report.overallCommentPositive}
+        isGuest={isGuest}
+        ctaHref={ctaHref}
       ></StrengthAndWeakness>
       {/* Overall Comments Grid */}
 
@@ -121,6 +125,8 @@ export function FirstImpressionCard({
               positiveComments={detailedReport?.headline.positiveComments}
               negativeComments={detailedReport?.headline.negativeComments}
               suggested={detailedReport?.headline.suggested}
+              isGuest={isGuest}
+              ctaHref={ctaHref}
             />
           )}
           {isGuest ? (
@@ -133,6 +139,8 @@ export function FirstImpressionCard({
               positiveComments={detailedReport?.subheadline.positiveComments}
               negativeComments={detailedReport?.subheadline.negativeComments}
               suggested={detailedReport?.subheadline.suggested}
+              isGuest={isGuest}
+              ctaHref={ctaHref}
             />
           )}
           {isGuest ? (
@@ -144,6 +152,8 @@ export function FirstImpressionCard({
               positiveComments={detailedReport?.cta.positiveComments}
               negativeComments={detailedReport?.cta.negativeComments}
               suggested={detailedReport?.cta.suggested}
+              isGuest={isGuest}
+              ctaHref={ctaHref}
             />
           )}
         </div>

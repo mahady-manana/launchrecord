@@ -2,8 +2,9 @@
 
 import DashboardSIOReport from "@/components/sio-report/DashboardSIOReport";
 import { Button } from "@/components/ui/button";
-import { useProductStore } from "@/stores/product-store";
+import { useSubscription } from "@/hooks/use-subscription";
 import { SIOV5Report } from "@/services/sio-report/schema";
+import { useProductStore } from "@/stores/product-store";
 import { ArrowLeft, Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -16,6 +17,7 @@ export default function DashboardSIOReportClient({
   params,
 }: DashboardSIOReportClientProps) {
   const { selectedProduct } = useProductStore();
+  const { subscription } = useSubscription();
   const router = useRouter();
   const [report, setReport] = useState<SIOV5Report | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -64,11 +66,7 @@ export default function DashboardSIOReportClient({
   if (!report) {
     return (
       <div className="space-y-6">
-        <Button
-          variant="ghost"
-          onClick={() => router.back()}
-          className="gap-2"
-        >
+        <Button variant="ghost" onClick={() => router.back()} className="gap-2">
           <ArrowLeft className="h-4 w-4" />
           Back
         </Button>
@@ -84,9 +82,7 @@ export default function DashboardSIOReportClient({
       {/* Back Button */}
       <Button
         variant="ghost"
-        onClick={() =>
-          router.push(`/dashboard/${selectedProduct.id}/reports`)
-        }
+        onClick={() => router.push(`/dashboard/${selectedProduct.id}/reports`)}
         className="gap-2"
       >
         <ArrowLeft className="h-4 w-4" />
@@ -94,7 +90,7 @@ export default function DashboardSIOReportClient({
       </Button>
 
       {/* Report */}
-      <DashboardSIOReport {...report} />
+      <DashboardSIOReport {...report} subscription={subscription} />
     </div>
   );
 }

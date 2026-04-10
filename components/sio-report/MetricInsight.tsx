@@ -1,9 +1,12 @@
 "use client";
 
+import { useSubscription } from "@/hooks/use-subscription";
 import clsx from "clsx";
-import { Check, Clock2, Copy, Sparkles } from "lucide-react";
+import { ArrowRight, Check, Clock2, Copy, Lock, Sparkles } from "lucide-react";
+import Link from "next/link";
 import { useState } from "react";
 import { Badge } from "../ui/badge";
+import { Button } from "../ui/button";
 import { CommentItem } from "./CommentItem";
 
 interface MetricInsightProps {
@@ -16,7 +19,66 @@ interface MetricInsightProps {
   compact?: boolean;
   score?: number;
   isGuest?: boolean;
+  ctaHref?: string;
   statement?: string;
+}
+
+// Helper to blur remaining items
+function BlurredMockItem({ isRed }: { isRed?: boolean }) {
+  return (
+    <li
+      className={clsx(
+        "flex items-start gap-3 text-sm py-1 blur-sm",
+        isRed ? "text-red-800" : "text-green-800",
+      )}
+    >
+      Please upgrade to unlock all insights, starting at $29.
+    </li>
+  );
+}
+// Reusable upgrade CTA component for all metrics
+export function MetricUpgradeCTA({
+  isGuest = false,
+  ctaHref,
+  message,
+}: {
+  isGuest?: boolean;
+  ctaHref: string;
+  message?: string;
+}) {
+  const { tier } = useSubscription(isGuest);
+
+  const defaultMsg =
+    tier === "guest"
+      ? "Sign up to unlock full insights"
+      : "Upgrade to see detailed analysis recommendations";
+
+  if (tier === "paid") {
+    return null;
+  }
+  return (
+    <div className="p-4 bg-gradient-to-r from-orange-50 to-amber-50 border-2 border-orange-200 rounded-lg">
+      <div className="flex items-center justify-between">
+        <div className="flex items-start gap-3">
+          <Lock className="h-5 w-5 text-orange-600 mt-0.5 shrink-0" />
+          <div>
+            <p className="text-sm font-semibold text-orange-800 mb-1">
+              {message || defaultMsg}
+            </p>
+          </div>
+        </div>
+        <Link href={ctaHref}>
+          <Button
+            size="sm"
+            className="bg-orange-500 hover:bg-orange-600 text-white"
+          >
+            {tier === "guest" ? "Sign up for free" : "Upgrade Now"}
+            <ArrowRight className="h-4 w-4 ml-2" />
+          </Button>
+        </Link>
+      </div>
+    </div>
+  );
 }
 
 export function MetricInsight({
@@ -28,9 +90,11 @@ export function MetricInsight({
   currentTitle,
   compact = false,
   score,
-  isGuest,
+  isGuest = false,
+  ctaHref,
   statement,
 }: MetricInsightProps) {
+  const { tier, isPaid } = useSubscription(isGuest);
   const currentText = current?.trim() ? current : "Not clearly stated.";
   const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
 
@@ -43,6 +107,27 @@ export function MetricInsight({
       // no-op: clipboard permission denied
     }
   };
+
+  // Apply limits based on user type
+
+  const limitedPositive = isPaid
+    ? positiveComments || []
+    : (positiveComments || []).slice(0, 1);
+  const limitedNegative = isPaid
+    ? negativeComments || []
+    : (negativeComments || []).slice(0, 1);
+  const limitedSuggested = isPaid
+    ? suggested || []
+    : (suggested || []).slice(0, 2);
+
+  const blurredPositiveCount = isPaid
+    ? 0
+    : Math.max(0, (positiveComments?.length || 0) - 1);
+  const blurredNegativeCount = isPaid
+    ? 0
+    : Math.max(0, (negativeComments?.length || 0) - 1);
+  const hasBlurred =
+    blurredPositiveCount > 0 || blurredNegativeCount > 0 || !isPaid;
 
   return (
     <div
@@ -66,13 +151,13 @@ export function MetricInsight({
             </Badge>
           ) : null}
         </div>
-
         <p className="text-slate-500 leading-relaxed text-sm font-semibold">
           {currentText}
         </p>
       </div>
 
-      {!isGuest && suggested && suggested.length > 0 && (
+      {/* Recommendations */}
+      {suggested && suggested.length > 0 && (
         <div className="space-y-2 border-2 border-green-200 rounded-lg p-4">
           <div className="flex items-center justify-between gap-3">
             <div className="flex items-center gap-4 text-sm text-green-700 font-bold bg-green-200 px-4 py-1 rounded-full ml-2">
@@ -81,7 +166,7 @@ export function MetricInsight({
             </div>
           </div>
           <ul className="space-y-1">
-            {suggested.map((item, idx) => (
+            {limitedSuggested.map((item, idx) => (
               <li
                 key={idx}
                 className={clsx(
@@ -94,58 +179,67 @@ export function MetricInsight({
                     <span>{item}</span>
                   </p>
                 </div>
-                <button
-                  type="button"
-                  onClick={() => handleCopy(item, idx)}
-                  className="absolute top-2 right-2 inline-flex items-center gap-1 text-xs font-semibold transition hover:text-slate-700"
-                >
-                  {copiedIndex === idx ? (
-                    <>
-                      <Check className="h-3.5 w-3.5" />
-                      Copied
-                    </>
-                  ) : (
-                    <>
-                      <Copy className="h-3.5 w-3.5" />
-                    </>
-                  )}
-                </button>
+                {isPaid && (
+                  <button
+                    type="button"
+                    onClick={() => handleCopy(item, idx)}
+                    className="absolute top-2 right-2 inline-flex items-center gap-1 text-xs font-semibold transition hover:text-slate-700"
+                  >
+                    {copiedIndex === idx ? (
+                      <>
+                        <Check className="h-3.5 w-3.5" />
+                        Copied
+                      </>
+                    ) : (
+                      <>
+                        <Copy className="h-3.5 w-3.5" />
+                      </>
+                    )}
+                  </button>
+                )}
               </li>
             ))}
           </ul>
         </div>
       )}
-      {!isGuest && positiveComments && positiveComments.length > 0 && (
+
+      {/* Positive Comments */}
+      {positiveComments && positiveComments.length > 0 && (
         <div className="space-y-2 border-2 border-green-200 rounded-lg p-4">
           <div className="text-xs font-semibold uppercase tracking-wide text-green-500">
             Strengths To Keep
           </div>
           <ul className="space-y-2">
-            {positiveComments.map((comment, idx) => (
+            {limitedPositive.map((comment, idx) => (
               <CommentItem key={idx} as="li" variant="neutral" text={comment} />
+            ))}
+            {/* Blurred items */}
+            {Array.from({ length: isPaid ? 0 : 1 }).map((_, idx) => (
+              <BlurredMockItem key={`blurred-pos-${idx}`} />
             ))}
           </ul>
         </div>
       )}
 
-      {!isGuest && negativeComments && negativeComments.length > 0 && (
+      {/* Negative Comments */}
+      {negativeComments && negativeComments.length > 0 && (
         <div className="space-y-2 border-2 border-red-200 rounded-lg p-4">
           <div className="text-xs font-semibold uppercase tracking-wide text-red-500">
             Conversion Blockers
           </div>
           <ul className="space-y-2">
-            {negativeComments.map((comment, idx) => (
+            {limitedNegative.map((comment, idx) => (
               <CommentItem key={idx} as="li" variant="neutral" text={comment} />
+            ))}
+            {/* Blurred items */}
+            {Array.from({ length: isPaid ? 0 : 3 }).map((_, idx) => (
+              <BlurredMockItem isRed key={`blurred-neg-${idx}`} />
             ))}
           </ul>
         </div>
       )}
 
-      {isGuest ? (
-        <div className="text-slate-500">
-          <p>Please sign up to read more details.</p>
-        </div>
-      ) : null}
+      {ctaHref && <MetricUpgradeCTA isGuest={isGuest} ctaHref={ctaHref} />}
     </div>
   );
 }

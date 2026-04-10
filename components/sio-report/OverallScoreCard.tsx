@@ -6,9 +6,15 @@ import { StrengthAndWeakness } from "./StrengthAndWeakness";
 
 interface OverallScoreCardProps {
   report: SIOV5Report;
+  isGuest?: boolean;
+  ctaHref?: string;
 }
 
-export function OverallScoreCard({ report }: OverallScoreCardProps) {
+export function OverallScoreCard({
+  report,
+  isGuest = false,
+  ctaHref,
+}: OverallScoreCardProps) {
   const scoreColor =
     report.overallScore >= 70
       ? "text-green-600"
@@ -103,6 +109,8 @@ export function OverallScoreCard({ report }: OverallScoreCardProps) {
       <StrengthAndWeakness
         commentNegative={report.overallCommentNegative}
         commentPositive={report.overallCommentPositive}
+        isGuest={isGuest}
+        ctaHref={ctaHref}
       ></StrengthAndWeakness>
     </section>
   );

@@ -7,7 +7,7 @@ import { useProductStore } from "@/stores/product-store";
 import { ArrowLeft, Crown, Globe } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 interface ProductDashboardHeaderProps {
   onRunAudit: () => void;
@@ -22,14 +22,8 @@ export function ProductDashboardHeader({
 }: ProductDashboardHeaderProps) {
   const router = useRouter();
   const { selectedProduct } = useProductStore();
-  const { fetchSubscription, subscription } = useSubscription();
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    if (selectedProduct?.id) {
-      fetchSubscription(selectedProduct.id).finally(() => setIsLoading(false));
-    }
-  }, [selectedProduct?.id]);
+  const { subscription } = useSubscription();
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleBack = () => {
     router.push("/dashboard");

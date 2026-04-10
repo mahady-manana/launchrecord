@@ -274,7 +274,7 @@ export function Header() {
             Features
           </Link>
           <Link
-            href="#pricing"
+            href="/pricing"
             className="font-bold text-sm text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-xl px-4 py-2 transition-colors"
           >
             Pricing
@@ -283,7 +283,7 @@ export function Header() {
             href="/startups"
             className="font-bold text-sm text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-xl px-4 py-2 transition-colors"
           >
-            Startups directories
+            Startup directories
           </Link>
           {isAuthenticated ? (
             <Link href="/dashboard">

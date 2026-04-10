@@ -11,6 +11,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { useSubscription } from "@/hooks/use-subscription";
 import { SIOV5Report } from "@/services/sio-report/schema";
 import { useProductStore } from "@/stores/product-store";
 import { BarChart3, RefreshCcw } from "lucide-react";
@@ -20,6 +21,7 @@ import { useEffect, useState } from "react";
 export default function ProductDashboard() {
   const router = useRouter();
   const { selectedProduct } = useProductStore();
+  const { subscription } = useSubscription();
 
   const [report, setReport] = useState<SIOV5Report | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -111,7 +113,7 @@ export default function ProductDashboard() {
         <>
           {/* Audit Date Badge */}
 
-          <DashboardSIOReport {...report} />
+          <DashboardSIOReport {...report} subscription={subscription} />
         </>
       )}
     </div>

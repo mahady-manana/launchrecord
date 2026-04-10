@@ -1,6 +1,7 @@
 "use client";
 
 import { useProducts } from "@/hooks/use-products";
+import { useSubscription } from "@/hooks/use-subscription";
 import { useProductStore } from "@/stores/product-store";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -16,6 +17,7 @@ export default function ProductLayout({
   const pathname = usePathname();
   const { selectedProduct, setSelectedProduct, products } = useProductStore();
   const { fetchProducts } = useProducts();
+  const { fetchSubscription } = useSubscription();
   const [isInitializing, setIsInitializing] = useState(true);
   const [productId, setProductId] = useState<string | null>(null);
   const [showIncompleteModal, setShowIncompleteModal] = useState(false);
@@ -44,12 +46,15 @@ export default function ProductLayout({
 
     if (foundProduct) {
       setSelectedProduct(foundProduct);
-      setIsInitializing(false);
+      // Fetch subscription once when product is loaded
+      fetchSubscription(foundProduct.id).finally(() =>
+        setIsInitializing(false),
+      );
     } else {
       // Product not found, redirect to dashboard
       router.push("/dashboard");
     }
-  }, [productId, products, setSelectedProduct, router]);
+  }, [productId, products, setSelectedProduct, router, fetchSubscription]);
 
   // Check for incomplete data after product is loaded
   useEffect(() => {

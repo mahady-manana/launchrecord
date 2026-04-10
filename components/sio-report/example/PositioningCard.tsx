@@ -7,6 +7,7 @@ import { StrengthAndWeakness } from "../StrengthAndWeakness";
 interface PositioningCardProps {
   report: SIOV5Report["positioning"];
   isGuest?: boolean;
+  ctaHref?: string;
 }
 
 interface SubMetricCardProps {
@@ -65,7 +66,11 @@ function SubMetricCard({
   );
 }
 
-export function PositioningCard({ report, isGuest }: PositioningCardProps) {
+export function PositioningCard({
+  report,
+  isGuest = false,
+  ctaHref,
+}: PositioningCardProps) {
   const scoreColor =
     report.score >= 70
       ? "text-green-600"
@@ -122,6 +127,8 @@ export function PositioningCard({ report, isGuest }: PositioningCardProps) {
         negativeTitle="Where You Lose Clarity"
         commentNegative={report.overallCommentNegative}
         commentPositive={report.overallCommentPositive}
+        isGuest={isGuest}
+        ctaHref={ctaHref}
       ></StrengthAndWeakness>
       {/* Overall Comments Grid */}
 
@@ -129,6 +136,7 @@ export function PositioningCard({ report, isGuest }: PositioningCardProps) {
       <div className="mb-6 space-y-3">
         <MetricInsight
           isGuest={isGuest}
+          ctaHref={ctaHref}
           title="Your Market Positioning & Differentiation"
           current={report.summary.current}
           positiveComments={report.summary.positiveComments}

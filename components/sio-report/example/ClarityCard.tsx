@@ -7,6 +7,7 @@ import { StrengthAndWeakness } from "../StrengthAndWeakness";
 interface ClarityCardProps {
   report: SIOV5Report["clarity"];
   isGuest?: boolean;
+  ctaHref?: string;
 }
 
 interface SubMetricCardProps {
@@ -89,7 +90,11 @@ function SubMetricCard({
   );
 }
 
-export function ClarityCard({ report, isGuest }: ClarityCardProps) {
+export function ClarityCard({
+  report,
+  isGuest = false,
+  ctaHref,
+}: ClarityCardProps) {
   const scoreColor =
     report.score >= 70
       ? "text-green-600"
@@ -152,6 +157,8 @@ export function ClarityCard({ report, isGuest }: ClarityCardProps) {
         negativeTitle="Messaging Clarity Weaknesses"
         commentNegative={report.overallCommentNegative}
         commentPositive={report.overallCommentPositive}
+        isGuest={isGuest}
+        ctaHref={ctaHref}
       ></StrengthAndWeakness>
       {/* Overall Comments Grid */}
 
@@ -159,6 +166,7 @@ export function ClarityCard({ report, isGuest }: ClarityCardProps) {
       <div className="mb-6 space-y-3">
         <MetricInsight
           isGuest={isGuest}
+          ctaHref={ctaHref}
           title="Messaging Clarity"
           current={report.summary.current}
           positiveComments={report.summary.positiveComments}
@@ -173,7 +181,7 @@ export function ClarityCard({ report, isGuest }: ClarityCardProps) {
           <h3 className="text-sm font-semibold text-slate-700 uppercase tracking-wider mb-3">
             Confusing Paragraphs To Fix ({report.unclearSentences.length})
           </h3>
-          {!isGuest ? (
+          {isGuest ? (
             <div className="space-y-3">
               {report.unclearSentences.map((item, idx) => (
                 <div key={idx} className="border-l-2 border-orange-200 pl-3">
@@ -189,13 +197,7 @@ export function ClarityCard({ report, isGuest }: ClarityCardProps) {
                 </div>
               ))}
             </div>
-          ) : (
-            <div className="py-4">
-              <p className="text-blue-500 underline">
-                Please signup to continue reading
-              </p>
-            </div>
-          )}
+          ) : null}
         </div>
       )}
 

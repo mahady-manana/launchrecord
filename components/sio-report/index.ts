@@ -1,6 +1,6 @@
 // SIO Report Components
-export { OverallScoreCard } from "./OverallScoreCard";
-export { FirstImpressionCard } from "./FirstImpressionCard";
 export { CommentItem } from "./CommentItem";
-export { MetricInsight } from "./MetricInsight";
+export { FirstImpressionCard } from "./FirstImpressionCard";
 export { HowToReadReport } from "./HowToReadReport";
+export { MetricInsight, MetricUpgradeCTA } from "./MetricInsight";
+export { OverallScoreCard } from "./OverallScoreCard";
