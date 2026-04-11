@@ -1,8 +1,8 @@
 import { connectToDatabase } from "@/lib/db";
+import { getGrade } from "@/lib/utils";
 import Product from "@/models/product";
 import Topic from "@/models/topic";
 import { NextRequest, NextResponse } from "next/server";
-import { getGrade } from "@/lib/utils";
 
 export async function GET(request: NextRequest) {
   try {
@@ -15,7 +15,7 @@ export async function GET(request: NextRequest) {
     const tn = Topic.name;
     // Get products sorted by score (descending), with null scores at the end
     const products = await Product.find({})
-      .sort({ score: -1, name: 1 })
+      .sort({ createdAt: -1, name: 1 })
       .skip(skip)
       .limit(limit)
       .select("name tagline website score createdAt logo slug")
@@ -26,7 +26,7 @@ export async function GET(request: NextRequest) {
 
     // Calculate rank for each product (only for scored products)
     const scoredProducts = await Product.find({ score: { $ne: null } })
-      .sort({ score: -1 })
+      .sort({ createdAt: -1 })
       .select("_id score");
 
     const rankMap = new Map();

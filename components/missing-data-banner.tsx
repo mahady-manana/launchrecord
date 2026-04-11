@@ -55,7 +55,8 @@ export function MissingDataBanner({ className }: MissingDataBannerProps) {
           <p className="text-sm text-red-700 mt-1">
             Missing:{" "}
             <span className="font-medium">{missingFields.join(", ")}</span>.
-            Complete your profile for accurate audit results.
+            Complete your profile for better listing on{" "}
+            <span>Launchrecord directories</span>.
           </p>
           <Button
             onClick={handleComplete}

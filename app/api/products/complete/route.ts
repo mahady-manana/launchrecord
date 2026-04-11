@@ -212,7 +212,9 @@ export async function POST(request: NextRequest) {
       const existing = await Product.findOne({ slug: candidate });
       return !!existing;
     });
-
+    console.log("====================================");
+    console.log(suggested);
+    console.log("====================================");
     const product = await Product.create({
       name: suggested.name,
       website: suggested.website,
@@ -231,14 +233,16 @@ export async function POST(request: NextRequest) {
       },
       slug,
     });
-    await SIOReport.updateMany(
+    const x = await SIOReport.updateMany(
       {
         url: suggested.website,
         $or: [{ product: null }, { product: { $exists: false } }],
       },
       { $set: { product: product._id } },
     );
-
+    console.log("====================================");
+    console.log(x);
+    console.log("====================================");
     return NextResponse.json({
       success: true,
       productId: product._id,
