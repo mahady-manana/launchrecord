@@ -118,13 +118,6 @@ export function Step2Pricing({ productId, onBack }: Step2PricingProps) {
     <div className="w-full max-w-4xl">
       {/* Mobile header */}
       <div className="lg:hidden mb-8">
-        <button
-          onClick={onBack}
-          className="flex items-center gap-1 text-sm text-slate-500 hover:text-slate-700 mb-4"
-        >
-          <ChevronRight className="h-4 w-4 rotate-180" />
-          Back to product details
-        </button>
         <div className="inline-flex items-center gap-2 bg-orange-500/10 border border-orange-500/20 rounded-full px-4 py-1.5 mb-4">
           <Sparkles className="h-4 w-4 text-orange-500" />
           <span className="text-sm font-medium text-orange-600">
