@@ -6,6 +6,8 @@ import { SIOV5Report } from "@/services/sio-report/schema";
 import {
   AlertCircle,
   ArrowRight,
+  ExternalLink,
+  FileText,
   Lock,
   RefreshCw,
   Sparkles,
@@ -209,28 +211,44 @@ export default function PublicAuditPage() {
       {/* Fixed Bottom CTA - Only show when report is complete */}
       {isComplete && (
         <div className="fixed bottom-6 left-0 right-0 z-50 flex justify-center px-4">
-          <div className="flex items-center gap-4 bg-white border border-slate-200 rounded-full shadow-lg px-5 py-3 max-w-lg w-full">
-            <Lock className="h-5 w-5 text-orange-500 flex-shrink-0" />
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-semibold text-slate-800 truncate">
-                Unlock your full audit report
-              </p>
-              <p className="text-xs text-slate-500 truncate">
-                Get detailed analysis and actionable recommendations
-              </p>
-            </div>
-            <Link
-              href={`/register?productUrl=${encodeURIComponent(status.data?.url || "")}`}
-              className="flex-shrink-0"
-            >
-              <Button
-                size="sm"
-                className="bg-orange-500 hover:bg-orange-600 text-white rounded-full"
+          <div className="flex flex-col bg-primary border border-slate-200 rounded-2xl shadow-xl px-6 py-4 max-w-xl w-full">
+            {/* Top row: title + CTA */}
+            <div className="flex items-center justify-between gap-4">
+              <div className="flex items-center gap-3 flex-1 min-w-0">
+                <Lock className="h-5 w-5 text-orange-100 flex-shrink-0" />
+                <p className="text-sm font-semibold text-slate-100 truncate">
+                  Sign up to unlock full analysis et recommendations
+                </p>
+              </div>
+              <Link
+                href={`/register?productUrl=${encodeURIComponent(status.data?.url || "")}`}
+                className="flex-shrink-0"
               >
-                Sign up
-                <ArrowRight className="ml-1.5 h-3.5 w-3.5" />
-              </Button>
-            </Link>
+                <Button
+                  size="sm"
+                  className="bg-secondary hover:bg-orange-600 text-white rounded-full"
+                >
+                  Get full report
+                  <ArrowRight className="ml-1.5 h-3.5 w-3.5" />
+                </Button>
+              </Link>
+            </div>
+
+            {/* Benefits row */}
+            <div className="flex flex-wrap gap-3 mt-3">
+              <div className="flex items-center gap-2 bg-slate-50 rounded-full px-3 py-1.5 text-xs">
+                <FileText className="h-3.5 w-3.5 text-slate-500" />
+                <span className="text-slate-700 font-medium">
+                  Full detailed audit report
+                </span>
+              </div>
+              <div className="flex items-center gap-2 bg-slate-50 rounded-full px-3 py-1.5 text-xs">
+                <ExternalLink className="h-3.5 w-3.5 text-slate-500" />
+                <span className="text-slate-700 font-medium">
+                  Free listing in our startup directory
+                </span>
+              </div>
+            </div>
           </div>
         </div>
       )}
