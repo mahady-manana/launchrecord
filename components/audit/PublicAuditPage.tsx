@@ -1,8 +1,16 @@
 "use client";
 
 import { AuditForm, AuditLoader, useAudit } from "@/components/audit";
+import { Button } from "@/components/ui/button";
 import { SIOV5Report } from "@/services/sio-report/schema";
-import { AlertCircle, RefreshCw, Sparkles } from "lucide-react";
+import {
+  AlertCircle,
+  ArrowRight,
+  Lock,
+  RefreshCw,
+  Sparkles,
+} from "lucide-react";
+import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import DashboardSIOReport from "../sio-report/DashboardSIOReport";
@@ -178,7 +186,9 @@ export default function PublicAuditPage() {
 
         {/* Report Display */}
         {isComplete && status.data && (
-          <DashboardSIOReport {...status.data} isGuest />
+          <div className={isComplete ? "pb-20" : ""}>
+            <DashboardSIOReport {...status.data} isGuest />
+          </div>
         )}
 
         {/* Footer */}
@@ -195,6 +205,35 @@ export default function PublicAuditPage() {
           </div>
         </div>
       </main>
+
+      {/* Fixed Bottom CTA - Only show when report is complete */}
+      {isComplete && (
+        <div className="fixed bottom-6 left-0 right-0 z-50 flex justify-center px-4">
+          <div className="flex items-center gap-4 bg-white border border-slate-200 rounded-full shadow-lg px-5 py-3 max-w-lg w-full">
+            <Lock className="h-5 w-5 text-orange-500 flex-shrink-0" />
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-semibold text-slate-800 truncate">
+                Unlock your full audit report
+              </p>
+              <p className="text-xs text-slate-500 truncate">
+                Get detailed analysis and actionable recommendations
+              </p>
+            </div>
+            <Link
+              href={`/register?productUrl=${encodeURIComponent(status.data?.url || "")}`}
+              className="flex-shrink-0"
+            >
+              <Button
+                size="sm"
+                className="bg-orange-500 hover:bg-orange-600 text-white rounded-full"
+              >
+                Sign up
+                <ArrowRight className="ml-1.5 h-3.5 w-3.5" />
+              </Button>
+            </Link>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

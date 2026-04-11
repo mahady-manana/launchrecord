@@ -90,11 +90,7 @@ function SubMetricCard({
   );
 }
 
-export function ClarityCard({
-  report,
-  isGuest = false,
-  ctaHref,
-}: ClarityCardProps) {
+export function ClarityCard({ report, isGuest, ctaHref }: ClarityCardProps) {
   const scoreColor =
     report.score >= 70
       ? "text-green-600"
@@ -181,9 +177,11 @@ export function ClarityCard({
           <h3 className="text-sm font-semibold text-slate-700 uppercase tracking-wider mb-3">
             Confusing Paragraphs To Fix ({report.unclearSentences.length})
           </h3>
-          {isGuest ? (
-            <div className="space-y-3">
-              {report.unclearSentences.map((item, idx) => (
+
+          <div className="space-y-3">
+            {report.unclearSentences
+              .slice(0, isGuest ? 1 : 20)
+              .map((item, idx) => (
                 <div key={idx} className="border-l-2 border-orange-200 pl-3">
                   <div className="text-orange-700 text-sm line-through mb-1">
                     "{item.text}"
@@ -196,6 +194,10 @@ export function ClarityCard({
                   </div>
                 </div>
               ))}
+          </div>
+          {isGuest ? (
+            <div className="py-8 text-lg underline">
+              <p>Please signup to see all unclear sentences</p>
             </div>
           ) : null}
         </div>

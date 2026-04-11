@@ -463,7 +463,7 @@ export default function DashboardSIOReport({
                   {isGuest && (
                     <LockedOverlay
                       title="Stop guessing your positioning - Get full insights and fixes"
-                      description="See the exact positioning gaps and the copy to fix them."
+                      subtitle="See the exact positioning gaps and the copy to fix them."
                       signupHref={ctaHref}
                       ctaLabel="Get Full Positioning Report"
                       metricLabels={positioningMetricLabels}
@@ -530,7 +530,7 @@ export default function DashboardSIOReport({
                   {isGuest && (
                     <LockedOverlay
                       title="Get full clarity report to boost conversions"
-                      description="Get sentence-level fixes you can ship today."
+                      subtitle="Get sentence-level fixes you can ship today."
                       signupHref={ctaHref}
                       ctaLabel="Signup and Get full report"
                       metricLabels={clarityMetricLabels}
