@@ -84,7 +84,7 @@ export function ActionablePositioning({
                     <div className="flex items-center gap-2">
                       <AlertCircle className="h-4 w-4 text-orange-600 flex-shrink-0" />
                       <span className="text-sm font-medium text-slate-700">
-                        {metric.name}
+                        {metric.statement}
                       </span>
                     </div>
                     <div className="text-right">
@@ -160,7 +160,7 @@ export function ActionablePositioning({
                     className="inline-flex items-center gap-1 bg-slate-100 text-slate-700 px-3 py-1 rounded-full text-xs font-medium"
                   >
                     <CheckCircle2 className="h-3 w-3" />
-                    {metric.name}
+                    {metric.statement}
                   </span>
                 ))}
             </div>

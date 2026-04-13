@@ -11,19 +11,19 @@ export function AEOCard({ report }: AEOCardProps) {
     report.score >= 70
       ? "text-green-600"
       : report.score >= 50
-      ? "text-yellow-600"
-      : report.score >= 30
-      ? "text-orange-600"
-      : "text-red-600";
+        ? "text-yellow-600"
+        : report.score >= 30
+          ? "text-orange-600"
+          : "text-red-600";
 
   const scoreBg =
     report.score >= 70
       ? "bg-green-50"
       : report.score >= 50
-      ? "bg-yellow-50"
-      : report.score >= 30
-      ? "bg-orange-50"
-      : "bg-red-50";
+        ? "bg-yellow-50"
+        : report.score >= 30
+          ? "bg-orange-50"
+          : "bg-red-50";
 
   return (
     <section className="py-8 space-y-6">
@@ -66,9 +66,7 @@ export function AEOCard({ report }: AEOCardProps) {
         </h3>
         <div
           className={`border-l-4 pl-4 ${
-            report.aiPresence.isPresent
-              ? "border-green-300"
-              : "border-red-300"
+            report.aiPresence.isPresent ? "border-green-300" : "border-red-300"
           }`}
         >
           <div className="flex items-center gap-3 mb-3">
@@ -79,9 +77,7 @@ export function AEOCard({ report }: AEOCardProps) {
             />
             <span
               className={`font-bold ${
-                report.aiPresence.isPresent
-                  ? "text-green-700"
-                  : "text-red-700"
+                report.aiPresence.isPresent ? "text-green-700" : "text-red-700"
               }`}
             >
               {report.aiPresence.isPresent
@@ -90,7 +86,7 @@ export function AEOCard({ report }: AEOCardProps) {
             </span>
           </div>
 
-          {report.aiPresence.engines.length > 0 ? (
+          {report.aiPresence.engines?.length > 0 ? (
             <div className="mb-2">
               <span className="text-sm text-slate-600">Found in:</span>
               <div className="flex flex-wrap gap-2 mt-1">
@@ -119,11 +115,14 @@ export function AEOCard({ report }: AEOCardProps) {
       {/* Recommendations */}
       <div>
         <h3 className="text-sm font-semibold text-slate-700 uppercase tracking-wider mb-3">
-          Fast Wins You Can Ship ({report.recommendations.length})
+          Fast Wins You Can Ship ({report.recommendations?.length})
         </h3>
         <ul className="space-y-2">
-          {report.recommendations.map((rec, idx) => (
-            <li key={idx} className="flex items-start gap-2 text-sm text-slate-700">
+          {report.recommendations?.map((rec, idx) => (
+            <li
+              key={idx}
+              className="flex items-start gap-2 text-sm text-slate-700"
+            >
               <span className="text-xs font-semibold text-purple-600">
                 {idx + 1}.
               </span>

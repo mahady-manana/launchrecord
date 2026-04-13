@@ -2,6 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
+import { LogoList } from "./LogoList";
 
 export function HeroSection() {
   const [websiteUrl, setWebsiteUrl] = useState("");
@@ -26,20 +27,21 @@ export function HeroSection() {
 
       <div className="space-y-8 relative px-4 max-w-6xl text-center">
         <div className="space-y-4">
-          <h1 className="text-4xl md:text-6xl font-bold tracking-tighter text-slate-500 leading-[1.1] pb-8">
-            <span className="block text-slate-600 leading-[1.5]">
-              Stop losing potential customers.
-            </span>
+          <h1 className="text-4xl md:text-5xl font-bold tracking-tighter text-slate-600 leading-[1.1] pb-8">
+            Visitors don’t understand your product <br />
             Get a free positioning and messaging audit
-            <br /> with exact fixes to
-            <span className="text-primary"> boost conversions.</span>{" "}
+            <br />
+            <span className="text-primary">
+              with exact fixes to boost conversions.
+            </span>{" "}
           </h1>
 
           <div className="space-y-2">
             <p className="block text-xl max-w-3xl mx-auto text-slate-600 font-mono tracking-normal normal-case">
-              Launchrecord audits your SaaS messaging clarity, spots positioning
-              gaps, tests AI visibility and gives you exact copy fixes to turn
-              confusion into conversions.
+              Launchrecord audits your SaaS messaging clarity, detects
+              positioning gaps, and benchmarks your website against thousands of
+              SaaS startups to reveal exactly what’s hurting conversions and how
+              to fix them.
             </p>
           </div>
         </div>
@@ -74,6 +76,7 @@ export function HeroSection() {
             </p>
           </div>
         </div>
+        <LogoList></LogoList>
       </div>
     </section>
   );

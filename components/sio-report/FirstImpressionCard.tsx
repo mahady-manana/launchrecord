@@ -6,14 +6,8 @@ import { MetricInsight } from "./MetricInsight";
 import { StrengthAndWeakness } from "./StrengthAndWeakness";
 
 interface FirstImpressionCardProps {
-  report:
-    | ISIOReport["firstImpression"]
-    | {
-        score: number;
-        statement: string;
-        overallCommentPositive: string[];
-        overallCommentNegative: string[];
-      };
+  report: ISIOReport["firstImpression"];
+
   isGuest?: boolean;
   ctaHref?: string;
 }
@@ -120,10 +114,12 @@ export function FirstImpressionCard({
           ) : (
             <MetricInsight
               title="Headline: Recommendations to improve your headline"
+              statement={detailedReport?.headline.statement}
               currentTitle="Current headline"
               current={detailedReport?.headline.current}
               positiveComments={detailedReport?.headline.positiveComments}
               negativeComments={detailedReport?.headline.negativeComments}
+              recommendation={detailedReport?.headline.recommendation}
               suggested={detailedReport?.headline.suggested}
               isGuest={isGuest}
               ctaHref={ctaHref}
@@ -134,10 +130,12 @@ export function FirstImpressionCard({
           ) : (
             <MetricInsight
               title="Subtitles, descriptions"
+              statement={detailedReport?.subheadline.statement}
               currentTitle="Current subtitles"
               current={detailedReport?.subheadline.current}
               positiveComments={detailedReport?.subheadline.positiveComments}
               negativeComments={detailedReport?.subheadline.negativeComments}
+              recommendation={detailedReport?.subheadline.recommendation}
               suggested={detailedReport?.subheadline.suggested}
               isGuest={isGuest}
               ctaHref={ctaHref}
@@ -148,9 +146,11 @@ export function FirstImpressionCard({
           ) : (
             <MetricInsight
               title="Primary CTA"
+              statement={detailedReport?.cta.statement}
               current={detailedReport?.cta.current}
               positiveComments={detailedReport?.cta.positiveComments}
               negativeComments={detailedReport?.cta.negativeComments}
+              recommendation={detailedReport?.cta.recommendation}
               suggested={detailedReport?.cta.suggested}
               isGuest={isGuest}
               ctaHref={ctaHref}

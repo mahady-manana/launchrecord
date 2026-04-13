@@ -13,10 +13,12 @@ interface LimitedMetricInsightProps {
   id: string;
   isGuest?: boolean;
   metric: {
+    statement?: string;
     score: number;
     current: string;
     positiveComments: string[];
     negativeComments: string[];
+    recommendation: string[];
     suggested: string[];
   };
   ctaHref: string;
@@ -66,9 +68,11 @@ export function LimitedMetricInsight({
     <div id={id} className="px-0 relative">
       <MetricInsight
         title={title}
+        statement={metric.statement}
         current={metric.current}
         positiveComments={metric.positiveComments}
         negativeComments={metric.negativeComments}
+        recommendation={metric.recommendation}
         suggested={metric.suggested}
         score={metric.score}
         ctaHref={

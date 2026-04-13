@@ -87,21 +87,23 @@ export default function DashboardSIOReport({
     : `/register?productUrl=${encodeURIComponent(reportUrl)}`;
 
   // Build sub-metrics if missing
-  const buildPositioningSubMetric = (name: string) => ({
-    name,
+  const buildPositioningSubMetric = (statement: string) => ({
+    statement,
     score: 0,
     current: "",
     positiveComments: [] as string[],
     negativeComments: [] as string[],
+    recommendation: [] as string[],
     suggested: [] as string[],
   });
 
-  const buildClaritySubMetric = (name: string) => ({
-    name,
+  const buildClaritySubMetric = (statement: string) => ({
+    statement,
     score: 0,
     current: "",
     positiveComments: [] as string[],
     negativeComments: [] as string[],
+    recommendation: [] as string[],
     suggested: [] as string[],
     unclearTexts: [] as Array<{ text: string; issue: string; fix: string }>,
   });

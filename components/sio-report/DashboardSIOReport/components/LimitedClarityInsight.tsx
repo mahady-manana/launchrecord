@@ -12,10 +12,12 @@ interface LimitedClarityInsightProps {
   id: string;
   isGuest?: boolean;
   metric: {
+    statement?: string;
     score: number;
     current: string;
     positiveComments: string[];
     negativeComments: string[];
+    recommendation: string[];
     suggested: string[];
     unclearTexts?: Array<{ text: string; issue: string; fix: string }>;
   };
@@ -83,9 +85,11 @@ export function LimitedClarityInsight({
     <div id={id} className="px-0 relative">
       <MetricInsight
         title={title}
+        statement={metric.statement}
         current={metric.current}
         positiveComments={limitedPositive}
         negativeComments={limitedNegative}
+        recommendation={metric.recommendation}
         suggested={limitedSuggested}
         score={metric.score}
         ctaHref={ctaHref}

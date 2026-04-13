@@ -90,25 +90,31 @@ export interface FirstImpressionReport {
 
   /** Headline analysis */
   headline: {
+    statement: string;
     current: string;
     positiveComments: string[];
     negativeComments: string[];
+    recommendation: string[];
     suggested: string[];
   };
 
   /** Subheadline analysis */
   subheadline: {
+    statement: string;
     current: string;
     positiveComments: string[];
     negativeComments: string[];
+    recommendation: string[];
     suggested: string[];
   };
 
   /** CTA analysis */
   cta: {
+    statement: string;
     current: string;
     positiveComments: string[];
     negativeComments: string[];
+    recommendation: string[];
     suggested: string[];
   };
 }
@@ -133,8 +139,8 @@ export interface PositioningSummary {
  * Each sub-metric (Category Ownership, UVP, etc.) with current, comments, fixes
  */
 export interface PositioningSubMetric {
-  /** Sub-metric name */
-  name: string;
+  /** Diagnostic statement about this sub-metric */
+  statement: string;
   /** Score 0-100 */
   score: number;
   /** Current state for this sub-metric */
@@ -143,6 +149,8 @@ export interface PositioningSubMetric {
   positiveComments: string[];
   /** Negative comments pointing out issues */
   negativeComments: string[];
+  /** Structural recommendations for this sub-metric */
+  recommendation: string[];
   /** Suggested fixes */
   suggested: string[];
 }
@@ -250,8 +258,8 @@ export interface UnclearText {
  * Each sub-metric (Headline, Value Prop, etc.) with current, comments, fixes, and unclear texts
  */
 export interface ClaritySubMetric {
-  /** Sub-metric name */
-  name: string;
+  /** Diagnostic statement about this sub-metric */
+  statement: string;
   /** Score 0-100 */
   score: number;
   /** Current state for this sub-metric */
@@ -260,6 +268,8 @@ export interface ClaritySubMetric {
   positiveComments: string[];
   /** Negative comments pointing out issues */
   negativeComments: string[];
+  /** Structural recommendations for this sub-metric */
+  recommendation: string[];
   /** Suggested fixes */
   suggested: string[];
   /** Specific unclear sentences/phrases found */

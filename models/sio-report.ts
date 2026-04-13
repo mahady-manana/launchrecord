@@ -51,24 +51,31 @@ export interface ISIOReport extends Document {
   firstImpression: {
     score: number;
     statement: string;
+    recommendation: string[];
     overallCommentPositive: string[];
     overallCommentNegative: string[];
     headline: {
+      statement: string;
       current: string;
       positiveComments: string[];
       negativeComments: string[];
+      recommendation: string[];
       suggested: string[];
     };
     subheadline: {
+      statement: string;
       current: string;
       positiveComments: string[];
       negativeComments: string[];
+      recommendation: string[];
       suggested: string[];
     };
     cta: {
+      statement: string;
       current: string;
       positiveComments: string[];
       negativeComments: string[];
+      recommendation: string[];
       suggested: string[];
     };
   };
@@ -77,61 +84,69 @@ export interface ISIOReport extends Document {
   positioning: {
     score: number;
     statement: string;
+    recommendation: string[];
     overallCommentPositive: string[];
     overallCommentNegative: string[];
     summary: {
       current: string;
       positiveComments: string[];
       negativeComments: string[];
+      recommendation: string[];
       suggested: string[];
     };
     subMetrics: {
       categoryOwnership: {
-        name: string;
+        statement: string;
         score: number;
         current: string;
         positiveComments: string[];
         negativeComments: string[];
+        recommendation: string[];
         suggested: string[];
       };
       uniqueValueProp: {
-        name: string;
+        statement: string;
         score: number;
         current: string;
         positiveComments: string[];
         negativeComments: string[];
+        recommendation: string[];
         suggested: string[];
       };
       competitiveDiff: {
-        name: string;
+        statement: string;
         score: number;
         current: string;
         positiveComments: string[];
         negativeComments: string[];
+        recommendation: string[];
         suggested: string[];
       };
       targetAudience: {
-        name: string;
+        statement: string;
         score: number;
         current: string;
         positiveComments: string[];
         negativeComments: string[];
+        recommendation: string[];
         suggested: string[];
       };
       problemSolutionFit: {
-        name: string;
+        statement: string;
         score: number;
         current: string;
         positiveComments: string[];
         negativeComments: string[];
+        recommendation: string[];
         suggested: string[];
       };
       messagingConsistency: {
-        name: string;
+        statement: string;
         score: number;
         current: string;
         positiveComments: string[];
         negativeComments: string[];
+        recommendation: string[];
         suggested: string[];
       };
     };
@@ -141,12 +156,14 @@ export interface ISIOReport extends Document {
   clarity: {
     score: number;
     statement: string;
+    recommendation: string[];
     overallCommentPositive: string[];
     overallCommentNegative: string[];
     summary: {
       current: string;
       positiveComments: string[];
       negativeComments: string[];
+      recommendation: string[];
       suggested: string[];
     };
     unclearSentences: Array<{
@@ -156,11 +173,12 @@ export interface ISIOReport extends Document {
     }>;
     subMetrics: {
       headlineClarity: {
-        name: string;
+        statement: string;
         score: number;
         current: string;
         positiveComments: string[];
         negativeComments: string[];
+        recommendation: string[];
         suggested: string[];
         unclearTexts: Array<{
           text: string;
@@ -169,11 +187,12 @@ export interface ISIOReport extends Document {
         }>;
       };
       valueProposition: {
-        name: string;
+        statement: string;
         score: number;
         current: string;
         positiveComments: string[];
         negativeComments: string[];
+        recommendation: string[];
         suggested: string[];
         unclearTexts: Array<{
           text: string;
@@ -182,11 +201,12 @@ export interface ISIOReport extends Document {
         }>;
       };
       featureBenefitMapping: {
-        name: string;
+        statement: string;
         score: number;
         current: string;
         positiveComments: string[];
         negativeComments: string[];
+        recommendation: string[];
         suggested: string[];
         unclearTexts: Array<{
           text: string;
@@ -195,11 +215,12 @@ export interface ISIOReport extends Document {
         }>;
       };
       visualHierarchy: {
-        name: string;
+        statement: string;
         score: number;
         current: string;
         positiveComments: string[];
         negativeComments: string[];
+        recommendation: string[];
         suggested: string[];
         unclearTexts: Array<{
           text: string;
@@ -208,11 +229,12 @@ export interface ISIOReport extends Document {
         }>;
       };
       ctaClarity: {
-        name: string;
+        statement: string;
         score: number;
         current: string;
         positiveComments: string[];
         negativeComments: string[];
+        recommendation: string[];
         suggested: string[];
         unclearTexts: Array<{
           text: string;
@@ -221,11 +243,12 @@ export interface ISIOReport extends Document {
         }>;
       };
       proofPlacement: {
-        name: string;
+        statement: string;
         score: number;
         current: string;
         positiveComments: string[];
         negativeComments: string[];
+        recommendation: string[];
         suggested: string[];
         unclearTexts: Array<{
           text: string;
@@ -366,24 +389,31 @@ const SIOReportSchema = new Schema<ISIOReport>(
     firstImpression: {
       score: { type: Number, default: 0, min: 0, max: 100 },
       statement: { type: String, default: "" },
+      recommendation: { type: [String], default: [] },
       overallCommentPositive: { type: [String], default: [] },
       overallCommentNegative: { type: [String], default: [] },
       headline: {
+        statement: { type: String, default: "" },
         current: { type: String, default: "" },
         positiveComments: { type: [String], default: [] },
         negativeComments: { type: [String], default: [] },
+        recommendation: { type: [String], default: [] },
         suggested: { type: [String], default: [] },
       },
       subheadline: {
+        statement: { type: String, default: "" },
         current: { type: String, default: "" },
         positiveComments: { type: [String], default: [] },
         negativeComments: { type: [String], default: [] },
+        recommendation: { type: [String], default: [] },
         suggested: { type: [String], default: [] },
       },
       cta: {
+        statement: { type: String, default: "" },
         current: { type: String, default: "" },
         positiveComments: { type: [String], default: [] },
         negativeComments: { type: [String], default: [] },
+        recommendation: { type: [String], default: [] },
         suggested: { type: [String], default: [] },
       },
     },
@@ -392,61 +422,69 @@ const SIOReportSchema = new Schema<ISIOReport>(
     positioning: {
       score: { type: Number, default: 0, min: 0, max: 100 },
       statement: { type: String, default: "" },
+      recommendation: { type: [String], default: [] },
       overallCommentPositive: { type: [String], default: [] },
       overallCommentNegative: { type: [String], default: [] },
       summary: {
         current: { type: String, default: "" },
         positiveComments: { type: [String], default: [] },
         negativeComments: { type: [String], default: [] },
+        recommendation: { type: [String], default: [] },
         suggested: { type: [String], default: [] },
       },
       subMetrics: {
         categoryOwnership: {
-          name: { type: String, default: "Category Ownership" },
+          statement: { type: String, default: "" },
           score: { type: Number, default: 0, min: 0, max: 100 },
           current: { type: String, default: "" },
           positiveComments: { type: [String], default: [] },
           negativeComments: { type: [String], default: [] },
+          recommendation: { type: [String], default: [] },
           suggested: { type: [String], default: [] },
         },
         uniqueValueProp: {
-          name: { type: String, default: "Unique Value Proposition" },
+          statement: { type: String, default: "" },
           score: { type: Number, default: 0, min: 0, max: 100 },
           current: { type: String, default: "" },
           positiveComments: { type: [String], default: [] },
           negativeComments: { type: [String], default: [] },
+          recommendation: { type: [String], default: [] },
           suggested: { type: [String], default: [] },
         },
         competitiveDiff: {
-          name: { type: String, default: "Competitive Differentiation" },
+          statement: { type: String, default: "" },
           score: { type: Number, default: 0, min: 0, max: 100 },
           current: { type: String, default: "" },
           positiveComments: { type: [String], default: [] },
           negativeComments: { type: [String], default: [] },
+          recommendation: { type: [String], default: [] },
           suggested: { type: [String], default: [] },
         },
         targetAudience: {
-          name: { type: String, default: "Target Audience Clarity" },
+          statement: { type: String, default: "" },
           score: { type: Number, default: 0, min: 0, max: 100 },
           current: { type: String, default: "" },
           positiveComments: { type: [String], default: [] },
           negativeComments: { type: [String], default: [] },
+          recommendation: { type: [String], default: [] },
           suggested: { type: [String], default: [] },
         },
         problemSolutionFit: {
-          name: { type: String, default: "Problem-Solution Fit" },
+          statement: { type: String, default: "" },
           score: { type: Number, default: 0, min: 0, max: 100 },
           current: { type: String, default: "" },
           positiveComments: { type: [String], default: [] },
           negativeComments: { type: [String], default: [] },
+          recommendation: { type: [String], default: [] },
           suggested: { type: [String], default: [] },
         },
         messagingConsistency: {
-          name: { type: String, default: "Messaging Consistency" },
+          statement: { type: String, default: "" },
           score: { type: Number, default: 0, min: 0, max: 100 },
           current: { type: String, default: "" },
           positiveComments: { type: [String], default: [] },
           negativeComments: { type: [String], default: [] },
+          recommendation: { type: [String], default: [] },
           suggested: { type: [String], default: [] },
         },
       },
@@ -456,12 +494,14 @@ const SIOReportSchema = new Schema<ISIOReport>(
     clarity: {
       score: { type: Number, default: 0, min: 0, max: 100 },
       statement: { type: String, default: "" },
+      recommendation: { type: [String], default: [] },
       overallCommentPositive: { type: [String], default: [] },
       overallCommentNegative: { type: [String], default: [] },
       summary: {
         current: { type: String, default: "" },
         positiveComments: { type: [String], default: [] },
         negativeComments: { type: [String], default: [] },
+        recommendation: { type: [String], default: [] },
         suggested: { type: [String], default: [] },
       },
       unclearSentences: {
@@ -476,11 +516,12 @@ const SIOReportSchema = new Schema<ISIOReport>(
       },
       subMetrics: {
         headlineClarity: {
-          name: { type: String, default: "Headline Clarity" },
+          statement: { type: String, default: "" },
           score: { type: Number, default: 0, min: 0, max: 100 },
           current: { type: String, default: "" },
           positiveComments: { type: [String], default: [] },
           negativeComments: { type: [String], default: [] },
+          recommendation: { type: [String], default: [] },
           suggested: { type: [String], default: [] },
           unclearTexts: {
             type: [
@@ -494,11 +535,12 @@ const SIOReportSchema = new Schema<ISIOReport>(
           },
         },
         valueProposition: {
-          name: { type: String, default: "Value Proposition" },
+          statement: { type: String, default: "" },
           score: { type: Number, default: 0, min: 0, max: 100 },
           current: { type: String, default: "" },
           positiveComments: { type: [String], default: [] },
           negativeComments: { type: [String], default: [] },
+          recommendation: { type: [String], default: [] },
           suggested: { type: [String], default: [] },
           unclearTexts: {
             type: [
@@ -512,11 +554,12 @@ const SIOReportSchema = new Schema<ISIOReport>(
           },
         },
         featureBenefitMapping: {
-          name: { type: String, default: "Feature-Benefit Mapping" },
+          statement: { type: String, default: "" },
           score: { type: Number, default: 0, min: 0, max: 100 },
           current: { type: String, default: "" },
           positiveComments: { type: [String], default: [] },
           negativeComments: { type: [String], default: [] },
+          recommendation: { type: [String], default: [] },
           suggested: { type: [String], default: [] },
           unclearTexts: {
             type: [
@@ -530,11 +573,12 @@ const SIOReportSchema = new Schema<ISIOReport>(
           },
         },
         visualHierarchy: {
-          name: { type: String, default: "Visual Hierarchy" },
+          statement: { type: String, default: "" },
           score: { type: Number, default: 0, min: 0, max: 100 },
           current: { type: String, default: "" },
           positiveComments: { type: [String], default: [] },
           negativeComments: { type: [String], default: [] },
+          recommendation: { type: [String], default: [] },
           suggested: { type: [String], default: [] },
           unclearTexts: {
             type: [
@@ -548,11 +592,12 @@ const SIOReportSchema = new Schema<ISIOReport>(
           },
         },
         ctaClarity: {
-          name: { type: String, default: "CTA Clarity" },
+          statement: { type: String, default: "" },
           score: { type: Number, default: 0, min: 0, max: 100 },
           current: { type: String, default: "" },
           positiveComments: { type: [String], default: [] },
           negativeComments: { type: [String], default: [] },
+          recommendation: { type: [String], default: [] },
           suggested: { type: [String], default: [] },
           unclearTexts: {
             type: [
@@ -566,11 +611,12 @@ const SIOReportSchema = new Schema<ISIOReport>(
           },
         },
         proofPlacement: {
-          name: { type: String, default: "Proof Placement" },
+          statement: { type: String, default: "" },
           score: { type: Number, default: 0, min: 0, max: 100 },
           current: { type: String, default: "" },
           positiveComments: { type: [String], default: [] },
           negativeComments: { type: [String], default: [] },
+          recommendation: { type: [String], default: [] },
           suggested: { type: [String], default: [] },
           unclearTexts: {
             type: [

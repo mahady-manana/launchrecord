@@ -35,7 +35,7 @@ const problems: Problem[] = [
 
 export function ProblemSection() {
   return (
-    <section className="py-20 bg-primary text-slate-100" id="problems">
+    <section className="py-20 bg-blue-800 text-slate-100" id="problems">
       <div className="max-w-7xl mx-auto px-4">
         {/* Section Header */}
         <div className="text-center space-y-4 mb-16">

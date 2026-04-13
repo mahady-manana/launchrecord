@@ -189,7 +189,7 @@ export default function PublicAuditPage() {
         {/* Report Display */}
         {isComplete && status.data && (
           <div className={isComplete ? "pb-20" : ""}>
-            <DashboardSIOReport {...status.data} isGuest />
+            <DashboardSIOReport {...status.data} />
           </div>
         )}
 

@@ -19,9 +19,10 @@ import SIOReport from "@/models/sio-report";
 import Subscription from "@/models/subscription";
 import Usage from "@/models/usage";
 import {
-  sioV5BaseInstructions,
-  step7RefinementInstructions,
-} from "@/services/sio-audit-instructions";
+  generalInstructions,
+  refinementInstruction,
+} from "@/services/sio-audit-instructions/next";
+import { refinementModels } from "@/services/sio-report/ai-models";
 import { sanitizeReportForGuest } from "@/services/sio-report/sanitizer";
 import { sioV5JsonSchema } from "@/services/sio-v5-json-schema";
 import { NextRequest, NextResponse } from "next/server";
@@ -79,7 +80,7 @@ export async function POST(request: NextRequest) {
     };
 
     // Replace context placeholder in instructions
-    const stepInstructions = step7RefinementInstructions.replace(
+    const stepInstructions = refinementInstruction.replace(
       "{COMPLETE_REPORT_CONTEXT}",
       JSON.stringify(completeReportContext, null, 2),
     );
@@ -89,15 +90,11 @@ export async function POST(request: NextRequest) {
     // Call AI for quality assurance - returns complete refined report in SIO-V5 format
     const aiResponse = await client.chat.send({
       chatGenerationParams: {
-        models: [
-          "qwen/qwen3.5-35b-a3b",
-          "x-ai/grok-4.1-fast",
-          "google/gemma-4-31b-it:free",
-        ],
+        models: refinementModels.models,
         messages: [
           {
             role: "system",
-            content: sioV5BaseInstructions,
+            content: generalInstructions,
           },
           {
             role: "system",
@@ -120,13 +117,10 @@ export async function POST(request: NextRequest) {
             schema: sioV5JsonSchema,
           },
         },
-        provider: {
-          requireParameters: true,
-          // sort: "throughput",
-        },
+        provider: refinementModels.provider,
         stream: false,
         reasoning: {
-          effort: "medium",
+          effort: refinementModels.reasoning,
         },
       },
     });

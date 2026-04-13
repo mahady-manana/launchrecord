@@ -1,35 +1,582 @@
 {
-  "errors": {
-    "positioning.subMetrics.competitiveDiff.current": {
-      "name": "ValidatorError",
-      "message": "Path `positioning.subMetrics.competitiveDiff.current` is required.",
-      "properties": {
-        "message": "Path `positioning.subMetrics.competitiveDiff.current` is required.",
-        "type": "required",
-        "path": "positioning.subMetrics.competitiveDiff.current",
-        "value": "",
-        "length": 0
-      },
-      "kind": "required",
-      "path": "positioning.subMetrics.competitiveDiff.current",
-      "value": ""
+  "_id": {
+    "$oid": "69da32531e5ce3ed145afbee"
+  },
+  "url": "https://excursionx.app",
+  "overallScore": 68,
+  "statement": "Your startup demonstrates solid feature coverage but faces critical positioning challenges. Key strengths include social proof through '2,400+ travelers' on waitlist, and consistent aspirational messaging across the platform. Critical weaknesses include vague ICP (generic 'travelers'), missing metrics throughout, weak competitive differentiation, and poor AI engine visibility. Immediate focus needed on narrowing to high-value ICPs like solo female travelers, adding quantified outcomes ('save 15 hours/trip'), and implementing AEO optimizations to increase AI discoverability.",
+  "reportBand": "Strong",
+  "overallCommentPositive": [
+    "Strong social proof with '2,400+ travelers already on the waitlist'",
+    "Feature-rich value props orient users quickly across entire journey",
+    "Logical section progression builds understanding from value to features to proof",
+    "Consistent aspirational travel theme reinforces brand identity",
+    "Specific feature descriptions like 'safety tips' avoid total abstraction",
+    "Testimonials provide concrete outcomes despite generic hero"
+  ],
+  "overallCommentNegative": [
+    "No pain-point lead-in, starts with aspiration that doesn't hook",
+    "Broad ICP of 'travelers' – too generic to convert high-value segments",
+    "No owned category beyond generic 'AI travel companion' competing with TripIt",
+    "Vague ICP ignores specifics like 'solo travelers wasting 20 hours planning'",
+    "Jargon like 'superpowers', 'beautifully crafted' confuses quick comprehension",
+    "No metrics anywhere hurts quantified value perception across sections"
+  ],
+  "websiteSummary": {
+    "summary": "ExcursionX is the intelligent travel companion that plans your perfect trip with smart itineraries, real-time weather, local insights, packing lists, currency converter, language phrasebook, and emergency contacts all in one app.",
+    "summaryComment": "",
+    "problems": {
+      "currents": [
+        "hours of research",
+        "adjusted my packing list based on the 7-day forecast",
+        "emergency contacts and local safety tips"
+      ],
+      "positiveComments": [
+        "Identifies real pains like excessive research time in testimonials",
+        "Touches on safety for solo travelers in problem statements"
+      ],
+      "negativeComments": [
+        "No explicit problem statements with metrics on hero or main sections",
+        "Pains only implied via testimonials, not leading hook",
+        "Too generic for all travelers, no specific ICP like 'solo female travelers wasting 20 hours planning'"
+      ]
     },
-    "firstImpression.subheadline.current": {
-      "name": "ValidatorError",
-      "message": "Path `firstImpression.subheadline.current` is required.",
-      "properties": {
-        "message": "Path `firstImpression.subheadline.current` is required.",
-        "type": "required",
-        "path": "firstImpression.subheadline.current",
-        "value": "",
-        "length": 0
-      },
-      "kind": "required",
-      "path": "firstImpression.subheadline.current",
-      "value": ""
+    "outcomes": {
+      "currents": [
+        "saved me hours of research and I discovered places I never would have found",
+        "The weather integration is a game-changer",
+        "gave me so much confidence"
+      ],
+      "positiveComments": [
+        "Specific time savings mentioned in testimonial",
+        "Builds emotional outcomes like confidence in user feedback"
+      ],
+      "negativeComments": [
+        "Outcomes hidden in testimonials, not quantified prominently on hero",
+        "No universal metrics like 'save 15 hours per trip' in positioning",
+        "Lacks specificity to ICP outcomes like 'solo travelers gain peace of mind'"
+      ]
+    },
+    "solutions": {
+      "currents": [
+        "AI-generated daily plans with optimized routes",
+        "Hourly forecasts, 7-day outlook, and activity-specific clothing suggestions",
+        "Smart packing lists that adapt to your destination weather"
+      ],
+      "positiveComments": [
+        "Covers full trip lifecycle from planning to emergencies with feature flow",
+        "Practical solutions tied to journey stages for user clarity"
+      ],
+      "negativeComments": [
+        "Listed as features without benefit quantification or outcome metrics",
+        "No differentiation from competitors like TripIt shown in solution description",
+        "Vague terms like 'superpowers' without proof or outcome connection"
+      ]
+    },
+    "features": {
+      "currents": [
+        "Smart Itineraries",
+        "Live Weather Intel",
+        "Contextual Packing",
+        "Currency Converter",
+        "Language Phrasebook",
+        "Emergency Contacts",
+        "Cultural Intelligence",
+        "Rich Location Details",
+        "Essential Phrases"
+      ],
+      "positiveComments": [
+        "Comprehensive list covering multiple pain points across journey",
+        "Includes unique angles like cultural etiquette beyond basic planning"
+      ],
+      "negativeComments": [
+        "Pure feature dump without benefits or metrics in section",
+        "Overwhelms with 9+ items, no prioritization or tiering",
+        "Generic; no claims like '99% accurate weather matching' for credibility"
+      ]
+    },
+    "isPositioningClear": true,
+    "isMessagingClear": true,
+    "areUsersLeftGuessing": false
+  },
+  "firstImpression": {
+    "score": 76,
+    "statement": "Hero section positions ExcursionX as an all-in-one AI travel app with feature highlights and social proof (2400+ waitlisters). Aspirational tone excites but fails to hook with specific pains or outcomes. Waitlist CTA builds FOMO via user count but signals pre-launch status, delaying conversion for ready users.",
+    "overallCommentPositive": [
+      "Strong social proof with '2,400+ travelers already on the waitlist' visible",
+      "Clear feature tease in subheadline within first 3 sections",
+      "Trust signals like 'No spam, ever' reduce signup friction"
+    ],
+    "overallCommentNegative": [
+      "No pain-point lead-in, starts with aspiration that doesn't resonate",
+      "Broad ICP of 'travelers' – too generic for targeted messaging",
+      "Waitlist CTA delays value vs. instant trial, losing urgency",
+      "Buzzwords like 'perfect' and 'beautiful' dilute credibility signals"
+    ],
+    "headline": {
+      "current": "Your Next Adventure, Powered by AI",
+      "positiveComments": [
+        "Short, memorable, aspirational for brand recall",
+        "AI mention signals tech differentiation clearly"
+      ],
+      "negativeComments": [
+        "Ignores user pain like research drudgery at moment of hook",
+        "No ICP or outcome tease in 3-word headline structure",
+        "Vague excitement without specificity for target segment"
+      ],
+      "suggested": [
+        "Tired of 20+ hours researching trips? AI builds your perfect itinerary.",
+        "Solo travelers: AI plans adventures saving 15 hours/week.",
+        "Discover hidden gems effortlessly – AI-powered itineraries for busy explorers"
+      ]
+    },
+    "subheadline": {
+      "current": "ExcursionX is the intelligent travel companion that plans your perfect trip. Smart itineraries, real-time weather, local insights — all in one beautiful app.",
+      "positiveComments": [
+        "Introduces brand and core value props quickly within 12 words",
+        "Feature list orients users to 3 core tools immediately"
+      ],
+      "negativeComments": [
+        "Buzzword salad: 'intelligent', 'perfect', 'beautiful' dilute credibility",
+        "No metrics or ICP specificity on subheadline line",
+        "Features not benefit-oriented (what value do they deliver)"
+      ],
+      "suggested": [
+        "For travelers wasting hours on planning: AI itineraries, weather intel, local secrets – save 10+ hours/trip.",
+        "Smart plans, real-time weather, insider tips in one app for families and solos.",
+        "Join 2400+ getting AI trips: itineraries, packing, safety – no more guesswork"
+      ]
+    },
+    "cta": {
+      "current": "Join Waitlist",
+      "positiveComments": [
+        "Low commitment, direct for pre-launch stage",
+        "Implies exclusivity with waitlist mechanism"
+      ],
+      "negativeComments": [
+        "Implies unavailability, kills momentum for ready users",
+        "No value prop in button text to convert",
+        "Missed leverage of social proof in CTA button"
+      ],
+      "suggested": [
+        "Join 2,400+ for Free Lifetime Access",
+        "Get Early Access – No CC Needed",
+        "Start Your AI Trip Plan Free"
+      ]
     }
   },
-  "_message": "SIOReport validation failed",
-  "name": "ValidationError",
-  "message": "SIOReport validation failed: positioning.subMetrics.competitiveDiff.current: Path `positioning.subMetrics.competitiveDiff.current` is required., firstImpression.subheadline.current: Path `firstImpression.subheadline.current` is required."
+  "positioning": {
+    "score": 68,
+    "statement": "ExcursionX positions itself as an AI-powered all-in-one travel companion with feature-heavy messaging, effectively highlighting tools like itineraries and safety features but lacking sharp category ownership or clear differentiation. Target audience remains vaguely 'travelers' without narrowing to high-value ICPs like solo female adventurers or busy families. Messaging is consistent in aspirational tone yet generic, relying on testimonials for proof of value rather than bold outcome claims.",
+    "overallCommentPositive": [
+      "Feature-rich value props orient users quickly across all sections",
+      "Consistent aspirational travel theme across entire platform",
+      "Social proof via 2400+ waitlist builds credibility signals"
+    ],
+    "overallCommentNegative": [
+      "No owned category beyond generic 'AI travel app' positioning",
+      "Vague ICP ignores specifics like 'solo travelers wasting 20 hours planning'",
+      "Missing quantified outcomes like 'save 15 hours per trip' in positioning",
+      "Competitive edges buried in features, not contrasted explicitly"
+    ],
+    "summary": {
+      "current": "ExcursionX is the intelligent travel companion that plans your perfect trip. Smart itineraries, real-time weather, local insights — all in one beautiful app.",
+      "positiveComments": [
+        "Introduces core features immediately within first sentence",
+        "Ties to 'perfect trip' outcome that appeals broadly"
+      ],
+      "negativeComments": [
+        "Buzzword-heavy ('intelligent', 'perfect', 'beautiful') without metrics",
+        "Too broad for all travelers, no ICP specificity to convert",
+        "Features listed without pain-solution framing for relevance"
+      ],
+      "suggested": [
+        "AI Travel Companion for Solo Adventurers: Save 15+ Hours Planning Safe, Hidden-Gem Itineraries.",
+        "The All-in-One App for Busy Travelers Wasting 20 Hours on Research – Smart Plans, Weather, Safety.",
+        "Own 'Solo Travel AI': Itineraries + Emergency Tools That 2400+ Waitlisters Use to Travel Confidently"
+      ]
+    },
+    "subMetrics": {
+      "categoryOwnership": {
+        "name": "Category Ownership",
+        "score": 62,
+        "current": "AI-powered travel companion",
+        "positiveComments": [
+          "Claims 'intelligent travel companion' category explicitly",
+          "AI signals tech differentiation clearly"
+        ],
+        "negativeComments": [
+          "Generic 'travel companion' doesn't own niche like 'solo safety AI'",
+          "No leadership claim e.g. '#1 AI for hidden gems' stated",
+          "Competes with 100s of apps without unique angle highlighted"
+        ],
+        "suggested": [
+          "#1 AI for Solo Travelers' Hidden-Gem Itineraries",
+          "The Smart Itinerary Builder Trusted by 2400+ Adventurers",
+          "All-in-One Safety + Planning AI for Female Solo Travelers"
+        ]
+      },
+      "uniqueValueProp": {
+        "name": "Unique Value Prop",
+        "score": 75,
+        "current": "Smart itineraries, real-time weather, local insights, packing lists, currency converter, language phrasebook, and emergency contacts all in one app.",
+        "positiveComments": [
+          "Specific feature bundle clarifies offering comprehensively",
+          "All-in-one convenience emphasized in single sentence"
+        ],
+        "negativeComments": [
+          "Features without quantified benefits e.g. 'save 10 hours/trip'",
+          "No emotional UVP like 'travel fearlessly solo' stated",
+          "Overloaded list dilutes strongest props (safety, hidden gems)"
+        ],
+        "suggested": [
+          "Save 15 Hours/Trip: AI Itineraries + Weather-Adaptive Packing + Solo Safety Tools.",
+          "One App for 20+ Hour Research: Hidden Gems, Emergency Contacts, Live Intel.",
+          "Lifetime Free: AI Plans + Local Secrets for Busy Explorers' Dream Trips"
+        ]
+      },
+      "competitiveDiff": {
+        "name": "Competitive Differentiation",
+        "score": 45,
+        "current": "local gems you won't find in guidebooks",
+        "positiveComments": [
+          "Hints at vs guidebooks via 'local gems' phrasing",
+          "Emergency/safety differentiates from basic planners like TripIt"
+        ],
+        "negativeComments": [
+          "No direct competitor mentions or contrasts made",
+          "Implicit diffs buried in features, not bold",
+          "Lacks proof like 'better than TripIt by 3x speed' stated"
+        ],
+        "suggested": [
+          "Unlike TripIt, We Add Solo Safety + Hidden Locals-Only Gems.",
+          "Beats Guidebooks: AI Routes + Real-Time Safety for 2400+ Users.",
+          "Not Just Maps – Emergency + Cultural Intel Guidebooks Miss."
+        ]
+      },
+      "targetAudience": {
+        "name": "Target Audience",
+        "score": 48,
+        "current": "travelers",
+        "positiveComments": [
+          "Testimonial nods to 'solo female traveler' in quotes",
+          "Broad appeal via families/solos implied across features"
+        ],
+        "negativeComments": [
+          "Too generic 'travelers' – no specifics like 'solo females 25-40'",
+          "No pains tailored e.g. 'busy parents wasting weekends planning'",
+          "Misses high-LTV ICPs wasting 20+ hours/trip in messaging"
+        ],
+        "suggested": [
+          "For Solo Female Travelers Wasting 20 Hours on Unsafe Plans.",
+          "Busy Professionals & Families: AI Saves 15 Hours Per Vacation.",
+          "Adventurers 25-45 Seeking Hidden Gems Without Research Drudgery"
+        ]
+      },
+      "problemSolutionFit": {
+        "name": "Problem-Solution Fit",
+        "score": 82,
+        "current": "saved me hours of research... emergency contacts and local safety tips",
+        "positiveComments": [
+          "Testimonials link research pain to AI itineraries explicitly",
+          "Safety features match solo traveler fears stated"
+        ],
+        "negativeComments": [
+          "Pains only in testimonials, not on main hero page",
+          "No metrics like 'cuts 20-hour research to 2 mins' for proof",
+          "Solution features solid but not pain-led in positioning"
+        ],
+        "suggested": [
+          "20-Hour Research Hell? AI Builds Safe Itineraries in Minutes.",
+          "Solo Safety Worries? One-Tap Emergencies + Local Tips.",
+          "Packing Guesswork Ends: Weather-Smart Lists for Your Exact Trip."
+        ]
+      },
+      "messagingConsistency": {
+        "name": "Messaging Consistency",
+        "score": 85,
+        "current": "Everything you need for the perfect trip... Loved by early testers",
+        "positiveComments": [
+          "Uniform aspirational 'perfect trip' theme across sections",
+          "Features reinforce all-in-one promise throughout platform"
+        ],
+        "negativeComments": [
+          "Pre-launch 'waitlist' vs 'early access' inconsistent CTAs",
+          "Testimonials add specificity missing in hero section",
+          "No repeated ICP anchors across sections for reinforcement"
+        ],
+        "suggested": [
+          "Consistent: 'AI for Solo Travelers' – From Itineraries to Safety.",
+          "Every Section: Save 15 Hours + Travel Confident.",
+          "Reinforce: 2400+ Solos Use for Hidden Gems & Peace of Mind"
+        ]
+      }
+    }
+  },
+  "clarity": {
+    "score": 72,
+    "statement": "Messaging is feature-packed and scannable with logical flow from hero to features to proof, making core offering graspable in seconds. However, buzzword vagueness and lack of metrics obscure instant value, while CTAs mix waitlist/access signals. Testimonials provide clearest benefits but are siloed at bottom for skeptical users.",
+    "overallCommentPositive": [
+      "Logical section progression builds understanding from top to bottom",
+      "Specific feature descriptions avoid total abstraction across pages",
+      "Testimonials add concrete clarity when read"
+    ],
+    "overallCommentNegative": [
+      "Jargon like 'superpowers', 'beautifully crafted' confuses quick comprehension",
+      "No metrics anywhere hurts quick comprehension of value",
+      "Buried benefits in features, not explicit mappings",
+      "Inconsistent CTAs dilute action across sections"
+    ],
+    "summary": {
+      "current": "ExcursionX is the ultimate AI-powered travel companion. Smart itineraries, real-time weather, local insights, and more — all in one beautiful app.",
+      "positiveComments": [
+        "Quick feature orientation within first 15 words",
+        "Clear all-in-one hook visible immediately"
+      ],
+      "negativeComments": [
+        "Vague adjectives ('ultimate', 'beautiful') dilute perceived value",
+        "Missing pains/outcomes upfront in clarity test",
+        "No ICP for relevance in summary section"
+      ],
+      "suggested": [
+        "Grasp in 5s: Save 15 Hours/Trip with AI Itineraries + Safety for Solos.",
+        "Clear UVP: Weather Packing + Hidden Gems in One App – No Research Needed.",
+        "Instant: 'Solo Travelers: AI Plans + Emergencies – Join 2400+'"
+      ]
+    },
+    "unclearSentences": [
+      {
+        "text": "ExcursionX gives you superpowers at every stage of your journey.",
+        "issue": "Vague metaphor 'superpowers' doesn't specify benefits",
+        "fix": "ExcursionX saves you 15 hours at every stage with AI plans, weather, and safety.",
+        "_id": {
+          "$oid": "69da327c1e5ce3ed145afbfd"
+        }
+      },
+      {
+        "text": "all in one beautiful app.",
+        "issue": "'Beautiful' subjective, adds no value clarity",
+        "fix": "all in one app – itineraries, weather, safety integrated.",
+        "_id": {
+          "$oid": "69da327c1e5ce3ed145afbfe"
+        }
+      },
+      {
+        "text": "Beautifully crafted, every screen",
+        "issue": "Aesthetic focus irrelevant to function and value",
+        "fix": "Seamless screens for offline maps + real-time updates.",
+        "_id": {
+          "$oid": "69da327c1e5ce3ed145afbff"
+        }
+      },
+      {
+        "text": "Getting started with ExcursionX takes less than a minute.",
+        "issue": "No outcome tie-in, generic speed claim without value",
+        "fix": "Start in 60s: Enter dates, get AI itinerary instantly.",
+        "_id": {
+          "$oid": "69da327c1e5ce3ed145afc00"
+        }
+      }
+    ],
+    "subMetrics": {
+      "headlineClarity": {
+        "name": "Headline Clarity",
+        "score": 68,
+        "current": "Your Next Adventure, Powered by AI",
+        "positiveComments": [
+          "Short and aspirational under 10 characters",
+          "AI keyword instantly signals tech differentiation"
+        ],
+        "negativeComments": [
+          "No pain hook or outcome tease to connect",
+          "Vague 'adventure' misses specific travelers",
+          "Ignores research pain from testimonials in headline"
+        ],
+        "suggested": [
+          "Tired of 20-Hour Trip Research? AI Builds Perfect Itineraries.",
+          "Solo Travelers: AI Adventures with Safety Built-In.",
+          "Save 15 Hours Planning: Your AI-Powered Trip Starts Here"
+        ],
+        "unclearTexts": [
+          {
+            "text": "Your Next Adventure, Powered by AI",
+            "issue": "Doesn't connect to pains like research or safety",
+            "fix": "20+ Hours Researching Trips? AI Powers Your Perfect Adventure.",
+            "_id": {
+              "$oid": "69da327c1e5ce3ed145afbfc"
+            }
+          }
+        ]
+      },
+      "valueProposition": {
+        "name": "Value Proposition",
+        "score": 70,
+        "current": "Smart itineraries, real-time weather, local insights — all in one beautiful app.",
+        "positiveComments": [
+          "Lists key features succinctly in under 20 words",
+          "All-in-one convenience clear from structure"
+        ],
+        "negativeComments": [
+          "No benefits e.g. 'save time' explicit",
+          "Buzzwords like 'beautiful' dilute message",
+          "Lacks metrics or ICP specificity"
+        ],
+        "suggested": [
+          "Save 15 Hours/Trip: AI Itineraries + Weather + Local Safety Gems.",
+          "All-in-One for Solos: Plans, Packing, Emergencies – No Apps Needed.",
+          "Proven by 2400+: Hidden Insights + Confidence Boost."
+        ],
+        "unclearTexts": [
+          {
+            "text": "intelligent travel companion that plans your perfect trip",
+            "issue": "'Intelligent' and 'perfect' vague, unprovable without proof",
+            "fix": "AI companion that builds personalized itineraries saving 15 hours.",
+            "_id": {
+              "$oid": "69da327c1e5ce3ed145afbfb"
+            }
+          }
+        ]
+      },
+      "featureBenefitMapping": {
+        "name": "Feature-Benefit Mapping",
+        "score": 78,
+        "current": "AI-generated daily plans with optimized routes, real walking times, and local gems you won't find in guidebooks.",
+        "positiveComments": [
+          "Some benefits like 'real walking times' clearly tied",
+          "Local gems ties to discovery angle"
+        ],
+        "negativeComments": [
+          "Features dominate over benefits stated",
+          "No quantification e.g. 'cuts walking errors by 50%' shown",
+          "Safety/emergency benefit buried in list"
+        ],
+        "suggested": [
+          "Smart Itineraries: Save 10 Hours + Discover 5x More Gems Than Guidebooks.",
+          "Live Weather: Auto-Adjust Packing for Your Exact 7-Day Forecast.",
+          "Emergency Contacts: One-Tap Safety for Solo Travelers Abroad."
+        ],
+        "unclearTexts": [
+          {
+            "text": "superpowers at every stage of your journey.",
+            "issue": "Unspecified 'superpowers' – what benefits delivered?",
+            "fix": "tools saving 15 hours: itineraries, updates, assistance.",
+            "_id": {
+              "$oid": "69da327c1e5ce3ed145afbfa"
+            }
+          }
+        ]
+      },
+      "visualHierarchy": {
+        "name": "Visual Hierarchy",
+        "score": 75,
+        "current": "h1 Hero > Features > Testimonials > CTA",
+        "positiveComments": [
+          "Logical top-to-bottom flow: problem-free hook to proof",
+          "h2/h3 structure scannable for quick understanding"
+        ],
+        "negativeComments": [
+          "No pain section up top to hook",
+          "Features overwhelm without benefit bullets",
+          "CTA repetition confuses user across page"
+        ],
+        "suggested": [
+          "Hero Pain > Features/Benefits > Proof > Single CTA",
+          "Lead with '20 Hours Wasted?' then Features Grid.",
+          "FOMO Waitlist After Testimonials."
+        ],
+        "unclearTexts": [
+          {
+            "text": "30+ meticulously designed screens for a seamless travel experience.",
+            "issue": "Irrelevant design focus, no functional clarity for user",
+            "fix": "30+ screens with offline access + real-time intel.",
+            "_id": {
+              "$oid": "69da327c1e5ce3ed145afbf9"
+            }
+          }
+        ]
+      },
+      "ctaClarity": {
+        "name": "CTA Clarity",
+        "score": 65,
+        "current": "Join Waitlist ... Get Early Access",
+        "positiveComments": [
+          "Direct low-commitment language used",
+          "Value add 'lifetime free' later mentioned"
+        ],
+        "negativeComments": [
+          "Inconsistent: waitlist vs early access messaging",
+          "No urgency or benefit in button text",
+          "Misses social proof tie-in on CTA"
+        ],
+        "suggested": [
+          "Join 2,400+ for Lifetime Free Access",
+          "Get Your Free AI Itinerary – No CC",
+          "Start Saving 15 Hours: Early Access Now"
+        ],
+        "unclearTexts": [
+          {
+            "text": "Join Waitlist",
+            "issue": "Implies delay, kills momentum for ready users",
+            "fix": "Get Instant Early Access Like 2,400 Others.",
+            "_id": {
+              "$oid": "69da327c1e5ce3ed145afbf8"
+            }
+          }
+        ]
+      },
+      "proofPlacement": {
+        "name": "Proof Placement",
+        "score": 82,
+        "current": "Loved by early testers ... “ExcursionX completely changed... saved me hours... gave me so much confidence”",
+        "positiveComments": [
+          "Specific quotes with pains/outcomes in testimonials",
+          "Bottom placement builds after features explained"
+        ],
+        "negativeComments": [
+          "After features – too late for skeptics reading top",
+          "No logos or metrics summary provided anywhere",
+          "Solo traveler quote not elevated prominently"
+        ],
+        "suggested": [
+          "Move Testimonials Under Hero: 'Saved 15 Hours – Sarah, Solo Traveler'",
+          "Hero Proof Strip: 2400+ + Quotes visible immediately.",
+          "Quantify: 'Users Save Avg 12 Hours/Trip – See Proof'"
+        ],
+        "unclearTexts": [
+          {
+            "text": "Here's what our beta users are saying about ExcursionX.",
+            "issue": "Generic intro, no credibility boost provided",
+            "fix": "Beta Testers Rave: Saved Hours + Gained Confidence.",
+            "_id": {
+              "$oid": "69da327c1e5ce3ed145afbf7"
+            }
+          }
+        ]
+      }
+    }
+  },
+  "aeo": {
+    "score": 48,
+    "statement": "ExcursionX has decent content clarity for AI to understand its core offering as an AI travel app with itineraries, weather, and safety features, but lacks structured data, authority as a pre-launch waitlist product, and differentiation in a crowded market, making it invisible to AI engines. Previous analyses highlight generic positioning and missing metrics/ICP, further reducing AI recommendability.",
+    "aiPresence": {
+      "isPresent": false,
+      "engines": [],
+      "comment": "As a pre-launch waitlist app with no evident press, backlinks, or brand authority (only 2,400 waitlisters mentioned), ExcursionX is unlikely to be known or recommended by any AI engines. Generic 'AI travel companion' positioning (score 68) competes with established players like TripIt without unique signals like 'solo female safety AI'; vague ICP ('travelers') and absent metrics mean AIs would default to bigger names. No FAQ or educational content reinforces low visibility across ChatGPT, Claude, Gemini, Perplexity, Copilot."
+    }
+  },
+  "auditDuration": 91118,
+  "tokenUsage": null,
+  "modelUsed": null,
+  "rawAnalysis": null,
+  "verifiedAnalysis": null,
+  "progress": "complete",
+  "failedAt": null,
+  "errorMessage": null,
+  "createdAt": {
+    "$date": "2026-04-11T11:36:51.611Z"
+  },
+  "updatedAt": {
+    "$date": "2026-04-11T11:38:22.735Z"
+  },
+  "__v": 1
 }

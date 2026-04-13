@@ -14,9 +14,10 @@ import { getOpenRouterClient } from "@/lib/openrouter";
 import ApiError from "@/models/api-error";
 import SIOReport from "@/models/sio-report";
 import {
-  sioV5BaseInstructions,
-  step4PositioningClarityInstructions,
-} from "@/services/sio-audit-instructions";
+  generalInstructions,
+  positioningClarityInstruction,
+} from "@/services/sio-audit-instructions/next";
+import { positioningClarityModels } from "@/services/sio-report/ai-models";
 import { sioV5JsonSchema } from "@/services/sio-v5-json-schema";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
@@ -93,7 +94,7 @@ export async function POST(request: NextRequest) {
     };
 
     // Replace context placeholders in instructions
-    const stepInstructions = step4PositioningClarityInstructions
+    const stepInstructions = positioningClarityInstruction
       .replace(
         "{WEBSITE_SUMMARY_CONTEXT}",
         JSON.stringify(previousContext.websiteSummary, null, 2),
@@ -108,15 +109,11 @@ export async function POST(request: NextRequest) {
     // Call AI for positioning and clarity analysis
     const aiResponse = await client.chat.send({
       chatGenerationParams: {
-        models: [
-          "x-ai/grok-4.1-fast",
-          "google/gemma-4-31b-it:free",
-          "qwen/qwen3.5-35b-a3b",
-        ],
+        models: positioningClarityModels.models,
         messages: [
           {
             role: "system",
-            content: sioV5BaseInstructions,
+            content: generalInstructions,
           },
           {
             role: "system",
@@ -147,13 +144,10 @@ export async function POST(request: NextRequest) {
             },
           },
         },
-        provider: {
-          requireParameters: true,
-          sort: "throughput",
-        },
+        provider: positioningClarityModels.provider,
         stream: false,
         reasoning: {
-          effort: "high",
+          effort: positioningClarityModels.reasoning,
         },
       },
     });

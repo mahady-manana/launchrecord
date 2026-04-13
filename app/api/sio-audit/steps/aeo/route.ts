@@ -13,10 +13,9 @@ import { connectToDatabase } from "@/lib/db";
 import { getOpenRouterClient } from "@/lib/openrouter";
 import ApiError from "@/models/api-error";
 import SIOReport from "@/models/sio-report";
-import {
-  sioV5BaseInstructions,
-  step5AEOInstructions,
-} from "@/services/sio-audit-instructions";
+import { step5AEOInstructions } from "@/services/sio-audit-instructions";
+import { generalInstructions } from "@/services/sio-audit-instructions/next";
+import { aeoModels } from "@/services/sio-report/ai-models";
 import { sioV5JsonSchema } from "@/services/sio-v5-json-schema";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
@@ -136,15 +135,11 @@ export async function POST(request: NextRequest) {
     // Call AI for AEO analysis
     const aiResponse = await client.chat.send({
       chatGenerationParams: {
-        models: [
-          "qwen/qwen3.6-plus:free",
-          "x-ai/grok-4.1-fast",
-          "qwen/qwen3.5-35b-a3b",
-        ],
+        models: aeoModels.models,
         messages: [
           {
             role: "system",
-            content: sioV5BaseInstructions,
+            content: generalInstructions,
           },
           {
             role: "system",
@@ -174,14 +169,10 @@ export async function POST(request: NextRequest) {
             },
           },
         },
-        provider: {
-          requireParameters: true,
-          preferredMinThroughput: 38,
-          // sort: "throughput",
-        },
+        provider: aeoModels.provider,
         stream: false,
         reasoning: {
-          effort: "medium",
+          effort: aeoModels.reasoning,
         },
       },
     });

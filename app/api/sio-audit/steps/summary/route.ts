@@ -14,9 +14,10 @@ import { getOpenRouterClient } from "@/lib/openrouter";
 import ApiError from "@/models/api-error";
 import SIOReport from "@/models/sio-report";
 import {
-  sioV5BaseInstructions,
-  step3SummaryInstructions,
-} from "@/services/sio-audit-instructions";
+  generalInstructions,
+  summaryImpressionInstruction,
+} from "@/services/sio-audit-instructions/next";
+import { summaryModels } from "@/services/sio-report/ai-models";
 import { sioV5JsonSchema } from "@/services/sio-v5-json-schema";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
@@ -79,19 +80,15 @@ export async function POST(request: NextRequest) {
     // Call AI for summary and first impression analysis
     const aiResponse = await client.chat.send({
       chatGenerationParams: {
-        models: [
-          "x-ai/grok-4.1-fast",
-          "google/gemma-4-31b-it:free",
-          "qwen/qwen3.5-35b-a3b",
-        ],
+        models: summaryModels.models,
         messages: [
           {
             role: "system",
-            content: sioV5BaseInstructions,
+            content: generalInstructions,
           },
           {
             role: "system",
-            content: step3SummaryInstructions,
+            content: summaryImpressionInstruction,
           },
           {
             role: "user",
@@ -118,14 +115,10 @@ export async function POST(request: NextRequest) {
             },
           },
         },
-        provider: {
-          requireParameters: true,
-          preferredMinThroughput: 38,
-          // sort: "throughput",
-        },
+        provider: summaryModels.provider,
         stream: false,
         reasoning: {
-          effort: "medium",
+          effort: summaryModels.reasoning,
         },
       },
     });

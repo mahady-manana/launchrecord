@@ -11,20 +11,22 @@ interface PositioningCardProps {
 }
 
 interface SubMetricCardProps {
-  name: string;
+  statement: string;
   score: number;
   current: string;
   positiveComments: string[];
   negativeComments: string[];
+  recommendation: string[];
   suggested: string[];
 }
 
 function SubMetricCard({
-  name,
+  statement,
   score,
   current,
   positiveComments,
   negativeComments,
+  recommendation,
   suggested,
 }: SubMetricCardProps) {
   const scoreColor =
@@ -48,10 +50,11 @@ function SubMetricCard({
   return (
     <div className="py-4 border-b border-slate-200 last:border-b-0 ">
       <MetricInsight
-        title={name}
+        title={statement}
         current={current}
         positiveComments={positiveComments}
         negativeComments={negativeComments}
+        recommendation={recommendation}
         suggested={suggested}
         compact
       />
@@ -59,7 +62,7 @@ function SubMetricCard({
         <div
           className={`px-2 py-1 rounded-full text-xs font-bold ${scoreBg} ${scoreColor}`}
         >
-          {name} score {score}/100
+          Score {score}/100
         </div>
       </div>
     </div>
@@ -152,7 +155,7 @@ export function PositioningCard({
           {isGuest || !report.subMetrics ? null : (
             <>
               <SubMetricCard
-                name="Niche Category Ownership"
+                statement={report.subMetrics.categoryOwnership.statement}
                 score={report.subMetrics.categoryOwnership.score}
                 current={report.subMetrics.categoryOwnership.current}
                 positiveComments={
@@ -161,10 +164,13 @@ export function PositioningCard({
                 negativeComments={
                   report.subMetrics.categoryOwnership.negativeComments
                 }
+                recommendation={
+                  report.subMetrics.categoryOwnership.recommendation
+                }
                 suggested={report.subMetrics.categoryOwnership.suggested}
               />
               <SubMetricCard
-                name="Unique Value Proposition"
+                statement={report.subMetrics.uniqueValueProp.statement}
                 score={report.subMetrics.uniqueValueProp.score}
                 current={report.subMetrics.uniqueValueProp.current}
                 positiveComments={
@@ -173,10 +179,13 @@ export function PositioningCard({
                 negativeComments={
                   report.subMetrics.uniqueValueProp.negativeComments
                 }
+                recommendation={
+                  report.subMetrics.uniqueValueProp.recommendation
+                }
                 suggested={report.subMetrics.uniqueValueProp.suggested}
               />
               <SubMetricCard
-                name='Competitive Differentiation ("Why You vs Them")'
+                statement={report.subMetrics.competitiveDiff.statement}
                 score={report.subMetrics.competitiveDiff.score}
                 current={report.subMetrics.competitiveDiff.current}
                 positiveComments={
@@ -185,10 +194,13 @@ export function PositioningCard({
                 negativeComments={
                   report.subMetrics.competitiveDiff.negativeComments
                 }
+                recommendation={
+                  report.subMetrics.competitiveDiff.recommendation
+                }
                 suggested={report.subMetrics.competitiveDiff.suggested}
               />
               <SubMetricCard
-                name='Target Audience Clarity ("Who You Serve")'
+                statement={report.subMetrics.targetAudience.statement}
                 score={report.subMetrics.targetAudience.score}
                 current={report.subMetrics.targetAudience.current}
                 positiveComments={
@@ -197,10 +209,11 @@ export function PositioningCard({
                 negativeComments={
                   report.subMetrics.targetAudience.negativeComments
                 }
+                recommendation={report.subMetrics.targetAudience.recommendation}
                 suggested={report.subMetrics.targetAudience.suggested}
               />
               <SubMetricCard
-                name='Problem-Solution Fit ("How Well You Solve The Problem")'
+                statement={report.subMetrics.problemSolutionFit.statement}
                 score={report.subMetrics.problemSolutionFit.score}
                 current={report.subMetrics.problemSolutionFit.current}
                 positiveComments={
@@ -209,10 +222,13 @@ export function PositioningCard({
                 negativeComments={
                   report.subMetrics.problemSolutionFit.negativeComments
                 }
+                recommendation={
+                  report.subMetrics.problemSolutionFit.recommendation
+                }
                 suggested={report.subMetrics.problemSolutionFit.suggested}
               />
               <SubMetricCard
-                name='Messaging Consistency ("How Consistent Your Messaging Is Across Content")'
+                statement={report.subMetrics.messagingConsistency.statement}
                 score={report.subMetrics.messagingConsistency.score}
                 current={report.subMetrics.messagingConsistency.current}
                 positiveComments={
@@ -220,6 +236,9 @@ export function PositioningCard({
                 }
                 negativeComments={
                   report.subMetrics.messagingConsistency.negativeComments
+                }
+                recommendation={
+                  report.subMetrics.messagingConsistency.recommendation
                 }
                 suggested={report.subMetrics.messagingConsistency.suggested}
               />

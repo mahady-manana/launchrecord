@@ -11,21 +11,23 @@ interface ClarityCardProps {
 }
 
 interface SubMetricCardProps {
-  name: string;
+  statement: string;
   score: number;
   current: string;
   positiveComments: string[];
   negativeComments: string[];
+  recommendation: string[];
   suggested: string[];
   unclearTexts: SIOV5Report["clarity"]["unclearSentences"];
 }
 
 function SubMetricCard({
-  name,
+  statement,
   score,
   current,
   positiveComments,
   negativeComments,
+  recommendation,
   suggested,
   unclearTexts,
 }: SubMetricCardProps) {
@@ -50,10 +52,11 @@ function SubMetricCard({
   return (
     <div className="py-4 border-b border-slate-200 last:border-b-0 space-y-3">
       <MetricInsight
-        title={name}
+        title={statement}
         current={current}
         positiveComments={positiveComments}
         negativeComments={negativeComments}
+        recommendation={recommendation}
         suggested={suggested}
         compact
       />
@@ -61,7 +64,7 @@ function SubMetricCard({
         <div
           className={`px-2 py-1 rounded-full text-xs font-bold ${scoreBg} ${scoreColor}`}
         >
-          {name} score {score}/100
+          Score {score}/100
         </div>
       </div>
 
@@ -208,7 +211,7 @@ export function ClarityCard({ report, isGuest, ctaHref }: ClarityCardProps) {
         <div>
           <div className="space-y-4">
             <SubMetricCard
-              name='Headline Clarity ("Can Visitors Instantly Understand What You Do?")'
+              statement={report.subMetrics.headlineClarity.statement}
               score={report.subMetrics.headlineClarity.score}
               current={report.subMetrics.headlineClarity.current}
               positiveComments={
@@ -217,11 +220,12 @@ export function ClarityCard({ report, isGuest, ctaHref }: ClarityCardProps) {
               negativeComments={
                 report.subMetrics.headlineClarity.negativeComments
               }
+              recommendation={report.subMetrics.headlineClarity.recommendation}
               suggested={report.subMetrics.headlineClarity.suggested}
               unclearTexts={report.subMetrics.headlineClarity.unclearTexts}
             />
             <SubMetricCard
-              name='Value Proposition Clarity ("How Clearly You Communicate Your Unique Value")'
+              statement={report.subMetrics.valueProposition.statement}
               score={report.subMetrics.valueProposition.score}
               current={report.subMetrics.valueProposition.current}
               positiveComments={
@@ -230,11 +234,12 @@ export function ClarityCard({ report, isGuest, ctaHref }: ClarityCardProps) {
               negativeComments={
                 report.subMetrics.valueProposition.negativeComments
               }
+              recommendation={report.subMetrics.valueProposition.recommendation}
               suggested={report.subMetrics.valueProposition.suggested}
               unclearTexts={report.subMetrics.valueProposition.unclearTexts}
             />
             <SubMetricCard
-              name='Feature-Benefit Mapping ("How Well You Link Features To Benefits")'
+              statement={report.subMetrics.featureBenefitMapping.statement}
               score={report.subMetrics.featureBenefitMapping.score}
               current={report.subMetrics.featureBenefitMapping.current}
               positiveComments={
@@ -243,13 +248,16 @@ export function ClarityCard({ report, isGuest, ctaHref }: ClarityCardProps) {
               negativeComments={
                 report.subMetrics.featureBenefitMapping.negativeComments
               }
+              recommendation={
+                report.subMetrics.featureBenefitMapping.recommendation
+              }
               suggested={report.subMetrics.featureBenefitMapping.suggested}
               unclearTexts={
                 report.subMetrics.featureBenefitMapping.unclearTexts
               }
             />
             <SubMetricCard
-              name='Visual Hierarchy & Readability ("How Easily Visitors Can Scan & Digest Your Content")'
+              statement={report.subMetrics.visualHierarchy.statement}
               score={report.subMetrics.visualHierarchy.score}
               current={report.subMetrics.visualHierarchy.current}
               positiveComments={
@@ -258,20 +266,22 @@ export function ClarityCard({ report, isGuest, ctaHref }: ClarityCardProps) {
               negativeComments={
                 report.subMetrics.visualHierarchy.negativeComments
               }
+              recommendation={report.subMetrics.visualHierarchy.recommendation}
               suggested={report.subMetrics.visualHierarchy.suggested}
               unclearTexts={report.subMetrics.visualHierarchy.unclearTexts}
             />
             <SubMetricCard
-              name='CTA Clarity ("How Clear & Compelling Your Calls-To-Action Are")'
+              statement={report.subMetrics.ctaClarity.statement}
               score={report.subMetrics.ctaClarity.score}
               current={report.subMetrics.ctaClarity.current}
               positiveComments={report.subMetrics.ctaClarity.positiveComments}
               negativeComments={report.subMetrics.ctaClarity.negativeComments}
+              recommendation={report.subMetrics.ctaClarity.recommendation}
               suggested={report.subMetrics.ctaClarity.suggested}
               unclearTexts={report.subMetrics.ctaClarity.unclearTexts}
             />
             <SubMetricCard
-              name='Proof Placement & Clarity ("How Well You Use Social Proof To Enhance Clarity")'
+              statement={report.subMetrics.proofPlacement.statement}
               score={report.subMetrics.proofPlacement.score}
               current={report.subMetrics.proofPlacement.current}
               positiveComments={
@@ -280,6 +290,7 @@ export function ClarityCard({ report, isGuest, ctaHref }: ClarityCardProps) {
               negativeComments={
                 report.subMetrics.proofPlacement.negativeComments
               }
+              recommendation={report.subMetrics.proofPlacement.recommendation}
               suggested={report.subMetrics.proofPlacement.suggested}
               unclearTexts={report.subMetrics.proofPlacement.unclearTexts}
             />

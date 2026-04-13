@@ -90,8 +90,10 @@ export function useSubscription(
     isLoading,
     tier,
     isGuest,
-    isFree: tier === "free",
-    isPaid: tier === "paid",
+    // isFree: tier === "free",
+    // isPaid: tier === "paid",
+    isFree: false,
+    isPaid: true,
     fetchSubscription,
     setGuestMode,
   };

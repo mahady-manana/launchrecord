@@ -82,6 +82,9 @@ export interface FirstImpressionReport {
   /** Overall assessment (2-3 sentences) */
   statement: string;
 
+  /** Recommendations for improving the hero section */
+  recommendation: string[];
+
   /** Overall positive comments about the hero section */
   overallCommentPositive: string[];
 
@@ -90,25 +93,31 @@ export interface FirstImpressionReport {
 
   /** Headline analysis */
   headline: {
+    statement: string;
     current: string;
     positiveComments: string[];
     negativeComments: string[];
+    recommendation: string[];
     suggested: string[];
   };
 
   /** Subheadline analysis */
   subheadline: {
+    statement: string;
     current: string;
     positiveComments: string[];
     negativeComments: string[];
+    recommendation: string[];
     suggested: string[];
   };
 
   /** CTA analysis */
   cta: {
+    statement: string;
     current: string;
     positiveComments: string[];
     negativeComments: string[];
+    recommendation: string[];
     suggested: string[];
   };
 }
@@ -124,6 +133,8 @@ export interface PositioningSummary {
   positiveComments: string[];
   /** Negative comments pointing out positioning issues */
   negativeComments: string[];
+  /** Recommendations for improving positioning */
+  recommendation: string[];
   /** Suggested positioning statements */
   suggested: string[];
 }
@@ -133,8 +144,8 @@ export interface PositioningSummary {
  * Each sub-metric (Category Ownership, UVP, etc.) with current, comments, fixes
  */
 export interface PositioningSubMetric {
-  /** Sub-metric name */
-  name: string;
+  /** Diagnostic statement about this sub-metric */
+  statement: string;
   /** Score 0-100 */
   score: number;
   /** Current state for this sub-metric */
@@ -143,6 +154,8 @@ export interface PositioningSubMetric {
   positiveComments: string[];
   /** Negative comments pointing out issues */
   negativeComments: string[];
+  /** Recommendations for this sub-metric */
+  recommendation: string[];
   /** Suggested fixes */
   suggested: string[];
 }
@@ -157,6 +170,9 @@ export interface PositioningReport {
 
   /** Overall assessment (2-3 sentences) */
   statement: string;
+
+  /** Recommendations for improving positioning */
+  recommendation: string[];
 
   /** Overall positive comments about positioning */
   overallCommentPositive: string[];
@@ -231,6 +247,8 @@ export interface ClaritySummary {
   positiveComments: string[];
   /** Negative comments pointing out clarity issues */
   negativeComments: string[];
+  /** Recommendations for improving clarity */
+  recommendation: string[];
   /** Suggested messaging */
   suggested: string[];
 }
@@ -253,8 +271,8 @@ export interface UnclearText {
  * Each sub-metric (Headline, Value Prop, etc.) with current, comments, fixes, and unclear texts
  */
 export interface ClaritySubMetric {
-  /** Sub-metric name */
-  name: string;
+  /** Diagnostic statement about this sub-metric */
+  statement: string;
   /** Score 0-100 */
   score: number;
   /** Current state for this sub-metric */
@@ -263,6 +281,8 @@ export interface ClaritySubMetric {
   positiveComments: string[];
   /** Negative comments pointing out issues */
   negativeComments: string[];
+  /** Recommendations for this sub-metric */
+  recommendation: string[];
   /** Suggested fixes */
   suggested: string[];
   /** Specific unclear sentences/phrases found */
@@ -279,6 +299,9 @@ export interface ClarityReport {
 
   /** Overall assessment (2-3 sentences) */
   statement: string;
+
+  /** Recommendations for improving clarity */
+  recommendation: string[];
 
   /** Overall positive comments about clarity */
   overallCommentPositive: string[];

@@ -53,6 +53,7 @@ export function mapToSIOReport(rawData: any): any {
     firstImpression: {
       score: rawData.firstImpression?.score || 0,
       statement: rawData.firstImpression?.statement || "",
+      recommendation: rawData.firstImpression?.recommendation || [],
       overallCommentPositive:
         rawData.firstImpression?.overallCommentPositive || [],
       overallCommentNegative:
@@ -63,6 +64,7 @@ export function mapToSIOReport(rawData: any): any {
           rawData.firstImpression?.headline?.positiveComments || [],
         negativeComments:
           rawData.firstImpression?.headline?.negativeComments || [],
+        recommendation: rawData.firstImpression?.headline?.recommendation || [],
         suggested: rawData.firstImpression?.headline?.suggested || [],
       },
       subheadline: {
@@ -71,12 +73,15 @@ export function mapToSIOReport(rawData: any): any {
           rawData.firstImpression?.subheadline?.positiveComments || [],
         negativeComments:
           rawData.firstImpression?.subheadline?.negativeComments || [],
+        recommendation:
+          rawData.firstImpression?.subheadline?.recommendation || [],
         suggested: rawData.firstImpression?.subheadline?.suggested || [],
       },
       cta: {
         current: rawData.firstImpression?.cta?.current || "",
         positiveComments: rawData.firstImpression?.cta?.positiveComments || [],
         negativeComments: rawData.firstImpression?.cta?.negativeComments || [],
+        recommendation: rawData.firstImpression?.cta?.recommendation || [],
         suggested: rawData.firstImpression?.cta?.suggested || [],
       },
     },
@@ -85,12 +90,14 @@ export function mapToSIOReport(rawData: any): any {
     positioning: {
       score: rawData.positioning?.score || 0,
       statement: rawData.positioning?.statement || "",
+      recommendation: rawData.positioning?.recommendation || [],
       overallCommentPositive: rawData.positioning?.overallCommentPositive || [],
       overallCommentNegative: rawData.positioning?.overallCommentNegative || [],
       summary: {
         current: rawData.positioning?.summary?.current || "",
         positiveComments: rawData.positioning?.summary?.positiveComments || [],
         negativeComments: rawData.positioning?.summary?.negativeComments || [],
+        recommendation: rawData.positioning?.summary?.recommendation || [],
         suggested: rawData.positioning?.summary?.suggested || [],
       },
       subMetrics: {
@@ -119,12 +126,14 @@ export function mapToSIOReport(rawData: any): any {
     clarity: {
       score: rawData.clarity?.score || 0,
       statement: rawData.clarity?.statement || "",
+      recommendation: rawData.clarity?.recommendation || [],
       overallCommentPositive: rawData.clarity?.overallCommentPositive || [],
       overallCommentNegative: rawData.clarity?.overallCommentNegative || [],
       summary: {
         current: rawData.clarity?.summary?.current || "",
         positiveComments: rawData.clarity?.summary?.positiveComments || [],
         negativeComments: rawData.clarity?.summary?.negativeComments || [],
+        recommendation: rawData.clarity?.summary?.recommendation || [],
         suggested: rawData.clarity?.summary?.suggested || [],
       },
       unclearSentences: (rawData.clarity?.unclearSentences || []).map(
@@ -180,6 +189,7 @@ export function mapSubMetric(raw: any) {
     current: raw?.current || "",
     positiveComments: raw?.positiveComments || [],
     negativeComments: raw?.negativeComments || [],
+    recommendation: raw?.recommendation || [],
     suggested: raw?.suggested || [],
   };
 }
@@ -194,6 +204,7 @@ export function mapClaritySubMetric(raw: any) {
     current: raw?.current || "",
     positiveComments: raw?.positiveComments || [],
     negativeComments: raw?.negativeComments || [],
+    recommendation: raw?.recommendation || [],
     suggested: raw?.suggested || [],
     unclearTexts: (raw?.unclearTexts || []).map((u: any) => ({
       text: u.text || "",

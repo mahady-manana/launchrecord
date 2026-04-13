@@ -15,6 +15,7 @@ interface MetricInsightProps {
   currentTitle?: string;
   positiveComments?: string[];
   negativeComments?: string[];
+  recommendation?: string[];
   suggested?: string[];
   compact?: boolean;
   score?: number;
@@ -86,6 +87,7 @@ export function MetricInsight({
   current,
   positiveComments,
   negativeComments,
+  recommendation,
   suggested,
   currentTitle,
   compact = false,
@@ -116,6 +118,9 @@ export function MetricInsight({
   const limitedNegative = isPaid
     ? negativeComments || []
     : (negativeComments || []).slice(0, 1);
+  const limitedRecommendation = isPaid
+    ? recommendation || []
+    : (recommendation || []).slice(0, 2);
   const limitedSuggested = isPaid
     ? suggested || []
     : (suggested || []).slice(0, 2);
@@ -156,7 +161,42 @@ export function MetricInsight({
         </p>
       </div>
 
-      {/* Recommendations */}
+      {/* Structural Recommendations */}
+      {recommendation && recommendation.length > 0 && (
+        <div className="space-y-2 border-2 border-amber-200 rounded-lg p-4">
+          <div className="flex items-center justify-between gap-3">
+            <div className="flex items-center gap-4 text-sm text-amber-700 font-bold bg-amber-200 px-4 py-1 rounded-full ml-2">
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+              >
+                <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
+                <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
+              </svg>
+              <p>What to Fix</p>
+            </div>
+          </div>
+          <ul className="space-y-1">
+            {limitedRecommendation.map((item, idx) => (
+              <li
+                key={idx}
+                className={clsx(
+                  "border-b",
+                  "font-semibold text-slate-500 text-sm last:border-b-0 px-3 py-2",
+                )}
+              >
+                {item}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      {/* Copy Fixes (suggested) */}
       {suggested && suggested.length > 0 && (
         <div className="space-y-2 border-2 border-green-200 rounded-lg p-4">
           <div className="flex items-center justify-between gap-3">

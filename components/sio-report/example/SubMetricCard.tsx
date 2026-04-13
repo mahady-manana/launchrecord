@@ -29,7 +29,9 @@ export function SubMetricCard({ subMetric }: SubMetricCardProps) {
   return (
     <div className="border border-slate-200 rounded-lg p-4 bg-white">
       <div className="flex items-center justify-between mb-3">
-        <h3 className="text-base font-bold text-slate-800">{subMetric.name}</h3>
+        <h3 className="text-base font-bold text-slate-800">
+          {subMetric.statement}
+        </h3>
         <div
           className={`px-2 py-1 rounded-full text-xs font-bold ${scoreBg} ${scoreColor}`}
         >
