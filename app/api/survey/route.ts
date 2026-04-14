@@ -126,7 +126,7 @@ export async function POST(request: NextRequest) {
       website: normalizedUrl,
       description: description,
       tagline: tagline,
-      logo: `http://www.google.com/s2/favicons?domain=${normalizedUrl}`,
+      logo: `http://www.google.com/s2/favicons?sz=64domain=${normalizedUrl}`,
       users: user?._id ? [user._id] : [],
       score: null,
       earlyAccess: true,

@@ -28,7 +28,7 @@ type SuggestedData = {
 };
 
 function buildFavicon(url: string) {
-  return `https://www.google.com/s2/favicons?domain=${url}`;
+  return `https://www.google.com/s2/favicons?sz=64domain=${url}`;
 }
 
 async function getSuggestedData(
