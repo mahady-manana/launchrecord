@@ -25,21 +25,20 @@ export function HeroSection() {
         }}
       /> */}
       <div className="border-y border-slate-200 w-full flex flex-col items-center justify-center">
-        <div className="space-y-8 relative px-4 py-12 max-w-7xl w-full text-center border-slate-200 border-x px-12">
+        <div className="space-y-6 relative px-4 py-20 max-w-7xl w-full text-center border-slate-200 border-x px-12">
           <div className="space-y-4">
-            <h1 className="text-4xl md:text-5xl font-bold tracking-tighter text-slate-600 leading-[1.1] pb-8">
+            <h1 className="text-4xl md:text-5xl font-bold tracking-tighter text-slate-600 leading-[1.1]">
               Confusion kills conversions. <br /> Get a free positioning and
-              messaging <br /> clarity audit with precise fixes.
+              messaging audit <br />{" "}
+              <span className="text-primary"> with precise fixes.</span>
             </h1>
 
-            <div className="space-y-2">
-              <p className="block text-lg max-w-2xl mx-auto text-slate-600 font-mono tracking-normal normal-case">
-                Launchrecord audits your SaaS messaging clarity, detects
-                positioning gaps, and benchmarks your website against thousands
-                of SaaS startups to reveal exactly what’s hurting conversions
-                and how to fix them.
-              </p>
-            </div>
+            <p className="block text-lg max-w-2xl mx-auto text-slate-600 font-mono tracking-normal normal-case">
+              Launchrecord audits your SaaS messaging clarity, detects
+              positioning gaps, and benchmarks your website against thousands of
+              SaaS startups to reveal exactly what’s hurting conversions and how
+              to fix them.
+            </p>
           </div>
 
           <div className="space-y-4">
