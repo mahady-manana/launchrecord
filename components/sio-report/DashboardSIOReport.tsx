@@ -12,6 +12,7 @@ import { ArrowRight, FileText, Lightbulb, Lock, RotateCw } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
+import { useUserStore } from "@/stores/user-store";
 import {
   AEOSection,
   ClaritySection,
@@ -64,13 +65,12 @@ interface DashboardSIOReportProps {
 
 export default function DashboardSIOReport({
   report,
-  isGuest = false,
   subscription = null,
 }: DashboardSIOReportProps) {
   const [view, setView] = useState<ReportView>("full");
   const [activeSection, setActiveSection] = useState("overview");
-  const { tier, isFree, isPaid } = useSubscription(isGuest);
-
+  const { isFree, isPaid } = useSubscription();
+  const isGuest = useUserStore((s) => s.isGuest);
   const reportUrl = report.url || "";
   const productId = report._id || report.product || "unknown";
 
@@ -187,14 +187,14 @@ export default function DashboardSIOReport({
             <RotateCw className="h-4 w-4" />
             <span>{report.url || "URL unavailable"}</span>
           </div>
-          <div className="flex items-center text-slate-200 gap-2">
+          <div className="hidden md:flex items-center text-slate-200 gap-2">
             <span className="text-xs sm:text-sm">
               {report.createdAt
                 ? new Date(report.createdAt).toLocaleString()
                 : "Date unavailable"}
             </span>
             {isGuest && (
-              <Link href={ctaHref} className="shrink-0">
+              <Link href={ctaHref} className="shrink-0 ">
                 <Button
                   variant="ghost"
                   size="sm"
@@ -233,7 +233,8 @@ export default function DashboardSIOReport({
             }
           >
             <Lightbulb className="h-4 w-4 mr-2" />
-            Recommendations and exact fixes
+            Recommendations{" "}
+            <span className="hidden md:block"> and exact fixes</span>
           </Button>
         </div>
       </div>
@@ -259,7 +260,12 @@ export default function DashboardSIOReport({
 
           {/* Content */}
           {view === "recommendations" ? (
-            <RecommendationsView report={report as any} />
+            <RecommendationsView
+              report={report as any}
+              productId={productId}
+              isGuest={isGuest}
+              isPaid={isPaid}
+            />
           ) : view === "actionable" ? (
             <ActionableReport
               report={report as any}
@@ -335,6 +341,14 @@ export default function DashboardSIOReport({
                 </div>
 
                 {/* Recommendations Section */}
+                <div id="recommendations" className="px-0 mb-8">
+                  <RecommendationsView
+                    report={report as any}
+                    productId={productId}
+                    isGuest={isGuest}
+                    isPaid={isPaid}
+                  />
+                </div>
 
                 {/* Guest CTA */}
                 {isGuest && (

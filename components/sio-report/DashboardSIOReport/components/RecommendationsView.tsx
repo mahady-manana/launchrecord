@@ -1,11 +1,21 @@
 "use client";
 
+import { UpgradeModal } from "@/components/upgrade/UpgradeModal";
 import { SIOV5Report } from "@/services/sio-report/schema";
-import { AlertCircle, CheckCircle, Lightbulb, TrendingUp } from "lucide-react";
+import {
+  AlertCircle,
+  CheckCircle,
+  Lightbulb,
+  Lock,
+  TrendingUp,
+} from "lucide-react";
 import { useState } from "react";
 
 interface RecommendationsViewProps {
   report: SIOV5Report;
+  productId?: string;
+  isGuest?: boolean;
+  isPaid?: boolean;
 }
 
 interface RecommendationItem {
@@ -17,8 +27,55 @@ interface RecommendationItem {
   priority: "high" | "medium" | "low";
 }
 
-export function RecommendationsView({ report }: RecommendationsViewProps) {
-  const [filter, setFilter] = useState<"all" | "negative" | "recommendation" | "suggestion">("all");
+export function RecommendationsView({
+  report,
+  productId = "",
+  isGuest,
+  isPaid,
+}: RecommendationsViewProps) {
+  const [filter, setFilter] = useState<
+    "all" | "negative" | "recommendation" | "suggestion"
+  >("all");
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
+
+  // If not paid or guest, show locked view with upgrade button
+  if (!isPaid) {
+    return (
+      <>
+        <div className="px-8 py-6">
+          <div className="bg-gradient-to-br from-slate-50 to-slate-100 border-2 border-slate-200 rounded-xl p-8 text-center">
+            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-slate-200 mb-4">
+              <Lock className="h-8 w-8 text-slate-500" />
+            </div>
+            <h3 className="text-xl font-bold text-slate-900 mb-2">
+              {isGuest
+                ? "Sign up to unlock Recommendations"
+                : "Upgrade to unlock Recommendations & Exact Fixes"}
+            </h3>
+            <p className="text-slate-600 text-sm max-w-md mx-auto mb-6">
+              {isGuest
+                ? "Create a free account to see all negative feedback, recommendations, and copy-paste ready fixes."
+                : "Get access to all identified issues, specific recommendations, and exact copy-paste fixes for every metric."}
+            </p>
+            <button
+              onClick={() => setShowUpgradeModal(true)}
+              className="inline-flex items-center gap-2 bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white px-6 py-3 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all"
+            >
+              <Lock className="h-4 w-4" />
+              {isGuest ? "Sign up to Unlock" : "Upgrade to Unlock"}
+            </button>
+          </div>
+        </div>
+
+        <UpgradeModal
+          isOpen={showUpgradeModal}
+          onClose={() => setShowUpgradeModal(false)}
+          productId={productId}
+          isGuest={isGuest}
+        />
+      </>
+    );
+  }
 
   // Extract all recommendations from the report
   const allRecommendations: RecommendationItem[] = [];
@@ -113,16 +170,18 @@ export function RecommendationsView({ report }: RecommendationsViewProps) {
     });
   });
 
-  report.firstImpression.subheadline.negativeComments?.forEach((comment, idx) => {
-    allRecommendations.push({
-      id: `subheadline-negative-${idx}`,
-      metric: "First Impression",
-      subMetric: "Subheadline",
-      type: "negative",
-      text: comment,
-      priority: "high",
-    });
-  });
+  report.firstImpression.subheadline.negativeComments?.forEach(
+    (comment, idx) => {
+      allRecommendations.push({
+        id: `subheadline-negative-${idx}`,
+        metric: "First Impression",
+        subMetric: "Subheadline",
+        type: "negative",
+        text: comment,
+        priority: "high",
+      });
+    },
+  );
 
   report.firstImpression.cta.negativeComments?.forEach((comment, idx) => {
     allRecommendations.push({
@@ -160,40 +219,42 @@ export function RecommendationsView({ report }: RecommendationsViewProps) {
   // Positioning sub-metrics negative comments and recommendations
   const positioningSubMetrics = report.positioning.subMetrics;
   if (positioningSubMetrics) {
-    Object.entries(positioningSubMetrics).forEach(([key, subMetric]: [string, any]) => {
-      subMetric.negativeComments?.forEach((comment: string, idx: number) => {
-        allRecommendations.push({
-          id: `positioning-${key}-negative-${idx}`,
-          metric: "Positioning",
-          subMetric: formatSubMetricName(key),
-          type: "negative",
-          text: comment,
-          priority: "high",
+    Object.entries(positioningSubMetrics).forEach(
+      ([key, subMetric]: [string, any]) => {
+        subMetric.negativeComments?.forEach((comment: string, idx: number) => {
+          allRecommendations.push({
+            id: `positioning-${key}-negative-${idx}`,
+            metric: "Positioning",
+            subMetric: formatSubMetricName(key),
+            type: "negative",
+            text: comment,
+            priority: "high",
+          });
         });
-      });
 
-      subMetric.recommendation?.forEach((rec: string, idx: number) => {
-        allRecommendations.push({
-          id: `positioning-${key}-rec-${idx}`,
-          metric: "Positioning",
-          subMetric: formatSubMetricName(key),
-          type: "recommendation",
-          text: rec,
-          priority: "high",
+        subMetric.recommendation?.forEach((rec: string, idx: number) => {
+          allRecommendations.push({
+            id: `positioning-${key}-rec-${idx}`,
+            metric: "Positioning",
+            subMetric: formatSubMetricName(key),
+            type: "recommendation",
+            text: rec,
+            priority: "high",
+          });
         });
-      });
 
-      subMetric.suggested?.forEach((suggestion: string, idx: number) => {
-        allRecommendations.push({
-          id: `positioning-${key}-suggestion-${idx}`,
-          metric: "Positioning",
-          subMetric: formatSubMetricName(key),
-          type: "suggestion",
-          text: suggestion,
-          priority: "high",
+        subMetric.suggested?.forEach((suggestion: string, idx: number) => {
+          allRecommendations.push({
+            id: `positioning-${key}-suggestion-${idx}`,
+            metric: "Positioning",
+            subMetric: formatSubMetricName(key),
+            type: "suggestion",
+            text: suggestion,
+            priority: "high",
+          });
         });
-      });
-    });
+      },
+    );
   }
 
   // Positioning summary suggestions
@@ -233,40 +294,42 @@ export function RecommendationsView({ report }: RecommendationsViewProps) {
   // Clarity sub-metrics negative comments and recommendations
   const claritySubMetrics = report.clarity.subMetrics;
   if (claritySubMetrics) {
-    Object.entries(claritySubMetrics).forEach(([key, subMetric]: [string, any]) => {
-      subMetric.negativeComments?.forEach((comment: string, idx: number) => {
-        allRecommendations.push({
-          id: `clarity-${key}-negative-${idx}`,
-          metric: "Clarity",
-          subMetric: formatSubMetricName(key),
-          type: "negative",
-          text: comment,
-          priority: "high",
+    Object.entries(claritySubMetrics).forEach(
+      ([key, subMetric]: [string, any]) => {
+        subMetric.negativeComments?.forEach((comment: string, idx: number) => {
+          allRecommendations.push({
+            id: `clarity-${key}-negative-${idx}`,
+            metric: "Clarity",
+            subMetric: formatSubMetricName(key),
+            type: "negative",
+            text: comment,
+            priority: "high",
+          });
         });
-      });
 
-      subMetric.recommendation?.forEach((rec: string, idx: number) => {
-        allRecommendations.push({
-          id: `clarity-${key}-rec-${idx}`,
-          metric: "Clarity",
-          subMetric: formatSubMetricName(key),
-          type: "recommendation",
-          text: rec,
-          priority: "high",
+        subMetric.recommendation?.forEach((rec: string, idx: number) => {
+          allRecommendations.push({
+            id: `clarity-${key}-rec-${idx}`,
+            metric: "Clarity",
+            subMetric: formatSubMetricName(key),
+            type: "recommendation",
+            text: rec,
+            priority: "high",
+          });
         });
-      });
 
-      subMetric.suggested?.forEach((suggestion: string, idx: number) => {
-        allRecommendations.push({
-          id: `clarity-${key}-suggestion-${idx}`,
-          metric: "Clarity",
-          subMetric: formatSubMetricName(key),
-          type: "suggestion",
-          text: suggestion,
-          priority: "high",
+        subMetric.suggested?.forEach((suggestion: string, idx: number) => {
+          allRecommendations.push({
+            id: `clarity-${key}-suggestion-${idx}`,
+            metric: "Clarity",
+            subMetric: formatSubMetricName(key),
+            type: "suggestion",
+            text: suggestion,
+            priority: "high",
+          });
         });
-      });
-    });
+      },
+    );
   }
 
   // Clarity summary suggestions
@@ -341,9 +404,15 @@ export function RecommendationsView({ report }: RecommendationsViewProps) {
   }, {});
 
   // Counts
-  const negativeCount = allRecommendations.filter((r) => r.type === "negative").length;
-  const recommendationCount = allRecommendations.filter((r) => r.type === "recommendation").length;
-  const suggestionCount = allRecommendations.filter((r) => r.type === "suggestion").length;
+  const negativeCount = allRecommendations.filter(
+    (r) => r.type === "negative",
+  ).length;
+  const recommendationCount = allRecommendations.filter(
+    (r) => r.type === "recommendation",
+  ).length;
+  const suggestionCount = allRecommendations.filter(
+    (r) => r.type === "suggestion",
+  ).length;
 
   return (
     <div className="px-8 py-6 space-y-6">
@@ -478,7 +547,7 @@ export function RecommendationsView({ report }: RecommendationsViewProps) {
                   ))}
                 </div>
               </div>
-            )
+            ),
         )}
       </div>
     </div>
@@ -545,10 +614,8 @@ function RecommendationCard({ item }: { item: RecommendationItem }) {
 
 function formatSubMetricName(key: string): string {
   // Convert camelCase to Title Case with spaces
-  return (
-    key
-      .replace(/([A-Z])/g, " $1")
-      .replace(/^./, (str) => str.toUpperCase())
-      .trim()
-  );
+  return key
+    .replace(/([A-Z])/g, " $1")
+    .replace(/^./, (str) => str.toUpperCase())
+    .trim();
 }
