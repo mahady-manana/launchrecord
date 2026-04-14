@@ -2,6 +2,25 @@ import { appLogo } from "@/lib/logo";
 import clsx from "clsx";
 import { useCallback, useEffect, useState } from "react";
 
+const urls = [
+  "https://digitalbrainstech.com/",
+  "https://pdf-redaction.com/",
+  "https://startupmaya.com/",
+  "https://www.webtoolkit.tech/",
+  "https://gogeoplayer.com/",
+  "https://www.phpcrudgenerator.com/",
+
+  "https://www.rentiz.app/",
+  "https://coregptapps.com/",
+  "https://lingrix.com/",
+  "https://sensepm.com/",
+  "https://natrajx.in/",
+  "https://www.launchrecord.com/",
+  "https://retold.me/",
+  "https://senti.solutions/",
+  "https://www.statnexa.com/",
+  "https://presenter3d.com/",
+];
 export function LogoList() {
   const [logos, setLogos] = useState<any[]>([]);
   const [count, setCount] = useState<number>(0);
@@ -27,8 +46,8 @@ export function LogoList() {
   return (
     <div className="pt-0 flex flex-col justify-center w-full">
       <div className="md:max-w-7xl max-w-[320px] mx-auto flex gap-0 p-4 overflow-x-auto md:overflow-x-hidden">
-        {logos.map((logo, idx) => (
-          <ImageComp key={idx} url={logo.url} logoUrl={logo.product?.logo} />
+        {urls.map((logo, idx) => (
+          <ImageComp key={idx} url={logo} />
         ))}
         <div className="hidden md:block z-999">
           <div className="bg-slate-50 px-2 text-slate-700 flex items-center justify-center h-8 rounded-full border overflow-hidden">
@@ -55,12 +74,9 @@ const ImageComp = ({ url, logoUrl }: { url: string; logoUrl?: string }) => {
     <div className="w-10 relative">
       <div className="absolute left-0 top-1/2 -translate-y-1/2 w-8 h-8 bg-white rounded-full border overflow-hidden">
         <img
-          src={
-            logoUrl ||
-            appLogo({
-              website: logo,
-            })
-          }
+          src={appLogo({
+            website: url,
+          })}
           height={30}
           width={30}
           className={clsx("object-cover h-8 w-8")}
