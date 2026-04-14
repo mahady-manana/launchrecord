@@ -256,12 +256,12 @@ Score 0–100 based on:
 
 No tolerance for commodization, unprofessionalism or errors.
 
-- Each grammar/spelling error = -5 points penalty.
-- Each unclear sentence/weak messaging = -2 points penalty.
-- No clear positioning (isPositioningClear = false) = -10 points penalty.
-- Users left guessing (areUsersLeftGuessing = true) = -8 points penalty.
-- Each negative comment identified = -2 points (max -15).
-- Generic CTA ("Get Started", "Sign Up") without outcome = -5 points.
+- Each unclear sentence = -1 points (max -10)
+- Each grammar/spelling error = -2 points
+- Each unclear/weak messaging instance = -2 points
+- No clear positioning (isPositioningClear = false OR isMessagingClear = false) = -5 points
+- Users left guessing (areUsersLeftGuessing = true) = -4 points
+- First impression score < 50 = additional -4 points
 
 Calculate all penalties and deduct from raw score before returning.
 Example: raw score 72 - 15 penalty = 57 final score.

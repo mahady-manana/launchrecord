@@ -152,9 +152,7 @@ For each metric:
 - CTA Clarity 50-69: Action clear but outcome vague. Somewhat specific.
 - CTA Clarity < 50: Generic ("Get Started", "Sign Up"). No outcome stated.
 
-**SCORING RULE**: If you identify 3+ negative comments in any section, cap that section's score at 55.
-**SCORING RULE**: If you identify 2+ unclear sentences, cap clarity score at 60.
-**SCORING RULE**: DEFAULT SCORE for average SaaS site = 50-60. Only award 70+ for truly exceptional clarity.
+
 
 ---
 

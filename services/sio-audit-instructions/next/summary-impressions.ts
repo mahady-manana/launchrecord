@@ -88,10 +88,6 @@ Check:
 - 30-49: WEAK. Headline is brand name or feature list without context. User confused after 5s (~25%)
 - 0-29: BROKEN. Headline communicates nothing about value. User doesn't understand product after 10s (~4%)
 
-**SCORING RULE**: If headline doesn't state WHO it's for, cap at 55.
-**SCORING RULE**: If CTA is generic ("Get Started", "Sign Up", "Try now") without outcome, cap at 50.
-**SCORING RULE**: If headline has grammar/spelling errors, deduct 5 points immediately.
-**SCORING RULE**: DEFAULT SCORE for average SaaS hero section = 50-60.
 
 Analyze:
 

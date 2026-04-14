@@ -158,13 +158,12 @@ You MUST deduct points for these issues. NO EXCEPTIONS.
 
 **PENALTY RULES**:
 
-- Each unclear sentence = -2 points (max -10)
-- Each grammar/spelling error = -5 points
+- Each unclear sentence = -1 points (max -10)
+- Each grammar/spelling error = -2 points
 - Each unclear/weak messaging instance = -2 points
-- No clear positioning (isPositioningClear = false OR isMessagingClear = false) = -10 points
-- Users left guessing (areUsersLeftGuessing = true) = -8 points
-- Each negative comment identified = -2 points (max -15)
-- First impression score < 50 = additional -5 points
+- No clear positioning (isPositioningClear = false OR isMessagingClear = false) = -5 points
+- Users left guessing (areUsersLeftGuessing = true) = -4 points
+- First impression score < 50 = additional -4 points
 
 Calculate total penalty and deduct from overallScore.
 
