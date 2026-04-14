@@ -247,6 +247,14 @@ export async function POST(request: NextRequest) {
   }
 }
 
+/**
+ * Update usage counters after successful audit completion.
+ *
+ * Logic per plan type:
+ * - Free users: No tracking (already blocked by init check after 1 audit)
+ * - One-time pass: Increment subscription.auditsUsed only (lifetime counter)
+ * - Subscription (founder/growth/sovereign): Increment Usage model (monthly + weekly)
+ */
 async function updateUsage(productId: any) {
   try {
     const subscription = await Subscription.findOne({
@@ -255,17 +263,81 @@ async function updateUsage(productId: any) {
       deletedAt: null,
     }).sort({ createdAt: -1 });
 
-    const usage = await Usage.findOne({
-      productId: productId.toString(),
-      periodStart: { $lte: new Date() },
-      periodEnd: { $gte: new Date() },
+    if (!subscription) {
+      console.log(
+        "[Audit Complete] No subscription found, skipping usage update",
+      );
+      return;
+    }
+
+    console.log("[Audit Complete] Updating usage:", {
+      productId,
+      planType: subscription.planType,
+      currentAuditsUsed: subscription.auditsUsed,
     });
 
-    if (usage) {
-      usage.sioAuditsUsed += 1;
-      usage.sioWeeklyAuditUsed += 1;
-      await usage.save();
+    // ------------------------------------------------------------------
+    // ONE-TIME PASS: Increment lifetime counter on subscription
+    // No Usage model needed - simple counter
+    // ------------------------------------------------------------------
+    if (subscription.planType === "onetime") {
+      subscription.auditsUsed = (subscription.auditsUsed || 0) + 1;
+      await subscription.save();
+
+      console.log("[Audit Complete] One-time pass updated:", {
+        auditsUsed: subscription.auditsUsed,
+        totalAuditLimit: subscription.totalAuditLimit,
+        remaining: subscription.totalAuditLimit - subscription.auditsUsed,
+      });
+      return;
     }
+
+    // ------------------------------------------------------------------
+    // SUBSCRIPTION PLANS: Increment Usage model (monthly + weekly)
+    // ------------------------------------------------------------------
+    if (["founder", "growth", "sovereign"].includes(subscription.planType)) {
+      const now = new Date();
+
+      // Find current month's usage record
+      const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+      const monthEnd = new Date(
+        now.getFullYear(),
+        now.getMonth() + 1,
+        0,
+        23,
+        59,
+        59,
+        999,
+      );
+
+      let usage = await Usage.findOne({
+        productId: productId.toString(),
+        periodStart: { $gte: monthStart, $lte: monthEnd },
+      });
+
+      if (usage) {
+        usage.sioAuditsUsed += 1;
+        usage.sioWeeklyAuditUsed += 1;
+        await usage.save();
+
+        console.log("[Audit Complete] Subscription usage updated:", {
+          sioAuditsUsed: usage.sioAuditsUsed,
+          monthlyLimit: subscription.monthlyAuditLimit,
+          sioWeeklyAuditUsed: usage.sioWeeklyAuditUsed,
+          weeklyLimit: subscription.weeklyAuditLimit,
+        });
+      } else {
+        console.warn(
+          "[Audit Complete] No Usage record found for subscription user",
+        );
+      }
+      return;
+    }
+
+    // ------------------------------------------------------------------
+    // FREE USERS: No usage tracking (already handled by init check)
+    // ------------------------------------------------------------------
+    console.log("[Audit Complete] Free user - no usage tracking needed");
   } catch (error) {
     console.error("Failed to update usage:", error);
   }

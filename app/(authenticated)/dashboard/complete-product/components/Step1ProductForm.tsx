@@ -1,5 +1,6 @@
 "use client";
 
+import { LogoUpload } from "@/components/LogoUpload ";
 import { Button } from "@/components/ui/button";
 import {
   CardContent,
@@ -214,26 +215,10 @@ export function Step1ProductForm({
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="logo">Logo URL (optional)</Label>
-              <Input
-                id="logo"
-                value={logo}
-                onChange={(event) => setLogo(event.target.value)}
-                placeholder="https://your-startup.com/logo.png"
-                className="border-slate-300"
-              />
+              <Label htmlFor="logo">Logo - Please upload your logo</Label>
+
+              <LogoUpload value={logo} onChange={(l) => setLogo(l)} />
             </div>
-
-            {logo ? (
-              <div className="flex items-center gap-3 text-sm text-slate-500">
-                <div className="h-10 w-10 rounded-lg border border-slate-200 bg-white flex items-center justify-center overflow-hidden">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={logo} alt="Logo preview" className="h-8 w-8" />
-                </div>
-                Logo preview
-              </div>
-            ) : null}
-
             {error ? (
               <div className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
                 {error}

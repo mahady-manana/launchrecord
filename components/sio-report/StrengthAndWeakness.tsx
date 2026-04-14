@@ -63,7 +63,7 @@ export function StrengthAndWeakness({
             {postiveTitle || "Strengths To Double Down"}
           </div>
           <ul className="space-y-2 p-4">
-            {positiveRender.visible.map((comment, idx) => (
+            {commentPositive.map((comment, idx) => (
               <CommentItem
                 key={idx}
                 as="li"
@@ -71,11 +71,6 @@ export function StrengthAndWeakness({
                 text={comment}
               />
             ))}
-            {Array.from({ length: positiveRender.blurredCount }).map(
-              (_, idx) => (
-                <BlurredMockItem key={`blurred-pos-${idx}`} />
-              ),
-            )}
           </ul>
         </div>
       )}
@@ -86,7 +81,7 @@ export function StrengthAndWeakness({
             {negativeTitle || "Conversion Leaks"}
           </div>
           <ul className="space-y-2 p-4">
-            {negativeRender.visible.map((comment, idx) => (
+            {commentNegative.map((comment, idx) => (
               <CommentItem
                 key={idx}
                 as="li"
@@ -94,11 +89,6 @@ export function StrengthAndWeakness({
                 text={comment}
               />
             ))}
-            {Array.from({ length: negativeRender.blurredCount }).map(
-              (_, idx) => (
-                <BlurredMockItem isRed key={`blurred-neg-${idx}`} />
-              ),
-            )}
           </ul>
         </div>
       )}

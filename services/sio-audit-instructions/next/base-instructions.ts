@@ -241,6 +241,34 @@ Score 0–100 based on:
 - positioning strength
 - differentiation clarity
 
+### STRICT SCORING DISTRIBUTION (FOLLOW EXACTLY):
+
+- 90–100 → FLAWLESS. Category-defining clarity and positioning. Extremely rare. ZERO friction. (<1% of startups).
+- 70–89  → STRONG. Clear differentiation, minimal friction. Well-executed (~10%).
+- 50–69  → AVERAGE. Understandable but has friction points. Most startups fall here (~60%).
+- 30–49  → WEAK. Significant clarity or positioning issues. Conversion breaking (~25%).
+- 0–29   → BROKEN. Users don't understand or don't care. Invisible (~4%).
+
+**MOST STARTUPS SCORE 50-60. ONLY TRULY EXCEPTIONAL ONES REACH 70+.**
+**IF YOU'RE CONSIDERING 70+, ASK: "Is this truly in the top 10% of ALL SaaS sites?" If unsure, score 55-65.**
+
+**SCORING PENALTIES (MANDATORY - APPLY BEFORE RETURNING SCORE)**:
+
+No tolerance for commodization, unprofessionalism or errors.
+
+- Each grammar/spelling error = -5 points penalty.
+- Each unclear sentence/weak messaging = -2 points penalty.
+- No clear positioning (isPositioningClear = false) = -10 points penalty.
+- Users left guessing (areUsersLeftGuessing = true) = -8 points penalty.
+- Each negative comment identified = -2 points (max -15).
+- Generic CTA ("Get Started", "Sign Up") without outcome = -5 points.
+
+Calculate all penalties and deduct from raw score before returning.
+Example: raw score 72 - 15 penalty = 57 final score.
+
+**WHEN IN DOUBT, SCORE LOWER. BETTER STRICT THAN LENIENT.**
+
+
 ---
 
 ## 🧠 SYSTEM PURPOSE

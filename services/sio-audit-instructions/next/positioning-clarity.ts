@@ -123,6 +123,39 @@ For each metric:
 - differentiation strength
 - message structure quality
 
+### STRICT SCORING ANCHORS (FOLLOW EXACTLY):
+
+**Positioning Overall**:
+- 90-100: FLAWLESS. Category-defining. Zero positioning gaps. ICP razor-sharp. Competitors irrelevant. (<1%)
+- 70-79: STRONG. Clear UVP and differentiation. Minor gaps in 1-2 sub-metrics (~10%)
+- 50-64: AVERAGE. Understandable positioning but generic in areas. 3+ sub-metrics in 40-55 range (~60%)
+- 30-49: WEAK. Positioning unclear or commoditized. 4+ sub-metrics below 40 (~25%)
+- 0-29: INVISIBLE. No discernible positioning. Could be anyone. (~4%)
+
+**Clarity Overall**:
+- 90-100: FLAWLESS. Zero friction. Perfect hierarchy. All CTAs specific. No unclear text. (<1%)
+- 70-79: STRONG. Clear messaging with 1-2 friction points. Strong hierarchy (~10%)
+- 50-64: AVERAGE. Mostly clear but has 3-5 unclear sentences. CTAs somewhat generic (~60%)
+- 30-49: WEAK. Confusing messaging. Poor hierarchy. Multiple vague CTAs (~25%)
+- 0-29: BROKEN. Users cannot understand what product does after full read (~4%)
+
+**Sub-Metric Anchors**:
+- Headline Clarity 70+: States WHO, WHAT, WHY in one read. Zero ambiguity.
+- Headline Clarity 50-69: States 2/3 signals. Requires full read for third. Some vagueness.
+- Headline Clarity < 50: Brand-led or feature-led without context. User confused.
+
+- Value Proposition 70+: Explicit unique value. Cannot be confused with competitor.
+- Value Proposition 50-69: Clear value but somewhat generic. Similar to alternatives.
+- Value Proposition < 50: Value unclear or identical to competitors.
+
+- CTA Clarity 70+: Specific action + outcome. Zero generic phrasing.
+- CTA Clarity 50-69: Action clear but outcome vague. Somewhat specific.
+- CTA Clarity < 50: Generic ("Get Started", "Sign Up"). No outcome stated.
+
+**SCORING RULE**: If you identify 3+ negative comments in any section, cap that section's score at 55.
+**SCORING RULE**: If you identify 2+ unclear sentences, cap clarity score at 60.
+**SCORING RULE**: DEFAULT SCORE for average SaaS site = 50-60. Only award 70+ for truly exceptional clarity.
+
 ---
 
 ## 📦 OUTPUT

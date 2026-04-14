@@ -335,9 +335,6 @@ export default function DashboardSIOReport({
                 </div>
 
                 {/* Recommendations Section */}
-                <div id="recommendations" className="px-0 mb-8">
-                  <RecommendationsView report={report as any} />
-                </div>
 
                 {/* Guest CTA */}
                 {isGuest && (

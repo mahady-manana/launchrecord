@@ -131,20 +131,95 @@ Remove if:
 
 ---
 
-## 📊 6. SCORING VALIDATION
+## 📊 6. SCORING VALIDATION (STRICT ENFORCEMENT)
 
-Adjust ONLY if mismatch exists (±5 max)
+CRITICAL: You are NOT allowed to inflate scores.
+Most startups score 50-60. Only exceptional ones reach 70+.
 
-Guidelines:
+Your role: VALIDATE and CORRECT scores if mismatch exists.
 
-- 70–100 → strong clarity, strong positioning, low friction
-- 40–69 → mixed clarity, moderate friction
-- 0–39 → unclear, weak positioning, high friction
+### SCORING DISTRIBUTION (FOLLOW STRICTLY):
 
-Rules:
+- 90–100 → FLAWLESS. Category-defining clarity and positioning. Extremely rare (<1%). ZERO friction anywhere.
+- 70–89  → STRONG. Clear differentiation, minimal friction. Well-executed (~10%).
+- 50–69  → AVERAGE. Understandable but has friction points. Most startups fall here (~60%).
+- 30–49  → WEAK. Significant clarity or positioning issues. Conversion breaking (~25%).
+- 0–29   → BROKEN. Users don't understand or don't care. Invisible (~4%).
 
-- real issues → score must drop
-- strong clarity → score must reflect it
+**MOST STARTUPS SCORE 50-60. ONLY TRULY EXCEPTIONAL ONES REACH 70+.**
+**IF SCORE IS ABOVE 70, YOU MUST JUSTIFY WHY THIS IS IN THE TOP 10% OF ALL SAAS SITES.**
+**IF SCORE IS ABOVE 80, IT MUST BE TRULY WORLD-CLASS. Almost no startup reaches this.**
+
+---
+
+### MANDATORY SCORING PENALTIES (APPLY BEFORE RETURNING):
+
+You MUST deduct points for these issues. NO EXCEPTIONS.
+
+**PENALTY RULES**:
+
+- Each unclear sentence = -2 points (max -10)
+- Each grammar/spelling error = -5 points
+- Each unclear/weak messaging instance = -2 points
+- No clear positioning (isPositioningClear = false OR isMessagingClear = false) = -10 points
+- Users left guessing (areUsersLeftGuessing = true) = -8 points
+- Each negative comment identified = -2 points (max -15)
+- First impression score < 50 = additional -5 points
+
+Calculate total penalty and deduct from overallScore.
+
+Example:
+- 3 unclear sentences = -6
+- No clear positioning = -10
+- 4 negative issues = -8
+- Total penalty = -24 points
+- If raw score = 72, final score = 72 - 24 = 48
+
+---
+
+### SCORE-SPECIFIC CHECKS:
+
+**For scores 70+**:
+- MUST have zero unclear sentences
+- MUST have strong differentiation explicitly stated
+- MUST have no positioning weaknesses in sub-metrics
+- MUST have headline that states WHO, WHAT, WHY clearly
+- If ANY of these are missing, cap score at 60
+
+**For scores 60-69**:
+- Can have 1-2 minor unclear sentences
+- MUST have explicit positioning
+- Can have 2-3 negative comments max
+- If has weak headline or vague CTA, cap at 55
+
+**For scores 50-59** (most common):
+- Typical startup range
+- Has understandable messaging but with friction
+- 3-5 negative comments normal
+- Some sub-metrics weak (40-50 range)
+
+**For scores < 50**:
+- Significant issues present
+- Users confused or unconvinced
+- Multiple weak sub-metrics
+- Poor first impression
+
+---
+
+### VALIDATION PROCESS:
+
+1. Count all unclear sentences → apply penalty
+2. Count all negative comments across sections → apply penalty
+3. Check positioning/messaging clarity flags → apply penalty if false
+4. Check if users left guessing → apply penalty if true
+5. Review sub-metric scores → if variance is low (<50) and avg > 55, likely AI was too generous, cap at 55
+6. Calculate total penalty
+7. Apply to overallScore: finalScore = rawScore - penalty
+8. If finalScore < 0, set to 0
+9. Update individual section scores proportionally if overall changed significantly
+
+RULE: When in doubt, SCORE LOWER. Better to be strict than lenient.
+RULE: DEFAULT score for average SaaS = 50-60. Only go above 65 if truly exceptional.
 
 ---
 

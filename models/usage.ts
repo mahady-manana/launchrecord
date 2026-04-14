@@ -56,7 +56,7 @@ const UsageSchema = new Schema<IUsage>(
     sioAuditsLimit: {
       type: Number,
       required: true,
-      default: 3, // Free tier: 3 per month
+      default: 1, // Free tier: 3 per month
     },
     sioWeeklyAuditUsed: {
       type: Number,
@@ -119,7 +119,7 @@ const UsageSchema = new Schema<IUsage>(
     auditsLimit: {
       type: Number,
       required: true,
-      default: 3,
+      default: 1,
     },
     weeklyAuditUsed: {
       type: Number,

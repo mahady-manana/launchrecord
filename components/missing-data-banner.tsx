@@ -50,7 +50,8 @@ export function MissingDataBanner({ className }: MissingDataBannerProps) {
         </div>
         <div className="flex-1">
           <h3 className="font-semibold text-red-800">
-            Incomplete Product Information
+            Update your product infos to complete your profile - Launchrecord
+            Startup Directories
           </h3>
           <p className="text-sm text-red-700 mt-1">
             Missing:{" "}

@@ -268,7 +268,10 @@ export function Step2Pricing({ productId, onBack }: Step2PricingProps) {
         })}
       </div>
       <div className="py-10 flex justify-end">
-        <Link href="/dashboard" className="underline text-sm text-slate-500">
+        <Link
+          href={`/dashboard/${productId || ""}`}
+          className="underline text-sm text-slate-500"
+        >
           Skip and continue with limited report only
         </Link>
       </div>

@@ -42,9 +42,10 @@ Definitions:
 
 Rules:
 
-- currents → verbatim text only
+- currents → Only what is said in website.
 - no reclassification between categories
-- no inference
+- Rephrasing is only allow if needed no forced.
+- Max 5 items
 
 For each:
 
@@ -78,6 +79,19 @@ Check:
 - clarity speed
 - conversion intent
 - positioning clarity
+
+### SCORING ANCHORS FOR FIRST IMPRESSION:
+
+- 90-100: FLAWLESS. Headline instantly states WHO, WHAT, WHY. Subheadline reinforces perfectly. CTA specific + outcome. Zero friction. (<1%)
+- 70-79: STRONG. Headline clear on 2/3 signals. Minor friction. CTA action clear but outcome somewhat vague (~10%)
+- 50-64: AVERAGE. Headline vague on WHO or WHY. Requires full read. CTA generic ("Get Started"). Typical SaaS site (~60%)
+- 30-49: WEAK. Headline is brand name or feature list without context. User confused after 5s (~25%)
+- 0-29: BROKEN. Headline communicates nothing about value. User doesn't understand product after 10s (~4%)
+
+**SCORING RULE**: If headline doesn't state WHO it's for, cap at 55.
+**SCORING RULE**: If CTA is generic ("Get Started", "Sign Up", "Try now") without outcome, cap at 50.
+**SCORING RULE**: If headline has grammar/spelling errors, deduct 5 points immediately.
+**SCORING RULE**: DEFAULT SCORE for average SaaS hero section = 50-60.
 
 Analyze:
 

@@ -4,11 +4,17 @@
  * Purpose:
  * - Validate URL and user permissions
  * - Check for existing recent reports
- * - Verify usage limits
+ * - Verify usage limits (simple logic per plan type)
  * - Fetch website content
  * - Validate content sufficiency
  * - ONLY create report if all conditions pass
  * - Return reportId with content already fetched
+ *
+ * USAGE LOGIC:
+ * - Guest: 1 audit per URL (30-day cache)
+ * - Free (no subscription): 1 audit per product (lifetime)
+ * - One-time pass: 5 audits total (lifetime, tracked on subscription.auditsUsed)
+ * - Subscription (founder/growth/sovereign): Monthly + weekly limits via Usage model
  */
 
 import { connectToDatabase } from "@/lib/db";
@@ -29,24 +35,29 @@ const initAuditSchema = z.object({
   isGuest: z.boolean().optional(),
 });
 
-function getWeekBounds(date: Date) {
-  const now = new Date(date);
-  const dayOfWeek = now.getDay();
-  const diff = now.getDate() - dayOfWeek;
+/**
+ * Find active subscription for a product.
+ * Tries exact productId match first, then broader search for one-time passes.
+ */
+async function findSubscription(productId: string) {
+  // Strategy 1: Exact product match
+  let subscription = await Subscription.findOne({
+    productId,
+    status: "active",
+    deletedAt: null,
+  }).sort({ createdAt: -1 });
 
-  const weekStart = new Date(now);
-  weekStart.setDate(diff);
-  weekStart.setHours(0, 0, 0, 0);
-
-  const weekEnd = new Date(weekStart);
-  weekEnd.setDate(weekStart.getDate() + 7);
-  weekEnd.setMilliseconds(-1);
-
-  return { weekStart, weekEnd };
+  return subscription;
 }
 
-function getMonthBounds(date: Date) {
-  const now = new Date(date);
+/**
+ * Get or create Usage tracking record for subscription-based plans.
+ * Only used for monthly/weekly subscription plans (founder/growth/sovereign).
+ */
+async function getOrCreateUsage(productId: string) {
+  const now = new Date();
+
+  // Month bounds: 1st to last day of current month
   const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
   const monthEnd = new Date(
     now.getFullYear(),
@@ -58,62 +69,44 @@ function getMonthBounds(date: Date) {
     999,
   );
 
-  return { monthStart, monthEnd };
-}
+  // Week bounds: Sunday to Saturday
+  const dayOfWeek = now.getDay();
+  const weekStart = new Date(now);
+  weekStart.setDate(now.getDate() - dayOfWeek);
+  weekStart.setHours(0, 0, 0, 0);
+  const weekEnd = new Date(weekStart);
+  weekEnd.setDate(weekStart.getDate() + 7);
+  weekEnd.setMilliseconds(-1);
 
-async function getOrCreateSioUsage(
-  productId: string,
-  monthlyLimit: number,
-  weeklyLimit: number,
-) {
-  const now = new Date();
-  const { weekStart, weekEnd } = getWeekBounds(now);
-  const { monthStart, monthEnd } = getMonthBounds(now);
-
+  // Find existing usage for current month
   let usage = await Usage.findOne({
     productId,
     periodStart: { $gte: monthStart, $lte: monthEnd },
   });
 
   if (!usage) {
+    // Create new monthly tracking
     usage = await Usage.create({
       productId,
       periodStart: monthStart,
       periodEnd: monthEnd,
       sioAuditsUsed: 0,
-      sioAuditsLimit: monthlyLimit,
       sioWeeklyAuditUsed: 0,
-      sioWeeklyAuditLimit: weeklyLimit,
-      positioningAuditsUsed: 0,
-      positioningAuditsLimit: monthlyLimit,
-      positioningWeeklyAuditUsed: 0,
-      positioningWeeklyAuditLimit: weeklyLimit,
-      clarityAuditsUsed: 0,
-      clarityAuditsLimit: monthlyLimit,
-      clarityWeeklyAuditUsed: 0,
-      clarityWeeklyAuditLimit: weeklyLimit,
       weekStart,
       weekEnd,
       resetAt: weekEnd,
     });
   } else {
+    // Reset weekly counter if new week
     if (usage.weekEnd < now) {
       usage.sioWeeklyAuditUsed = 0;
-      usage.positioningWeeklyAuditUsed = 0;
-      usage.clarityWeeklyAuditUsed = 0;
       usage.weekStart = weekStart;
       usage.weekEnd = weekEnd;
       usage.resetAt = weekEnd;
     }
 
-    usage.sioAuditsLimit = monthlyLimit;
-    usage.sioWeeklyAuditLimit = weeklyLimit;
-    usage.positioningAuditsLimit = monthlyLimit;
-    usage.positioningWeeklyAuditLimit = weeklyLimit;
-    usage.clarityAuditsLimit = monthlyLimit;
-    usage.clarityWeeklyAuditLimit = weeklyLimit;
+    // Update month end
     usage.periodEnd = monthEnd;
-
     await usage.save();
   }
 
@@ -166,14 +159,15 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // Check for existing recent report (30 days)
+    // ========================================================================
+    // GUEST USERS: 1 audit per URL (30-day cache)
+    // ========================================================================
     if (isGuest) {
       const thirtyDaysAgo = new Date();
       thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
       const existingReport = await SIOReport.findOne({
         url: hostUrl,
-        createdAt: { $gte: thirtyDaysAgo },
         progress: "complete",
       })
         .sort({ createdAt: -1 })
@@ -190,10 +184,15 @@ export async function POST(request: NextRequest) {
           { status: 409 },
         );
       }
+
+      // Guest allowed, proceed
     }
 
-    // Verify product access for logged-in users
+    // ========================================================================
+    // AUTHENTICATED USERS: Verify product access + check limits
+    // ========================================================================
     if (!isGuest && productId) {
+      // Verify product access
       const product = await Product.findOne({ _id: productId, users: userId });
 
       if (!product) {
@@ -202,87 +201,34 @@ export async function POST(request: NextRequest) {
           { status: 403 },
         );
       }
-    }
 
-    // Check usage limits
-    let usage: Awaited<ReturnType<typeof getOrCreateSioUsage>> | null = null;
-    let monthlyLimit = 0;
-    let weeklyLimit = 0;
-    let totalLimit = 0;
-    let planType = "free";
+      // Find subscription for this product
+      const subscription = await findSubscription(productId);
 
-    if (!isGuest && productId) {
-      const subscription = await Subscription.findOne({
+      console.log("[Audit Init] Subscription check:", {
         productId,
-        status: "active",
-        deletedAt: null,
-      }).sort({ createdAt: -1 });
+        found: !!subscription,
+        planType: subscription?.planType,
+        monthlyLimit: subscription?.monthlyAuditLimit,
+        weeklyLimit: subscription?.weeklyAuditLimit,
+        totalLimit: subscription?.totalAuditLimit,
+        auditsUsed: subscription?.auditsUsed,
+      });
 
-      monthlyLimit = subscription?.monthlyAuditLimit || 0;
-      weeklyLimit = subscription?.weeklyAuditLimit || 0;
-      totalLimit = subscription?.totalAuditLimit || 0;
-      planType = subscription?.planType || "free";
-
-      // Check total audit limit (for one-time payments)
-      if (totalLimit > 0) {
-        usage = await getOrCreateSioUsage(productId, totalLimit, 0);
-
-        if (usage.sioAuditsUsed >= totalLimit) {
-          return NextResponse.json(
-            {
-              error: `You've used all ${totalLimit} audits included in your one-time pass. Upgrade to Founder for unlimited audits.`,
-              limitReached: true,
-              limitType: "total",
-              used: usage.sioAuditsUsed,
-              limit: totalLimit,
-              resetAt: null,
-              upgradeRequired: true,
-            },
-            { status: 403 },
-          );
-        }
-      }
-      // Check monthly limit (for subscriptions)
-      else if (monthlyLimit > 0) {
-        usage = await getOrCreateSioUsage(productId, monthlyLimit, weeklyLimit);
-
-        if (usage.sioAuditsUsed >= monthlyLimit) {
-          return NextResponse.json(
-            {
-              error: `You've reached your monthly SIO audit limit (${monthlyLimit}/month). Next reset on ${usage.periodEnd.toLocaleDateString()}.`,
-              limitReached: true,
-              limitType: "monthly",
-              used: usage.sioAuditsUsed,
-              limit: monthlyLimit,
-              resetAt: usage.periodEnd,
-            },
-            { status: 403 },
-          );
-        }
-
-        // Check weekly limit
-        if (weeklyLimit > 0 && usage.sioWeeklyAuditUsed >= weeklyLimit) {
-          return NextResponse.json(
-            {
-              error: `You've reached your weekly SIO audit limit (${weeklyLimit}/week). Next reset on ${usage.resetAt.toLocaleDateString()}.`,
-              limitReached: true,
-              limitType: "weekly",
-              used: usage.sioWeeklyAuditUsed,
-              limit: weeklyLimit,
-              resetAt: usage.resetAt,
-            },
-            { status: 403 },
-          );
-        }
-      }
-      // Free plan - check if they already have any reports (only 1 allowed ever)
-      else {
+      // ------------------------------------------------------------------
+      // NO SUBSCRIPTION = FREE PLAN: 1 audit per product (lifetime)
+      // ------------------------------------------------------------------
+      if (!subscription || subscription.planType === "free") {
         const existingReports = await SIOReport.countDocuments({
           product: productId,
           progress: "complete",
         });
 
         if (existingReports >= 1) {
+          console.log("[Audit Init] Free plan limit reached", {
+            existingReports,
+          });
+
           return NextResponse.json(
             {
               error:
@@ -298,12 +244,98 @@ export async function POST(request: NextRequest) {
           );
         }
 
-        // Initialize usage for tracking
-        usage = await getOrCreateSioUsage(productId, 1, 0);
+        // Free user with 0 audits → allowed, proceed
+        console.log("[Audit Init] Free user allowed (first audit)");
+      }
+
+      // ------------------------------------------------------------------
+      // ONE-TIME PASS: Lifetime N audits (tracked on subscription.auditsUsed)
+      // No period tracking. Simple counter.
+      // ------------------------------------------------------------------
+      else if (subscription.planType === "onetime") {
+        const totalLimit = subscription.totalAuditLimit || 5; // Default 5 if not set
+        const auditsUsed = subscription.auditsUsed || 0;
+
+        console.log("[Audit Init] One-time pass check:", {
+          totalLimit,
+          auditsUsed,
+          remaining: totalLimit - auditsUsed,
+        });
+
+        if (auditsUsed >= totalLimit) {
+          return NextResponse.json(
+            {
+              error: `You've used all ${totalLimit} audits included in your one-time pass. Upgrade to Founder for unlimited audits.`,
+              limitReached: true,
+              limitType: "total",
+              used: auditsUsed,
+              limit: totalLimit,
+              resetAt: null,
+              upgradeRequired: true,
+            },
+            { status: 403 },
+          );
+        }
+
+        // One-time user with remaining audits → allowed, proceed
+        console.log("[Audit Init] One-time pass allowed");
+      }
+
+      // ------------------------------------------------------------------
+      // SUBSCRIPTION (founder/growth/sovereign): Monthly + weekly limits
+      // Uses Usage model for period tracking
+      // ------------------------------------------------------------------
+      else {
+        const monthlyLimit = subscription.monthlyAuditLimit || 0;
+        const weeklyLimit = subscription.weeklyAuditLimit || 0;
+
+        console.log("[Audit Init] Subscription plan check:", {
+          planType: subscription.planType,
+          monthlyLimit,
+          weeklyLimit,
+        });
+
+        // Get or create usage tracking for this month
+        const usage = await getOrCreateUsage(productId);
+
+        // Check monthly limit
+        if (monthlyLimit > 0 && usage.sioAuditsUsed >= monthlyLimit) {
+          return NextResponse.json(
+            {
+              error: `You've reached your monthly SIO audit limit (${monthlyLimit}/month). Next reset on ${usage.periodEnd.toLocaleDateString()}.`,
+              limitReached: true,
+              limitType: "monthly",
+              used: usage.sioAuditsUsed,
+              limit: monthlyLimit,
+              resetAt: usage.periodEnd,
+            },
+            { status: 403 },
+          );
+        }
+
+        // Check weekly limit (if set)
+        if (weeklyLimit > 0 && usage.sioWeeklyAuditUsed >= weeklyLimit) {
+          return NextResponse.json(
+            {
+              error: `You've reached your weekly SIO audit limit (${weeklyLimit}/week). Next reset on ${usage.resetAt.toLocaleDateString()}.`,
+              limitReached: true,
+              limitType: "weekly",
+              used: usage.sioWeeklyAuditUsed,
+              limit: weeklyLimit,
+              resetAt: usage.resetAt,
+            },
+            { status: 403 },
+          );
+        }
+
+        // Subscription user within limits → allowed, proceed
+        console.log("[Audit Init] Subscription user allowed");
       }
     }
 
-    // Fetch website content BEFORE creating report
+    // ========================================================================
+    // ALL CHECKS PASSED - Fetch website content
+    // ========================================================================
     const websiteContent = await getWebsiteContent(normalizedUrl, true);
 
     if (!websiteContent) {
@@ -313,7 +345,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Validate content sufficiency BEFORE creating report
+    // Validate content sufficiency
     const contentLength = websiteContent.simplifiedContent?.trim().length || 0;
     if (contentLength < 100) {
       return NextResponse.json(
@@ -326,7 +358,9 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // ALL CONDITIONS MET - Now create the report with content
+    // ========================================================================
+    // CREATE REPORT
+    // ========================================================================
     const newReport = await SIOReport.create({
       url: hostUrl,
       product: isGuest ? undefined : productId || undefined,
@@ -547,6 +581,37 @@ export async function POST(request: NextRequest) {
       },
     });
 
+    // ========================================================================
+    // DETERMINE PLAN TYPE FOR RESPONSE
+    // ========================================================================
+    let planType = "free";
+    let usageRemaining: number | null = null;
+
+    if (!isGuest && productId) {
+      const subscription = await findSubscription(productId);
+      if (subscription) {
+        planType = subscription.planType;
+
+        if (subscription.planType === "onetime") {
+          const totalLimit = subscription.totalAuditLimit || 5;
+          const auditsUsed = subscription.auditsUsed || 0;
+          usageRemaining = totalLimit - auditsUsed - 1; // -1 for this audit
+        } else if (
+          ["founder", "growth", "sovereign"].includes(subscription.planType)
+        ) {
+          const usage = await Usage.findOne({
+            productId,
+            periodStart: { $lte: new Date() },
+            periodEnd: { $gte: new Date() },
+          });
+          if (usage && subscription.monthlyAuditLimit > 0) {
+            usageRemaining =
+              subscription.monthlyAuditLimit - usage.sioAuditsUsed - 1;
+          }
+        }
+      }
+    }
+
     return NextResponse.json({
       success: true,
       reportId: newReport._id.toString(),
@@ -564,16 +629,7 @@ export async function POST(request: NextRequest) {
         url: hostUrl,
         isGuest,
         planType,
-        usageRemaining:
-          totalLimit > 0
-            ? totalLimit - (usage?.sioAuditsUsed || 0)
-            : monthlyLimit > 0
-              ? monthlyLimit - (usage?.sioAuditsUsed || 0)
-              : usage
-                ? 1 - usage.sioAuditsUsed
-                : null,
-        limitType:
-          totalLimit > 0 ? "total" : monthlyLimit > 0 ? "monthly" : null,
+        usageRemaining,
       },
     });
   } catch (error: any) {
