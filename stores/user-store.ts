@@ -1,10 +1,12 @@
-import { create } from "zustand";
 import type { UserRecord } from "@/types/user";
+import { create } from "zustand";
 
 interface UserState {
   users: UserRecord[];
   isLoading: boolean;
   setUsers: (users: UserRecord[]) => void;
+  isGuest: boolean;
+  setIsGuest: (b: boolean) => void;
   setIsLoading: (value: boolean) => void;
   addUser: (user: UserRecord) => void;
   updateUser: (user: UserRecord) => void;
@@ -15,6 +17,12 @@ interface UserState {
 export const useUserStore = create<UserState>((set) => ({
   users: [],
   isLoading: false,
+  isGuest: false,
+  setIsGuest(b) {
+    set({
+      isGuest: b,
+    });
+  },
   setUsers: (users) => set({ users }),
   setIsLoading: (value) => set({ isLoading: value }),
   addUser: (user) =>

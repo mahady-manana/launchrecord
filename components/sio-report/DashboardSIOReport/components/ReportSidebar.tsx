@@ -17,12 +17,12 @@ export function ReportSidebar({
   const { tier } = useSubscription(isGuest);
 
   return (
-    <nav className="sticky top-24 max-h-[calc(100vh-8rem)] overflow-y-auto pr-2 space-y-1 no-scrollbar">
+    <nav className="sticky top-18 max-h-[calc(100vh-6rem)] overflow-y-auto pr-2 space-y-1 no-scrollbar">
       {reportNavigation.map((nav) => (
         <div key={nav.id}>
           <button
             onClick={() => onNavigate(nav.id)}
-            className={`w-full text-left px-3 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2 ${
+            className={`w-full text-left px-3 py-1 rounded-lg text-sm font-medium transition-colors flex items-center gap-2 ${
               activeSection === nav.id
                 ? "bg-primary/10 text-primary"
                 : "text-slate-600 hover:bg-slate-100"
@@ -44,10 +44,10 @@ export function ReportSidebar({
                 <button
                   key={child.id}
                   onClick={() => tier !== "guest" && onNavigate(child.id)}
-                  className={`w-full text-left px-3 py-1.5 rounded text-xs transition-colors ${
+                  className={`w-full text-left px-3 py-0.5 rounded text-xs transition-colors ${
                     activeSection === child.id
                       ? "text-primary font-semibold"
-                      : "text-slate-500 hover:text-slate-700"
+                      : "text-slate-600 hover:text-slate-800"
                   }`}
                   disabled={tier === "guest" && idx === 0}
                 >

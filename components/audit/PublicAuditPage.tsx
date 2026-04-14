@@ -3,6 +3,7 @@
 import { AuditForm, AuditLoader, useAudit } from "@/components/audit";
 import { Button } from "@/components/ui/button";
 import { SIOV5Report } from "@/services/sio-report/schema";
+import { useUserStore } from "@/stores/user-store";
 import {
   AlertCircle,
   ArrowRight,
@@ -21,7 +22,7 @@ export default function PublicAuditPage() {
   const [url, setUrl] = useState("");
   const [cachedWarning, setCachedWarning] = useState<string | null>(null);
   const searchParams = useSearchParams();
-
+  const setIsGuest = useUserStore((s) => s.setIsGuest);
   const { status, startAudit, isRunning, isComplete, isFailed } = useAudit({
     isGuest: true,
     onComplete: (report: SIOV5Report) => {
@@ -40,6 +41,10 @@ export default function PublicAuditPage() {
       startAudit(prefillUrl);
     }
   }, [searchParams, url, isRunning, isComplete, isFailed, startAudit]);
+
+  useEffect(() => {
+    setIsGuest(true);
+  }, []);
 
   const handleSubmit = async (normalizedUrl: string) => {
     setUrl(normalizedUrl);
@@ -189,7 +194,7 @@ export default function PublicAuditPage() {
         {/* Report Display */}
         {isComplete && status.data && (
           <div className={isComplete ? "pb-20" : ""}>
-            <DashboardSIOReport {...status.data} />
+            <DashboardSIOReport report={status.data as any} isGuest />
           </div>
         )}
 

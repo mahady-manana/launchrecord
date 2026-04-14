@@ -319,7 +319,7 @@ export function PositioningCard({ report }: PositioningCardProps) {
         </h3>
         <div className="grid md:grid-cols-2 gap-4">
           <SubMetricCard
-            name={report.subMetrics.categoryOwnership.name}
+            name={report.subMetrics.categoryOwnership.statement}
             score={report.subMetrics.categoryOwnership.score}
             current={report.subMetrics.categoryOwnership.current}
             positiveComments={
@@ -331,7 +331,7 @@ export function PositioningCard({ report }: PositioningCardProps) {
             suggested={report.subMetrics.categoryOwnership.suggested}
           />
           <SubMetricCard
-            name={report.subMetrics.uniqueValueProp.name}
+            name={report.subMetrics.uniqueValueProp.statement}
             score={report.subMetrics.uniqueValueProp.score}
             current={report.subMetrics.uniqueValueProp.current}
             positiveComments={
@@ -343,7 +343,7 @@ export function PositioningCard({ report }: PositioningCardProps) {
             suggested={report.subMetrics.uniqueValueProp.suggested}
           />
           <SubMetricCard
-            name={report.subMetrics.competitiveDiff.name}
+            name={report.subMetrics.competitiveDiff.statement}
             score={report.subMetrics.competitiveDiff.score}
             current={report.subMetrics.competitiveDiff.current}
             positiveComments={
@@ -355,7 +355,7 @@ export function PositioningCard({ report }: PositioningCardProps) {
             suggested={report.subMetrics.competitiveDiff.suggested}
           />
           <SubMetricCard
-            name={report.subMetrics.targetAudience.name}
+            name={report.subMetrics.targetAudience.statement}
             score={report.subMetrics.targetAudience.score}
             current={report.subMetrics.targetAudience.current}
             positiveComments={report.subMetrics.targetAudience.positiveComments}
@@ -363,7 +363,7 @@ export function PositioningCard({ report }: PositioningCardProps) {
             suggested={report.subMetrics.targetAudience.suggested}
           />
           <SubMetricCard
-            name={report.subMetrics.problemSolutionFit.name}
+            name={report.subMetrics.problemSolutionFit.statement}
             score={report.subMetrics.problemSolutionFit.score}
             current={report.subMetrics.problemSolutionFit.current}
             positiveComments={
@@ -375,7 +375,7 @@ export function PositioningCard({ report }: PositioningCardProps) {
             suggested={report.subMetrics.problemSolutionFit.suggested}
           />
           <SubMetricCard
-            name={report.subMetrics.messagingConsistency.name}
+            name={report.subMetrics.messagingConsistency.statement}
             score={report.subMetrics.messagingConsistency.score}
             current={report.subMetrics.messagingConsistency.current}
             positiveComments={

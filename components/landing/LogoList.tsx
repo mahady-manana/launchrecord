@@ -4,7 +4,6 @@ import { useCallback, useEffect, useState } from "react";
 
 export function LogoList() {
   const [logos, setLogos] = useState<any[]>([]);
-  const [websites, setWebsite] = useState<any[]>([]);
   const [count, setCount] = useState<number>(0);
 
   const fetchs = useCallback(async () => {
@@ -27,38 +26,41 @@ export function LogoList() {
   }, [fetchs]);
   return (
     <div className="pt-0 flex flex-col justify-center w-full">
-      <div className="md:max-w-6xl max-w-[320px] mx-auto flex gap-0 p-4 overflow-x-auto md:overflow-x-hidden">
+      <div className="md:max-w-7xl max-w-[320px] mx-auto flex gap-0 p-4 overflow-x-auto md:overflow-x-hidden">
         {logos.map((logo, idx) => (
-          <ImageComp key={idx} url={logo.url} />
+          <ImageComp key={idx} url={logo.url} logoUrl={logo.product?.logo} />
         ))}
         <div className="hidden md:block z-999">
-          <div className="bg-slate-800 px-2 text-white flex items-center justify-center h-8 rounded-full border overflow-hidden">
-            <p className="text-xs font-bold">+{count}58 Audits last week</p>
+          <div className="bg-slate-50 px-2 text-slate-700 flex items-center justify-center h-8 rounded-full border overflow-hidden">
+            <p className="text-xs font-bold">+{count} Audits last week</p>
           </div>
         </div>
       </div>
       <div className="block md:hidden pt-4">
         <div className="bg-slate-800 px-2 text-white flex items-center justify-center h-8 rounded-full border overflow-hidden">
-          <p className="text-xs font-bold">+{count}58 Audits last week</p>
+          <p className="text-xs font-bold">+{count} Audits last week</p>
         </div>
       </div>
     </div>
   );
 }
 
-const ImageComp = ({ url }: { url: string }) => {
+const ImageComp = ({ url, logoUrl }: { url: string; logoUrl?: string }) => {
   const [logo, setLogo] = useState(url);
 
-  if (!logo) {
+  if (!logo && !logoUrl) {
     return null;
   }
   return (
-    <div className="w-5 relative">
+    <div className="w-10 relative">
       <div className="absolute left-0 top-1/2 -translate-y-1/2 w-8 h-8 bg-white rounded-full border overflow-hidden">
         <img
-          src={appLogo({
-            website: logo,
-          })}
+          src={
+            logoUrl ||
+            appLogo({
+              website: logo,
+            })
+          }
           height={30}
           width={30}
           className={clsx("object-cover h-8 w-8")}

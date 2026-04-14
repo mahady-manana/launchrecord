@@ -9,27 +9,21 @@ export async function GET(request: NextRequest) {
 
     const products = await SIOReport.find({
       progress: "complete",
+      product: { $exists: true },
     })
+      .populate("product", "logo", Product)
       .sort({ createdAt: -1, name: 1 })
-      .select("url")
-      .limit(30);
+      .select("url product")
+      .limit(25);
 
     const count = await SIOReport.countDocuments({
       progress: "complete",
     });
 
-    const website = await Product.find({
-      website: { $exists: true, $ne: null },
-    })
-      .sort({ createdAt: -1, name: 1 })
-      .select("website")
-      .limit(30);
-
     return NextResponse.json({
       success: true,
       data: {
         logos: products,
-        websites: website,
         count: count,
       },
     });

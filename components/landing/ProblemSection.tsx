@@ -1,6 +1,15 @@
 "use client";
 
-import { AlertTriangle, TrendingDown, XCircle } from "lucide-react";
+import Autoplay from "embla-carousel-autoplay";
+import {
+  AlertTriangle,
+  ChevronRight,
+  TrendingDown,
+  XCircle,
+} from "lucide-react";
+import Link from "next/link";
+import React from "react";
+import { Carousel, CarouselContent, CarouselItem } from "../ui/carousel";
 
 interface Problem {
   stat: string;
@@ -12,78 +21,104 @@ interface Problem {
 const problems: Problem[] = [
   {
     stat: "85% of startups have positioning debt",
-    title: "You Sound Like Everyone Else",
+    title: "You sound kike everyone else",
     description:
-      "Your messaging is generic. You’re solving the same problems the same way as everyone else. Prospects can’t tell why you’re different—so they don’t choose you.",
-    icon: <AlertTriangle className="h-8 w-8" />,
+      "No clear positioning. You’re solving the same problems the same way as everyone else.",
+    icon: <AlertTriangle className="h-6 w-6" />,
   },
   {
     stat: "65% of visitors leave from unclear messaging",
-    title: "Visitors Don’t Get It",
-    description:
-      "People land on your site and don’t understand what you do in seconds. You talk about your product, not their problem. Confusion kills conversions.",
-    icon: <TrendingDown className="h-8 w-8" />,
+    title: "Visitors don’t get it",
+    description: "Unclear messaging. Confusion kills conversions instantly",
+    icon: <TrendingDown className="h-6 w-6" />,
   },
   {
     stat: "94.2% of startups are invisible to AI",
-    title: "AI Can’t See You",
+    title: "AI can’t see you",
     description:
-      "You’re not cited, recommended, or surfaced by AI systems. If your positioning isn’t clear, you don’t exist in the fastest-growing discovery channel.",
-    icon: <XCircle className="h-8 w-8" />,
+      "No visibility. You don’t exist in the fastest-growing discovery channel.",
+    icon: <XCircle className="h-6 w-6" />,
   },
 ];
 
+const imagesCar = [
+  "/images/report-1.png",
+  "/images/report-2.png",
+  "/images/report-3.png",
+];
+
 export function ProblemSection() {
+  const plugin = React.useRef(
+    Autoplay({ delay: 3000, stopOnInteraction: true }),
+  );
   return (
-    <section className="py-20 bg-blue-800 text-slate-100" id="problems">
-      <div className="max-w-7xl mx-auto px-4">
+    <section
+      className="py-12 bg-gradient-to-b from-white via-amber-100 via-orange-100 to-blue-100"
+      id="problems"
+    >
+      <div className="px-4 py-8 max-w-7xl mx-auto">
         {/* Section Header */}
-        <div className="text-center space-y-4 mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold tracking-tighter">
-            The Silent Killers of Most Startups
+        <div className="space-y-4 mb-16 max-w-4xl">
+          <h2 className="text-2xl md:text-3xl tracking-tighter inline font-medium">
+            The silent killers of most startups.
           </h2>
-          <p className="text-xl text-slate-200 max-w-3xl mx-auto">
-            Most founders are building features without clear positioning,
-            messaging, or visibility. The market doesn’t care. Here’s what’s
-            quietly killing your startup.
+          <p className="inline text-2xl md:text-3xl tracking-tighter pl-2 font-medium text-slate-600">
+            Most SaaS don’t fail because of the product — they fail because no
+            one understands them.
           </p>
         </div>
+        <div className="md:flex gap-8 md:space-y-0 space-y-8">
+          <div className="space-y-4 bg-white max-w-md p-8 border rounded-md shadow-xl">
+            {problems.map((problem, index) => (
+              <div key={index} className="relative p-2">
+                {/* Stat - Small, colored, supporting evidence */}
+                {/* <p className="text-sm font-semibold">{problem.stat}</p> */}
 
-        {/* Problems Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {problems.map((problem, index) => (
-            <div key={index} className="relative p-2">
-              {/* Icon */}
-              <div className="w-16 h-16 rounded-lg border border-slate-100 text-white flex items-center justify-center mb-6">
-                {problem.icon}
+                {/* Title - Large, clear, direct problem statement */}
+                <div className="flex items-end gap-4 pb-2 text-primary">
+                  <div className="">{problem.icon}</div>
+                  <h3 className="text-md  font-medium tracking-tight leading-tight">
+                    {problem.title}
+                  </h3>
+                </div>
+
+                {/* Description */}
+                <p className="leading-relaxed">{problem.description}</p>
               </div>
-
-              {/* Stat - Small, colored, supporting evidence */}
-              <p className="text-sm font-semibold text-white mb-3">
-                {problem.stat}
-              </p>
-
-              {/* Title - Large, clear, direct problem statement */}
-              <h3 className="text-xl md:text-2xl font-bold text-slate-100 tracking-tight mb-4 leading-tight">
-                {problem.title}
-              </h3>
-
-              {/* Description */}
-              <p className="text-slate-100 leading-relaxed">
-                {problem.description}
-              </p>
+            ))}
+            <div className="flex">
+              <Link
+                href="/sio-audit"
+                className="flex items-center rounded-md text-lg gap-4 bg-primary text-white h-10 w-full justify-center px-6"
+              >
+                <span>Run free audit</span>
+                <ChevronRight size={15} />
+              </Link>
             </div>
-          ))}
-        </div>
-
-        {/* Bottom CTA */}
-        <div className="mt-16 text-center">
-          <p className="text-slate-100 text-lg mb-2">
-            The question isn't if you have these problems.
-          </p>
-          <p className="text-red-100 font-bold text-xl">
-            It's how bad they've already infected your conversion.
-          </p>
+          </div>
+          <div className="p-8 flex flex-1 items-center bg-white border rounded-md shadow-xl">
+            <div>
+              <Carousel
+                className="w-full"
+                opts={{
+                  active: true,
+                }}
+                plugins={[plugin.current]}
+                onMouseEnter={plugin.current.stop}
+                onMouseLeave={plugin.current.reset}
+              >
+                <CarouselContent>
+                  {imagesCar.map((src, index) => (
+                    <CarouselItem key={index}>
+                      <div className="p-1">
+                        <img src={src} alt="" className="rounded-lg shadow" />
+                      </div>
+                    </CarouselItem>
+                  ))}
+                </CarouselContent>
+              </Carousel>
+            </div>
+          </div>
         </div>
       </div>
     </section>

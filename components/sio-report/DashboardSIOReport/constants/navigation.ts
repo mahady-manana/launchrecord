@@ -14,13 +14,22 @@ export const reportNavigation: NavItem[] = [
     label: "Positioning Analysis",
     icon: "🎯",
     children: [
-      { id: "positioning-overview", label: "Market Positioning & Differentiation" },
-      { id: "category-ownership", label: "Category Ownership" },
-      { id: "unique-value-prop", label: "Unique Value Proposition" },
-      { id: "competitive-diff", label: "Competitive Differentiation" },
-      { id: "target-audience", label: "Target Audience Clarity" },
-      { id: "problem-solution", label: "Problem-Solution Fit" },
-      { id: "messaging-consistency", label: "Messaging Consistency" },
+      {
+        id: "positioning-overview",
+        label: "Market Positioning & Differentiation",
+      },
+      { id: "positioning-categoryOwnership", label: "Category Ownership" },
+      { id: "positioning-uniqueValueProp", label: "Unique Value Proposition" },
+      {
+        id: "positioning-competitiveDiff",
+        label: "Competitive Differentiation",
+      },
+      { id: "positioning-targetAudience", label: "Target Audience Clarity" },
+      { id: "positioning-problemSolutionFit", label: "Problem-Solution Fit" },
+      {
+        id: "positioning-messagingConsistency",
+        label: "Messaging Consistency",
+      },
     ],
   },
   {
@@ -29,15 +38,16 @@ export const reportNavigation: NavItem[] = [
     icon: "✨",
     children: [
       { id: "clarity-overview", label: "Messaging Clarity" },
-      { id: "headline-clarity", label: "Headline Clarity" },
-      { id: "value-proposition", label: "Value Proposition" },
-      { id: "feature-benefit", label: "Feature-Benefit Mapping" },
-      { id: "visual-hierarchy", label: "Visual Hierarchy" },
-      { id: "cta-clarity", label: "CTA Clarity" },
-      { id: "proof-placement", label: "Proof Placement" },
+      { id: "clarity-headlineClarity", label: "Headline Clarity" },
+      { id: "clarity-valueProposition", label: "Value Proposition" },
+      { id: "clarity-featureBenefitMapping", label: "Feature-Benefit Mapping" },
+      { id: "clarity-visualHierarchy", label: "Visual Hierarchy" },
+      { id: "clarity-ctaClarity", label: "CTA Clarity" },
+      { id: "clarity-proofPlacement", label: "Proof Placement" },
     ],
   },
   { id: "aeo", label: "AEO Presence", icon: "🤖" },
+  { id: "recommendations", label: "Recommendations", icon: "💡" },
 ];
 
 export function getAllSectionIds(nav: NavItem[]): string[] {

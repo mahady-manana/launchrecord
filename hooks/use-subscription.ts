@@ -1,4 +1,5 @@
 import { useSubscriptionStore } from "@/stores/subscription-store";
+import { useUserStore } from "@/stores/user-store";
 import type { SubscriptionRecord } from "@/types/subscription";
 import { useCallback, useMemo } from "react";
 
@@ -16,9 +17,7 @@ interface UseSubscriptionReturn {
   setGuestMode: (isGuest: boolean) => void;
 }
 
-export function useSubscription(
-  isGuest: boolean = false,
-): UseSubscriptionReturn {
+export function useSubscription(b: boolean = false): UseSubscriptionReturn {
   const subscription = useSubscriptionStore((state) => state.subscription);
   const subscriptions = useSubscriptionStore((state) => state.subscriptions);
   const isLoading = useSubscriptionStore((state) => state.isLoading);
@@ -28,6 +27,7 @@ export function useSubscription(
   const setSubscriptions = useSubscriptionStore(
     (state) => state.setSubscriptions,
   );
+  const isGuest = useUserStore((state) => state.isGuest);
   const setIsLoading = useSubscriptionStore((state) => state.setIsLoading);
   const reset = useSubscriptionStore((state) => state.reset);
 

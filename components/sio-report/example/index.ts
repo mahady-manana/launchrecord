@@ -1,11 +1,3 @@
+// Legacy example components removed.
+// Use DashboardSIOReport/components for the current component system.
 export * from "@/research/sio-v5-report-schema";
-export { ActionItemCard } from "./ActionItemCard";
-export { AEOCard } from "./AEOCard";
-export { ClarityCard } from "./ClarityCard";
-export { FirstImpressionCard } from "./FirstImpressionCard";
-export * from "./mock-data";
-export { OverallScoreCard } from "./OverallScoreCard";
-export { PillarReportCard } from "./PillarReportCard";
-export { PositioningCard } from "./PositioningCard";
-export { SubMetricCard } from "./SubMetricCard";
-export { WebsiteSummaryCard } from "./WebsiteSummaryCard";

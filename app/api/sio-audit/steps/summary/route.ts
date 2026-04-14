@@ -134,12 +134,14 @@ export async function POST(request: NextRequest) {
 
     // Parse AI response
     let aiData;
+    console.log("====================================");
+    console.log(aiContent);
+    console.log("====================================");
     try {
       aiData = JSON.parse(aiContent);
     } catch (error) {
       throw new Error("Failed to parse AI response as JSON");
     }
-
     // Update report with summary and first impression
     await SIOReport.findByIdAndUpdate(reportId, {
       progress: "summary_complete",

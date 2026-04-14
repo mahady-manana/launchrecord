@@ -43,7 +43,7 @@ export function CommentItem({
 
   return (
     <Comp
-      className={`flex items-start gap-2 text-sm ${textClass} ${className || ""}`.trim()}
+      className={`flex items-start gap-2 text-sm  ${className || ""}`.trim()}
     >
       <Icon className={`h-4 w-4 mt-0.5 ${iconClass}`} />
       <span>{text}</span>

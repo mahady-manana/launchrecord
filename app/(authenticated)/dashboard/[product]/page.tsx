@@ -177,8 +177,10 @@ export default function ProductDashboard() {
       ) : (
         <>
           {/* Audit Date Badge */}
-
-          <DashboardSIOReport {...report} subscription={subscription} />
+          <DashboardSIOReport
+            report={report as any}
+            subscription={subscription}
+          />
         </>
       )}
     </div>

@@ -150,7 +150,7 @@ export interface PositioningSubMetric {
   /** Negative comments pointing out issues */
   negativeComments: string[];
   /** Structural recommendations for this sub-metric */
-  recommendation: string[];
+  recommendation?: string[];
   /** Suggested fixes */
   suggested: string[];
 }
@@ -269,7 +269,7 @@ export interface ClaritySubMetric {
   /** Negative comments pointing out issues */
   negativeComments: string[];
   /** Structural recommendations for this sub-metric */
-  recommendation: string[];
+  recommendation?: string[];
   /** Suggested fixes */
   suggested: string[];
   /** Specific unclear sentences/phrases found */

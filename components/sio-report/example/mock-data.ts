@@ -98,33 +98,42 @@ export const mockReport: SIOV5Report = {
       "Restructure to lead with the visitor's pain point, then show the outcome, then support with social proof and visuals",
     ],
     headline: {
+      statement:
+        "Headline leads with brand name instead of visitor pain point, forcing users to figure out what you do.",
       current: "StandupAI - The Future of Work",
       positiveComments: ["Short and memorable brand name"],
       negativeComments: [
         "Leads with brand name - visitors don't know what you do until reading further",
       ],
+      recommendation: ["Lead with the visitor's problem, not your brand name."],
       suggested: [
         "Tired of endless standups? We help engineering managers save 10 hours/week",
         "Stop wasting 15 hours/week on status meetings - automate your standups today",
       ],
     },
     subheadline: {
+      statement:
+        "Subheadline uses generic SaaS jargon that doesn't differentiate or explain the mechanism.",
       current: "Streamline your team's workflow with our innovative platform",
       positiveComments: ["Attempts to describe the benefit"],
       negativeComments: [
         "Generic marketing jargon - 'streamline', 'innovative', 'platform' could apply to any SaaS",
       ],
+      recommendation: ["Replace vague terms with specific outcomes and ICP."],
       suggested: [
         "For remote engineering teams wasting 15 hours/week on status updates, we automate standups asynchronously",
         "Replace daily standup meetings with 2-minute async video updates that your team actually enjoys",
       ],
     },
     cta: {
+      statement:
+        "CTA is generic and doesn't reduce friction or explain what happens next.",
       current: "Get Started",
       positiveComments: ["Clear action-oriented language"],
       negativeComments: [
         "Generic CTA - doesn't tell visitor what happens next (demo? trial? pricing?)",
       ],
+      recommendation: ["Make the CTA specific and reduce perceived risk."],
       suggested: [
         "Start Free Trial · No credit card required · 14 days free",
         "Try Free for 14 Days · Setup in 2 minutes",
@@ -164,7 +173,7 @@ export const mockReport: SIOV5Report = {
     },
     subMetrics: {
       categoryOwnership: {
-        name: "Category Ownership",
+        statement: "Category ownership diagnostic",
         score: 45,
         current: "Project management software / Productivity tool",
         positiveComments: ["Attempts to position in recognizable category"],
@@ -172,13 +181,16 @@ export const mockReport: SIOV5Report = {
           "Too broad - competing against Asana, Monday, ClickUp without defensible niche",
           "No distinctive category language that you can own",
         ],
+        recommendation: [
+          "Narrow to a specific category you can dominate instead of competing broadly.",
+        ],
         suggested: [
           "Async Standup Automation for Remote Engineering Teams",
           "Engineering Standup Automation - Built for Remote-First Teams",
         ],
       },
       uniqueValueProp: {
-        name: "Unique Value Proposition",
+        statement: "Unique value proposition diagnostic",
         score: 55,
         current: "Streamline your team's workflow with our innovative platform",
         positiveComments: ["Attempts to communicate workflow benefits"],
@@ -186,18 +198,22 @@ export const mockReport: SIOV5Report = {
           "Describes features instead of specific outcomes",
           "Generic jargon ('streamline', 'innovative') without quantified benefits",
         ],
+        recommendation: [
+          "Replace generic value props with specific quantified outcomes.",
+        ],
         suggested: [
           "Save 10 hours/week on status meetings. Get back 25% of your workweek for actual building.",
           "Replace 15 hours of weekly standups with 10 minutes of async updates - ship features 2x faster.",
         ],
       },
       competitiveDiff: {
-        name: "Competitive Differentiation",
+        statement: "Competitive differentiation diagnostic",
         score: 50,
         current: "Better than alternatives for modern teams",
         positiveComments: ["Attempts to differentiate from alternatives"],
-        negativeComments: [
-          "No explicit competitor contrasts",
+        negativeComments: ["No explicit competitor contrasts"],
+        recommendation: [
+          "Name 2-3 specific alternatives and explain why you win.",
           "Doesn't name alternatives or explain why you win",
         ],
         suggested: [
@@ -206,7 +222,7 @@ export const mockReport: SIOV5Report = {
         ],
       },
       targetAudience: {
-        name: "Target Audience Clarity",
+        statement: "Target audience clarity diagnostic",
         score: 58,
         current: "Teams and businesses",
         positiveComments: ["Attempts to define audience"],
@@ -220,7 +236,7 @@ export const mockReport: SIOV5Report = {
         ],
       },
       problemSolutionFit: {
-        name: "Problem-Solution Fit",
+        statement: "Problem-solution fit diagnostic",
         score: 52,
         current: "We help teams communicate better",
         positiveComments: ["Addresses a real communication pain point"],
@@ -234,7 +250,7 @@ export const mockReport: SIOV5Report = {
         ],
       },
       messagingConsistency: {
-        name: "Messaging Consistency",
+        statement: "Messaging consistency diagnostic",
         score: 54,
         current:
           "Homepage: 'productivity' | Pricing: 'collaboration' | About: 'teamwork'",
@@ -300,7 +316,7 @@ export const mockReport: SIOV5Report = {
     ],
     subMetrics: {
       headlineClarity: {
-        name: "Headline Clarity",
+        statement: "Headline clarity diagnostic",
         score: 35,
         current: "StandupAI - The Future of Work",
         positiveComments: ["Short and memorable"],
@@ -321,7 +337,7 @@ export const mockReport: SIOV5Report = {
         ],
       },
       valueProposition: {
-        name: "Value Proposition",
+        statement: "Value proposition clarity diagnostic",
         score: 40,
         current: "Streamline your team's workflow with our innovative platform",
         positiveComments: ["Attempts to communicate benefits"],
@@ -342,7 +358,7 @@ export const mockReport: SIOV5Report = {
         ],
       },
       featureBenefitMapping: {
-        name: "Feature-Benefit Mapping",
+        statement: "Feature-benefit mapping diagnostic",
         score: 50,
         current: "Automated standups, async video updates, team dashboards",
         positiveComments: ["Clear feature list"],
@@ -364,7 +380,7 @@ export const mockReport: SIOV5Report = {
         ],
       },
       visualHierarchy: {
-        name: "Visual Hierarchy",
+        statement: "Visual hierarchy diagnostic",
         score: 45,
         current: "Dashboard screenshot in hero before problem is explained",
         positiveComments: ["Clean visual design"],
@@ -379,7 +395,7 @@ export const mockReport: SIOV5Report = {
         unclearTexts: [],
       },
       ctaClarity: {
-        name: "CTA Clarity",
+        statement: "CTA clarity diagnostic",
         score: 55,
         current: "Get Started",
         positiveComments: ["Clear action verb"],
@@ -401,7 +417,7 @@ export const mockReport: SIOV5Report = {
         ],
       },
       proofPlacement: {
-        name: "Proof Placement",
+        statement: "Proof placement diagnostic",
         score: 48,
         current: "Customer logos at bottom of page after 3 CTAs",
         positiveComments: ["Has social proof elements"],

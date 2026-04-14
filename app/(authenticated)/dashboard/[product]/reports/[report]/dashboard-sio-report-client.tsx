@@ -90,7 +90,7 @@ export default function DashboardSIOReportClient({
       </Button>
 
       {/* Report */}
-      <DashboardSIOReport {...report} subscription={subscription} />
+      <DashboardSIOReport report={report as any} subscription={subscription} />
     </div>
   );
 }

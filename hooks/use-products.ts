@@ -78,244 +78,277 @@ export function useProducts() {
 
       // Transform preview data to ProductWithReport format
       const productsWithReportsData: ProductWithReport[] = productPreviews.map(
-        (preview: any) => ({
-          _id: preview._id,
-          id: preview.id,
-          name: preview.name,
-          tagline: preview.tagline,
-          logo: preview.logo,
-          website: preview.website,
-          score: preview.score,
-          createdAt: preview.createdAt,
-          updatedAt: preview.updatedAt,
-          report: preview.hasReport
-            ? ({
-                _id: preview._id,
-                overallScore: preview.compositeScore,
-                score: preview.compositeScore,
-                statement: preview.statement || "Overall assessment",
-                overallCommentPositive: [],
-                overallCommentNegative: [],
-                websiteSummary: {
-                  summary: preview.categoryPosition || "",
-                  summaryComment: "",
-                  problems: {
-                    currents: [],
-                    positiveComments: [],
-                    negativeComments: [],
-                  },
-                  outcomes: {
-                    currents: [],
-                    positiveComments: [],
-                    negativeComments: [],
-                  },
-                  solutions: {
-                    currents: [],
-                    positiveComments: [],
-                    negativeComments: [],
-                  },
-                  features: {
-                    currents: [],
-                    positiveComments: [],
-                    negativeComments: [],
-                  },
-                  isPositioningClear: true,
-                  isMessagingClear: true,
-                  areUsersLeftGuessing: false,
-                },
-                firstImpression: {
-                  score: preview.pillars.clarity,
-                  statement: "First impression analysis",
-                  recommendation: [],
+        (preview: any) => {
+          const compositeScore = preview.compositeScore || 0;
+
+          return {
+            _id: preview._id,
+            id: preview.id,
+            name: preview.name,
+            tagline: preview.tagline,
+            logo: preview.logo,
+            website: preview.website,
+            score: preview.score,
+            createdAt: preview.createdAt,
+            updatedAt: preview.updatedAt,
+            report: preview.hasReport
+              ? ({
+                  _id: preview._id,
+                  overallScore: preview.compositeScore,
+                  score: preview.compositeScore,
+                  statement: preview.statement || "Overall assessment",
                   overallCommentPositive: [],
                   overallCommentNegative: [],
-                  headline: {
-                    current: "",
-                    positiveComments: [],
-                    negativeComments: [],
+                  websiteSummary: {
+                    summary: "",
+                    problems: {
+                      currents: [],
+                      positiveComments: [],
+                      negativeComments: [],
+                    },
+                    outcomes: {
+                      currents: [],
+                      positiveComments: [],
+                      negativeComments: [],
+                    },
+                    solutions: {
+                      currents: [],
+                      positiveComments: [],
+                      negativeComments: [],
+                    },
+                    features: {
+                      currents: [],
+                      positiveComments: [],
+                      negativeComments: [],
+                    },
+                    isPositioningClear: true,
+                    isMessagingClear: true,
+                    areUsersLeftGuessing: false,
+                  },
+                  firstImpression: {
+                    score: preview.pillars?.firstImpression || 0,
+                    statement: "",
                     recommendation: [],
-                    suggested: [],
+                    overallCommentPositive: [],
+                    overallCommentNegative: [],
+                    headline: {
+                      statement: "",
+                      current: "",
+                      positiveComments: [],
+                      negativeComments: [],
+                      recommendation: [],
+                      suggested: [],
+                    },
+                    subheadline: {
+                      statement: "",
+                      current: "",
+                      positiveComments: [],
+                      negativeComments: [],
+                      recommendation: [],
+                      suggested: [],
+                    },
+                    cta: {
+                      statement: "",
+                      current: "",
+                      positiveComments: [],
+                      negativeComments: [],
+                      recommendation: [],
+                      suggested: [],
+                    },
                   },
-                  subheadline: {
-                    current: "",
-                    positiveComments: [],
-                    negativeComments: [],
+                  positioning: {
+                    score: preview.pillars?.positioning || 0,
+                    statement: "",
                     recommendation: [],
-                    suggested: [],
+                    overallCommentPositive: [],
+                    overallCommentNegative: [],
+                    summary: {
+                      current: "",
+                      positiveComments: [],
+                      negativeComments: [],
+                      recommendation: [],
+                      suggested: [],
+                    },
+                    subMetrics: {
+                      categoryOwnership: {
+                        statement: "",
+                        score: 0,
+                        current: "",
+                        positiveComments: [],
+                        negativeComments: [],
+                        recommendation: [],
+                        suggested: [],
+                      },
+                      uniqueValueProp: {
+                        statement: "",
+                        score: 0,
+                        current: "",
+                        positiveComments: [],
+                        negativeComments: [],
+                        recommendation: [],
+                        suggested: [],
+                      },
+                      competitiveDiff: {
+                        statement: "",
+                        score: 0,
+                        current: "",
+                        positiveComments: [],
+                        negativeComments: [],
+                        recommendation: [],
+                        suggested: [],
+                      },
+                      targetAudience: {
+                        statement: "",
+                        score: 0,
+                        current: "",
+                        positiveComments: [],
+                        negativeComments: [],
+                        recommendation: [],
+                        suggested: [],
+                      },
+                      problemSolutionFit: {
+                        statement: "",
+                        score: 0,
+                        current: "",
+                        positiveComments: [],
+                        negativeComments: [],
+                        recommendation: [],
+                        suggested: [],
+                      },
+                      messagingConsistency: {
+                        statement: "",
+                        score: 0,
+                        current: "",
+                        positiveComments: [],
+                        negativeComments: [],
+                        recommendation: [],
+                        suggested: [],
+                      },
+                    },
                   },
-                  cta: {
-                    current: "",
-                    positiveComments: [],
-                    negativeComments: [],
+                  clarity: {
+                    score: preview.pillars?.clarity || 0,
+                    statement: "",
                     recommendation: [],
-                    suggested: [],
-                  },
-                },
-                positioning: {
-                  score: preview.pillars.positioning,
-                  statement: "Positioning analysis",
-                  recommendation: [],
-                  overallCommentPositive: [],
-                  overallCommentNegative: [],
-                  summary: {
-                    current: "",
-                    positiveComments: [],
-                    negativeComments: [],
-                    recommendation: [],
-                    suggested: [],
-                  },
-                  subMetrics: {
-                    categoryOwnership: {
-                      name: "Category Ownership",
-                      score: preview.pillars.positioning,
+                    overallCommentPositive: [],
+                    overallCommentNegative: [],
+                    summary: {
                       current: "",
                       positiveComments: [],
                       negativeComments: [],
                       recommendation: [],
                       suggested: [],
                     },
-                    uniqueValueProp: {
-                      name: "Unique Value Prop",
-                      score: preview.pillars.positioning,
-                      current: "",
-                      positiveComments: [],
-                      negativeComments: [],
-                      recommendation: [],
-                      suggested: [],
-                    },
-                    competitiveDiff: {
-                      name: "Competitive Diff",
-                      score: preview.pillars.positioning,
-                      current: "",
-                      positiveComments: [],
-                      negativeComments: [],
-                      recommendation: [],
-                      suggested: [],
-                    },
-                    targetAudience: {
-                      name: "Target Audience",
-                      score: preview.pillars.positioning,
-                      current: "",
-                      positiveComments: [],
-                      negativeComments: [],
-                      recommendation: [],
-                      suggested: [],
-                    },
-                    problemSolutionFit: {
-                      name: "Problem-Solution Fit",
-                      score: preview.pillars.positioning,
-                      current: "",
-                      positiveComments: [],
-                      negativeComments: [],
-                      recommendation: [],
-                      suggested: [],
-                    },
-                    messagingConsistency: {
-                      name: "Messaging Consistency",
-                      score: preview.pillars.positioning,
-                      current: "",
-                      positiveComments: [],
-                      negativeComments: [],
-                      recommendation: [],
-                      suggested: [],
-                    },
-                  },
-                },
-                clarity: {
-                  score: preview.pillars.clarity,
-                  statement: "Clarity analysis",
-                  recommendation: [],
-                  overallCommentPositive: [],
-                  overallCommentNegative: [],
-                  summary: {
-                    current: "",
-                    positiveComments: [],
-                    negativeComments: [],
-                    recommendation: [],
-                    suggested: [],
-                  },
-                  unclearSentences: [],
-                  subMetrics: {
-                    headlineClarity: {
-                      name: "Headline Clarity",
-                      score: preview.pillars.clarity,
-                      current: "",
-                      positiveComments: [],
-                      negativeComments: [],
-                      recommendation: [],
-                      suggested: [],
-                      unclearTexts: [],
-                    },
-                    valueProposition: {
-                      name: "Value Proposition",
-                      score: preview.pillars.clarity,
-                      current: "",
-                      positiveComments: [],
-                      negativeComments: [],
-                      recommendation: [],
-                      suggested: [],
-                      unclearTexts: [],
-                    },
-                    featureBenefitMapping: {
-                      name: "Feature-Benefit Mapping",
-                      score: preview.pillars.clarity,
-                      current: "",
-                      positiveComments: [],
-                      negativeComments: [],
-                      recommendation: [],
-                      suggested: [],
-                      unclearTexts: [],
-                    },
-                    visualHierarchy: {
-                      name: "Visual Hierarchy",
-                      score: preview.pillars.clarity,
-                      current: "",
-                      positiveComments: [],
-                      negativeComments: [],
-                      recommendation: [],
-                      suggested: [],
-                      unclearTexts: [],
-                    },
-                    ctaClarity: {
-                      name: "CTA Clarity",
-                      score: preview.pillars.clarity,
-                      current: "",
-                      positiveComments: [],
-                      negativeComments: [],
-                      recommendation: [],
-                      suggested: [],
-                      unclearTexts: [],
-                    },
-                    proofPlacement: {
-                      name: "Proof Placement",
-                      score: preview.pillars.clarity,
-                      current: "",
-                      positiveComments: [],
-                      negativeComments: [],
-                      recommendation: [],
-                      suggested: [],
-                      unclearTexts: [],
+                    unclearSentences: [],
+                    subMetrics: {
+                      headlineClarity: {
+                        statement: "",
+                        score: 0,
+                        current: "",
+                        positiveComments: [],
+                        negativeComments: [],
+                        recommendation: [],
+                        suggested: [],
+                        unclearTexts: [],
+                      },
+                      valueProposition: {
+                        statement: "",
+                        score: 0,
+                        current: "",
+                        positiveComments: [],
+                        negativeComments: [],
+                        recommendation: [],
+                        suggested: [],
+                        unclearTexts: [],
+                      },
+                      featureBenefitMapping: {
+                        statement: "",
+                        score: 0,
+                        current: "",
+                        positiveComments: [],
+                        negativeComments: [],
+                        recommendation: [],
+                        suggested: [],
+                        unclearTexts: [],
+                      },
+                      visualHierarchy: {
+                        statement: "",
+                        score: 0,
+                        current: "",
+                        positiveComments: [],
+                        negativeComments: [],
+                        recommendation: [],
+                        suggested: [],
+                        unclearTexts: [],
+                      },
+                      ctaClarity: {
+                        statement: "",
+                        score: 0,
+                        current: "",
+                        positiveComments: [],
+                        negativeComments: [],
+                        recommendation: [],
+                        suggested: [],
+                        unclearTexts: [],
+                      },
+                      proofPlacement: {
+                        statement: "",
+                        score: 0,
+                        current: "",
+                        positiveComments: [],
+                        negativeComments: [],
+                        recommendation: [],
+                        suggested: [],
+                        unclearTexts: [],
+                      },
                     },
                   },
-                },
-                aeo: {
-                  score: preview.pillars.aeo,
-                  statement: "AEO analysis",
-                  aiPresence: { isPresent: false, engines: [], comment: "" },
-                  recommendations: [],
-                },
-                analyzedUrl: preview.website || "",
-                analyzedAt: preview.updatedAt,
-                band: {
-                  name: "Blended",
-                  scoreRange: "50-69",
-                  description: "Understandable but not distinctive",
-                },
-                url: preview.website || "",
-                createdAt: new Date(preview.createdAt),
-              } as SIOV5Report)
-            : null,
-        }),
+                  aeo: {
+                    score: preview.pillars?.aeo || 0,
+                    statement: "",
+                    aiPresence: { isPresent: false, engines: [], comment: "" },
+                    recommendations: [],
+                  },
+                  analyzedUrl: preview.website || "",
+                  analyzedAt: new Date().toISOString(),
+                  band: {
+                    name:
+                      compositeScore >= 90
+                        ? "Dominant"
+                        : compositeScore >= 70
+                          ? "Strong"
+                          : compositeScore >= 50
+                            ? "Blended"
+                            : compositeScore >= 30
+                              ? "Weak"
+                              : "Ghost",
+                    scoreRange:
+                      compositeScore >= 90
+                        ? "90-100"
+                        : compositeScore >= 70
+                          ? "70-89"
+                          : compositeScore >= 50
+                            ? "50-69"
+                            : compositeScore >= 30
+                              ? "30-49"
+                              : "0-29",
+                    description:
+                      compositeScore >= 90
+                        ? "You own the category"
+                        : compositeScore >= 70
+                          ? "Clear differentiation"
+                          : compositeScore >= 50
+                            ? "Understandable but not distinctive"
+                            : compositeScore >= 30
+                              ? "Unclear positioning"
+                              : "Invisible to market",
+                  },
+                  url: preview.website || "",
+                  createdAt: new Date(preview.createdAt),
+                } as SIOV5Report)
+              : null,
+          };
+        },
       );
 
       // Build reports cache

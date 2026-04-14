@@ -241,7 +241,7 @@ export function ProductSection({
                 <div className="pt-4">
                   <div className="grid grid-cols-4 gap-3">
                     <PillarScoreCard
-                      score={report.firstImpression.score}
+                      score={report.firstImpression?.score}
                       label="First Impression"
                       insight={report.statement}
                       icon={TrendingUpIcon}
@@ -251,9 +251,9 @@ export function ProductSection({
                     />
 
                     <PillarScoreCard
-                      score={report.positioning.score}
+                      score={report.positioning?.score}
                       label="Positioning"
-                      insight={report.positioning.statement}
+                      insight={report.positioning?.statement}
                       icon={TargetIcon}
                       description="Keep an eye on your positioning"
                       productId={product._id}
@@ -284,7 +284,7 @@ export function ProductSection({
             </div>
 
             {/* Insights Bar - Enhanced */}
-            {report.overallCommentNegative.length > 0 && (
+            {report.overallCommentNegative?.length > 0 && (
               <div className="relative overflow-hidden rounded-xl bg-gradient-to-r from-slate-50 to-slate-100/50 border border-slate-200/60 p-3.5">
                 <div className="flex items-center gap-2.5">
                   <div className="p-1.5 rounded-lg bg-gradient-to-br from-orange-500 to-amber-500 shadow-md shadow-orange-500/20">
