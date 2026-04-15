@@ -30,7 +30,6 @@ export async function fetchWebsiteContent(
       robotsUrl,
       {
         headers: { "User-Agent": "Mozilla/5.0 (compatible; SidleBot/1.0)" },
-        maxRedirects: 5,
         validateStatus: (status) => status < 500,
       },
     );
@@ -59,7 +58,6 @@ export async function fetchWebsiteContent(
                 "User-Agent": "Mozilla/5.0 (compatible; SidleBot/1.0)",
               },
               timeout: 5000,
-              maxRedirects: 5,
               validateStatus: (status) => status < 500,
             });
 
