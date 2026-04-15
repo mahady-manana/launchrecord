@@ -108,7 +108,10 @@ export function parseWebsiteContent(
     .find(selector)
     .each((_, el) => {
       const tag = (el.tagName || "").toLowerCase();
-      const text = $(el).text().replace(/\s+/g, " ").trim();
+      const text = $(el)
+        .map((i, el) => $(el).text().trim())
+        ?.get()
+        ?.join(" ");
       if (text.length > 0 && allowedTags.includes(tag)) {
         simplifiedContent += `<${tag}>${text}</${tag}>\n`;
       }
