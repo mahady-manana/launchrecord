@@ -387,13 +387,13 @@ export function getBand(score: number): ReportBand {
       scoreRange: "90-100",
       description: "You own the category",
     };
-  if (score >= 70)
+  if (score >= 75)
     return {
       name: "Strong",
       scoreRange: "70-89",
       description: "Clear differentiation",
     };
-  if (score >= 50)
+  if (score >= 55)
     return {
       name: "Blended",
       scoreRange: "50-69",

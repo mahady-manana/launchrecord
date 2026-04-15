@@ -59,9 +59,6 @@ export async function POST(request: NextRequest) {
     const clarityScore = report.clarity?.score || 0;
     const aeoScore = report.aeo?.score || 0;
 
-    // Website summary score based on clarity indicators
-    const websiteSummaryScore = calculateWebsiteSummaryScore(report);
-
     // Calculate raw weighted score
     let overallScore = Math.min(
       Math.round(
@@ -132,46 +129,6 @@ export async function POST(request: NextRequest) {
       { status: 500 },
     );
   }
-}
-
-function calculateWebsiteSummaryScore(report: any): number {
-  // Score based on website clarity indicators
-  let score = 30; // Start LOW - require evidence to climb
-
-  // Adjust based on clarity flags (both must be true for significant bonus)
-  if (
-    report.websiteSummary?.isPositioningClear &&
-    report.websiteSummary?.isMessagingClear
-  ) {
-    score += 10; // Both clear = strong signal
-  } else if (
-    report.websiteSummary?.isPositioningClear ||
-    report.websiteSummary?.isMessagingClear
-  ) {
-    score += 5; // Only one clear = partial
-  }
-
-  // Users not left guessing = good
-  if (!report.websiteSummary?.areUsersLeftGuessing) score += 5;
-
-  // PENALTY: Users left guessing = significant deduction
-  if (report.websiteSummary?.areUsersLeftGuessing) score -= 10;
-
-  // Adjust based on content completeness
-  const hasProblems = report.websiteSummary?.problems?.currents?.length > 0;
-  const hasOutcomes = report.websiteSummary?.outcomes?.currents?.length > 0;
-  const hasSolutions = report.websiteSummary?.solutions?.currents?.length > 0;
-  const hasFeatures = report.websiteSummary?.features?.currents?.length > 0;
-
-  const completeness = [
-    hasProblems,
-    hasOutcomes,
-    hasSolutions,
-    hasFeatures,
-  ].filter(Boolean).length;
-  score += completeness * 2; // Max +8 for having all 4 sections
-
-  return Math.min(100, Math.max(0, score));
 }
 
 function generateOverallStatement(
