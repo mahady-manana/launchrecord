@@ -348,6 +348,9 @@ export async function POST(request: NextRequest) {
     // Validate content sufficiency
     const contentLength = websiteContent.simplifiedContent?.trim().length || 0;
     if (contentLength < 100) {
+      console.log("====================================");
+      console.log(websiteContent);
+      console.log("====================================");
       return NextResponse.json(
         {
           error:

@@ -26,34 +26,52 @@ export async function fetchWebsiteContent(
 
   try {
     const robotsUrl = `${baseUrl}/robots.txt`;
-    const { data: robotsData } = await axios.get<string>(robotsUrl, {
-      headers: { "User-Agent": "Mozilla/5.0 (compatible; SidleBot/1.0)" },
-    });
+    const { data: robotsData, status: robotsStatus } = await axios.get<string>(
+      robotsUrl,
+      {
+        headers: { "User-Agent": "Mozilla/5.0 (compatible; SidleBot/1.0)" },
+        maxRedirects: 5,
+        validateStatus: (status) => status < 500,
+      },
+    );
 
-    // Only store robots.txt if it's valid (status 200 and has content)
-    if (robotsData && robotsData.trim().length > 0) {
-      robottxts = robotsData;
+    // Validate: must be 200, text-like content, and not HTML
+    if (
+      robotsData &&
+      typeof robotsData === "string" &&
+      robotsData.trim().length > 0
+    ) {
+      const trimmed = robotsData.trim();
+      const isHtml =
+        trimmed.startsWith("<") ||
+        /<\s*(html|!doctype|head|body)/i.test(trimmed);
 
-      // Check if sitemap is referenced in robots.txt
-      const sitemapMatch = robotsData.match(/sitemap:\s*(\S+)/i);
-      if (sitemapMatch && sitemapMatch[1]) {
-        const sitemapUrl = sitemapMatch[1].trim();
+      if (!isHtml) {
+        // Check if sitemap is referenced in robots.txt
+        const sitemapMatch = trimmed.match(/sitemap:\s*(\S+)/i);
+        if (sitemapMatch && sitemapMatch[1]) {
+          const sitemapUrl = sitemapMatch[1].trim();
 
-        // Ping the sitemap to check if it's accessible
-        try {
-          const { status } = await axios.head(sitemapUrl, {
-            headers: { "User-Agent": "Mozilla/5.0 (compatible; SidleBot/1.0)" },
-            timeout: 5000,
-          });
+          // Ping the sitemap to check if it's accessible
+          try {
+            const { status } = await axios.head(sitemapUrl, {
+              headers: {
+                "User-Agent": "Mozilla/5.0 (compatible; SidleBot/1.0)",
+              },
+              timeout: 5000,
+              maxRedirects: 5,
+              validateStatus: (status) => status < 500,
+            });
 
-          if (status === 200 || status === 201) {
-            sitemap = "accessible";
-          } else {
+            sitemap =
+              status === 200 || status === 201
+                ? "accessible"
+                : "not_accessible";
+          } catch {
             sitemap = "not_accessible";
           }
-        } catch {
-          sitemap = "not_accessible";
         }
+        robottxts = trimmed.slice(0, 200);
       }
     }
   } catch (error) {
