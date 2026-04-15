@@ -1,5 +1,6 @@
 import { connectToDatabase } from "@/lib/db";
 import Product from "@/models/product";
+import Report from "@/models/report";
 import SIOReport from "@/models/sio-report";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -36,15 +37,14 @@ export async function GET(request: NextRequest) {
       .select("url product")
       .limit(25);
 
-    const count = await SIOReport.countDocuments({
-      progress: "complete",
-    });
+    const count = await SIOReport.countDocuments();
+    const oldRep = await Report.countDocuments();
 
     return NextResponse.json({
       success: true,
       data: {
         logos: products,
-        count: count,
+        count: count + oldRep,
       },
     });
   } catch (error) {

@@ -145,6 +145,7 @@ export function ClaritySection({
                 }}
                 ctaHref={ctaHref}
                 showCurrent={!!metric.current}
+                isClaritySubmetric
               />
             );
           })}

@@ -1,5 +1,6 @@
 import { CommentItem } from "@/components/sio-report/CommentItem";
 import { useSubscription } from "@/hooks/use-subscription";
+import { useUserStore } from "@/stores/user-store";
 import { AlertTriangle, CheckCircle2 } from "lucide-react";
 
 interface CommentListProps {
@@ -22,6 +23,7 @@ export function CommentList({
   negativeTitle = "Weaknesses",
 }: CommentListProps) {
   const { tier, isPaid } = useSubscription(false);
+  const isGuest = useUserStore((s) => s.isGuest);
 
   if (!positiveComments || !negativeComments) {
     return null;
@@ -33,7 +35,6 @@ export function CommentList({
     ? negativeComments
     : negativeComments.slice(0, tier === "free" ? 2 : 2);
 
-  const hasMorePositive = positiveComments?.length > visiblePositive?.length;
   const hasMoreNegative = negativeComments?.length > visibleNegative?.length;
 
   return (
@@ -56,14 +57,6 @@ export function CommentList({
                 text={comment}
               />
             ))}
-            {hasMorePositive && tier !== "paid" && (
-              <li className="text-sm text-green-400/60 italic px-3 py-1">
-                +{positiveComments.length - visiblePositive.length} more insight
-                {positiveComments.length - visiblePositive.length > 1
-                  ? "s"
-                  : ""}
-              </li>
-            )}
           </ul>
         ) : (
           <p className="text-sm text-green-400">No strengths identified.</p>
@@ -88,14 +81,6 @@ export function CommentList({
                 text={comment}
               />
             ))}
-            {hasMoreNegative && tier !== "paid" && (
-              <li className="text-sm text-red-400/60 italic px-3 py-1">
-                +{negativeComments.length - visibleNegative.length} more issue
-                {negativeComments.length - visibleNegative.length > 1
-                  ? "s"
-                  : ""}
-              </li>
-            )}
           </ul>
         ) : (
           <p className="text-sm text-red-400">No weaknesses identified.</p>

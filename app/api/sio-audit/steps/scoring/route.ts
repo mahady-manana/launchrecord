@@ -63,12 +63,14 @@ export async function POST(request: NextRequest) {
     const websiteSummaryScore = calculateWebsiteSummaryScore(report);
 
     // Calculate raw weighted score
-    let overallScore = Math.round(
-      firstImpressionScore * 0.2 +
-        positioningScore * 0.25 +
-        clarityScore * 0.25 +
-        aeoScore * 0.1 +
-        websiteSummaryScore * 0.2,
+    let overallScore = Math.min(
+      Math.round(
+        firstImpressionScore * 0.3 +
+          positioningScore * 0.3 +
+          clarityScore * 0.3 +
+          aeoScore * 0.1,
+      ),
+      87,
     );
 
     // Apply automatic penalties based on identified issues

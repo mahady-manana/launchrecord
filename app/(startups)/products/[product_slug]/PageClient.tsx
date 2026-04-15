@@ -163,12 +163,11 @@ export default function ProductPageClient({
                   {/* Logo */}
                   <div className="relative flex items-center justify-center md:h-18 md:w-18 w-12 h-12 rounded-2xl overflow-hidden border-4 border-white/20 bg-white flex-shrink-0">
                     {product.logo ? (
-                      <Image
+                      <img
                         src={product.logo}
                         alt={product.name}
-                        width={40}
                         height={40}
-                        className="object-cover  h-8 w-8 p-2"
+                        className="object-contain h-10"
                       />
                     ) : (
                       <div className="h-full w-full flex items-center justify-center bg-gradient-to-br from-white/20 to-white/10">
@@ -246,9 +245,10 @@ export default function ProductPageClient({
               </h2>
               <Card>
                 <CardContent className="">
-                  <p className="text-muted-foreground leading-relaxed">
-                    {product.description}
-                  </p>
+                  <p
+                    className="text-muted-foreground leading-relaxed"
+                    dangerouslySetInnerHTML={{ __html: product.description }}
+                  ></p>
                 </CardContent>
               </Card>
             </section>

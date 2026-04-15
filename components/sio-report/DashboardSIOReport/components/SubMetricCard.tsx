@@ -1,7 +1,9 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
 import { useSubscription } from "@/hooks/use-subscription";
 import { Sparkles } from "lucide-react";
+import Link from "next/link";
 import { CommentList } from "./CommentList";
 import { LockedContent } from "./LockedContent";
 import { MetricStatement } from "./MetricStatement";
@@ -22,6 +24,7 @@ interface SubMetricCardProps {
   };
   ctaHref: string;
   showCurrent?: boolean;
+  isClaritySubmetric?: boolean;
 }
 
 /**
@@ -36,6 +39,7 @@ export function SubMetricCard({
   metric,
   ctaHref,
   showCurrent = true,
+  isClaritySubmetric,
 }: SubMetricCardProps) {
   const { tier, isPaid } = useSubscription(false);
 
@@ -58,9 +62,7 @@ export function SubMetricCard({
           : "bg-red-50";
 
   // Limit unclearTexts for guest/free
-  const visibleUnclear = isPaid
-    ? metric.unclearTexts || []
-    : (metric.unclearTexts || []).slice(0, 2);
+  const visibleUnclear = metric.unclearTexts || [];
 
   return (
     <div
@@ -97,35 +99,61 @@ export function SubMetricCard({
         />
 
         {/* Unclear texts (clarity metrics) - Always visible section */}
-        {/* <div>
-          <span className="text-xs font-bold uppercase tracking-wide text-orange-500">
-            Unclear lines to fix
-          </span>
-          {visibleUnclear.length > 0 ? (
-            <div className="mt-2 space-y-2">
-              {visibleUnclear.map((item, idx) => (
-                <div
-                  key={idx}
-                  className="border-l-2 border-orange-200 pl-3 py-1"
-                >
-                  <div className="text-orange-700 text-sm line-through mb-0.5">
-                    "{item.text}"
+        {isClaritySubmetric && visibleUnclear.length ? (
+          <div className="bg-red-100 px-4 py-8">
+            <span className="text-xs font-bold uppercase tracking-wide text-orange-500">
+              Unclear sentences, lines or texts to fix
+            </span>
+            {isPaid ? (
+              <div>
+                {visibleUnclear.length > 0 ? (
+                  <div className="mt-2 space-y-2">
+                    {visibleUnclear.map((item, idx) => (
+                      <div
+                        key={idx}
+                        className="border-l-2 border-orange-200 pl-3 py-1"
+                      >
+                        <div className="text-orange-700 text-sm line-through mb-0.5">
+                          "{item.text}"
+                        </div>
+                        <div className="text-orange-600 text-xs italic mb-1">
+                          ⚠ {item.issue}
+                        </div>
+                        <div className="text-green-700 text-sm font-medium">
+                          → {item.fix}
+                        </div>
+                      </div>
+                    ))}
                   </div>
-                  <div className="text-orange-600 text-xs italic mb-1">
-                    ⚠ {item.issue}
+                ) : (
+                  <div className="mt-2 text-sm text-slate-400">
+                    No unclear text found.
                   </div>
-                  <div className="text-green-700 text-sm font-medium">
-                    → {item.fix}
-                  </div>
+                )}
+              </div>
+            ) : visibleUnclear.length ? (
+              <div className="mt-2 text-sm text-slate-400 space-y-4">
+                <div>
+                  <p className="text-xl text-red-800 font-bold">
+                    {visibleUnclear.length} unclear sentence(s) identified
+                  </p>
                 </div>
-              ))}
-            </div>
-          ) : (
-            <div className="mt-2 text-sm text-slate-400">
-              No unclear text found.
-            </div>
-          )}
-        </div> */}
+                {ctaHref && (
+                  <Link href={ctaHref} className="flex-shrink-0">
+                    <Button
+                      size="sm"
+                      className="bg-amber-500 hover:bg-amber-600 text-white font-semibold"
+                    >
+                      {tier === "guest"
+                        ? "Sign up to fix them"
+                        : "Upgrade to see what wrong and get exact fixes"}
+                    </Button>
+                  </Link>
+                )}
+              </div>
+            ) : null}
+          </div>
+        ) : null}
 
         <RecommendationsCard
           title={"Recommendations "}

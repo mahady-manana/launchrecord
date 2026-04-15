@@ -32,8 +32,8 @@ export function LockedContent({
 
   const message =
     tier === "guest"
-      ? "Sign up to unlock recommendations"
-      : "Upgrade to see detailed recommendations";
+      ? "Sign up to get recommendations and fixes"
+      : "Upgrade to get exact fixes and recommendations";
 
   return (
     <div className={`overflow-hidden`}>
@@ -65,8 +65,8 @@ export function LockedContent({
                 <p className="text-sm font-medium text-amber-600">{message}</p>
                 <p className={`text-xs mt-0.5 text-slate-600`}>
                   {tier === "guest"
-                    ? "Create a free account to unlock all recommendations."
-                    : "Upgrade to a paid plan to unlock recommendations and suggested fixes."}
+                    ? "Create a free account to get recommendations and exact fixes"
+                    : "Upgrade to get recommendations and exact fixes - Remove friction & Boost conversions"}
                 </p>
               </div>
             </div>

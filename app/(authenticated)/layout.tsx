@@ -30,13 +30,23 @@ const productMenuItems: MenuItem[] = [
     icon: LayoutDashboard,
   },
   {
-    label: "Audit",
+    label: "New Audit",
     href: "/audit-page",
     icon: BadgeCheck,
   },
+  // {
+  //   label: "You vs Competitors",
+  //   href: "/market-center",
+  //   icon: ShoppingBag,
+  // },
+  // {
+  //   label: "Competitors and Spy",
+  //   href: "/audit-page",
+  //   icon: ScanSearch,
+  // },
 
   {
-    label: "Reports",
+    label: "Reports and History",
     href: "/reports",
     icon: FileText,
   },
@@ -92,7 +102,7 @@ function Sidebar() {
                 <Link
                   key={item.label}
                   href={href}
-                  className={`group flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm transition-all duration-200 ${
+                  className={`group flex items-center gap-3 rounded-xl px-3 py-1 text-sm transition-all duration-200 ${
                     isActive
                       ? "bg-gradient-to-r from-orange-50 to-amber-50 shadow-sm"
                       : "hover:bg-gradient-to-r hover:from-orange-50 hover:to-amber-50 hover:shadow-sm"

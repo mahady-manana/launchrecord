@@ -111,7 +111,8 @@ export default function ProductDashboard() {
                   </span>
                 </div>
                 <h3 className="text-xl sm:text-2xl font-bold text-slate-900 mb-2">
-                  Unlock full audits reports and powerful growth tools
+                  Get full audits reports with all recommendations and exact
+                  fixes
                 </h3>
                 <p className="text-sm text-slate-600 mb-5 max-w-2xl">
                   Upgrade to get full audits report, weekly auto-audits that

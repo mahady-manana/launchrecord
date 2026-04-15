@@ -345,7 +345,7 @@ export default function ProductSubscriptionPage() {
                     ) : isCurrentPlan ? (
                       "Current Plan"
                     ) : plan.id === "onetime" ? (
-                      "Get 5 Audits - $29"
+                      "Get one time pass - $29"
                     ) : (
                       "Upgrade to Founder"
                     )}

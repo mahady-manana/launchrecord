@@ -29,7 +29,7 @@ export default function StartupsPageClient({
               Discover the latest AI Startups
             </h1>
             <p className="text-blue-100 text-sm max-w-xl">
-              Browse {total.toLocaleString()}+ startups across 250+ categories.
+              Browse {total.toLocaleString()}+ startups across 230+ categories.
               Compare the most defensive startups in AI
             </p>
           </div>
@@ -45,23 +45,6 @@ export default function StartupsPageClient({
       </section>
 
       {/* Stats Bar */}
-      <section className="flex items-center justify-between bg-white rounded-lg border border-slate-200 px-6 py-4">
-        <div className="flex items-center gap-6">
-          <div>
-            <div className="text-xl font-black text-slate-900">
-              {total.toLocaleString()}
-            </div>
-            <div className="text-xs text-slate-600 font-medium">
-              Total Startups
-            </div>
-          </div>
-          <div className="h-8 w-px bg-slate-200" />
-          <div>
-            <div className="text-xl font-black text-slate-900">230+</div>
-            <div className="text-xs text-slate-600 font-medium">Categories</div>
-          </div>
-        </div>
-      </section>
 
       {/* Infinite Scroll - starts from page 2 */}
       <InfiniteScrollProducts
