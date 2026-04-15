@@ -152,30 +152,6 @@ Your role: VALIDATE and CORRECT scores if mismatch exists.
 
 ---
 
-### MANDATORY SCORING PENALTIES (APPLY BEFORE RETURNING):
-
-You MUST deduct points for these issues. NO EXCEPTIONS.
-
-**PENALTY RULES**:
-
-- Each unclear sentence = -1 points (max -10)
-- Each grammar/spelling error = -2 points
-- Each unclear/weak messaging instance = -2 points
-- No clear positioning (isPositioningClear = false OR isMessagingClear = false) = -5 points
-- Users left guessing (areUsersLeftGuessing = true) = -4 points
-- First impression score < 50 = additional -4 points
-
-Calculate total penalty and deduct from overallScore.
-
-Example:
-- 3 unclear sentences = -6
-- No clear positioning = -10
-- 4 negative issues = -8
-- Total penalty = -24 points
-- If raw score = 72, final score = 72 - 24 = 48
-
----
-
 ### SCORE-SPECIFIC CHECKS:
 
 **For scores 70+**:
@@ -203,24 +179,7 @@ Example:
 - Multiple weak sub-metrics
 - Poor first impression
 
----
 
-### VALIDATION PROCESS:
-
-1. Count all unclear sentences → apply penalty
-2. Count all negative comments across sections → apply penalty
-3. Check positioning/messaging clarity flags → apply penalty if false
-4. Check if users left guessing → apply penalty if true
-5. Review sub-metric scores → if variance is low (<50) and avg > 55, likely AI was too generous, cap at 55
-6. Calculate total penalty
-7. Apply to overallScore: finalScore = rawScore - penalty
-8. If finalScore < 0, set to 0
-9. Update individual section scores proportionally if overall changed significantly
-
-RULE: When in doubt, SCORE LOWER. Better to be strict than lenient.
-RULE: DEFAULT score for average SaaS = 50-60. Only go above 65 if truly exceptional.
-
----
 
 ## ⚙️ REFINEMENT RULES
 

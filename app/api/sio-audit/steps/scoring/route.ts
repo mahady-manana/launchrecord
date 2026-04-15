@@ -67,7 +67,7 @@ export async function POST(request: NextRequest) {
           clarityScore * 0.3 +
           aeoScore * 0.1,
       ),
-      87,
+      90,
     );
 
     // Apply automatic penalties based on identified issues
@@ -238,82 +238,4 @@ function compileNegativeComments(report: any): string[] {
   }
 
   return comments.slice(0, 6); // Limit to top 6
-}
-
-/**
- * Apply automatic scoring penalties based on identified issues.
- * Enforces strict scoring to prevent inflation.
- */
-function applyPenalties(report: any): {
-  totalDeduction: number;
-  breakdown: Record<string, number>;
-} {
-  const breakdown: Record<string, number> = {};
-  let totalDeduction = 0;
-
-  // 1. Unclear messages penalty (2 points each, max 10)
-  const unclearCount = report.clarity?.unclearSentences?.length || 0;
-  if (unclearCount > 0) {
-    const unclearPenalty = Math.min(unclearCount, 8);
-    breakdown["unclear_messages"] = unclearPenalty;
-    totalDeduction += unclearPenalty;
-  }
-
-  // 2. Negative comments penalty (3 points each identified issue, max 15)
-  const negativeIssues = [
-    ...(report.firstImpression?.overallCommentNegative || []),
-    ...(report.positioning?.overallCommentNegative || []),
-    ...(report.clarity?.overallCommentNegative || []),
-  ].length;
-  if (negativeIssues > 0) {
-    const negativePenalty = Math.min(negativeIssues, 10);
-    breakdown["negative_issues"] = negativePenalty;
-    totalDeduction += negativePenalty;
-  }
-
-  // 3. No clear positioning penalty (10 points)
-  if (
-    report.websiteSummary &&
-    (!report.websiteSummary.isPositioningClear ||
-      !report.websiteSummary.isMessagingClear)
-  ) {
-    breakdown["weak_positioning"] = 4;
-    totalDeduction += 4;
-  }
-
-  // 4. Users left guessing penalty (8 points)
-  if (report.websiteSummary?.areUsersLeftGuessing) {
-    breakdown["users_guessing"] = 4;
-    totalDeduction += 4;
-  }
-
-  // 5. Low first impression score penalty (if < 50, add 5 points)
-  if (report.firstImpression?.score < 50) {
-    breakdown["weak_first_impression"] = 2;
-    totalDeduction += 2;
-  }
-
-  // 6. Commodity risk penalty (if positioning sub-metrics are all similar, likely generic)
-  if (report.positioning?.subMetrics) {
-    const subScores = Object.values(report.positioning.subMetrics).map(
-      (m: any) => m.score || 0,
-    );
-    if (subScores.length >= 4) {
-      const avgScore =
-        subScores.reduce((a: number, b: number) => a + b, 0) / subScores.length;
-      const variance =
-        subScores.reduce(
-          (acc: number, s: number) => acc + Math.pow(s - avgScore, 2),
-          0,
-        ) / subScores.length;
-
-      // If all scores are very similar (variance < 50), likely AI was too generous across the board
-      if (variance < 50 && avgScore > 55) {
-        breakdown["commodity_risk"] = 2;
-        totalDeduction += 2;
-      }
-    }
-  }
-
-  return { totalDeduction, breakdown };
 }
