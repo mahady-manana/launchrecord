@@ -1,48 +1,42 @@
 "use client";
 
-import { getReportBand } from "@/services/sio-report/mappers";
-import { SIOV5Report } from "@/services/sio-report/schema";
-import { StrengthAndWeakness } from "./StrengthAndWeakness";
-
-interface OverallScoreCardProps {
-  report: SIOV5Report;
-  isGuest?: boolean;
-  ctaHref?: string;
+interface OverallScoreCardV2Props {
+  score: number;
+  band: "Dominant" | "Strong" | "Average" | "Weak" | "Ghost";
+  statement: string;
 }
 
-export function OverallScoreCard({
-  report,
-  isGuest = false,
-  ctaHref,
-}: OverallScoreCardProps) {
+export function OverallScoreCardV2({
+  score,
+  band,
+  statement,
+}: OverallScoreCardV2Props) {
   const scoreColor =
-    report.overallScore >= 70
+    score >= 70
       ? "text-green-600"
-      : report.overallScore >= 50
+      : score >= 50
         ? "text-yellow-600"
-        : report.overallScore >= 30
+        : score >= 30
           ? "text-orange-600"
           : "text-red-600";
 
   const scoreBg =
-    report.overallScore >= 70
+    score >= 70
       ? "bg-green-500"
-      : report.overallScore >= 50
+      : score >= 50
         ? "bg-yellow-500"
-        : report.overallScore >= 30
+        : score >= 30
           ? "bg-orange-500"
           : "bg-red-500";
 
-  const bandColors = {
+  const bandColors: Record<string, string> = {
     Dominant: "bg-green-100 text-green-800",
     Strong: "bg-lime-100 text-lime-800",
     Average: "bg-blue-100 text-blue-800",
-    Blended: "bg-yellow-100 text-yellow-800",
     Weak: "bg-orange-100 text-orange-800",
     Ghost: "bg-red-100 text-red-800",
   };
 
-  const band = getReportBand(report.overallScore);
   return (
     <section className="py-8 border-b border-slate-200 space-y-6">
       <div className="flex flex-col md:flex-row md:items-center gap-6">
@@ -50,29 +44,30 @@ export function OverallScoreCard({
           <div className="relative w-32 h-32">
             <svg className="w-full h-full transform -rotate-90">
               <circle
-                cx="64"
-                cy="64"
-                r="56"
-                stroke="currentColor"
-                strokeWidth="10"
+                cx="50%"
+                cy="50%"
+                r="44"
+                stroke="rgba(148, 163, 184, 0.2)"
+                strokeWidth="12"
                 fill="none"
-                className="text-slate-200"
               />
               <circle
-                cx="64"
-                cy="64"
-                r="56"
+                cx="50%"
+                cy="50%"
+                r="44"
                 stroke="currentColor"
-                strokeWidth="10"
+                strokeWidth="12"
+                strokeDasharray={`${(score / 100) * 276.46} 276.46`}
+                strokeLinecap="round"
                 fill="none"
-                strokeDasharray={`${(report.overallScore / 100) * 352} 352`}
-                className={scoreColor}
+                className="text-blue-600"
+                transform="rotate(-90 50 50)"
               />
             </svg>
             <div className="absolute inset-0 flex items-center justify-center">
               <div className="text-center">
                 <div className={`text-3xl font-black ${scoreColor}`}>
-                  {report.overallScore}
+                  {score}
                 </div>
                 <div className="text-xs text-slate-500 uppercase tracking-wider">
                   Score
@@ -88,11 +83,10 @@ export function OverallScoreCard({
               Executive Summary
             </h2>
             <p className="text-slate-600 text-sm leading-relaxed">
-              {report.statement}
+              {statement}
             </p>
           </div>
 
-          {/* Band Badge */}
           <div className="flex items-center gap-3">
             <div
               className={`px-3 py-1.5 rounded-lg text-sm font-bold ${bandColors[band]}`}
@@ -100,19 +94,11 @@ export function OverallScoreCard({
               {band}
             </div>
             <div className="text-xs text-slate-500">
-              <span className="font-semibold">Analyzed:</span>{" "}
-              {new Date(report.createdAt).toLocaleDateString()}
+              <span className="font-semibold">Rating:</span> {band}
             </div>
           </div>
         </div>
       </div>
-
-      <StrengthAndWeakness
-        commentNegative={report.overallCommentNegative}
-        commentPositive={report.overallCommentPositive}
-        isGuest={isGuest}
-        ctaHref={ctaHref}
-      ></StrengthAndWeakness>
     </section>
   );
 }

@@ -432,6 +432,7 @@ export async function POST(request: NextRequest) {
       ...reportData,
       product: isGuest ? null : productId || null,
       url: hostUrl,
+      version: 2,
       auditDuration: 0, // Can be calculated from timestamps
       // tokenUsage:
       //   (initialResponse.usage?.totalTokens || 0) +

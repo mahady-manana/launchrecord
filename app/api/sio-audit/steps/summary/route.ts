@@ -18,7 +18,7 @@ import {
   summaryImpressionInstruction,
 } from "@/services/sio-audit-instructions/next";
 import { summaryModels } from "@/services/sio-report/ai-models";
-import { sioV5JsonSchema } from "@/services/sio-v5-json-schema";
+import { sioV5JsonSchema } from "@/services/sio-v5-json-schema.bkp";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 

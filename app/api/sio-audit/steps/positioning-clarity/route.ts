@@ -18,7 +18,7 @@ import {
   positioningClarityInstruction,
 } from "@/services/sio-audit-instructions/next";
 import { positioningClarityModels } from "@/services/sio-report/ai-models";
-import { sioV5JsonSchema } from "@/services/sio-v5-json-schema";
+import { sioV5JsonSchema } from "@/services/sio-v5-json-schema.bkp";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
@@ -78,18 +78,14 @@ export async function POST(request: NextRequest) {
     // Prepare context from previous steps
     const previousContext = {
       websiteSummary: {
-        summary: report.websiteSummary?.summary,
-        isPositioningClear: report.websiteSummary?.isPositioningClear,
-        isMessagingClear: report.websiteSummary?.isMessagingClear,
-        problems: report.websiteSummary?.problems,
-        outcomes: report.websiteSummary?.outcomes,
+        overview: report.websiteSummaryV2?.overview,
+        problems: report.websiteSummaryV2?.problems,
+        solutions: report.websiteSummaryV2?.solutions,
       },
       firstImpression: {
-        score: report.firstImpression?.score,
-        statement: report.firstImpression?.statement,
-        headline: report.firstImpression?.headline,
-        subheadline: report.firstImpression?.subheadline,
-        cta: report.firstImpression?.cta,
+        score: report.scoring?.first_impression,
+        statement: report.categoryInsights?.first_impression?.statement,
+        summary: report.categoryInsights?.first_impression?.summary,
       },
     };
 

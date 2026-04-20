@@ -1,295 +1,137 @@
 import mongoose, { Document, Model, Schema, Types } from "mongoose";
 import type { IProduct } from "./product";
 
+export type SIOReportVersion = 1 | 2;
+
+export type ReportBand =
+  | "Dominant"
+  | "Strong"
+  | "Blended"
+  | "Average"
+  | "Weak"
+  | "Ghost";
+
+export type IssueSeverity = "critical" | "medium" | "low";
+
+export type IssueCategory =
+  | "positioning"
+  | "clarity"
+  | "first_impression"
+  | "aeo";
+
+export type FirstImpressionMetric = "headline" | "subheadline" | "cta";
+
+export type PositioningMetric =
+  | "category_ownership"
+  | "unique_value_proposition"
+  | "competitive_differentiation"
+  | "target_audience"
+  | "problem_solution_fit"
+  | "messaging_consistency";
+
+export type ClarityMetric =
+  | "headline_clarity"
+  | "value_proposition"
+  | "feature_benefit_mapping"
+  | "visual_hierarchy"
+  | "cta_clarity"
+  | "proof_placement";
+
+export type IssueMetricKey =
+  | FirstImpressionMetric
+  | PositioningMetric
+  | ClarityMetric;
+
+export interface IIssue {
+  category: IssueCategory;
+  metricKey?: IssueMetricKey;
+  severity: IssueSeverity;
+  statement: string;
+  explanation?: string;
+  current?: string;
+  recommendations?: string[];
+  fixes?: string[];
+  isVisibleInFree?: boolean;
+  isFixLocked?: boolean;
+  impactScore?: number;
+}
+
+type CategoryInsight = {
+  statement: string;
+  summary: string;
+};
+
+type V2WebsiteSummary = {
+  overview: string;
+  problems: string[];
+  solutions: string[];
+};
+
 /**
- * SIO-V5 Report Document Interface
+ * SIO Report Document Interface (V2)
  */
 export interface ISIOReport extends Document {
   // References (optional for guest users)
   product?: Types.ObjectId | IProduct;
   url: string;
+  version: number;
 
-  // Overall Score
-  overallScore: number;
-  statement: string;
-  reportBand: "Dominant" | "Strong" | "Blended" | "Weak" | "Ghost";
-
-  // Overall Comments
-  overallCommentPositive: string[];
-  overallCommentNegative: string[];
-
-  // Website Summary
-  websiteSummary: {
-    summary: string;
-    summaryComment?: string;
-    problems: {
-      currents: string[];
-      positiveComments: string[];
-      negativeComments: string[];
-    };
-    outcomes: {
-      currents: string[];
-      positiveComments: string[];
-      negativeComments: string[];
-    };
-    solutions: {
-      currents: string[];
-      positiveComments: string[];
-      negativeComments: string[];
-    };
-    features: {
-      currents: string[];
-      positiveComments: string[];
-      negativeComments: string[];
-    };
-    isPositioningClear: boolean;
-    isMessagingClear: boolean;
-    areUsersLeftGuessing: boolean;
-  };
-
-  // First Impression (Hero)
-  firstImpression: {
-    score: number;
-    statement: string;
-    recommendation: string[];
-    overallCommentPositive: string[];
-    overallCommentNegative: string[];
-    headline: {
-      statement: string;
-      current: string;
-      positiveComments: string[];
-      negativeComments: string[];
-      recommendation: string[];
-      suggested: string[];
-    };
-    subheadline: {
-      statement: string;
-      current: string;
-      positiveComments: string[];
-      negativeComments: string[];
-      recommendation: string[];
-      suggested: string[];
-    };
-    cta: {
-      statement: string;
-      current: string;
-      positiveComments: string[];
-      negativeComments: string[];
-      recommendation: string[];
-      suggested: string[];
-    };
-  };
-
-  // Positioning Report
-  positioning: {
-    score: number;
-    statement: string;
-    recommendation: string[];
-    overallCommentPositive: string[];
-    overallCommentNegative: string[];
-    summary: {
-      current: string;
-      positiveComments: string[];
-      negativeComments: string[];
-      recommendation: string[];
-      suggested: string[];
-    };
-    subMetrics: {
-      categoryOwnership: {
-        statement: string;
-        score: number;
-        current: string;
-        positiveComments: string[];
-        negativeComments: string[];
-        recommendation: string[];
-        suggested: string[];
-      };
-      uniqueValueProp: {
-        statement: string;
-        score: number;
-        current: string;
-        positiveComments: string[];
-        negativeComments: string[];
-        recommendation: string[];
-        suggested: string[];
-      };
-      competitiveDiff: {
-        statement: string;
-        score: number;
-        current: string;
-        positiveComments: string[];
-        negativeComments: string[];
-        recommendation: string[];
-        suggested: string[];
-      };
-      targetAudience: {
-        statement: string;
-        score: number;
-        current: string;
-        positiveComments: string[];
-        negativeComments: string[];
-        recommendation: string[];
-        suggested: string[];
-      };
-      problemSolutionFit: {
-        statement: string;
-        score: number;
-        current: string;
-        positiveComments: string[];
-        negativeComments: string[];
-        recommendation: string[];
-        suggested: string[];
-      };
-      messagingConsistency: {
-        statement: string;
-        score: number;
-        current: string;
-        positiveComments: string[];
-        negativeComments: string[];
-        recommendation: string[];
-        suggested: string[];
-      };
-    };
-  };
-
-  // Clarity Report
-  clarity: {
-    score: number;
-    statement: string;
-    recommendation: string[];
-    overallCommentPositive: string[];
-    overallCommentNegative: string[];
-    summary: {
-      current: string;
-      positiveComments: string[];
-      negativeComments: string[];
-      recommendation: string[];
-      suggested: string[];
-    };
-    unclearSentences: Array<{
-      text: string;
-      issue: string;
-      fix: string;
-    }>;
-    subMetrics: {
-      headlineClarity: {
-        statement: string;
-        score: number;
-        current: string;
-        positiveComments: string[];
-        negativeComments: string[];
-        recommendation: string[];
-        suggested: string[];
-        unclearTexts: Array<{
-          text: string;
-          issue: string;
-          fix: string;
-        }>;
-      };
-      valueProposition: {
-        statement: string;
-        score: number;
-        current: string;
-        positiveComments: string[];
-        negativeComments: string[];
-        recommendation: string[];
-        suggested: string[];
-        unclearTexts: Array<{
-          text: string;
-          issue: string;
-          fix: string;
-        }>;
-      };
-      featureBenefitMapping: {
-        statement: string;
-        score: number;
-        current: string;
-        positiveComments: string[];
-        negativeComments: string[];
-        recommendation: string[];
-        suggested: string[];
-        unclearTexts: Array<{
-          text: string;
-          issue: string;
-          fix: string;
-        }>;
-      };
-      visualHierarchy: {
-        statement: string;
-        score: number;
-        current: string;
-        positiveComments: string[];
-        negativeComments: string[];
-        recommendation: string[];
-        suggested: string[];
-        unclearTexts: Array<{
-          text: string;
-          issue: string;
-          fix: string;
-        }>;
-      };
-      ctaClarity: {
-        statement: string;
-        score: number;
-        current: string;
-        positiveComments: string[];
-        negativeComments: string[];
-        recommendation: string[];
-        suggested: string[];
-        unclearTexts: Array<{
-          text: string;
-          issue: string;
-          fix: string;
-        }>;
-      };
-      proofPlacement: {
-        statement: string;
-        score: number;
-        current: string;
-        positiveComments: string[];
-        negativeComments: string[];
-        recommendation: string[];
-        suggested: string[];
-        unclearTexts: Array<{
-          text: string;
-          issue: string;
-          fix: string;
-        }>;
-      };
-    };
-  };
-
-  // AEO Report
-  aeo: {
-    score: number;
-    statement: string;
-    aiPresence: {
-      isPresent: boolean;
-      engines: string[];
-      comment: string;
-    };
-    recommendations: string[];
-  };
-
-  // Metadata
-  auditDuration?: number;
-  tokenUsage?: number;
-  modelUsed?: string;
-  rawAnalysis?: string;
-  verifiedAnalysis?: string;
-
-  // Progress tracking (multi-step audit)
-  progress?:
-    | "initializing"
+  // Progress tracking
+  progress:
     | "content_fetched"
     | "summary_complete"
     | "positioning_clarity_complete"
     | "aeo_complete"
+    | "issues_generated"
     | "scoring_complete"
     | "complete"
     | "failed";
 
-  // Temporary storage for multi-step audit (deleted on completion)
+  // Overall Score
+  overallScore: number;
+  statement: string;
+  reportBand: "Dominant" | "Strong" | "Average" | "Weak" | "Ghost";
+
+  // Website Summary V2
+  websiteSummaryV2: V2WebsiteSummary;
+
+  // Legacy v1 compatibility fields
+  websiteSummary?: any;
+  firstImpression?: any;
+  positioning?: any;
+  clarity?: any;
+  aeo?: any;
+  overallCommentPositive?: string[];
+  overallCommentNegative?: string[];
+  auditDuration?: number;
+
+  // Issues
+  issues: IIssue[];
+
+  // Strengths
+  strengths: Array<{
+    statement: string;
+    impact: string;
+  }>;
+
+  // Scoring
+  scoring: {
+    overall: number;
+    positioning: number;
+    clarity: number;
+    first_impression: number;
+    aeo: number;
+  };
+
+  // Category Insights
+  categoryInsights: {
+    positioning: CategoryInsight;
+    clarity: CategoryInsight;
+    first_impression: CategoryInsight;
+    aeo: CategoryInsight;
+  };
+
+  // Temporary storage for multi-step audit (kept for backward compatibility)
   tempData?: {
     rawWebsiteContent?: string;
     simplifiedContent?: string;
@@ -303,7 +145,7 @@ export interface ISIOReport extends Document {
     metadataCount?: number;
   };
 
-  // Error tracking for failed audits
+  // Error tracking
   failedAt?: string;
   errorMessage?: string;
 
@@ -312,8 +154,29 @@ export interface ISIOReport extends Document {
   updatedAt: Date;
 }
 
+const issueMetricKeyEnum: IssueMetricKey[] = [
+  "headline",
+  "subheadline",
+  "cta",
+  "category_ownership",
+  "unique_value_proposition",
+  "competitive_differentiation",
+  "target_audience",
+  "problem_solution_fit",
+  "messaging_consistency",
+  "headline_clarity",
+  "value_proposition",
+  "feature_benefit_mapping",
+  "visual_hierarchy",
+  "cta_clarity",
+  "proof_placement",
+];
+
 /**
  * SIO-V5 Report Schema
+ */
+/**
+ * SIO-V2 Report Schema
  */
 const SIOReportSchema = new Schema<ISIOReport>(
   {
@@ -328,6 +191,32 @@ const SIOReportSchema = new Schema<ISIOReport>(
       required: [true, "URL is required"],
       trim: true,
       lowercase: true,
+      index: true,
+    },
+    version: {
+      type: Number,
+      required: true,
+      default: 2,
+    },
+
+    // Progress tracking
+    progress: {
+      type: String,
+      required: true,
+      enum: {
+        values: [
+          "content_fetched",
+          "summary_complete",
+          "positioning_clarity_complete",
+          "aeo_complete",
+          "issues_generated",
+          "scoring_complete",
+          "complete",
+          "failed",
+        ],
+        message: "Invalid progress state",
+      },
+      default: "content_fetched",
       index: true,
     },
 
@@ -345,330 +234,127 @@ const SIOReportSchema = new Schema<ISIOReport>(
     },
     reportBand: {
       type: String,
+      required: true,
       default: "Ghost",
       enum: {
-        values: ["Dominant", "Strong", "Blended", "Weak", "Ghost"],
+        values: ["Dominant", "Strong", "Average", "Weak", "Ghost"],
         message: "Invalid report band",
       },
     },
 
-    // Overall Comments
-    overallCommentPositive: { type: [String], default: [] },
-    overallCommentNegative: { type: [String], default: [] },
-
-    // Website Summary
+    // Website Summary V2
+    websiteSummaryV2: {
+      overview: { type: String, default: "" },
+      problems: { type: [String], default: [] },
+      solutions: { type: [String], default: [] },
+    },
     websiteSummary: {
-      summary: { type: String, default: "" },
-      summaryComment: { type: String, default: "" },
-      problems: {
-        currents: { type: [String], default: [] },
-        positiveComments: { type: [String], default: [] },
-        negativeComments: { type: [String], default: [] },
-      },
-      outcomes: {
-        currents: { type: [String], default: [] },
-        positiveComments: { type: [String], default: [] },
-        negativeComments: { type: [String], default: [] },
-      },
-      solutions: {
-        currents: { type: [String], default: [] },
-        positiveComments: { type: [String], default: [] },
-        negativeComments: { type: [String], default: [] },
-      },
-      features: {
-        currents: { type: [String], default: [] },
-        positiveComments: { type: [String], default: [] },
-        negativeComments: { type: [String], default: [] },
-      },
-      isPositioningClear: { type: Boolean, default: false },
-      isMessagingClear: { type: Boolean, default: false },
-      areUsersLeftGuessing: { type: Boolean, default: true },
+      type: Schema.Types.Mixed,
+      default: null,
     },
-
-    // First Impression
     firstImpression: {
-      score: { type: Number, default: 0, min: 0, max: 100 },
-      statement: { type: String, default: "" },
-      recommendation: { type: [String], default: [] },
-      overallCommentPositive: { type: [String], default: [] },
-      overallCommentNegative: { type: [String], default: [] },
-      headline: {
-        statement: { type: String, default: "" },
-        current: { type: String, default: "" },
-        positiveComments: { type: [String], default: [] },
-        negativeComments: { type: [String], default: [] },
-        recommendation: { type: [String], default: [] },
-        suggested: { type: [String], default: [] },
-      },
-      subheadline: {
-        statement: { type: String, default: "" },
-        current: { type: String, default: "" },
-        positiveComments: { type: [String], default: [] },
-        negativeComments: { type: [String], default: [] },
-        recommendation: { type: [String], default: [] },
-        suggested: { type: [String], default: [] },
-      },
-      cta: {
-        statement: { type: String, default: "" },
-        current: { type: String, default: "" },
-        positiveComments: { type: [String], default: [] },
-        negativeComments: { type: [String], default: [] },
-        recommendation: { type: [String], default: [] },
-        suggested: { type: [String], default: [] },
-      },
+      type: Schema.Types.Mixed,
+      default: null,
     },
-
-    // Positioning
     positioning: {
-      score: { type: Number, default: 0, min: 0, max: 100 },
-      statement: { type: String, default: "" },
-      recommendation: { type: [String], default: [] },
-      overallCommentPositive: { type: [String], default: [] },
-      overallCommentNegative: { type: [String], default: [] },
-      summary: {
-        current: { type: String, default: "" },
-        positiveComments: { type: [String], default: [] },
-        negativeComments: { type: [String], default: [] },
-        recommendation: { type: [String], default: [] },
-        suggested: { type: [String], default: [] },
-      },
-      subMetrics: {
-        categoryOwnership: {
-          statement: { type: String, default: "" },
-          score: { type: Number, default: 0, min: 0, max: 100 },
-          current: { type: String, default: "" },
-          positiveComments: { type: [String], default: [] },
-          negativeComments: { type: [String], default: [] },
-          recommendation: { type: [String], default: [] },
-          suggested: { type: [String], default: [] },
-        },
-        uniqueValueProp: {
-          statement: { type: String, default: "" },
-          score: { type: Number, default: 0, min: 0, max: 100 },
-          current: { type: String, default: "" },
-          positiveComments: { type: [String], default: [] },
-          negativeComments: { type: [String], default: [] },
-          recommendation: { type: [String], default: [] },
-          suggested: { type: [String], default: [] },
-        },
-        competitiveDiff: {
-          statement: { type: String, default: "" },
-          score: { type: Number, default: 0, min: 0, max: 100 },
-          current: { type: String, default: "" },
-          positiveComments: { type: [String], default: [] },
-          negativeComments: { type: [String], default: [] },
-          recommendation: { type: [String], default: [] },
-          suggested: { type: [String], default: [] },
-        },
-        targetAudience: {
-          statement: { type: String, default: "" },
-          score: { type: Number, default: 0, min: 0, max: 100 },
-          current: { type: String, default: "" },
-          positiveComments: { type: [String], default: [] },
-          negativeComments: { type: [String], default: [] },
-          recommendation: { type: [String], default: [] },
-          suggested: { type: [String], default: [] },
-        },
-        problemSolutionFit: {
-          statement: { type: String, default: "" },
-          score: { type: Number, default: 0, min: 0, max: 100 },
-          current: { type: String, default: "" },
-          positiveComments: { type: [String], default: [] },
-          negativeComments: { type: [String], default: [] },
-          recommendation: { type: [String], default: [] },
-          suggested: { type: [String], default: [] },
-        },
-        messagingConsistency: {
-          statement: { type: String, default: "" },
-          score: { type: Number, default: 0, min: 0, max: 100 },
-          current: { type: String, default: "" },
-          positiveComments: { type: [String], default: [] },
-          negativeComments: { type: [String], default: [] },
-          recommendation: { type: [String], default: [] },
-          suggested: { type: [String], default: [] },
-        },
-      },
+      type: Schema.Types.Mixed,
+      default: null,
     },
-
-    // Clarity
     clarity: {
-      score: { type: Number, default: 0, min: 0, max: 100 },
-      statement: { type: String, default: "" },
-      recommendation: { type: [String], default: [] },
-      overallCommentPositive: { type: [String], default: [] },
-      overallCommentNegative: { type: [String], default: [] },
-      summary: {
-        current: { type: String, default: "" },
-        positiveComments: { type: [String], default: [] },
-        negativeComments: { type: [String], default: [] },
-        recommendation: { type: [String], default: [] },
-        suggested: { type: [String], default: [] },
-      },
-      unclearSentences: {
-        type: [
-          {
-            text: { type: String, default: "" },
-            issue: { type: String, default: "" },
-            fix: { type: String, default: "" },
-          },
-        ],
-        default: [],
-      },
-      subMetrics: {
-        headlineClarity: {
-          statement: { type: String, default: "" },
-          score: { type: Number, default: 0, min: 0, max: 100 },
-          current: { type: String, default: "" },
-          positiveComments: { type: [String], default: [] },
-          negativeComments: { type: [String], default: [] },
-          recommendation: { type: [String], default: [] },
-          suggested: { type: [String], default: [] },
-          unclearTexts: {
-            type: [
-              {
-                text: { type: String, default: "" },
-                issue: { type: String, default: "" },
-                fix: { type: String, default: "" },
-              },
-            ],
-            default: [],
-          },
-        },
-        valueProposition: {
-          statement: { type: String, default: "" },
-          score: { type: Number, default: 0, min: 0, max: 100 },
-          current: { type: String, default: "" },
-          positiveComments: { type: [String], default: [] },
-          negativeComments: { type: [String], default: [] },
-          recommendation: { type: [String], default: [] },
-          suggested: { type: [String], default: [] },
-          unclearTexts: {
-            type: [
-              {
-                text: { type: String, default: "" },
-                issue: { type: String, default: "" },
-                fix: { type: String, default: "" },
-              },
-            ],
-            default: [],
-          },
-        },
-        featureBenefitMapping: {
-          statement: { type: String, default: "" },
-          score: { type: Number, default: 0, min: 0, max: 100 },
-          current: { type: String, default: "" },
-          positiveComments: { type: [String], default: [] },
-          negativeComments: { type: [String], default: [] },
-          recommendation: { type: [String], default: [] },
-          suggested: { type: [String], default: [] },
-          unclearTexts: {
-            type: [
-              {
-                text: { type: String, default: "" },
-                issue: { type: String, default: "" },
-                fix: { type: String, default: "" },
-              },
-            ],
-            default: [],
-          },
-        },
-        visualHierarchy: {
-          statement: { type: String, default: "" },
-          score: { type: Number, default: 0, min: 0, max: 100 },
-          current: { type: String, default: "" },
-          positiveComments: { type: [String], default: [] },
-          negativeComments: { type: [String], default: [] },
-          recommendation: { type: [String], default: [] },
-          suggested: { type: [String], default: [] },
-          unclearTexts: {
-            type: [
-              {
-                text: { type: String, default: "" },
-                issue: { type: String, default: "" },
-                fix: { type: String, default: "" },
-              },
-            ],
-            default: [],
-          },
-        },
-        ctaClarity: {
-          statement: { type: String, default: "" },
-          score: { type: Number, default: 0, min: 0, max: 100 },
-          current: { type: String, default: "" },
-          positiveComments: { type: [String], default: [] },
-          negativeComments: { type: [String], default: [] },
-          recommendation: { type: [String], default: [] },
-          suggested: { type: [String], default: [] },
-          unclearTexts: {
-            type: [
-              {
-                text: { type: String, default: "" },
-                issue: { type: String, default: "" },
-                fix: { type: String, default: "" },
-              },
-            ],
-            default: [],
-          },
-        },
-        proofPlacement: {
-          statement: { type: String, default: "" },
-          score: { type: Number, default: 0, min: 0, max: 100 },
-          current: { type: String, default: "" },
-          positiveComments: { type: [String], default: [] },
-          negativeComments: { type: [String], default: [] },
-          recommendation: { type: [String], default: [] },
-          suggested: { type: [String], default: [] },
-          unclearTexts: {
-            type: [
-              {
-                text: { type: String, default: "" },
-                issue: { type: String, default: "" },
-                fix: { type: String, default: "" },
-              },
-            ],
-            default: [],
-          },
-        },
-      },
+      type: Schema.Types.Mixed,
+      default: null,
     },
-
-    // AEO
     aeo: {
-      score: { type: Number, default: 0, min: 0, max: 100 },
-      statement: { type: String, default: "" },
-      aiPresence: {
-        isPresent: { type: Boolean, default: false },
-        engines: { type: [String], default: [] },
-        comment: { type: String, default: "" },
-      },
-      recommendations: { type: [String], default: [] },
+      type: Schema.Types.Mixed,
+      default: null,
+    },
+    overallCommentPositive: {
+      type: [String],
+      default: [],
+    },
+    overallCommentNegative: {
+      type: [String],
+      default: [],
+    },
+    auditDuration: {
+      type: Number,
+      default: null,
     },
 
-    // Metadata
-    auditDuration: { type: Number, min: 0, default: null },
-    tokenUsage: { type: Number, min: 0, default: null },
-    modelUsed: { type: String, default: null },
-    rawAnalysis: { type: String, default: null },
-    verifiedAnalysis: { type: String, default: null },
-
-    // Progress tracking (multi-step audit)
-    progress: {
-      type: String,
-      enum: [
-        "initializing",
-        "content_fetched",
-        "summary_complete",
-        "positioning_clarity_complete",
-        "aeo_complete",
-        "scoring_complete",
-        "complete",
-        "failed",
+    // Issues
+    issues: {
+      type: [
+        {
+          id: { type: String, required: true },
+          category: {
+            type: String,
+            enum: ["positioning", "clarity", "first_impression", "aeo"],
+            required: true,
+          },
+          metricKey: {
+            type: String,
+            enum: issueMetricKeyEnum,
+            default: undefined,
+          },
+          severity: {
+            type: String,
+            enum: ["critical", "medium", "low"],
+            required: true,
+          },
+          statement: { type: String, required: true },
+          explanation: { type: String, default: null },
+          current: { type: String, default: null },
+          recommendations: { type: [String], default: [] },
+          fixes: { type: [String], default: [] },
+          isVisibleInFree: { type: Boolean, default: false },
+          isFixLocked: { type: Boolean, default: false },
+          impactScore: { type: Number, min: -100, max: 100, default: null },
+        },
       ],
-      default: "initializing",
-      index: true,
+      default: [],
     },
 
-    // Temporary storage for multi-step audit
+    // Strengths
+    strengths: {
+      type: [
+        {
+          statement: { type: String, required: true },
+          impact: { type: String, required: true },
+        },
+      ],
+      default: [],
+    },
+
+    // Scoring
+    scoring: {
+      overall: { type: Number, default: 0, min: 0, max: 100 },
+      positioning: { type: Number, default: 0, min: 0, max: 100 },
+      clarity: { type: Number, default: 0, min: 0, max: 100 },
+      first_impression: { type: Number, default: 0, min: 0, max: 100 },
+      aeo: { type: Number, default: 0, min: 0, max: 100 },
+    },
+
+    // Category Insights
+    categoryInsights: {
+      positioning: {
+        statement: { type: String, default: "" },
+        summary: { type: String, default: "" },
+      },
+      clarity: {
+        statement: { type: String, default: "" },
+        summary: { type: String, default: "" },
+      },
+      first_impression: {
+        statement: { type: String, default: "" },
+        summary: { type: String, default: "" },
+      },
+      aeo: {
+        statement: { type: String, default: "" },
+        summary: { type: String, default: "" },
+      },
+    },
+
+    // Temporary storage for multi-step audit (kept for backward compatibility)
     tempData: {
       rawWebsiteContent: { type: String, default: null },
       simplifiedContent: { type: String, default: null },
@@ -682,7 +368,7 @@ const SIOReportSchema = new Schema<ISIOReport>(
       metadataCount: { type: Number, default: null },
     },
 
-    // Error tracking for failed audits
+    // Error tracking
     failedAt: { type: String, default: null },
     errorMessage: { type: String, default: null },
   },

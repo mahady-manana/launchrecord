@@ -1,228 +1,85 @@
 /**
- * Maps raw AI response to ISIOReport format
- * Ensures all required fields are present and properly typed
+ * Maps raw AI response to the v2 SIO report shape stored in MongoDB.
  */
 export function mapToSIOReport(rawData: any): any {
+  const overallScore = normalizeScore(rawData?.overallScore ?? rawData?.score);
+
   return {
-    // Overall
-    overallScore: rawData.score || 0,
-    statement: rawData.statement || "",
-    reportBand: getReportBand(rawData.score || 0),
-    overallCommentPositive: rawData.overallCommentPositive || [],
-    overallCommentNegative: rawData.overallCommentNegative || [],
-
-    // Website Summary
-    websiteSummary: {
-      summary: rawData.websiteSummary?.summary || "",
-      summaryComment: rawData.websiteSummary?.summaryComment || "",
-      problems: {
-        currents: rawData.websiteSummary?.problems?.currents || [],
-        positiveComments:
-          rawData.websiteSummary?.problems?.positiveComments || [],
-        negativeComments:
-          rawData.websiteSummary?.problems?.negativeComments || [],
-      },
-      outcomes: {
-        currents: rawData.websiteSummary?.outcomes?.currents || [],
-        positiveComments:
-          rawData.websiteSummary?.outcomes?.positiveComments || [],
-        negativeComments:
-          rawData.websiteSummary?.outcomes?.negativeComments || [],
-      },
-      solutions: {
-        currents: rawData.websiteSummary?.solutions?.currents || [],
-        positiveComments:
-          rawData.websiteSummary?.solutions?.positiveComments || [],
-        negativeComments:
-          rawData.websiteSummary?.solutions?.negativeComments || [],
-      },
-      features: {
-        currents: rawData.websiteSummary?.features?.currents || [],
-        positiveComments:
-          rawData.websiteSummary?.features?.positiveComments || [],
-        negativeComments:
-          rawData.websiteSummary?.features?.negativeComments || [],
-      },
-      isPositioningClear: rawData.websiteSummary?.isPositioningClear || false,
-      isMessagingClear: rawData.websiteSummary?.isMessagingClear || false,
-      areUsersLeftGuessing:
-        rawData.websiteSummary?.areUsersLeftGuessing || false,
+    version: 2,
+    overallScore,
+    statement: rawData?.statement || "",
+    reportBand: rawData?.reportBand || getReportBand(overallScore),
+    issues: (rawData?.issues || []).map(mapIssue),
+    strengths: (rawData?.strengths || []).map(mapStrength),
+    scoring: {
+      firstImpression: normalizeScore(rawData?.scoring?.firstImpression),
+      positioning: normalizeScore(rawData?.scoring?.positioning),
+      clarity: normalizeScore(rawData?.scoring?.clarity),
+      aeo: normalizeScore(rawData?.scoring?.aeo),
     },
-
-    // First Impression
-    firstImpression: {
-      score: rawData.firstImpression?.score || 0,
-      statement: rawData.firstImpression?.statement || "",
-      recommendation: rawData.firstImpression?.recommendation || [],
-      overallCommentPositive:
-        rawData.firstImpression?.overallCommentPositive || [],
-      overallCommentNegative:
-        rawData.firstImpression?.overallCommentNegative || [],
-      headline: {
-        current: rawData.firstImpression?.headline?.current || "",
-        positiveComments:
-          rawData.firstImpression?.headline?.positiveComments || [],
-        negativeComments:
-          rawData.firstImpression?.headline?.negativeComments || [],
-        recommendation: rawData.firstImpression?.headline?.recommendation || [],
-        suggested: rawData.firstImpression?.headline?.suggested || [],
-      },
-      subheadline: {
-        current: rawData.firstImpression?.subheadline?.current || "",
-        positiveComments:
-          rawData.firstImpression?.subheadline?.positiveComments || [],
-        negativeComments:
-          rawData.firstImpression?.subheadline?.negativeComments || [],
-        recommendation:
-          rawData.firstImpression?.subheadline?.recommendation || [],
-        suggested: rawData.firstImpression?.subheadline?.suggested || [],
-      },
-      cta: {
-        current: rawData.firstImpression?.cta?.current || "",
-        positiveComments: rawData.firstImpression?.cta?.positiveComments || [],
-        negativeComments: rawData.firstImpression?.cta?.negativeComments || [],
-        recommendation: rawData.firstImpression?.cta?.recommendation || [],
-        suggested: rawData.firstImpression?.cta?.suggested || [],
-      },
-    },
-
-    // Positioning
-    positioning: {
-      score: rawData.positioning?.score || 0,
-      statement: rawData.positioning?.statement || "",
-      recommendation: rawData.positioning?.recommendation || [],
-      overallCommentPositive: rawData.positioning?.overallCommentPositive || [],
-      overallCommentNegative: rawData.positioning?.overallCommentNegative || [],
-      summary: {
-        current: rawData.positioning?.summary?.current || "",
-        positiveComments: rawData.positioning?.summary?.positiveComments || [],
-        negativeComments: rawData.positioning?.summary?.negativeComments || [],
-        recommendation: rawData.positioning?.summary?.recommendation || [],
-        suggested: rawData.positioning?.summary?.suggested || [],
-      },
-      subMetrics: {
-        categoryOwnership: mapSubMetric(
-          rawData.positioning?.subMetrics?.categoryOwnership,
-        ),
-        uniqueValueProp: mapSubMetric(
-          rawData.positioning?.subMetrics?.uniqueValueProp,
-        ),
-        competitiveDiff: mapSubMetric(
-          rawData.positioning?.subMetrics?.competitiveDiff,
-        ),
-        targetAudience: mapSubMetric(
-          rawData.positioning?.subMetrics?.targetAudience,
-        ),
-        problemSolutionFit: mapSubMetric(
-          rawData.positioning?.subMetrics?.problemSolutionFit,
-        ),
-        messagingConsistency: mapSubMetric(
-          rawData.positioning?.subMetrics?.messagingConsistency,
-        ),
-      },
-    },
-
-    // Clarity
-    clarity: {
-      score: rawData.clarity?.score || 0,
-      statement: rawData.clarity?.statement || "",
-      recommendation: rawData.clarity?.recommendation || [],
-      overallCommentPositive: rawData.clarity?.overallCommentPositive || [],
-      overallCommentNegative: rawData.clarity?.overallCommentNegative || [],
-      summary: {
-        current: rawData.clarity?.summary?.current || "",
-        positiveComments: rawData.clarity?.summary?.positiveComments || [],
-        negativeComments: rawData.clarity?.summary?.negativeComments || [],
-        recommendation: rawData.clarity?.summary?.recommendation || [],
-        suggested: rawData.clarity?.summary?.suggested || [],
-      },
-      unclearSentences: (rawData.clarity?.unclearSentences || []).map(
-        (u: any) => ({
-          text: u.text || "",
-          issue: u.issue || "",
-          fix: u.fix || "",
-        }),
+    categoryInsights: {
+      positioning: mapCategoryInsight(rawData?.categoryInsights?.positioning),
+      clarity: mapCategoryInsight(rawData?.categoryInsights?.clarity),
+      firstImpression: mapCategoryInsight(
+        rawData?.categoryInsights?.firstImpression,
       ),
-      subMetrics: {
-        headlineClarity: mapClaritySubMetric(
-          rawData.clarity?.subMetrics?.headlineClarity,
-        ),
-        valueProposition: mapClaritySubMetric(
-          rawData.clarity?.subMetrics?.valueProposition,
-        ),
-        featureBenefitMapping: mapClaritySubMetric(
-          rawData.clarity?.subMetrics?.featureBenefitMapping,
-        ),
-        visualHierarchy: mapClaritySubMetric(
-          rawData.clarity?.subMetrics?.visualHierarchy,
-        ),
-        ctaClarity: mapClaritySubMetric(
-          rawData.clarity?.subMetrics?.ctaClarity,
-        ),
-        proofPlacement: mapClaritySubMetric(
-          rawData.clarity?.subMetrics?.proofPlacement,
-        ),
-      },
-    },
-
-    // AEO
-    aeo: {
-      score: rawData.aeo?.score || 0,
-      statement: rawData.aeo?.statement || "",
-      aiPresence: {
-        isPresent: rawData.aeo?.aiPresence?.isPresent || false,
-        engines: rawData.aeo?.aiPresence?.engines || [],
-        comment: rawData.aeo?.aiPresence?.comment || "",
-      },
-      recommendations: rawData.aeo?.recommendations || [],
+      aeo: mapCategoryInsight(rawData?.categoryInsights?.aeo),
     },
   };
 }
 
-/**
- * Maps positioning sub-metric
- */
-export function mapSubMetric(raw: any) {
+function mapIssue(raw: any) {
   return {
-    name: raw?.name || "",
-    score: raw?.score || 0,
-    current: raw?.current || "",
-    positiveComments: raw?.positiveComments || [],
-    negativeComments: raw?.negativeComments || [],
-    recommendation: raw?.recommendation || [],
-    suggested: raw?.suggested || [],
+    id: raw?.id || "",
+    category: raw?.category || "positioning",
+    metricKey: raw?.metricKey || undefined,
+    severity: raw?.severity || "low",
+    statement: raw?.statement || "",
+    explanation: raw?.explanation || undefined,
+    current: raw?.current || undefined,
+    recommendations: normalizeStringArray(raw?.recommendations),
+    fixes: normalizeStringArray(raw?.fixes),
+    isVisibleInFree: Boolean(raw?.isVisibleInFree),
+    isFixLocked: Boolean(raw?.isFixLocked),
+    impactScore:
+      typeof raw?.impactScore === "number"
+        ? normalizeScore(raw.impactScore)
+        : undefined,
   };
 }
 
-/**
- * Maps clarity sub-metric with unclearTexts
- */
-export function mapClaritySubMetric(raw: any) {
+function mapStrength(raw: any) {
   return {
-    name: raw?.name || "",
-    score: raw?.score || 0,
-    current: raw?.current || "",
-    positiveComments: raw?.positiveComments || [],
-    negativeComments: raw?.negativeComments || [],
-    recommendation: raw?.recommendation || [],
-    suggested: raw?.suggested || [],
-    unclearTexts: (raw?.unclearTexts || []).map((u: any) => ({
-      text: u.text || "",
-      issue: u.issue || "",
-      fix: u.fix || "",
-    })),
+    statement: raw?.statement || "",
+    impact: raw?.impact || "",
   };
 }
 
-/**
- * Gets report band based on score
- */
-export function getReportBand(
+function mapCategoryInsight(raw: any) {
+  return {
+    statement: raw?.statement || "",
+    summary: raw?.summary || "",
+  };
+}
+
+function normalizeStringArray(value: unknown): string[] {
+  if (!Array.isArray(value)) return [];
+  return value.filter((item): item is string => typeof item === "string");
+}
+
+function normalizeScore(value: unknown): number {
+  if (typeof value !== "number" || Number.isNaN(value)) return 0;
+  return Math.max(0, Math.min(100, value));
+}
+
+function getReportBand(
   score: number,
-): "Dominant" | "Strong" | "Blended" | "Weak" | "Ghost" {
+): "Dominant" | "Strong" | "Average" | "Weak" | "Ghost" {
   if (score >= 90) return "Dominant";
   if (score >= 70) return "Strong";
-  if (score >= 50) return "Blended";
+  if (score >= 50) return "Average";
   if (score >= 30) return "Weak";
   return "Ghost";
 }
+
+export { getReportBand };

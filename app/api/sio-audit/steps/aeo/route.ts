@@ -16,7 +16,7 @@ import SIOReport from "@/models/sio-report";
 import { step5AEOInstructions } from "@/services/sio-audit-instructions";
 import { generalInstructions } from "@/services/sio-audit-instructions/next";
 import { aeoModels } from "@/services/sio-report/ai-models";
-import { sioV5JsonSchema } from "@/services/sio-v5-json-schema";
+import { sioV5JsonSchema } from "@/services/sio-v5-json-schema.bkp";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
@@ -74,40 +74,29 @@ export async function POST(request: NextRequest) {
     // Prepare context from ALL previous steps
     const previousContext = {
       websiteSummary: {
-        summary: report.websiteSummary?.summary,
-        summaryComment: report.websiteSummary?.summaryComment,
-        isPositioningClear: report.websiteSummary?.isPositioningClear,
-        isMessagingClear: report.websiteSummary?.isMessagingClear,
-        areUsersLeftGuessing: report.websiteSummary?.areUsersLeftGuessing,
-        problems: report.websiteSummary?.problems,
-        outcomes: report.websiteSummary?.outcomes,
-        solutions: report.websiteSummary?.solutions,
-        features: report.websiteSummary?.features,
+        overview: report.websiteSummaryV2?.overview,
+        problems: report.websiteSummaryV2?.problems,
+        solutions: report.websiteSummaryV2?.solutions,
       },
       firstImpression: {
-        score: report.firstImpression?.score,
-        statement: report.firstImpression?.statement,
-        overallCommentPositive: report.firstImpression?.overallCommentPositive,
-        overallCommentNegative: report.firstImpression?.overallCommentNegative,
-        headline: report.firstImpression?.headline,
-        subheadline: report.firstImpression?.subheadline,
-        cta: report.firstImpression?.cta,
+        score: report.scoring?.first_impression,
+        statement: report.categoryInsights?.first_impression?.statement,
+        summary: report.categoryInsights?.first_impression?.summary,
       },
       positioning: {
-        score: report.positioning?.score,
-        statement: report.positioning?.statement,
-        overallCommentPositive: report.positioning?.overallCommentPositive,
-        overallCommentNegative: report.positioning?.overallCommentNegative,
-        summary: report.positioning?.summary,
-        subMetrics: report.positioning?.subMetrics,
+        score: report.scoring?.positioning,
+        statement: report.categoryInsights?.positioning?.statement,
+        summary: report.categoryInsights?.positioning?.summary,
       },
       clarity: {
-        score: report.clarity?.score,
-        statement: report.clarity?.statement,
-        overallCommentPositive: report.clarity?.overallCommentPositive,
-        overallCommentNegative: report.clarity?.overallCommentNegative,
-        summary: report.clarity?.summary,
-        unclearSentences: report.clarity?.unclearSentences,
+        score: report.scoring?.clarity,
+        statement: report.categoryInsights?.clarity?.statement,
+        summary: report.categoryInsights?.clarity?.summary,
+      },
+      aeo: {
+        score: report.scoring?.aeo,
+        statement: report.categoryInsights?.aeo?.statement,
+        summary: report.categoryInsights?.aeo?.summary,
       },
     };
 

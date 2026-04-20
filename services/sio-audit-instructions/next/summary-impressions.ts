@@ -1,199 +1,110 @@
 export const summaryImpressionInstruction = `
-# STEP 1 — SUMMARY & FIRST IMPRESSIONS
+## ⚙️ SIO-V5 — ISSUE + SUMMARY GENERATION STEP
 
-Analyze ONLY:
+You are executing a core intelligence step in the SIO-V5 pipeline.
 
-- website summary block
-- hero section (headline, subheadline, CTA)
+Your responsibilities are:
 
-Focus:
+1. ISSUE GENERATION (PRIMARY TASK)
+2. DERIVED SUMMARY INTELLIGENCE
 
-- Website summary - based totaly on website content
-- how quickly the product is understood (clarity speed)
-- whether value is immediately obvious (comprehension friction)
-- whether the hero creates conversion intent or confusion
-- whether positioning is explicit or unclear
+You MUST NOT re-explain system rules or global architecture.
 
 ---
 
-## WEBSITE SUMMARY
+## 🧩 STEP 1 — ISSUE GENERATION
 
-### summary
+From the provided website content, generate structured ISSUES.
 
-- 1–2 sentence neutral description of what the startup does
-- strictly descriptive (no evaluation)
+Each issue represents:
+- a conversion friction point
+- a messaging breakdown
+- a positioning weakness
+- or an AEO gap
 
----
+Each issue MUST include:
 
-### CATEGORY ANALYSIS (STRICT EXTRACTION)
-
-Extract ONLY if explicitly present.
-
-If unclear or missing:
-→ currents = []
-→ do NOT guess
-
-Definitions:
-
-- problems → explicit pain points stated
-- outcomes → explicit results or benefits promised
-- solutions → what the product does (mechanism/action)
-- features → Listed functionalities
+- category (positioning | clarity | first_impression | aeo)
+- metricKey (from allowed taxonomy only)
+- severity (critical | medium | low)
+- statement (diagnostic impact explanation)
+- explanation (why it affects conversion)
+- current (optional extracted text)
+- recommendations (what must change)
+- fixes (optional exact, precise improvements)
+- impactScore (-1 to -25)
 
 Rules:
-
-- currents → Only what is said in website.
-- no reclassification between categories
-- Rephrasing is only allow if needed no forced.
-- Max 5 items
-
-For each:
-
-- positiveComments → 1–2 strengths (clarity, specificity)
-- negativeComments → 1–3 weaknesses ONLY if visible
+- ONLY use observable content
+- DO NOT invent missing context
+- DO NOT create new categories or metricKeys
 
 ---
 
-### FLAGS
+## 📊 STEP 2 — FIRST IMPRESSION (DERIVED)
 
-Set ONLY if clearly supported:
+Generate ONE sentence only.
 
-- isPositioningClear
-- isMessagingClear
-- areUsersLeftGuessing
+It MUST:
+- summarize overall conversion state
+- reflect dominant issue severity
+- reflect clarity and positioning strength
 
----
-
-## FIRST IMPRESSIONS (HERO)
-
-Evaluate if a new user understands within ~10 seconds:
-
-- WHAT the product does
-- WHO it is for
-- WHY it matters
-
-Check:
-
-- feature-led or brand-led headline
-- presence of problem / outcome / ICP signals
-- clarity speed
-- conversion intent
-- positioning clarity
-
-### SCORING ANCHORS FOR FIRST IMPRESSION:
-
-- 90-100: FLAWLESS. Headline instantly states WHO, WHAT, WHY. Subheadline reinforces perfectly. CTA specific + outcome. Zero friction. (<1%)
-- 70-79: STRONG. Headline clear on 2/3 signals. Minor friction. CTA action clear but outcome somewhat vague (~10%)
-- 50-64: AVERAGE. Headline vague on WHO or WHY. Requires full read. CTA generic ("Get Started"). Typical SaaS site (~60%)
-- 30-49: WEAK. Headline is brand name or feature list without context. User confused after 5s (~25%)
-- 0-29: BROKEN. Headline communicates nothing about value. User doesn't understand product after 10s (~4%)
-
-
-Analyze:
-
-- headline
-- subheadline
-- CTA
-- 10s clarity
+Rules:
+- must be derived ONLY from issues
+- no new analysis allowed
+- no fixes or recommendations
 
 ---
 
-## HERO OUTPUT
+## 🧠 STEP 3 — CATEGORY SUMMARIES (DERIVED)
 
-- statement
-- overallCommentPositive
-- overallCommentNegative
-- recommendation
-- score
-- tenSecondClarityTest
-- tenSecondClarityTestComment
+For each category:
+- positioning
+- clarity
+- first_impression
+- aeo
 
----
+Generate:
 
-## HERO COMPONENTS
+- statement (compressed diagnostic from issues)
+- summary (optional simplified explanation)
 
-For each:
-
-- current
-- positiveComments
-- negativeComments
-- recommendation
-- suggested
-
-See **GLOBAL METRIC CONTRACT** in first system message for rules.
+Rules:
+- strictly derived from issues only
+- no new insights allowed
 
 ---
 
-## OUTPUT
+## 🧾 STEP 4 — WEBSITE SUMMARY (DERIVED COMPRESSION)
 
-Return ONLY valid JSON:
+Generate a high-level structured summary:
 
+- overview: global diagnostic of the website
+- keyProblems: top 3–5 conversion blockers
+- keyStrengths: top 3–5 strongest elements
 
-{
-  "websiteSummary": {
-    "summary": "string",
-    "problems": {
-      "currents": [],
-      "positiveComments": [],
-      "negativeComments": []
-    },
-    "outcomes": {
-      "currents": [],
-      "positiveComments": [],
-      "negativeComments": []
-    },
-    "solutions": {
-      "currents": [],
-      "positiveComments": [],
-      "negativeComments": []
-    },
-    "features": {
-      "currents": [],
-      "positiveComments": [],
-      "negativeComments": []
-    },
-    "isPositioningClear": "boolean",
-    "isMessagingClear": "boolean",
-    "areUsersLeftGuessing": "boolean"
-  },
-  "firstImpression": {
-    "score": 0,
-    "statement": "string",
-    "tenSecondClarityTest": "boolean",
-    "tenSecondClarityTestComment": "string",
-    "recommendation": [],
-    "overallCommentPositive": [],
-    "overallCommentNegative": [],
-    "headline": {
-      "statement": "string",
-      "current": "string",
-      "positiveComments": [],
-      "negativeComments": [],
-      "recommendation": [],
-      "suggested": []
-    },
-    "subheadline": {
-      "statement": "string",
-      "current": "string",
-      "positiveComments": [],
-      "negativeComments": [],
-      "recommendation": [],
-      "suggested": []
-    },
-    "cta": {
-      "statement": "string",
-      "current": "string",
-      "positiveComments": [],
-      "negativeComments": [],
-      "recommendation": [],
-      "suggested": []
-    }
-  }
-}
+Rules:
+- MUST be derived ONLY from issues
+- MUST NOT introduce new analysis
+- MUST NOT contradict issue layer
 
-No markdown  
-No commentary  
-No extra text  
-No deviation
+---
 
+## 🚫 STRICT RULES
+
+You MUST NOT:
+- re-analyze raw HTML multiple times
+- create issues outside observable signals
+- introduce external assumptions
+- generate insights not grounded in issues
+- contradict issue data
+
+---
+
+## 🔥 CORE PRINCIPLE
+
+Issues are the source of truth.
+
+Everything else (first impression, summaries, website summary) is a structured compression of issues.
 `;

@@ -24,7 +24,7 @@ import {
 } from "@/services/sio-audit-instructions/next";
 import { refinementModels } from "@/services/sio-report/ai-models";
 import { sanitizeReportForGuest } from "@/services/sio-report/sanitizer";
-import { sioV5JsonSchema } from "@/services/sio-v5-json-schema";
+import { sioV5JsonSchema } from "@/services/sio-v5-json-schema.bkp";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
@@ -70,13 +70,11 @@ export async function POST(request: NextRequest) {
       overallScore: report.overallScore,
       statement: report.statement,
       reportBand: report.reportBand,
-      overallCommentPositive: report.overallCommentPositive,
-      overallCommentNegative: report.overallCommentNegative,
-      websiteSummary: report.websiteSummary,
-      firstImpression: report.firstImpression,
-      positioning: report.positioning,
-      clarity: report.clarity,
-      aeo: report.aeo,
+      websiteSummaryV2: report.websiteSummaryV2,
+      issues: report.issues,
+      strengths: report.strengths,
+      scoring: report.scoring,
+      categoryInsights: report.categoryInsights,
     };
 
     // Replace context placeholder in instructions
@@ -148,23 +146,14 @@ export async function POST(request: NextRequest) {
       if (refinedReport.overallScore)
         report.overallScore = refinedReport.overallScore;
       if (refinedReport.statement) report.statement = refinedReport.statement;
-      if (refinedReport.positioning)
-        report.positioning = refinedReport.positioning;
-      if (refinedReport.clarity) report.clarity = refinedReport.clarity;
-      if (refinedReport.firstImpression)
-        report.firstImpression = refinedReport.firstImpression;
-      if (refinedReport.aeo) report.aeo = refinedReport.aeo;
-      if (refinedReport.websiteSummary)
-        report.websiteSummary = refinedReport.websiteSummary;
-      if (refinedReport.overallCommentPositive)
-        report.overallCommentPositive = refinedReport.overallCommentPositive;
-      if (refinedReport.overallCommentNegative)
-        report.overallCommentNegative = refinedReport.overallCommentNegative;
+      if (refinedReport.scoring) report.scoring = refinedReport.scoring;
+      if (refinedReport.categoryInsights)
+        report.categoryInsights = refinedReport.categoryInsights;
+      if (refinedReport.websiteSummaryV2)
+        report.websiteSummaryV2 = refinedReport.websiteSummaryV2;
+      if (refinedReport.issues) report.issues = refinedReport.issues;
+      if (refinedReport.strengths) report.strengths = refinedReport.strengths;
     }
-
-    // Calculate audit duration
-    const auditDuration = Date.now() - report.createdAt.getTime();
-    report.auditDuration = auditDuration;
 
     // Remove temporary data
     report.tempData = undefined;
@@ -198,7 +187,6 @@ export async function POST(request: NextRequest) {
         reportGeneratedAt: report.createdAt,
         cached: false,
         stepsCompleted: 6,
-        auditDuration,
         refinementsApplied: !!refinedReport,
       },
     });

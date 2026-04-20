@@ -1,8 +1,13 @@
 "use client";
 
-import { AuditForm, AuditLoader, useAudit } from "@/components/audit";
+import {
+  AuditForm,
+  AuditLoader,
+  AuditProgress,
+  SIOV2Report,
+  useAudit2,
+} from "@/components/audit";
 import { Button } from "@/components/ui/button";
-import { SIOV5Report } from "@/services/sio-report/schema";
 import { useUserStore } from "@/stores/user-store";
 import {
   AlertCircle,
@@ -16,16 +21,19 @@ import {
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import DashboardSIOReport from "../sio-report/DashboardSIOReport";
+import {
+  DashboardSIOReportV2,
+  SIOV2ReportData,
+} from "../sio-report/dashboardV2";
 
 export default function PublicAuditPage() {
   const [url, setUrl] = useState("");
   const [cachedWarning, setCachedWarning] = useState<string | null>(null);
   const searchParams = useSearchParams();
   const setIsGuest = useUserStore((s) => s.setIsGuest);
-  const { status, startAudit, isRunning, isComplete, isFailed } = useAudit({
+  const { status, startAudit, isRunning, isComplete, isFailed } = useAudit2({
     isGuest: true,
-    onComplete: (report: SIOV5Report) => {
+    onComplete: (report: SIOV2Report) => {
       console.log("Audit complete!", report);
     },
     onError: (error: string) => {
@@ -62,7 +70,7 @@ export default function PublicAuditPage() {
   // Show cached report warning
   useEffect(() => {
     if (isComplete && status.data) {
-      const reportDate = new Date(status.data.analyzedAt);
+      const reportDate = new Date(status.data.createdAt || Date.now());
       const daysAgo = Math.floor(
         (Date.now() - reportDate.getTime()) / (1000 * 60 * 60 * 24),
       );
@@ -132,7 +140,7 @@ export default function PublicAuditPage() {
         {isRunning && status.reportId && (
           <div className="max-w-5xl mx-auto">
             <AuditLoader
-              currentProgress={status.progress}
+              currentProgress={status.progress as AuditProgress}
               url={url}
               className="max-w-none"
             />
@@ -194,7 +202,15 @@ export default function PublicAuditPage() {
         {/* Report Display */}
         {isComplete && status.data && (
           <div className={isComplete ? "pb-20" : ""}>
-            <DashboardSIOReport report={status.data as any} isGuest />
+            <DashboardSIOReportV2
+              report={
+                {
+                  ...status.data,
+                  websiteSummaryV2: status.data.websiteSummary,
+                } as SIOV2ReportData
+              }
+              isGuest
+            />
           </div>
         )}
 

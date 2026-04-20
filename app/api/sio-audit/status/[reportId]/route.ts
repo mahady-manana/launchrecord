@@ -1,6 +1,6 @@
 /**
  * Audit Status Endpoint
- * 
+ *
  * Purpose:
  * - Check current progress of an audit
  * - Used by client to poll for updates
@@ -14,7 +14,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: Promise<{ reportId: string }> }
+  { params }: { params: Promise<{ reportId: string }> },
 ) {
   try {
     await connectToDatabase();
@@ -31,79 +31,89 @@ export async function GET(
     const report = await SIOReport.findById(reportId).lean();
 
     if (!report) {
-      return NextResponse.json(
-        { error: "Report not found" },
-        { status: 404 },
-      );
+      return NextResponse.json({ error: "Report not found" }, { status: 404 });
     }
 
     // Build response based on progress
     const response: any = {
       reportId: report._id.toString(),
-      progress: report.progress || 'initializing',
+      progress: report.progress || "initializing",
       url: report.url,
       createdAt: report.createdAt,
     };
 
     // Include partial data based on progress
-    if (report.progress === 'content_fetched' || 
-        report.progress === 'summary_complete' ||
-        report.progress === 'positioning_clarity_complete' ||
-        report.progress === 'aeo_complete' ||
-        report.progress === 'scoring_complete' ||
-        report.progress === 'complete') {
-      response.contentSummary = report.tempData ? {
-        contentLength: report.tempData.contentLength,
-        hasSitemap: report.tempData.hasSitemap,
-        hasRobots: report.tempData.hasRobots,
-      } : null;
+    if (
+      report.progress === "content_fetched" ||
+      report.progress === "summary_complete" ||
+      report.progress === "positioning_clarity_complete" ||
+      report.progress === "aeo_complete" ||
+      report.progress === "scoring_complete" ||
+      report.progress === "complete"
+    ) {
+      response.contentSummary = report.tempData
+        ? {
+            contentLength: report.tempData.contentLength,
+            hasSitemap: report.tempData.hasSitemap,
+            hasRobots: report.tempData.hasRobots,
+          }
+        : null;
     }
 
-    if (report.progress === 'summary_complete' || 
-        report.progress === 'positioning_clarity_complete' ||
-        report.progress === 'aeo_complete' ||
-        report.progress === 'scoring_complete' ||
-        report.progress === 'complete') {
-      response.websiteSummary = report.websiteSummary;
-      response.firstImpressionScore = report.firstImpression?.score;
+    if (
+      report.progress === "summary_complete" ||
+      report.progress === "positioning_clarity_complete" ||
+      report.progress === "aeo_complete" ||
+      report.progress === "scoring_complete" ||
+      report.progress === "complete"
+    ) {
+      response.websiteSummary = report.websiteSummaryV2;
+      response.firstImpressionScore = report.scoring?.first_impression;
     }
 
-    if (report.progress === 'positioning_clarity_complete' ||
-        report.progress === 'aeo_complete' ||
-        report.progress === 'scoring_complete' ||
-        report.progress === 'complete') {
-      response.positioningScore = report.positioning?.score;
-      response.clarityScore = report.clarity?.score;
+    if (
+      report.progress === "positioning_clarity_complete" ||
+      report.progress === "aeo_complete" ||
+      report.progress === "scoring_complete" ||
+      report.progress === "complete"
+    ) {
+      response.positioningScore = report.scoring?.positioning;
+      response.clarityScore = report.scoring?.clarity;
     }
 
-    if (report.progress === 'aeo_complete' ||
-        report.progress === 'scoring_complete' ||
-        report.progress === 'complete') {
-      response.aeoScore = report.aeo?.score;
+    if (
+      report.progress === "aeo_complete" ||
+      report.progress === "scoring_complete" ||
+      report.progress === "complete"
+    ) {
+      response.aeoScore = report.scoring?.aeo;
     }
 
-    if (report.progress === 'scoring_complete' || report.progress === 'complete') {
+    if (
+      report.progress === "scoring_complete" ||
+      report.progress === "complete"
+    ) {
       response.overallScore = report.overallScore;
       response.reportBand = report.reportBand;
     }
 
     // If complete, return full report
-    if (report.progress === 'complete') {
+    if (report.progress === "complete") {
       response.data = sanitizeReportForGuest(report);
     }
 
     // If failed, return error info
-    if (report.progress === 'failed') {
+    if (report.progress === "failed") {
       response.failedAt = report.failedAt;
       response.errorMessage = report.errorMessage;
     }
 
     return NextResponse.json(response);
   } catch (error: any) {
-    console.error('SIO Audit Status Check Error:', error);
+    console.error("SIO Audit Status Check Error:", error);
 
     return NextResponse.json(
-      { error: 'Failed to check audit status' },
+      { error: "Failed to check audit status" },
       { status: 500 },
     );
   }

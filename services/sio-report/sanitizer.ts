@@ -7,7 +7,7 @@ import { ISIOReport } from "@/models/sio-report";
 export interface ISanitizedSIOReport {
   overallScore: number;
   statement: string;
-  reportBand: "Dominant" | "Strong" | "Blended" | "Weak" | "Ghost";
+  reportBand: ISIOReport["reportBand"];
   overallCommentPositive: string[];
   overallCommentNegative: string[];
   url: string;

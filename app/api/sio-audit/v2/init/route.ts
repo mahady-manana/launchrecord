@@ -1,22 +1,3 @@
-/**
- * Step 1: Initialize & Fetch Content
- *
- * Purpose:
- * - Validate URL and user permissions
- * - Check for existing recent reports
- * - Verify usage limits (simple logic per plan type)
- * - Fetch website content
- * - Validate content sufficiency
- * - ONLY create report if all conditions pass
- * - Return reportId with content already fetched
- *
- * USAGE LOGIC:
- * - Guest: 1 audit per URL (30-day cache)
- * - Free (no subscription): 1 audit per product (lifetime)
- * - One-time pass: 5 audits total (lifetime, tracked on subscription.auditsUsed)
- * - Subscription (founder/growth/sovereign): Monthly + weekly limits via Usage model
- */
-
 import { connectToDatabase } from "@/lib/db";
 import { getUserSession } from "@/lib/session";
 import { validateUrlServer } from "@/lib/url-validation";
@@ -35,13 +16,8 @@ const initAuditSchema = z.object({
   isGuest: z.boolean().optional(),
 });
 
-/**
- * Find active subscription for a product.
- * Tries exact productId match first, then broader search for one-time passes.
- */
 async function findSubscription(productId: string) {
-  // Strategy 1: Exact product match
-  let subscription = await Subscription.findOne({
+  const subscription = await Subscription.findOne({
     productId,
     status: "active",
     deletedAt: null,
@@ -50,14 +26,9 @@ async function findSubscription(productId: string) {
   return subscription;
 }
 
-/**
- * Get or create Usage tracking record for subscription-based plans.
- * Only used for monthly/weekly subscription plans (founder/growth/sovereign).
- */
 async function getOrCreateUsage(productId: string) {
   const now = new Date();
 
-  // Month bounds: 1st to last day of current month
   const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
   const monthEnd = new Date(
     now.getFullYear(),
@@ -69,7 +40,6 @@ async function getOrCreateUsage(productId: string) {
     999,
   );
 
-  // Week bounds: Sunday to Saturday
   const dayOfWeek = now.getDay();
   const weekStart = new Date(now);
   weekStart.setDate(now.getDate() - dayOfWeek);
@@ -78,14 +48,12 @@ async function getOrCreateUsage(productId: string) {
   weekEnd.setDate(weekStart.getDate() + 7);
   weekEnd.setMilliseconds(-1);
 
-  // Find existing usage for current month
   let usage = await Usage.findOne({
     productId,
     periodStart: { $gte: monthStart, $lte: monthEnd },
   });
 
   if (!usage) {
-    // Create new monthly tracking
     usage = await Usage.create({
       productId,
       periodStart: monthStart,
@@ -97,7 +65,6 @@ async function getOrCreateUsage(productId: string) {
       resetAt: weekEnd,
     });
   } else {
-    // Reset weekly counter if new week
     if (usage.weekEnd < now) {
       usage.sioWeeklyAuditUsed = 0;
       usage.weekStart = weekStart;
@@ -105,7 +72,6 @@ async function getOrCreateUsage(productId: string) {
       usage.resetAt = weekEnd;
     }
 
-    // Update month end
     usage.periodEnd = monthEnd;
     await usage.save();
   }
@@ -131,7 +97,6 @@ export async function POST(request: NextRequest) {
 
     const { url, productId, isGuest: guest } = validation.data;
 
-    // Server-side URL validation
     const urlValidation = validateUrlServer(url);
     if (!urlValidation.isValid || !urlValidation.normalizedUrl) {
       return NextResponse.json(
@@ -143,7 +108,6 @@ export async function POST(request: NextRequest) {
     const { normalizedUrl, hostUrl } = urlValidation;
     website = normalizedUrl;
 
-    // Check authentication
     const { user } = await getUserSession({ required: false });
     const isGuest = !user?._id || guest;
     const userId = user?.id;
@@ -159,13 +123,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // ========================================================================
-    // GUEST USERS: 1 audit per URL (30-day cache)
-    // ========================================================================
     if (isGuest) {
-      const thirtyDaysAgo = new Date();
-      thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-
       const existingReport = await SIOReport.findOne({
         url: hostUrl,
         progress: "complete",
@@ -184,15 +142,9 @@ export async function POST(request: NextRequest) {
           { status: 409 },
         );
       }
-
-      // Guest allowed, proceed
     }
 
-    // ========================================================================
-    // AUTHENTICATED USERS: Verify product access + check limits
-    // ========================================================================
     if (!isGuest && productId) {
-      // Verify product access
       const product = await Product.findOne({ _id: productId, users: userId });
 
       if (!product) {
@@ -202,10 +154,9 @@ export async function POST(request: NextRequest) {
         );
       }
 
-      // Find subscription for this product
       const subscription = await findSubscription(productId);
 
-      console.log("[Audit Init] Subscription check:", {
+      console.log("[Audit Init V2] Subscription check:", {
         productId,
         found: !!subscription,
         planType: subscription?.planType,
@@ -215,9 +166,6 @@ export async function POST(request: NextRequest) {
         auditsUsed: subscription?.auditsUsed,
       });
 
-      // ------------------------------------------------------------------
-      // NO SUBSCRIPTION = FREE PLAN: 1 audit per product (lifetime)
-      // ------------------------------------------------------------------
       if (!subscription || subscription.planType === "free") {
         const existingReports = await SIOReport.countDocuments({
           product: productId,
@@ -225,10 +173,6 @@ export async function POST(request: NextRequest) {
         });
 
         if (existingReports >= 1) {
-          console.log("[Audit Init] Free plan limit reached", {
-            existingReports,
-          });
-
           return NextResponse.json(
             {
               error:
@@ -243,24 +187,9 @@ export async function POST(request: NextRequest) {
             { status: 403 },
           );
         }
-
-        // Free user with 0 audits → allowed, proceed
-        console.log("[Audit Init] Free user allowed (first audit)");
-      }
-
-      // ------------------------------------------------------------------
-      // ONE-TIME PASS: Lifetime N audits (tracked on subscription.auditsUsed)
-      // No period tracking. Simple counter.
-      // ------------------------------------------------------------------
-      else if (subscription.planType === "onetime") {
-        const totalLimit = subscription.totalAuditLimit || 5; // Default 5 if not set
+      } else if (subscription.planType === "onetime") {
+        const totalLimit = subscription.totalAuditLimit || 5;
         const auditsUsed = subscription.auditsUsed || 0;
-
-        console.log("[Audit Init] One-time pass check:", {
-          totalLimit,
-          auditsUsed,
-          remaining: totalLimit - auditsUsed,
-        });
 
         if (auditsUsed >= totalLimit) {
           return NextResponse.json(
@@ -276,29 +205,11 @@ export async function POST(request: NextRequest) {
             { status: 403 },
           );
         }
-
-        // One-time user with remaining audits → allowed, proceed
-        console.log("[Audit Init] One-time pass allowed");
-      }
-
-      // ------------------------------------------------------------------
-      // SUBSCRIPTION (founder/growth/sovereign): Monthly + weekly limits
-      // Uses Usage model for period tracking
-      // ------------------------------------------------------------------
-      else {
+      } else {
         const monthlyLimit = subscription.monthlyAuditLimit || 0;
         const weeklyLimit = subscription.weeklyAuditLimit || 0;
-
-        console.log("[Audit Init] Subscription plan check:", {
-          planType: subscription.planType,
-          monthlyLimit,
-          weeklyLimit,
-        });
-
-        // Get or create usage tracking for this month
         const usage = await getOrCreateUsage(productId);
 
-        // Check monthly limit
         if (monthlyLimit > 0 && usage.sioAuditsUsed >= monthlyLimit) {
           return NextResponse.json(
             {
@@ -313,7 +224,6 @@ export async function POST(request: NextRequest) {
           );
         }
 
-        // Check weekly limit (if set)
         if (weeklyLimit > 0 && usage.sioWeeklyAuditUsed >= weeklyLimit) {
           return NextResponse.json(
             {
@@ -327,15 +237,9 @@ export async function POST(request: NextRequest) {
             { status: 403 },
           );
         }
-
-        // Subscription user within limits → allowed, proceed
-        console.log("[Audit Init] Subscription user allowed");
       }
     }
 
-    // ========================================================================
-    // ALL CHECKS PASSED - Fetch website content
-    // ========================================================================
     const websiteContent = await getWebsiteContent(normalizedUrl, true);
 
     if (!websiteContent) {
@@ -345,12 +249,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Validate content sufficiency
     const contentLength = websiteContent.simplifiedContent?.trim().length || 0;
     if (contentLength < 100) {
-      console.log("====================================");
-      console.log(websiteContent);
-      console.log("====================================");
       return NextResponse.json(
         {
           error:
@@ -361,9 +261,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // ========================================================================
-    // CREATE REPORT
-    // ========================================================================
     const newReport = await SIOReport.create({
       url: hostUrl,
       product: isGuest ? undefined : productId || undefined,
@@ -380,19 +277,29 @@ export async function POST(request: NextRequest) {
       issues: [],
       strengths: [],
       scoring: {
-        overall: 0,
+        first_impression: 0,
         positioning: 0,
         clarity: 0,
-        first_impression: 0,
         aeo: 0,
       },
       categoryInsights: {
-        positioning: { statement: "", summary: "" },
-        clarity: { statement: "", summary: "" },
-        first_impression: { statement: "", summary: "" },
-        aeo: { statement: "", summary: "" },
+        positioning: {
+          statement: "",
+          summary: "",
+        },
+        clarity: {
+          statement: "",
+          summary: "",
+        },
+        first_impression: {
+          statement: "",
+          summary: "",
+        },
+        aeo: {
+          statement: "",
+          summary: "",
+        },
       },
-      // Store content in tempData immediately
       tempData: {
         rawWebsiteContent: JSON.stringify(websiteContent),
         simplifiedContent: websiteContent.simplifiedContent,
@@ -409,8 +316,6 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    // ========================================================================
-    // DETERMINE PLAN TYPE FOR RESPONSE
     let planType = "free";
     let usageRemaining: number | null = null;
 
@@ -422,7 +327,7 @@ export async function POST(request: NextRequest) {
         if (subscription.planType === "onetime") {
           const totalLimit = subscription.totalAuditLimit || 5;
           const auditsUsed = subscription.auditsUsed || 0;
-          usageRemaining = totalLimit - auditsUsed - 1; // -1 for this audit
+          usageRemaining = totalLimit - auditsUsed - 1;
         } else if (
           ["founder", "growth", "sovereign"].includes(subscription.planType)
         ) {
@@ -451,7 +356,7 @@ export async function POST(request: NextRequest) {
           ? Object.keys(websiteContent.meta).length
           : 0,
       },
-      nextStep: "/api/sio-audit/steps/summary",
+      nextStep: "/api/sio-audit/v2/summary-and-issues",
       metadata: {
         url: hostUrl,
         isGuest,
@@ -460,10 +365,10 @@ export async function POST(request: NextRequest) {
       },
     });
   } catch (error: any) {
-    console.error("SIO Audit Init Error:", error);
+    console.error("SIO Audit V2 Init Error:", error);
 
     const errordb = new ApiError({
-      path: "/api/sio-audit/steps/init",
+      path: "/api/sio-audit/v2/init",
       content: JSON.stringify(error),
       metadata: {
         website,

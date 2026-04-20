@@ -53,11 +53,11 @@ export async function POST(request: NextRequest) {
     }
 
     // Calculate weighted overall score
-    // Weights: First Impression (20%), Positioning (25%), Clarity (25%), AEO (10%), Website Summary (20%)
-    const firstImpressionScore = report.firstImpression?.score || 0;
-    const positioningScore = report.positioning?.score || 0;
-    const clarityScore = report.clarity?.score || 0;
-    const aeoScore = report.aeo?.score || 0;
+    // Weights: First Impression (30%), Positioning (30%), Clarity (30%), AEO (10%)
+    const firstImpressionScore = report.scoring?.first_impression || 0;
+    const positioningScore = report.scoring?.positioning || 0;
+    const clarityScore = report.scoring?.clarity || 0;
+    const aeoScore = report.scoring?.aeo || 0;
 
     // Calculate raw weighted score
     let overallScore = Math.min(
@@ -88,8 +88,6 @@ export async function POST(request: NextRequest) {
       overallScore,
       statement,
       reportBand: band.name,
-      overallCommentPositive,
-      overallCommentNegative,
     });
 
     return NextResponse.json({
