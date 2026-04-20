@@ -35,8 +35,7 @@ export type ClarityMetric =
   | "feature_benefit_mapping"
   | "visual_hierarchy"
   | "cta_clarity"
-  | "proof_placement"
-  | "unclear_sentences";
+  | "proof_placement";
 
 export type IssueMetricKey =
   | FirstImpressionMetric
@@ -94,8 +93,10 @@ export interface ISIOReport extends Document {
   reportBand: "Dominant" | "Strong" | "Average" | "Weak" | "Ghost";
 
   // Website Summary V2
-  websiteSummary: V2WebsiteSummary;
+  websiteSummaryV2: V2WebsiteSummary;
 
+  // Legacy v1 compatibility fields
+  websiteSummary?: any;
   firstImpression?: any;
   positioning?: any;
   clarity?: any;
@@ -169,7 +170,6 @@ const issueMetricKeyEnum: IssueMetricKey[] = [
   "visual_hierarchy",
   "cta_clarity",
   "proof_placement",
-  "unclear_sentences",
 ];
 
 /**
@@ -243,10 +243,14 @@ const SIOReportSchema = new Schema<ISIOReport>(
     },
 
     // Website Summary V2
-    websiteSummary: {
+    websiteSummaryV2: {
       overview: { type: String, default: "" },
       problems: { type: [String], default: [] },
       solutions: { type: [String], default: [] },
+    },
+    websiteSummary: {
+      type: Schema.Types.Mixed,
+      default: null,
     },
     firstImpression: {
       type: Schema.Types.Mixed,

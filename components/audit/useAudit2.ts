@@ -372,35 +372,25 @@ export function useAudit2(options: UseAudit2Options = {}) {
             return;
           }
 
-          if (initResponse.status === 409 && initData.cached) {
-            try {
-              const statusResponse = await fetch(
-                `/api/sio-audit/status/${initData.existingReportId}`,
-              );
-              const statusData = await statusResponse.json();
-
-              if (statusData.data) {
-                setStatus({
-                  progress: "complete",
-                  reportId: initData.existingReportId,
-                  overallScore: statusData.overallScore,
-                  data: statusData.data,
-                  error: null,
-                  failedAt: null,
-                  contentSummary: null,
-                });
-                onCompleteRef.current?.(statusData.data);
-                isRunningRef.current = false;
-                return;
-              }
-            } catch (cacheError: any) {
-              throw new Error("Failed to fetch cached report");
-            }
-          }
-
           throw new Error(
             initData.error || initData.message || "Failed to initialize audit",
           );
+        }
+
+        // Check if this is a cached report response
+        if (initData.cached && initData.data) {
+          setStatus({
+            progress: "complete",
+            reportId: initData.reportId,
+            overallScore: initData.data.overallScore,
+            data: initData.data,
+            error: null,
+            failedAt: null,
+            contentSummary: initData.contentSummary || null,
+          });
+          onCompleteRef.current?.(initData.data);
+          isRunningRef.current = false;
+          return;
         }
 
         const reportId = initData.reportId;

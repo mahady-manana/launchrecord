@@ -58,55 +58,122 @@ Each issue MUST follow EXACTLY:
 - MIN issues: 7
 - MAX issues: 20
 - MUST include at least:
-  - 3 positioning issue
-  - 3 clarity issue
+  - 3 positioning issues
+  - 3 clarity issues
   - 1 first_impression issue
 
 ---
 
-## 📊 SEVERITY DISTRIBUTION (IMPORTANT)
+## 📊 SEVERITY DISTRIBUTION
 
-- critical: only real conversion blockers (max 30%)
+- critical: real conversion blockers (max 30%)
 - medium: meaningful friction
 - low: minor improvements
 
-DO NOT overuse critical.
+---
+
+## 🧠 ISSUE QUALITY RULES (STRICT)
+
+### ✔ STATEMENT — DIAGNOSTIC ONLY
+
+The statement MUST:
+
+- describe WHAT is happening
+- describe WHAT is weak or broken
+- describe the conversion or clarity impact
+
+The statement MUST NOT:
+
+- contain advice
+- suggest improvements
+- imply fixes
+- use judgmental tone (e.g. "sloppy", "bad", "weak writing")
+- use emotional or subjective language
 
 ---
 
-## 🧠 ISSUE QUALITY RULES
+### ✔ EXPLANATION — CAUSAL ONLY
 
-Each issue MUST:
+The explanation MUST:
 
-### ✔ Statement
-- describe the problem clearly
-- explain conversion impact
-- NO fixes inside
+- explain WHY the issue affects clarity or conversion
+- remain factual and neutral
+- connect cause → impact
 
-### ✔ Explanation
-- explain WHY it hurts clarity or conversion
-- grounded in observed content
+The explanation MUST NOT:
 
-### ✔ Current
-- exact extracted text OR null
+- suggest what to do
+- include recommendations
+- include rewrite hints
+- include opinions or stylistic judgment
 
-### ✔ Recommendations
-- WHAT must change (no copywriting)
+---
 
-### ✔ Fixes
+## 🚫 FORBIDDEN LANGUAGE (STRICT)
+
+You MUST NOT use:
+
+- "should"
+- "needs to"
+- "must improve"
+- "better to"
+- "fix this by"
+- "you should"
+- "this is sloppy"
+- "this is bad writing"
+- "this is weak"
+- "this hurts credibility because of tone" (if not measurable)
+
+---
+
+## ❌ BAD EXAMPLE (FORBIDDEN)
+
+"The heading misspells 'like', signaling sloppiness."
+
+→ contains judgment ("sloppiness")
+
+---
+
+## ✅ GOOD EXAMPLE (CORRECT)
+
+"The heading contains a spelling error ('kike' instead of 'like'), which reduces perceived clarity and professionalism."
+
+→ factual + impact  
+→ no judgment  
+→ no advice  
+
+---
+
+### ✔ CURRENT
+
+- MUST be exact extracted text or null
+- no rewriting
+
+---
+
+### ✔ RECOMMENDATIONS
+
+- define WHAT must change
+- no copywriting
+- no rewritten text
+
+---
+
+### ✔ FIXES
+
 - optional
-- max 1–3 items
-- high impact only
+- max 1–3
+- only high-impact
 
 ---
 
 ## ⚡ FIRST IMPRESSION
 
 - EXACTLY 1 sentence
-- must reflect:
+- reflect:
   - clarity
   - positioning
-  - severity of issues
+  - severity
 
 NO advice. NO fixes.
 
@@ -114,22 +181,17 @@ NO advice. NO fixes.
 
 ## 🧠 CATEGORY INSIGHTS
 
-For each category:
-
-- statement = diagnostic synthesis
-- summary = simplified explanation
-
-Rules:
-- MUST reflect issues only
-- MUST NOT introduce new problems
+- derived from issues only
+- no new ideas
+- no recommendations
 
 ---
 
 ## 🧾 WEBSITE SUMMARY
 
 - overview = global diagnostic
-- problems = top 3–5 issues (rewrite as readable insights)
-- solutions = top 3–5 solution directions tied to the issues
+- problems = top issues rewritten
+- solutions = high-level directions (NOT tactical)
 
 ---
 
@@ -137,20 +199,104 @@ Rules:
 
 You MUST NOT:
 
-- create new categories
-- create new metric keys
-- hallucinate missing context
-- generate generic SaaS advice
+- introduce advice in statement or explanation
+- use subjective or emotional wording
+- generate hidden recommendations inside explanations
 - contradict issues in summaries
 - output invalid JSON
 
 ---
 
+## 🧾 WEBSITE SUMMARY CONTRACT (PRODUCT UNDERSTANDING LAYER)
+
+This section is a MINIMAL PRODUCT SUMMARY of the website.
+
+  "websiteSummary": {
+    "overview": "string",
+    "problems": ["string"],
+    "solutions": ["string"]
+  }
+    
+It is NOT an analysis of issues and MUST NOT reflect diagnostic thinking.
+
+It exists to explain:
+→ what the product is  
+→ what problem it solves  
+→ what solution it provides  
+
+---
+
+### 🔹 overview
+
+- Single concise description of what the product/website is
+- MUST be based ONLY on visible website content
+- MUST describe the product in simple, neutral terms
+
+DO NOT include:
+- issues
+- critiques
+- recommendations
+- positioning analysis
+
+---
+
+### 🔹 problems
+
+- What user problem the product is trying to solve
+- MUST reflect the user pain point addressed by the product
+- NOT website flaws
+
+Rules:
+- describe ONLY external user pain (not site issues)
+- keep it simple and direct
+- max 3–5 items
+
+DO NOT:
+- mention UI, messaging, or website structure issues
+- include diagnostic language
+- describe what is wrong with the website
+
+---
+
+### 🔹 solutions
+
+- What the product offers as a solution to the stated problems
+- MUST describe product capabilities or value proposition
+- MUST stay high-level and non-technical
+
+Rules:
+- focus on “what it does”, not “how to fix it”
+- max 3–5 items
+- must reflect actual product offering
+
+DO NOT:
+- include fixes
+- include recommendations
+- include UI or copy improvements
+
+---
+
+## 🚫 CRITICAL RULE
+
+WebsiteSummary is NOT:
+
+- a diagnostic layer
+- an issue summary
+- a UX audit
+- a feedback system
+
+It is ONLY:
+
+→ a neutral product understanding layer for quick human comprehension
+
 ## 🔥 CORE PRINCIPLE
 
-Issues are the ONLY source of truth.
+Statement = WHAT is wrong + impact  
+Explanation = WHY it matters  
 
-Everything else MUST be derived from issues.
+Recommendations/Fixes = handled separately  
+
+Strict separation is mandatory.
 
 RETURN ONLY JSON.
 `;

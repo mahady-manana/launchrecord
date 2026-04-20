@@ -132,15 +132,20 @@ export async function POST(request: NextRequest) {
         .lean();
 
       if (existingReport) {
-        return NextResponse.json(
-          {
-            error: "A recent audit for this URL already exists",
-            existingReportId: existingReport._id,
-            cached: true,
-            reportGeneratedAt: existingReport.createdAt,
+        return NextResponse.json({
+          success: true,
+          reportId: existingReport._id.toString(),
+          progress: "complete",
+          data: existingReport,
+          cached: true,
+          reportGeneratedAt: existingReport.createdAt,
+          metadata: {
+            url: hostUrl,
+            isGuest: true,
+            planType: "free",
+            usageRemaining: null,
           },
-          { status: 409 },
-        );
+        });
       }
     }
 
