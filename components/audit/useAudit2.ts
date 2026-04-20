@@ -42,7 +42,7 @@ export interface SIOV2Report {
       | "visual_hierarchy"
       | "cta_clarity"
       | "proof_placement";
-    severity: "critical" | "medium" | "low";
+    severity: "critical" | "high" | "medium" | "low";
     statement: string;
     explanation?: string;
     current?: string;

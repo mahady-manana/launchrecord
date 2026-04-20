@@ -4,7 +4,7 @@ import { Document, Types } from "mongoose";
    ENUMS
 ========================= */
 
-export type IssueSeverity = "critical" | "medium" | "low";
+export type IssueSeverity = "critical" | "high" | "medium" | "low";
 
 export type IssueCategory =
   | "positioning"

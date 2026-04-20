@@ -7,7 +7,7 @@ const issueCategoryEnum = [
   "aeo",
 ];
 
-const issueSeverityEnum = ["critical", "medium", "low"];
+const issueSeverityEnum = ["critical", "high", "medium", "low"];
 
 const issueMetricKeyEnum = [
   "headline",

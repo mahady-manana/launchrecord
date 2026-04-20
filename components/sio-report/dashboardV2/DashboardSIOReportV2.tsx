@@ -49,7 +49,7 @@ export interface SIOV2ReportData {
     id: string;
     category: "positioning" | "clarity" | "first_impression" | "aeo";
     metricKey?: string;
-    severity: "critical" | "medium" | "low";
+    severity: "critical" | "high" | "medium" | "low";
     statement: string;
     explanation?: string;
     current?: string;

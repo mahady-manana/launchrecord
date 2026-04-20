@@ -8,7 +8,7 @@ export type V2WebsiteSummary = {
 
 const issueCategoryEnum = ["positioning", "clarity", "first_impression", "aeo"];
 
-const issueSeverityEnum = ["critical", "medium", "low"];
+const issueSeverityEnum = ["critical", "high", "medium", "low"];
 
 const issueMetricKeyEnum = [
   "headline",

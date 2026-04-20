@@ -22,7 +22,7 @@ interface Issue {
   id: string;
   category: "positioning" | "clarity" | "first_impression" | "aeo";
   metricKey?: string;
-  severity: "critical" | "medium" | "low";
+  severity: "critical" | "high" | "medium" | "low";
   statement: string;
   explanation?: string;
   current?: string;
@@ -54,9 +54,11 @@ export function IssuesSection({ issues, isFree = false }: IssuesSectionProps) {
   const getSeverityIcon = (severity: string) => {
     switch (severity) {
       case "critical":
-        return <AlertTriangle className="w-4 h-4 text-red-500" />;
+        return <AlertTriangle className="w-4 h-4 text-red-600" />;
+      case "high":
+        return <AlertTriangle className="w-4 h-4 text-orange-600" />;
       case "medium":
-        return <AlertCircle className="w-4 h-4 text-yellow-500" />;
+        return <AlertCircle className="w-4 h-4 text-yellow-600" />;
       case "low":
         return <Info className="w-4 h-4 text-blue-500" />;
       default:
@@ -65,16 +67,22 @@ export function IssuesSection({ issues, isFree = false }: IssuesSectionProps) {
   };
 
   const getSeverityBadge = (severity: string) => {
-    const variants = {
-      critical: "destructive" as const,
-      medium: "secondary" as const,
-      low: "outline" as const,
-    };
-    return (
-      <Badge variant={variants[severity as keyof typeof variants] || "outline"}>
-        {severity.toUpperCase()}
-      </Badge>
-    );
+    switch (severity) {
+      case "critical":
+        return <Badge variant="destructive">CRITICAL</Badge>;
+      case "high":
+        return (
+          <Badge className="bg-orange-100 text-orange-800 border-orange-200">
+            HIGH
+          </Badge>
+        );
+      case "medium":
+        return <Badge variant="secondary">MEDIUM</Badge>;
+      case "low":
+        return <Badge variant="outline">LOW</Badge>;
+      default:
+        return <Badge variant="outline">{severity.toUpperCase()}</Badge>;
+    }
   };
 
   const getCategoryColor = (category: string) => {
@@ -101,7 +109,7 @@ export function IssuesSection({ issues, isFree = false }: IssuesSectionProps) {
     {} as Record<string, Issue[]>,
   );
 
-  const severityOrder = ["critical", "medium", "low"];
+  const severityOrder = ["critical", "high", "medium", "low"];
 
   return (
     <div className="space-y-6">

@@ -1,20 +1,108 @@
 export const analyzeAndIssueInstruction = `
-## ⚙️ SIO-V5 — ANALYZE & ISSUE GENERATION (STRICT MODE)
+## ⚙️ SIO-V6 — ANALYZE & ISSUE GENERATION (STEP 1)
 
-You are responsible for:
-
-1. analyzing website content
-2. generating structured ISSUES
-3. producing initial summaries
-
-This is the ONLY step where issues are created.
+**Primary Objective**: Extract intelligence and create structured ISSUES. 
+Refer to **General Instructions** for core metric definitions and quality rules.
 
 ---
 
-## 🧠 OUTPUT CONTRACT (MANDATORY)
+## 🧩 LOGICAL MAPPING (CRITICAL)
+- **isPositioningClear = FALSE** → MUST generate 2+ CRITICAL "positioning" issues.
+- **ten_second_test = FALSE** → MUST generate 2+ CRITICAL "first_impression" issues.
+- **isMessagingClear = FALSE** → MUST generate 2+ HIGH/CRITICAL "clarity" issues.
 
-You MUST return a JSON object with EXACTLY this structure:
+---
 
+## 🔍 CONTEXTUAL FLEXIBILITY (CRITICAL)
+Do NOT enforce a rigid "startup template". 
+- Some products need ICP + Outcome in headline; others don't.
+- Evaluate effectiveness and clarity for the specific context, not adherence to a specific framework.
+- Every startup has unique ways of implementing best practices.
+
+---
+
+## 🔍 DIAGNOSTIC PRINCIPLE (CRITICAL)
+Do NOT rely only on provided examples. Apply these **first principles** to the unique website context. If a message is weak for a reason not listed but violates a principle, you MUST flag it.
+
+
+---
+
+## 🔍 evaluation: headline
+- **What Matters**: Effectively capturing attention and communicating the "reason to exist" without forcing a rigid formula.
+- **Checks**: Ambiguity requiring multiple paragraphs to resolve; jargon that alienates the intended user; overall compelling nature and clarity.
+
+## 🔍 evaluation: subheadline
+- **What Matters**: Reducing cognitive load by expanding on the primary hook and providing context.
+- **Checks**: Pure repetition of headline; introduction of unsupported technical concepts; failure to bridge from promise to execution.
+
+## 🔍 evaluation: cta (first impression)
+- **What Matters**: A clear, low-friction trigger for the next logical step in the user journey.
+- **Checks**: "Mystery meat" links with no clear destination; language disconnected from hero section value; visual buried in layout.
+
+## 🔍 evaluation: category_ownership
+- **What Matters**: An immediate mental frame of reference so users know how to value the product.
+- **Checks**: Obscure "invented" categories that prevent comparison; lack of any baseline context; being too broad to be meaningful.
+
+## 🔍 evaluation: unique_value_proposition (uvp)
+- **What Matters**: Identifying the primary outcome or "edge" that makes the product worth choosing.
+- **Checks**: UVP indistinguishable from industry "table stakes"; primary benefits claimed without any evidence; non-measurable outcomes.
+
+## 🔍 evaluation: competitive_differentiation
+- **What Matters**: Clarifying the specific "delta" between this product and known alternatives.
+- **Checks**: Assuming the user already knows the competition; failure to state why this is better, faster, or more relevant for a specific niche.
+
+## 🔍 evaluation: target_audience
+- **What Matters**: Resonance with a specific ICP so the right user feels "spoken to."
+- **Checks**: "Everything for everyone" language; lack of industry-specific terminology; mismatch between capability and target audience.
+
+## 🔍 evaluation: problem_solution_fit
+- **What Matters**: Direct alignment between a recognizable, "burning" user pain and the product solution.
+- **Checks**: Trivial or "hallucinated" problems; solutions that look like a "feature looking for a problem"; weak bridge between pain and better state.
+
+## 🔍 evaluation: messaging_consistency
+- **What Matters**: A logical, aligned narrative flow from the top of the page to the bottom.
+- **Checks**: Pivoting to unrelated value props halfway down; testimonials praising features not in copy; "Frankenstein" messaging.
+
+## 🔍 evaluation: headline_clarity
+- **What Matters**: Passing the "glance test" (3-5 seconds) for basic comprehension.
+- **Checks**: Puns or clever wordplay prioritized over meaning; excessive jargon; requiring sub-copy reading to understand the main hook.
+
+## 🔍 evaluation: value_proposition (clarity)
+- **What Matters**: Making specific outcomes and benefits easy to find and digest during a quick scan.
+- **Checks**: Value buried in massive text blocks; vague high-level marketing speak; lack of concrete outcome statements.
+
+## 🔍 evaluation: feature_benefit_mapping
+- **What Matters**: Connecting the technical "what" to the practical or emotional "why."
+- **Checks**: "Laundry lists" of features without enabled outcomes; promising outcomes without showing the enabling features.
+
+## 🔍 evaluation: visual_hierarchy
+- **What Matters**: Guiding attention toward critical conversion and clarity elements through layout.
+- **Checks**: Critical text too small to notice; CTA blending into background; secondary elements louder than primary value prop.
+
+## 🔍 evaluation: cta_clarity
+- **What Matters**: Precise transparency regarding the immediate result of a click.
+- **Checks**: "Commitment-heavy" language before value is established; "commitment-vague" text that leaves the user guessing.
+
+## 🔍 evaluation: proof_placement
+- **What Matters**: Trust signals (logos, data) deployed at moments of maximum doubt or friction.
+- **Checks**: Social proof sequestered at the bottom only; generic/unverifiable reviews; missing proof near primary CTAs.
+
+## 🔍 evaluation: unclear_sentences
+- **What Matters**: A professional, high-momentum reading experience through clean copy.
+- **Checks**: Sentences so long the thread is lost; typos and grammar issues undermining credibility; passive voice stalling momentum.
+
+
+---
+
+## 🧩 ISSUES CONTRACT
+Each issue MUST adhere to the **General Instructions** schema and quality rules. 
+- **metricKey**: MUST be lowercase.
+- MIN issues: 7 | MAX: 20
+- Categories: 3 Positioning, 3 Clarity, 1 First Impression.
+
+---
+
+## ⚡ OUTPUT STRUCTURE
 {
   "issues": [...],
   "firstImpressions": {
@@ -22,287 +110,20 @@ You MUST return a JSON object with EXACTLY this structure:
     "isMessagingClear": boolean,
     "isUserLeftGuessing": boolean,
     "ten_second_test": boolean,
-    "statement": "string"
+    "statement": "Summary of current conversion state (1 sentence)"
   },
   "categoryInsights": {
-    "positioning": { "statement": "string", "summary": "string" },
-    "clarity": { "statement": "string", "summary": "string" },
-    "first_impression": { "statement": "string", "summary": "string" },
-    "aeo": { "statement": "string", "summary": "string" }
+    "positioning": { "statement": "Diagnostic synthesis", "summary": "Simplified explanation" },
+    "clarity": { "statement": "...", "summary": "..." },
+    "first_impression": { "statement": "...", "summary": "..." },
+    "aeo": { "statement": "...", "summary": "..." }
   },
   "websiteSummary": {
-    "overview": "string",
-    "problems": ["string"],
-    "solutions": ["string"]
+    "overview": "Neutral product description",
+    "problems": ["User pains addressed by product"],
+    "solutions": ["Product capabilities/value prop"]
   }
 }
-
-NO extra fields allowed.
-
----
-
-## 🧩 ISSUES ARRAY (STRICT FORMAT)
-
-Each issue MUST follow EXACTLY:
-
-{
-  "category": "positioning | clarity | first_impression | aeo",
-  "metricKey": "one of allowed metric keys",
-  "severity": "critical | medium | low",
-  "statement": "string",
-  "explanation": "string",
-  "current": "string or null",
-  "recommendations": ["string"],
-  "fixes": ["string"],
-  "impactScore": number
-}
-
----
-
-## 🔒 ISSUE CONSTRAINTS
-
-- MIN issues: 7
-- MAX issues: 20
-- MUST include at least:
-  - 3 positioning issues
-  - 3 clarity issues
-  - 1 first_impression issue
-
----
-
-## 📊 SEVERITY DISTRIBUTION
-
-- critical: real conversion blockers (max 30%)
-- medium: meaningful friction
-- low: minor improvements
-
----
-
-## 🧠 ISSUE QUALITY RULES (STRICT)
-
-### ✔ STATEMENT — DIAGNOSTIC ONLY
-
-The statement MUST:
-
-- describe WHAT is happening
-- describe WHAT is weak or broken
-- describe the conversion or clarity impact
-
-The statement MUST NOT:
-
-- contain advice
-- suggest improvements
-- imply fixes
-- use judgmental tone (e.g. "sloppy", "bad", "weak writing")
-- use emotional or subjective language
-
----
-
-### ✔ EXPLANATION — CAUSAL ONLY
-
-The explanation MUST:
-
-- explain WHY the issue affects clarity or conversion
-- remain factual and neutral
-- connect cause → impact
-
-The explanation MUST NOT:
-
-- suggest what to do
-- include recommendations
-- include rewrite hints
-- include opinions or stylistic judgment
-
----
-
-## 🚫 FORBIDDEN LANGUAGE (STRICT)
-
-You MUST NOT use:
-
-- "should"
-- "needs to"
-- "must improve"
-- "better to"
-- "fix this by"
-- "you should"
-- "this is sloppy"
-- "this is bad writing"
-- "this is weak"
-- "this hurts credibility because of tone" (if not measurable)
-
----
-
-## ❌ BAD EXAMPLE (FORBIDDEN)
-
-"The heading misspells 'like', signaling sloppiness."
-
-→ contains judgment ("sloppiness")
-
----
-
-## ✅ GOOD EXAMPLE (CORRECT)
-
-"The heading contains a spelling error ('kike' instead of 'like'), which reduces perceived clarity and professionalism."
-
-→ factual + impact  
-→ no judgment  
-→ no advice  
-
----
-
-### ✔ CURRENT
-
-- MUST be exact extracted text or null
-- no rewriting
-
----
-
-### ✔ RECOMMENDATIONS
-
-- define WHAT must change
-- no copywriting
-- no rewritten text
-
----
-
-### ✔ FIXES
-
-- optional
-- max 1–3
-- only high-impact
-
----
-
-## ⚡ FIRST IMPRESSIONS
-
-- isPositioningClear: Is it clear what they do and who for?
-- isMessagingClear: Is the value prop easy to understand?
-- isUserLeftGuessing: Is the visitor confused about the product?
-- ten_second_test: Can a visitor understand the value in 10 seconds?
-- statement: EXACTLY 1 sentence reflecting clarity, positioning, and severity.
-
-NO advice. NO fixes.
-
----
-
-## 🧠 CATEGORY INSIGHTS
-
-- derived from issues only
-- no new ideas
-- no recommendations
-
----
-
-## 🧾 WEBSITE SUMMARY
-
-- overview = global diagnostic
-- problems = top issues rewritten
-- solutions = high-level directions (NOT tactical)
-
----
-
-## 🚫 HARD RULES
-
-You MUST NOT:
-
-- introduce advice in statement or explanation
-- use subjective or emotional wording
-- generate hidden recommendations inside explanations
-- contradict issues in summaries
-- output invalid JSON
-
----
-
-## 🧾 WEBSITE SUMMARY CONTRACT (PRODUCT UNDERSTANDING LAYER)
-
-This section is a MINIMAL PRODUCT SUMMARY of the website.
-
-  "websiteSummary": {
-    "overview": "string",
-    "problems": ["string"],
-    "solutions": ["string"]
-  }
-    
-It is NOT an analysis of issues and MUST NOT reflect diagnostic thinking.
-
-It exists to explain:
-→ what the product is  
-→ what problem it solves  
-→ what solution it provides  
-
----
-
-### 🔹 overview
-
-- Single concise description of what the product/website is
-- MUST be based ONLY on visible website content
-- MUST describe the product in simple, neutral terms
-
-DO NOT include:
-- issues
-- critiques
-- recommendations
-- positioning analysis
-
----
-
-### 🔹 problems
-
-- What user problem the product is trying to solve
-- MUST reflect the user pain point addressed by the product
-- NOT website flaws
-
-Rules:
-- describe ONLY external user pain (not site issues)
-- keep it simple and direct
-- max 3–5 items
-
-DO NOT:
-- mention UI, messaging, or website structure issues
-- include diagnostic language
-- describe what is wrong with the website
-
----
-
-### 🔹 solutions
-
-- What the product offers as a solution to the stated problems
-- MUST describe product capabilities or value proposition
-- MUST stay high-level and non-technical
-
-Rules:
-- focus on “what it does”, not “how to fix it”
-- max 3–5 items
-- must reflect actual product offering
-
-DO NOT:
-- include fixes
-- include recommendations
-- include UI or copy improvements
-
----
-
-## 🚫 CRITICAL RULE
-
-WebsiteSummary is NOT:
-
-- a diagnostic layer
-- an issue summary
-- a UX audit
-- a feedback system
-
-It is ONLY:
-
-→ a neutral product understanding layer for quick human comprehension
-
-## 🔥 CORE PRINCIPLE
-
-Statement = WHAT is wrong + impact  
-Explanation = WHY it matters  
-
-Recommendations/Fixes = handled separately  
-
-Strict separation is mandatory.
 
 RETURN ONLY JSON.
 `;

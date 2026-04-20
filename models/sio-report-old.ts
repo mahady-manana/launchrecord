@@ -11,7 +11,7 @@ export type ReportBand =
   | "Weak"
   | "Ghost";
 
-export type IssueSeverity = "critical" | "medium" | "low";
+export type IssueSeverity = "critical" | "high" | "medium" | "low";
 
 export type IssueCategory =
   | "positioning"
@@ -298,7 +298,7 @@ const SIOReportSchema = new Schema<ISIOReport>(
           },
           severity: {
             type: String,
-            enum: ["critical", "medium", "low"],
+            enum: ["critical", "high", "medium", "low"],
             required: true,
           },
           statement: { type: String, required: true },

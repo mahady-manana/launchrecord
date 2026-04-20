@@ -53,6 +53,9 @@ export async function POST(request: NextRequest) {
 
     const promptInput = {
       issues: normalizeIssues(report.issues || []),
+      firstImpressions: report.firstImpressions,
+      categoryInsights: report.categoryInsights,
+      websiteSummary: report.websiteSummary,
     };
 
     const client = getOpenRouterClient();
