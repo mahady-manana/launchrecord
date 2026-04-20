@@ -28,9 +28,12 @@ export function HeroSection() {
         <div className="space-y-6 relative px-4 py-20 max-w-7xl w-full text-center border-slate-200 border-x px-12">
           <div className="space-y-4">
             <h1 className="text-4xl md:text-5xl font-bold tracking-tighter text-slate-600 leading-[1.1]">
-              Confusion kills conversions. <br /> Get a free positioning and
+              Confusion kills conversions. <br /> Get a positioning and
               messaging audit <br />{" "}
-              <span className="text-primary"> with precise fixes.</span>
+              <span className="text-primary">
+                {" "}
+                with precise, actionable fixes.
+              </span>
             </h1>
 
             <p className="block text-lg max-w-2xl mx-auto text-slate-600 font-mono tracking-normal normal-case">
@@ -66,7 +69,7 @@ export function HeroSection() {
               <p className="inline-block rounded-md text-slate-600 font-medium text-sm">
                 Enter your website url.{" "}
                 <span className="px-2 text-primary font-bold">
-                  No signup required.
+                  No signup required for initial audit.
                 </span>
               </p>
             </div>

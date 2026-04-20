@@ -126,6 +126,14 @@ STRICTLY FORBIDDEN:
 
 This is the **WHY layer (tension creation)**.
 
+EXAMPLE :
+
+❌ BAD STATEMENT - Too weak:
+Your value proposition is unclear and may confuse users.
+
+✅ GOOD STATEMENT - Better:
+Your value proposition is unclear, which likely reduces conversions.
+It focuses on features instead of a concrete outcome.
 ---
 
 ### 4. recommendations (EXECUTION LOGIC)
