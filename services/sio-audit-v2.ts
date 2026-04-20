@@ -28,6 +28,25 @@ const issueMetricKeyEnum = [
   "proof_placement",
 ];
 
+const firstImpressionsSchema = {
+  type: "object",
+  additionalProperties: false,
+  properties: {
+    isPositioningClear: { type: "boolean" },
+    isMessagingClear: { type: "boolean" },
+    isUserLeftGuessing: { type: "boolean" },
+    ten_second_test: { type: "boolean" },
+    statement: { type: "string" },
+  },
+  required: [
+    "isPositioningClear",
+    "isMessagingClear",
+    "isUserLeftGuessing",
+    "ten_second_test",
+    "statement",
+  ],
+};
+
 const categoryInsightSchema = {
   type: "object",
   additionalProperties: false,
@@ -93,7 +112,7 @@ export const summaryAndIssuesJsonSchema = {
       type: "array",
       items: issueGenerationIssueSchema,
     },
-    firstImpression: { type: "string" },
+    firstImpressions: firstImpressionsSchema,
     categoryInsights: {
       type: "object",
       additionalProperties: false,
@@ -107,7 +126,12 @@ export const summaryAndIssuesJsonSchema = {
     },
     websiteSummary: websiteSummarySchema,
   },
-  required: ["issues", "firstImpression", "categoryInsights", "websiteSummary"],
+  required: [
+    "issues",
+    "firstImpressions",
+    "categoryInsights",
+    "websiteSummary",
+  ],
 };
 
 export const scoringFixesJsonSchema = {
@@ -149,14 +173,14 @@ export const validationImprovementJsonSchema = {
       items: enrichedIssueSchema,
     },
     scoring: scoringFixesJsonSchema.properties.scoring,
-    firstImpression: { type: "string" },
+    firstImpressions: firstImpressionsSchema,
     categoryInsights: summaryAndIssuesJsonSchema.properties.categoryInsights,
     websiteSummary: websiteSummarySchema,
   },
   required: [
     "issues",
     "scoring",
-    "firstImpression",
+    "firstImpressions",
     "categoryInsights",
     "websiteSummary",
   ],
@@ -225,6 +249,16 @@ export function normalizeWebsiteSummary(
   };
 }
 
+export function normalizeFirstImpressions(rawFirstImpressions: any) {
+  return {
+    isPositioningClear: Boolean(rawFirstImpressions?.isPositioningClear),
+    isMessagingClear: Boolean(rawFirstImpressions?.isMessagingClear),
+    isUserLeftGuessing: Boolean(rawFirstImpressions?.isUserLeftGuessing),
+    ten_second_test: Boolean(rawFirstImpressions?.ten_second_test),
+    statement: rawFirstImpressions?.statement || "",
+  };
+}
+
 export function getStoredWebsiteSummary(report: any): V2WebsiteSummary {
   return normalizeWebsiteSummary(report?.websiteSummaryV2);
 }
@@ -239,7 +273,7 @@ export function buildV2ValidationInput(report: any) {
       first_impression: normalizeScore(report?.scoring?.firstImpression),
       aeo: normalizeScore(report?.scoring?.aeo),
     },
-    firstImpression: report?.statement || "",
+    firstImpressions: normalizeFirstImpressions(report?.firstImpressions),
     categoryInsights: serializeCategoryInsightsForPrompt(
       report?.categoryInsights,
     ),
@@ -257,7 +291,7 @@ export function buildV2ApiData(report: any) {
     url: report?.url || "",
     overallScore: normalizeScore(report?.overallScore),
     statement: report?.statement || "",
-    firstImpression: report?.statement || "",
+    firstImpressions: normalizeFirstImpressions(report?.firstImpressions),
     reportBand: normalizeReportBand(report?.reportBand),
     issues: normalizeIssues(report?.issues || []),
     strengths: Array.isArray(report?.strengths) ? report.strengths : [],
@@ -277,6 +311,7 @@ export function buildV2ApiData(report: any) {
     updatedAt: report?.updatedAt,
   };
 }
+
 
 export function getV2Band(score: number) {
   if (score >= 90) return "Dominant";

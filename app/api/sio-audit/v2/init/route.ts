@@ -274,7 +274,7 @@ export async function POST(request: NextRequest) {
       overallScore: 0,
       statement: "",
       reportBand: "Ghost",
-      websiteSummaryV2: {
+      websiteSummary: {
         overview: "",
         problems: [],
         solutions: [],

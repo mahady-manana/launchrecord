@@ -3,18 +3,19 @@ import { getOpenRouterClient } from "@/lib/openrouter";
 import ApiError from "@/models/api-error";
 import SIOReport from "@/models/sio-report";
 import {
+  generalInstructions,
+  summaryAndIssuesInstruction,
+} from "@/services/sio-audit-instructions/v2";
+import {
   buildCleanContent,
   buildV2ApiData,
   mapStrengthsFromSummary,
   normalizeCategoryInsights,
+  normalizeFirstImpressions,
   normalizeIssues,
   normalizeWebsiteSummary,
   summaryAndIssuesJsonSchema,
 } from "@/services/sio-audit-v2";
-import {
-  generalInstructions,
-  summaryAndIssuesInstruction,
-} from "@/services/sio-audit-instructions/v2";
 import { summaryModels } from "@/services/sio-report/ai-models";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
@@ -109,14 +110,16 @@ export async function POST(request: NextRequest) {
 
     const aiData = JSON.parse(aiContent);
     const websiteSummary = normalizeWebsiteSummary(aiData.websiteSummary);
+    const firstImpressions = normalizeFirstImpressions(aiData.firstImpressions);
     const issues = normalizeIssues(aiData.issues);
     const categoryInsights = normalizeCategoryInsights(aiData.categoryInsights);
     const strengths = mapStrengthsFromSummary(websiteSummary);
 
     await SIOReport.findByIdAndUpdate(reportId, {
       progress: "issues_generated",
-      statement: aiData.firstImpression || "",
-      websiteSummaryV2: websiteSummary,
+      statement: firstImpressions.statement || "",
+      firstImpressions,
+      websiteSummary: websiteSummary,
       issues,
       categoryInsights,
       strengths,
@@ -144,7 +147,8 @@ export async function POST(request: NextRequest) {
           progress: "failed",
           failedAt: "v2_summary_and_issues",
           errorMessage:
-            error.message || "Unknown error during summary and issue generation",
+            error.message ||
+            "Unknown error during summary and issue generation",
         });
       }
     } catch {}

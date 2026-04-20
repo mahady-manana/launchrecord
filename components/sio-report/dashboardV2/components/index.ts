@@ -4,3 +4,4 @@ export { OverallScoreCardV2 } from "./OverallScoreCardV2";
 export { ScoringOverview } from "./ScoringOverview";
 export { StrengthsSection } from "./StrengthsSection";
 export { WebsiteSummarySectionV2 } from "./WebsiteSummarySectionV2";
+export { FirstImpressionTeaser } from "./FirstImpressionTeaser";

@@ -96,6 +96,15 @@ export interface ISIOReport extends Document {
   // Website Summary V2
   websiteSummary: V2WebsiteSummary;
 
+  // First Impressions V2
+  firstImpressions?: {
+    isPositioningClear?: boolean;
+    isMessagingClear?: boolean;
+    isUserLeftGuessing?: boolean;
+    ten_second_test?: boolean;
+    statement?: string;
+  };
+
   firstImpression?: any;
   positioning?: any;
   clarity?: any;
@@ -247,6 +256,13 @@ const SIOReportSchema = new Schema<ISIOReport>(
       overview: { type: String, default: "" },
       problems: { type: [String], default: [] },
       solutions: { type: [String], default: [] },
+    },
+    firstImpressions: {
+      isPositioningClear: { type: Boolean, default: null },
+      isMessagingClear: { type: Boolean, default: null },
+      isUserLeftGuessing: { type: Boolean, default: null },
+      ten_second_test: { type: Boolean, default: null },
+      statement: { type: String, default: null },
     },
     firstImpression: {
       type: Schema.Types.Mixed,

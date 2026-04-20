@@ -10,6 +10,7 @@ import { useState } from "react";
 import { useUserStore } from "@/stores/user-store";
 import {
   CategoryInsightsSection,
+  FirstImpressionTeaser,
   IssuesSection,
   OverallScoreCardV2,
   ScoringOverview,
@@ -31,6 +32,13 @@ export interface SIOV2ReportData {
   url: string;
   overallScore: number;
   statement: string;
+  firstImpressions?: {
+    isPositioningClear: boolean;
+    isMessagingClear: boolean;
+    isUserLeftGuessing: boolean;
+    ten_second_test: boolean;
+    statement: string;
+  };
   reportBand: "Dominant" | "Strong" | "Average" | "Weak" | "Ghost";
   websiteSummaryV2: {
     overview: string;
@@ -120,12 +128,17 @@ export default function DashboardSIOReportV2({
               band={report.reportBand}
               statement={report.statement}
             />
+
+            <FirstImpressionTeaser firstImpressions={report.firstImpressions} />
+
             <ScoringOverview scoring={report.scoring} />
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="bg-white rounded-lg border p-6">
                 <h3 className="text-lg font-semibold mb-4">First Impression</h3>
                 <p className="text-gray-700">
-                  {report.categoryInsights.first_impression.statement}
+                  {report.firstImpressions?.statement ||
+                    report.categoryInsights.first_impression.statement}
                 </p>
               </div>
               <div className="bg-white rounded-lg border p-6">

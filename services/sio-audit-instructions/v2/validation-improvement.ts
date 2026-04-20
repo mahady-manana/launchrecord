@@ -23,7 +23,13 @@ You will receive:
 {
   "issues": [...],
   "scoring": {...},
-  "firstImpression": "string",
+  "firstImpressions": {
+    "isPositioningClear": boolean,
+    "isMessagingClear": boolean,
+    "isUserLeftGuessing": boolean,
+    "ten_second_test": boolean,
+    "statement": "string"
+  },
   "categoryInsights": {...},
   "websiteSummary": {...}
 }
@@ -37,7 +43,13 @@ You MUST return the SAME structure:
 {
   "issues": [...],
   "scoring": {...},
-  "firstImpression": "string",
+  "firstImpressions": {
+    "isPositioningClear": boolean,
+    "isMessagingClear": boolean,
+    "isUserLeftGuessing": boolean,
+    "ten_second_test": boolean,
+    "statement": "string"
+  },
   "categoryInsights": {...},
   "websiteSummary": {...}
 }
@@ -107,17 +119,19 @@ You MUST NOT:
 
 ---
 
-## ⚡ STEP 4 — FIRST IMPRESSION VALIDATION
+## ⚡ STEP 4 — FIRST IMPRESSIONS VALIDATION
 
 Ensure:
 
-- it reflects dominant issues
-- it matches scoring level
-- it is clear and concise
+- flags (isPositioningClear, etc.) match the issues and scoring
+- statement reflects dominant issues
+- statement matches scoring level
+- statement is clear and concise
 
 You MAY:
 - rewrite for clarity
 - strengthen wording
+- flip flags if clearly contradictory to issues
 
 You MUST NOT:
 - introduce new insights not in issues

@@ -3,15 +3,15 @@ import { getOpenRouterClient } from "@/lib/openrouter";
 import ApiError from "@/models/api-error";
 import SIOReport from "@/models/sio-report";
 import {
+  generalInstructions,
+  scoringAndFixesInstruction,
+} from "@/services/sio-audit-instructions/v2";
+import {
   buildV2ApiData,
   getV2Band,
   normalizeIssues,
   scoringFixesJsonSchema,
 } from "@/services/sio-audit-v2";
-import {
-  generalInstructions,
-  scoringAndFixesInstruction,
-} from "@/services/sio-audit-instructions/v2";
 import { positioningClarityModels } from "@/services/sio-report/ai-models";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
@@ -109,7 +109,7 @@ export async function POST(request: NextRequest) {
       overallScore,
       reportBand: getV2Band(overallScore),
       scoring: {
-        firstImpression: normalizeScore(aiData.scoring?.first_impression),
+        first_impression: normalizeScore(aiData.scoring?.first_impression),
         positioning: normalizeScore(aiData.scoring?.positioning),
         clarity: normalizeScore(aiData.scoring?.clarity),
         aeo: normalizeScore(aiData.scoring?.aeo),

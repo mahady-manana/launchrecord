@@ -15,6 +15,7 @@ import {
   getV2Band,
   mapStrengthsFromSummary,
   normalizeCategoryInsights,
+  normalizeFirstImpressions,
   normalizeIssues,
   normalizeWebsiteSummary,
   validationImprovementJsonSchema,
@@ -107,11 +108,13 @@ export async function POST(request: NextRequest) {
 
     const aiData = JSON.parse(aiContent);
     const websiteSummary = normalizeWebsiteSummary(aiData.websiteSummary);
+    const firstImpressions = normalizeFirstImpressions(aiData.firstImpressions);
     const issues = normalizeIssues(aiData.issues);
     const overallScore = normalizeScore(aiData.scoring?.overall);
 
-    report.statement = aiData.firstImpression || report.statement;
-    report.websiteSummaryV2 = websiteSummary as any;
+    report.statement = firstImpressions.statement || report.statement;
+    report.firstImpressions = firstImpressions as any;
+    report.websiteSummary = websiteSummary as any;
     report.issues = issues;
     report.overallScore = overallScore;
     report.reportBand = getV2Band(overallScore);

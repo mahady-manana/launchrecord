@@ -17,7 +17,13 @@ You MUST return a JSON object with EXACTLY this structure:
 
 {
   "issues": [...],
-  "firstImpression": "string",
+  "firstImpressions": {
+    "isPositioningClear": boolean,
+    "isMessagingClear": boolean,
+    "isUserLeftGuessing": boolean,
+    "ten_second_test": boolean,
+    "statement": "string"
+  },
   "categoryInsights": {
     "positioning": { "statement": "string", "summary": "string" },
     "clarity": { "statement": "string", "summary": "string" },
@@ -167,13 +173,13 @@ You MUST NOT use:
 
 ---
 
-## ⚡ FIRST IMPRESSION
+## ⚡ FIRST IMPRESSIONS
 
-- EXACTLY 1 sentence
-- reflect:
-  - clarity
-  - positioning
-  - severity
+- isPositioningClear: Is it clear what they do and who for?
+- isMessagingClear: Is the value prop easy to understand?
+- isUserLeftGuessing: Is the visitor confused about the product?
+- ten_second_test: Can a visitor understand the value in 10 seconds?
+- statement: EXACTLY 1 sentence reflecting clarity, positioning, and severity.
 
 NO advice. NO fixes.
 
