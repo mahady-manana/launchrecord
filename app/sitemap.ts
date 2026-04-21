@@ -222,6 +222,30 @@ export default async function sitemap(props: {
             changeFrequency: "weekly",
             priority: 0.95,
           },
+          {
+            url: `${BASE_URL}/ressources/what-is-startup-positioning`,
+            lastModified: new Date(),
+            changeFrequency: "weekly",
+            priority: 1,
+          },
+          {
+            url: `${BASE_URL}/ressources/messaging-clarity-first-impression`,
+            lastModified: new Date(),
+            changeFrequency: "weekly",
+            priority: 1,
+          },
+          {
+            url: `${BASE_URL}/ressources/startup-positioning-unique-value-proposition-analysis`,
+            lastModified: new Date(),
+            changeFrequency: "weekly",
+            priority: 1,
+          },
+          {
+            url: `${BASE_URL}/ressources/startup-positioning-target-audience-icp-analysis`,
+            lastModified: new Date(),
+            changeFrequency: "weekly",
+            priority: 1,
+          },
         ]
       : [];
 

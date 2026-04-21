@@ -1,5 +1,12 @@
+import { ConsultationCTA } from "@/components/ressources/cta/ConsultationCTA";
+import { DownloadGuideCTA } from "@/components/ressources/cta/DownloadGuideCTA";
+import { NewsletterCTA } from "@/components/ressources/cta/NewsletterCTA";
+import { RessourceSidebar } from "@/components/ressources/RessourceSidebar";
 import { Metadata } from "next/types";
 import { ReactNode } from "react";
+import { ressourcesArticles } from "./ressources";
+
+let ctaIndex = 0;
 const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
 
 export async function generateMetadata({
@@ -59,6 +66,18 @@ const getdata = (slug: string) => {
     return null;
   }
 };
+const getAllData = () => {
+  try {
+    const alls = ressourcesArticles.map((article) =>
+      import(`@/content/ressources/${article.slug}.mdx`).then(
+        (mod) => mod?.metadata,
+      ),
+    );
+    return Promise.all(alls);
+  } catch (error) {
+    return null;
+  }
+};
 export default async function Page({
   params,
 }: {
@@ -70,6 +89,8 @@ export default async function Page({
   if (!data) {
     return <div className="text-center py-20">Resource not found.</div>;
   }
+  const allData = await getAllData();
+
   const { default: Post, metadata } = data;
   const overrideComponents = {
     h1: CustomH1,
@@ -79,13 +100,7 @@ export default async function Page({
     h3: CustomH3,
     h4: CustomH4,
     p: PorCTA,
-  };
-
-  const meta = {
-    image: metadata.image,
-    title: metadata.title,
-    description: metadata.description,
-    lastUpdated: metadata.lastUpdated,
+    ul: CustomUL,
   };
 
   return (
@@ -93,9 +108,9 @@ export default async function Page({
       <section className="relative bg-gradient-to-b pt-20 flex justify-between flex-col from-white via-blue-50 to-purple-50">
         <div className="max-w-4xl px-4 mx-auto relative flex-1 flex flex-col justify-center">
           <h1 className="text-4xl font-bold mt-8 tracking-tighter text-slate-700">
-            {metadata.title}
+            {metadata.headline}
           </h1>
-          <p className="text-lg text-slate-600 my-4">{metadata.description}</p>
+          <p className="text-lg text-slate-600 my-4">{metadata.subheadline}</p>
           <p className="text-slate-500 my-4">
             Last updated: {new Date(metadata.lastUpdated).toLocaleDateString()}
           </p>
@@ -108,15 +123,22 @@ export default async function Page({
           />
         </div>
       </section>
-      <div className="max-w-4xl mx-auto py-20 px-4">
-        <Post components={overrideComponents} />
+      <div className="md:flex gap-8 max-w-4xl mx-auto py-20 px-4">
+        <div className="container-article flex-1">
+          <Post components={overrideComponents} />
+        </div>
+        <aside className="aside shrink-0">
+          <RessourceSidebar items={allData || []} />
+        </aside>
       </div>
     </div>
   );
 }
 
 export function generateStaticParams() {
-  return [{ slug: "what-is-startup-positioning" }];
+  return ressourcesArticles.map((article) => ({
+    slug: article.slug,
+  }));
 }
 
 function CustomH1({ children }: { children: ReactNode }) {
@@ -147,25 +169,32 @@ function CustomH4({ children }: { children: ReactNode }) {
     </h4>
   );
 }
+function CustomUL({ children }: { children: ReactNode }) {
+  return <ul className="list-disc list-inside pl-8 py-4">{children}</ul>;
+}
 function Section({ children }: { children: ReactNode }) {
   return <section className="py-8">{children}</section>;
 }
 function Blockquote({ children }: { children: ReactNode }) {
   return (
-    <blockquote className="border-l-4 bg-slate-50 py-2 my-4 border-primary pl-4 italic text-lg text-slate-600">
+    <blockquote className="border-l-4 bg-slate-50 pt-4 my-4 border-primary pl-4 italic text-lg text-slate-600">
       {children}
     </blockquote>
   );
 }
 
-function PorCTA({ children }: { children: ReactNode }) {
+function PorCTA({
+  children,
+}: {
+  children: ReactNode;
+}): React.ReactElement | null {
   if (!children) return null;
-  if (typeof children === "string" && children.trim() === "#CTA_PLACEHOLDER#")
-    return (
-      <div>
-        <p>This is a CTA placement!</p>
-      </div>
-    );
-  return <p>{children}</p>;
+  if (typeof children === "string" && children.trim() === "#CTA_PLACEHOLDER#") {
+    const ctas = [<NewsletterCTA />, <DownloadGuideCTA />, <ConsultationCTA />];
+    const cta = ctas[ctaIndex % ctas.length];
+    ctaIndex++;
+    return cta;
+  }
+  return <p className="pb-4">{children}</p>;
 }
 export const dynamicParams = false;
