@@ -8,6 +8,14 @@ const nextConfig = {
 };
 const withMDX = createMDX({
   extension: /\.(md|mdx)$/,
+  options: {
+    remarkPlugins: [
+      "remark-gfm",
+      "remark-frontmatter",
+      ["remark-mdx-frontmatter", { name: "metadata" }],
+    ],
+    rehypePlugins: [],
+  },
 });
 
 // Merge MDX config with Next.js config

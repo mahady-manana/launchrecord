@@ -31,6 +31,10 @@ export async function Footer() {
 
   const resources = [
     {
+      href: "/ressources/what-is-startup-positioning",
+      label: "What is startup positioning?",
+    },
+    {
       href: "/blog/why-traffic-but-no-signup",
       label: "Traffic But No Signup?",
     },
