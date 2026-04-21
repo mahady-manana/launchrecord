@@ -116,7 +116,7 @@ export default async function Page({
 }
 
 export function generateStaticParams() {
-  return [{ slug: "welcome" }, { slug: "what-is-startup-positioning" }];
+  return [{ slug: "what-is-startup-positioning" }];
 }
 
 function CustomH1({ children }: { children: ReactNode }) {
