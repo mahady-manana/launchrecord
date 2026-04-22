@@ -15,6 +15,8 @@ import {
   ChevronRight,
   Info,
   Lock,
+  ShieldAlert,
+  ShieldX,
 } from "lucide-react";
 import { useState } from "react";
 
@@ -56,7 +58,7 @@ export function IssuesSection({ issues, isFree = false }: IssuesSectionProps) {
       case "critical":
         return <AlertTriangle className="w-4 h-4 text-red-600" />;
       case "high":
-        return <AlertTriangle className="w-4 h-4 text-orange-600" />;
+        return <AlertTriangle className="w-4 h-4 text-red-600" />;
       case "medium":
         return <AlertCircle className="w-4 h-4 text-yellow-600" />;
       case "low":
@@ -69,15 +71,28 @@ export function IssuesSection({ issues, isFree = false }: IssuesSectionProps) {
   const getSeverityBadge = (severity: string) => {
     switch (severity) {
       case "critical":
-        return <Badge variant="destructive">CRITICAL</Badge>;
-      case "high":
         return (
-          <Badge className="bg-orange-100 text-orange-800 border-orange-200">
-            HIGH
+          <Badge variant="outline" className="bg-red-600 text-white">
+            <ShieldX></ShieldX> CRITICAL ISSUE
           </Badge>
         );
+      case "high":
+        return (
+          <>
+            <Badge className="bg-red-200 text-red-700 font-bold border-red-200">
+              <ShieldAlert></ShieldAlert> HIGH ISSUE
+            </Badge>
+          </>
+        );
       case "medium":
-        return <Badge variant="secondary">MEDIUM</Badge>;
+        return (
+          <Badge
+            variant="outline"
+            className="text-yellow-700 bg-yellow-200 border-yellow-200 font-bold"
+          >
+            MEDIUM ISSUE
+          </Badge>
+        );
       case "low":
         return <Badge variant="outline">LOW</Badge>;
       default:
@@ -151,7 +166,9 @@ export function IssuesSection({ issues, isFree = false }: IssuesSectionProps) {
                               <Badge
                                 className={getCategoryColor(issue.category)}
                               >
-                                {issue.category.replace("_", " ").toUpperCase()}
+                                {issue.category
+                                  .replaceAll("_", " ")
+                                  .toUpperCase()}
                               </Badge>
                               {issue.metricKey && (
                                 <Badge variant="outline">
@@ -169,11 +186,6 @@ export function IssuesSection({ issues, isFree = false }: IssuesSectionProps) {
                             )}
                           </div>
                           <div className="flex items-center gap-2">
-                            {issue.impactScore && (
-                              <span className="text-sm font-medium text-gray-500">
-                                Impact: {issue.impactScore}
-                              </span>
-                            )}
                             {isLocked && (
                               <Lock className="w-4 h-4 text-gray-400" />
                             )}

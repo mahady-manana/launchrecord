@@ -24,7 +24,7 @@ export const PRODUCT_STATUS_CONFIG: ProductStatusConfig[] = [
     status: "UNTOUCHABLE",
     minScore: 90,
     maxScore: 100,
-    color: "text-purple-500",
+    color: "text-[#02804b]",
     colorHex: "#02804b",
     description:
       "They aren't just in a category; they are the category. Copying them feels like a crime.",
@@ -33,7 +33,7 @@ export const PRODUCT_STATUS_CONFIG: ProductStatusConfig[] = [
     status: "LETHAL",
     minScore: 70,
     maxScore: 89,
-    color: "text-green-400",
+    color: "text-[#a4c709]",
     colorHex: "#a4c709",
     description:
       "Sharp, precise positioning. They cut through the noise and leave a mark on the user's brain.",
@@ -42,7 +42,7 @@ export const PRODUCT_STATUS_CONFIG: ProductStatusConfig[] = [
     status: "PLASTIC",
     minScore: 40,
     maxScore: 69,
-    color: "text-blue-400",
+    color: "text-[#d8ca08]",
     colorHex: "#d8ca08",
     description:
       "Looks good at first glance, but it's a mold. High polish, low soul. Standard industry filler.",
@@ -51,7 +51,7 @@ export const PRODUCT_STATUS_CONFIG: ProductStatusConfig[] = [
     status: "ZOMBIE",
     minScore: 20,
     maxScore: 39,
-    color: "text-orange-600",
+    color: "text-[#e0970d]",
     colorHex: "#e0970d",
     description:
       'Just walking through the motions. Repeating "AI-powered" slogans they heard someone else say.',
@@ -60,7 +60,7 @@ export const PRODUCT_STATUS_CONFIG: ProductStatusConfig[] = [
     status: "GHOST",
     minScore: 1,
     maxScore: 19,
-    color: "text-red-600",
+    color: "text-[#dc2626]",
     colorHex: "#dc2626",
     description:
       "Invisible. Zero presence. If they deleted their site today, no one would notice they were gone.",
@@ -81,8 +81,8 @@ export function getProductBadge(status: string): ProductStatusConfig {
 export function getProductStatus(score: number): ProductStatusConfig {
   if (score >= 85) return PRODUCT_STATUS_CONFIG[0]; // UNTOUCHABLE
   if (score >= 70) return PRODUCT_STATUS_CONFIG[1]; // LETHAL
-  if (score >= 40) return PRODUCT_STATUS_CONFIG[2]; // PLASTIC
-  if (score >= 20) return PRODUCT_STATUS_CONFIG[3]; // ZOMBIE
+  if (score >= 55) return PRODUCT_STATUS_CONFIG[2]; // PLASTIC
+  if (score >= 45) return PRODUCT_STATUS_CONFIG[3]; // ZOMBIE
   return PRODUCT_STATUS_CONFIG[4]; // GHOST (0-19)
 }
 

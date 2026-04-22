@@ -299,7 +299,7 @@ export function buildV2ApiData(report: any) {
       overall: normalizeScore(report?.overallScore),
       positioning: normalizeScore(report?.scoring?.positioning),
       clarity: normalizeScore(report?.scoring?.clarity),
-      first_impression: normalizeScore(report?.scoring?.firstImpression),
+      first_impression: normalizeScore(report?.scoring?.first_impression),
       aeo: normalizeScore(report?.scoring?.aeo),
     },
     categoryInsights: serializeCategoryInsightsForPrompt(
@@ -311,7 +311,6 @@ export function buildV2ApiData(report: any) {
     updatedAt: report?.updatedAt,
   };
 }
-
 
 export function getV2Band(score: number) {
   if (score >= 90) return "Dominant";
