@@ -21,7 +21,7 @@ interface Problem {
 const problems: Problem[] = [
   {
     stat: "85% of startups have positioning debt",
-    title: "You sound kike everyone else",
+    title: "You sound like everyone else",
     description:
       "No clear positioning. You’re solving the same problems the same way as everyone else.",
     icon: <AlertTriangle className="h-6 w-6" />,

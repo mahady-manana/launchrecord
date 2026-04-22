@@ -2,11 +2,43 @@
 
 import { CheckCircle2 } from "lucide-react";
 import Link from "next/link";
-
+const steps = [
+  {
+    id: 1,
+    title: "We detect your positioning and messaging problems",
+    description:
+      "Our engine analyzes your startup against 10,000+ SaaS sites to spot: commodity positioning, confusing messaging, and AI invisibility killing discovery. You get cold, clinical data—no opinions, no fluff.",
+  },
+  {
+    id: 2,
+    title: "We tell you what's broken and its impact on growth",
+    description:
+      "Your report shows your score, strong points, and weaknesses across different pillars of defensibility. Each weakness comes with specific examples and a truth summary. You'll know what works, what doesn't, and how to fix it. No generic advice. Just the raw data you need to prioritize fixes.",
+  },
+  {
+    id: 3,
+    title: "We show you how to fix it and win",
+    description:
+      "Every weakness comes with exact fixes. Your positioning is commodity? We show you how to differentiate. Your clarity is weak? We identify the confusing messages. You're invisible to AI? We tell you what to change to get cited. Then you execute weekly missions to make it happen.",
+  },
+  {
+    id: 4,
+    title: "We track your progress",
+    description:
+      "This isn't a one-time audit. Your Sovereign Dashboard tracks your scores across all five pillars over time. Complete weekly missions, upload proof of shipping, and watch your defensibility compound. You'll know exactly when you're winning—and when you're slipping.",
+  },
+];
+const CardHowItWorks = ({ children }: { children: React.ReactNode }) => {
+  return (
+    <div className="bg-white max-w-lg shadow rounded-lg p-8 h-full">
+      {children}
+    </div>
+  );
+};
 export function SolutionSection() {
   return (
-    <section className="py-20 bg-gradient-to-b from-slate-50 to-white">
-      <div className="max-w-7xl mx-auto px-4">
+    <section className="py-20 bg-gradient-to-b from-blue-100 to-orange-50">
+      <div className="max-w-7xl mx-auto px-4 bg-white rounded-lg shadow-lg p-12">
         {/* Section Header */}
         <div className="text-center space-y-4 mb-16">
           <h2 className="text-4xl md:text-5xl font-black text-slate-900 tracking-tighter">
@@ -20,89 +52,27 @@ export function SolutionSection() {
         </div>
 
         {/* Main Solution Flow */}
-        <div className="max-w-4xl mx-auto space-y-12">
-          {/* Step 1 */}
-          <div className="flex flex-col md:flex-row gap-8 items-start">
-            <div className="flex-shrink-0">
-              <div className="w-16 h-16 rounded-full bg-primary/10 text-primary font-black flex items-center justify-center text-2xl border-2 border-primary/20">
-                1
+        <div className="max-w-4xl mx-auto space-y-12 grid grid-cols-1 md:grid-cols-2 gap-8">
+          {steps.map((step) => (
+            <div
+              key={step.id}
+              className="relative bg-slate-50/20 border border-slate-200 max-w-lg rounded-lg p-8 h-full"
+            >
+              <div className="">
+                <div className="text-slate-200 font-black text-8xl">
+                  <p>{step.id}</p>
+                </div>
+                <div className="flex-1 space-y-4 relative z-10 pt-4">
+                  <h3 className="text-lg font-bold text-primary">
+                    {step.title}
+                  </h3>
+                  <p className="text-slate-600 leading-relaxed">
+                    {step.description}
+                  </p>
+                </div>
               </div>
             </div>
-            <div className="flex-1 space-y-4">
-              <h3 className="text-2xl font-bold text-slate-900">
-                We Detect Your Blind Spots
-              </h3>
-              <p className="text-slate-600 text-lg leading-relaxed">
-                Our engine analyzes your startup against 10,000+ SaaS sites to
-                spot: commodity positioning, confusing messaging, and AI
-                invisibility killing discovery. You get cold, clinical data—no
-                opinions, no fluff.
-              </p>
-            </div>
-          </div>
-
-          {/* Step 2 */}
-          <div className="flex flex-col md:flex-row gap-8 items-start">
-            <div className="flex-shrink-0">
-              <div className="w-16 h-16 rounded-full bg-primary/10 text-primary font-black flex items-center justify-center text-2xl border-2 border-primary/20">
-                2
-              </div>
-            </div>
-            <div className="flex-1 space-y-4">
-              <h3 className="text-2xl font-bold text-slate-900">
-                We Tell You What's Broken
-              </h3>
-              <p className="text-slate-600 text-lg leading-relaxed">
-                Your report shows your score, strong points, and weaknesses
-                across different pillars of defensibility. Each weakness comes
-                with specific examples and a truth summary.You'll know what
-                works, what doesn't, and how to fix it. No generic advice. Just
-                the raw data you need to prioritize fixes.
-              </p>
-            </div>
-          </div>
-
-          {/* Step 3 */}
-          <div className="flex flex-col md:flex-row gap-8 items-start">
-            <div className="flex-shrink-0">
-              <div className="w-16 h-16 rounded-full bg-primary/10 text-primary font-black flex items-center justify-center text-2xl border-2 border-primary/20">
-                3
-              </div>
-            </div>
-            <div className="flex-1 space-y-4">
-              <h3 className="text-2xl font-bold text-slate-900">
-                We Show You How to Fix It
-              </h3>
-              <p className="text-slate-600 text-lg leading-relaxed">
-                Every weakness comes with exact fixes. Your positioning is
-                commodity? We show you how to differentiate. Your clarity is
-                weak? We identify the confusing messages. You're invisible to
-                AI? We tell you what to change to get cited. Then you execute
-                weekly missions to make it happen.
-              </p>
-            </div>
-          </div>
-
-          {/* Step 4 */}
-          <div className="flex flex-col md:flex-row gap-8 items-start">
-            <div className="flex-shrink-0">
-              <div className="w-16 h-16 rounded-full bg-primary/10 text-primary font-black flex items-center justify-center text-2xl border-2 border-primary/20">
-                4
-              </div>
-            </div>
-            <div className="flex-1 space-y-4">
-              <h3 className="text-2xl font-bold text-slate-900">
-                We Track Your Progress
-              </h3>
-              <p className="text-slate-600 text-lg leading-relaxed">
-                This isn't a one-time audit. Your Sovereign Dashboard tracks
-                your scores across all five pillars over time. Complete weekly
-                missions, upload proof of shipping, and watch your defensibility
-                compound. You'll know exactly when you're winning—and when
-                you're slipping.
-              </p>
-            </div>
-          </div>
+          ))}
         </div>
 
         {/* Bottom CTA */}

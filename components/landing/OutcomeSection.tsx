@@ -43,7 +43,7 @@ const outcomes: Outcome[] = [
 
 export function OutcomeSection() {
   return (
-    <section className="py-20 bg-gradient-to-b from-primary/20 to-white">
+    <section className="py-20 bg-gradient-to-b from-orange-50 to-white">
       <div className="max-w-7xl mx-auto px-4">
         {/* Section Header */}
         <div className="text-center space-y-4 mb-16">
