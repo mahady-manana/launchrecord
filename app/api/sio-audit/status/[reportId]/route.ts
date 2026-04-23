@@ -45,6 +45,7 @@ export async function GET(
     // Include partial data based on progress
     if (
       report.progress === "content_fetched" ||
+      report.progress === "issues_generated" ||
       report.progress === "summary_complete" ||
       report.progress === "positioning_clarity_complete" ||
       report.progress === "aeo_complete" ||
@@ -61,6 +62,7 @@ export async function GET(
     }
 
     if (
+      report.progress === "issues_generated" ||
       report.progress === "summary_complete" ||
       report.progress === "positioning_clarity_complete" ||
       report.progress === "aeo_complete" ||
@@ -92,7 +94,9 @@ export async function GET(
 
     if (
       report.progress === "scoring_complete" ||
-      report.progress === "complete"
+      report.progress === "complete" ||
+      report.progress === "issues_generated" ||
+      report.progress === "aeo_complete"
     ) {
       response.overallScore = report.overallScore;
       response.reportBand = report.reportBand;

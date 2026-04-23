@@ -1,17 +1,11 @@
 import { connectToDatabase } from "@/lib/db";
-import { getOpenRouterClient } from "@/lib/openrouter";
 import SIOReport from "@/models/sio-report";
 import {
-  aeoAnalysisInstruction,
-  generalInstructions,
-} from "@/services/sio-audit-instructions/v2";
-import {
-  aeoAnalysisJsonSchema,
-  buildCleanContent,
-  buildV2ApiData,
-  normalizeIssues,
+    buildCleanContent,
+    buildV2ApiData,
+    normalizeIssues,
 } from "@/services/sio-audit-v2";
-import { summaryModels } from "@/services/sio-report/ai-models";
+import { runAeoAnalysis } from "@/services/sio-audit-v2-ai";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
@@ -58,55 +52,9 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const client = getOpenRouterClient();
     const cleanContent = buildCleanContent(report);
+    const aiData = await runAeoAnalysis(cleanContent);
 
-    const aiResponse = await client.chat.send({
-      chatGenerationParams: {
-        models: summaryModels.models,
-        messages: [
-          {
-            role: "system",
-            content: generalInstructions,
-          },
-          {
-            role: "system",
-            content: aeoAnalysisInstruction,
-          },
-          {
-            role: "user",
-            content: `Website content to analyze:\n\n${JSON.stringify(cleanContent, null, 2)}`,
-          },
-          {
-            role: "user",
-            content:
-              "Perform the AEO Visibility Readiness analysis. Generate ONLY the payload following the JSON schema provided. Add new issues to the existing ones if needed.",
-          },
-        ],
-        responseFormat: {
-          type: "json_schema",
-          jsonSchema: {
-            name: "sio_v2_aeo_analysis",
-            strict: true,
-            schema: aeoAnalysisJsonSchema,
-          },
-        },
-        provider: summaryModels.provider,
-        stream: false,
-        reasoning: {
-          effort: summaryModels.reasoning,
-        },
-      },
-    });
-    console.log("====================================");
-    console.log(aiResponse.usage);
-    console.log("====================================");
-    const aiContent = aiResponse.choices[0]?.message?.content;
-    if (!aiContent) {
-      throw new Error("No content returned from AI");
-    }
-
-    const aiData = JSON.parse(aiContent);
     const newAeoIssues = normalizeIssues(aiData.issues);
 
     // Merge existing issues with new AEO issues

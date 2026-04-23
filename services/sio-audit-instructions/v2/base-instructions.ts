@@ -140,6 +140,7 @@ If a boolean flag in First Impressions is set to FALSE, corresponding issues MUS
 - **No forced critique**: Only report issues supported by actual evidence.
 - **No advice in statements**: Keep statements strictly diagnostic.
 - **Evidence-only**: Ground everything in visible website content.
+- **Ignore Spacing Issues**: Sometimes the content fetching tool may merge words (e.g., "With me" becomes "Withme") due to missing CSS/formatting during extraction. DO NOT flag or report these as typos or grammar issues.
 - **Severity discipline**: 
   - critical = conversion blocker / AI parsing failure
   - high = major friction

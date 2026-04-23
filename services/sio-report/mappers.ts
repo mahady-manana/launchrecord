@@ -12,7 +12,9 @@ export function mapToSIOReport(rawData: any): any {
     issues: (rawData?.issues || []).map(mapIssue),
     strengths: (rawData?.strengths || []).map(mapStrength),
     scoring: {
-      firstImpression: normalizeScore(rawData?.scoring?.firstImpression),
+      first_impression: normalizeScore(
+        rawData?.scoring?.first_impression || rawData?.scoring?.firstImpression,
+      ),
       positioning: normalizeScore(rawData?.scoring?.positioning),
       clarity: normalizeScore(rawData?.scoring?.clarity),
       aeo: normalizeScore(rawData?.scoring?.aeo),
@@ -20,8 +22,9 @@ export function mapToSIOReport(rawData: any): any {
     categoryInsights: {
       positioning: mapCategoryInsight(rawData?.categoryInsights?.positioning),
       clarity: mapCategoryInsight(rawData?.categoryInsights?.clarity),
-      firstImpression: mapCategoryInsight(
-        rawData?.categoryInsights?.firstImpression,
+      first_impression: mapCategoryInsight(
+        rawData?.categoryInsights?.first_impression ||
+          rawData?.categoryInsights?.firstImpression,
       ),
       aeo: mapCategoryInsight(rawData?.categoryInsights?.aeo),
     },

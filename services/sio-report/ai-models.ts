@@ -5,7 +5,16 @@
  * Change models here to update across all steps.
  */
 
-import { Effort } from "@openrouter/sdk/models";
+export const AI_PROVIDER: "openrouter" | "openai" = "openai"; // Switch here
+
+/**
+ * OpenAI Model Definitions
+ */
+export const openAIModels = {
+  summary: "gpt-5-nano",
+  analysis: "gpt-5-nano",
+  refinement: "gpt-5-nano",
+};
 
 /**
  * Step 3: Summary & First Impressions
@@ -13,11 +22,11 @@ import { Effort } from "@openrouter/sdk/models";
  */
 export const summaryModels = {
   models: [
-    "qwen/qwen3-next-80b-a3b-thinking",
-    "x-ai/grok-4.1-fast",
+    "tencent/hy3-preview:free",
+    // "x-ai/grok-4.1-fast",
     "openai/gpt-oss-120b:free",
   ],
-  reasoning: "medium" as Effort,
+  // reasoning: "medium" as Effort,
   provider: {
     requireParameters: true,
     // preferredMinThroughput: 35,
@@ -30,11 +39,11 @@ export const summaryModels = {
  */
 export const positioningClarityModels = {
   models: [
-    "qwen/qwen3-next-80b-a3b-thinking",
-    "x-ai/grok-4.1-fast",
+    "tencent/hy3-preview:free",
+    // "x-ai/grok-4.1-fast",
     "openai/gpt-oss-120b:free",
   ],
-  reasoning: "high" as Effort,
+  // reasoning: "high" as Effort,
   provider: {
     requireParameters: true,
     // preferredMinThroughput: 38,
@@ -47,11 +56,11 @@ export const positioningClarityModels = {
  */
 export const aeoModels = {
   models: [
-    "x-ai/grok-4.1-fast",
-    "qwen/qwen3-next-80b-a3b-thinking",
+    // "x-ai/grok-4.1-fast",
+    "tencent/hy3-preview:free",
     "openai/gpt-oss-120b:free",
   ],
-  reasoning: "medium" as Effort,
+  // reasoning: "medium" as Effort,
   provider: {
     requireParameters: true,
     // preferredMinThroughput: 38,
@@ -64,11 +73,11 @@ export const aeoModels = {
  */
 export const refinementModels = {
   models: [
-    "qwen/qwen3-next-80b-a3b-thinking",
+    "tencent/hy3-preview:free",
     "openai/gpt-oss-120b:free",
-    "x-ai/grok-4.1-fast",
+    // "x-ai/grok-4.1-fast",
   ],
-  reasoning: "medium" as Effort,
+  // reasoning: "medium" as Effort,
   provider: {
     requireParameters: true,
   },

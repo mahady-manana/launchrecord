@@ -1,26 +1,20 @@
 import { connectToDatabase } from "@/lib/db";
-import { getOpenRouterClient } from "@/lib/openrouter";
 import ApiError from "@/models/api-error";
 import Product from "@/models/product";
 import SIOReport from "@/models/sio-report";
 import Subscription from "@/models/subscription";
 import Usage from "@/models/usage";
 import {
-  generalInstructions,
-  validationAndImprovementInstruction,
-} from "@/services/sio-audit-instructions/v2";
-import {
-  buildV2ApiData,
-  buildV2ValidationInput,
-  getV2Band,
-  mapStrengthsFromSummary,
-  normalizeCategoryInsights,
-  normalizeFirstImpressions,
-  normalizeIssues,
-  normalizeWebsiteSummary,
-  validationImprovementJsonSchema,
+    buildV2ApiData,
+    buildV2ValidationInput,
+    getV2Band,
+    mapStrengthsFromSummary,
+    normalizeCategoryInsights,
+    normalizeFirstImpressions,
+    normalizeIssues,
+    normalizeWebsiteSummary,
 } from "@/services/sio-audit-v2";
-import { refinementModels } from "@/services/sio-report/ai-models";
+import { runValidationImprovement } from "@/services/sio-audit-v2-ai";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
@@ -61,52 +55,8 @@ export async function POST(request: NextRequest) {
     }
 
     const promptInput = buildV2ValidationInput(report);
-    const client = getOpenRouterClient();
+    const aiData = await runValidationImprovement(promptInput);
 
-    const aiResponse = await client.chat.send({
-      chatGenerationParams: {
-        models: refinementModels.models,
-        messages: [
-          {
-            role: "system",
-            content: generalInstructions,
-          },
-          {
-            role: "system",
-            content: validationAndImprovementInstruction,
-          },
-          {
-            role: "user",
-            content: `Persisted report state from DB:\n\n${JSON.stringify(promptInput, null, 2)}`,
-          },
-          {
-            role: "user",
-            content:
-              "Validate and improve this report without breaking consistency. Return ONLY the validation-improvement payload following the JSON schema provided.",
-          },
-        ],
-        responseFormat: {
-          type: "json_schema",
-          jsonSchema: {
-            name: "sio_v2_validation_improvement",
-            strict: true,
-            schema: validationImprovementJsonSchema,
-          },
-        },
-        provider: refinementModels.provider,
-        stream: false,
-        reasoning: {
-          effort: refinementModels.reasoning,
-        },
-      },
-    });
-
-    const aiContent = aiResponse.choices[0]?.message?.content;
-    if (!aiContent) {
-      throw new Error("No content returned from AI");
-    }
-
-    const aiData = JSON.parse(aiContent);
     const websiteSummary = normalizeWebsiteSummary(aiData.websiteSummary);
     const firstImpressions = normalizeFirstImpressions(aiData.firstImpressions);
     const issues = normalizeIssues(aiData.issues);

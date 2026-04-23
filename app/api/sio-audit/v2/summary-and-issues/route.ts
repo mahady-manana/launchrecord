@@ -1,11 +1,6 @@
 import { connectToDatabase } from "@/lib/db";
-import { getOpenRouterClient } from "@/lib/openrouter";
 import ApiError from "@/models/api-error";
 import SIOReport from "@/models/sio-report";
-import {
-  generalInstructions,
-  summaryAndIssuesInstruction,
-} from "@/services/sio-audit-instructions/v2";
 import {
   buildCleanContent,
   buildV2ApiData,
@@ -14,9 +9,8 @@ import {
   normalizeFirstImpressions,
   normalizeIssues,
   normalizeWebsiteSummary,
-  summaryAndIssuesJsonSchema,
 } from "@/services/sio-audit-v2";
-import { summaryModels } from "@/services/sio-report/ai-models";
+import { runSummaryAndIssues } from "@/services/sio-audit-v2-ai";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
@@ -62,53 +56,9 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const client = getOpenRouterClient();
     const cleanContent = buildCleanContent(report);
+    const aiData = await runSummaryAndIssues(cleanContent);
 
-    const aiResponse = await client.chat.send({
-      chatGenerationParams: {
-        models: summaryModels.models,
-        messages: [
-          {
-            role: "system",
-            content: generalInstructions,
-          },
-          {
-            role: "system",
-            content: summaryAndIssuesInstruction,
-          },
-          {
-            role: "user",
-            content: `Website content to analyze:\n\n${JSON.stringify(cleanContent, null, 2)}`,
-          },
-          {
-            role: "user",
-            content:
-              "Analyze this website and generate ONLY the summary-and-issues payload following the JSON schema provided.",
-          },
-        ],
-        responseFormat: {
-          type: "json_schema",
-          jsonSchema: {
-            name: "sio_v2_summary_and_issues",
-            strict: true,
-            schema: summaryAndIssuesJsonSchema,
-          },
-        },
-        provider: summaryModels.provider,
-        stream: false,
-        reasoning: {
-          effort: summaryModels.reasoning,
-        },
-      },
-    });
-
-    const aiContent = aiResponse.choices[0]?.message?.content;
-    if (!aiContent) {
-      throw new Error("No content returned from AI");
-    }
-
-    const aiData = JSON.parse(aiContent);
     const websiteSummary = normalizeWebsiteSummary(aiData.websiteSummary);
     const firstImpressions = normalizeFirstImpressions(aiData.firstImpressions);
     const issues = normalizeIssues(aiData.issues);

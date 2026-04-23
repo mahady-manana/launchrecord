@@ -1,18 +1,12 @@
 import { connectToDatabase } from "@/lib/db";
-import { getOpenRouterClient } from "@/lib/openrouter";
 import ApiError from "@/models/api-error";
 import SIOReport from "@/models/sio-report";
 import {
-  generalInstructions,
-  scoringAndFixesInstruction,
-} from "@/services/sio-audit-instructions/v2";
-import {
-  buildV2ApiData,
-  getV2Band,
-  normalizeIssues,
-  scoringFixesJsonSchema,
+    buildV2ApiData,
+    getV2Band,
+    normalizeIssues,
 } from "@/services/sio-audit-v2";
-import { positioningClarityModels } from "@/services/sio-report/ai-models";
+import { runScoringAndFixes } from "@/services/sio-audit-v2-ai";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
@@ -58,51 +52,8 @@ export async function POST(request: NextRequest) {
       websiteSummary: report.websiteSummary,
     };
 
-    const client = getOpenRouterClient();
-    const aiResponse = await client.chat.send({
-      chatGenerationParams: {
-        models: positioningClarityModels.models,
-        messages: [
-          {
-            role: "system",
-            content: generalInstructions,
-          },
-          {
-            role: "system",
-            content: scoringAndFixesInstruction,
-          },
-          {
-            role: "user",
-            content: `Persisted report issues from DB:\n\n${JSON.stringify(promptInput, null, 2)}`,
-          },
-          {
-            role: "user",
-            content:
-              "Generate ONLY the scoring-and-fixes payload following the JSON schema provided. Keep the same issues and enrich them.",
-          },
-        ],
-        responseFormat: {
-          type: "json_schema",
-          jsonSchema: {
-            name: "sio_v2_scoring_and_fixes",
-            strict: true,
-            schema: scoringFixesJsonSchema,
-          },
-        },
-        provider: positioningClarityModels.provider,
-        stream: false,
-        reasoning: {
-          effort: positioningClarityModels.reasoning,
-        },
-      },
-    });
+    const aiData = await runScoringAndFixes(promptInput);
 
-    const aiContent = aiResponse.choices[0]?.message?.content;
-    if (!aiContent) {
-      throw new Error("No content returned from AI");
-    }
-
-    const aiData = JSON.parse(aiContent);
     const issues = normalizeIssues(aiData.issues);
     const overallScore = normalizeScore(aiData.scoring?.overall);
     console.log("====================================");
