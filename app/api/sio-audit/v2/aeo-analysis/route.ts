@@ -1,22 +1,21 @@
 import { connectToDatabase } from "@/lib/db";
 import { getOpenRouterClient } from "@/lib/openrouter";
-import ApiError from "@/models/api-error";
 import SIOReport from "@/models/sio-report";
 import {
+  aeoAnalysisInstruction,
   generalInstructions,
-  scoringAndFixesInstruction,
 } from "@/services/sio-audit-instructions/v2";
 import {
+  aeoAnalysisJsonSchema,
+  buildCleanContent,
   buildV2ApiData,
-  getV2Band,
   normalizeIssues,
-  scoringFixesJsonSchema,
 } from "@/services/sio-audit-v2";
-import { positioningClarityModels } from "@/services/sio-report/ai-models";
+import { summaryModels } from "@/services/sio-report/ai-models";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
-const scoringFixesSchema = z.object({
+const aeoAnalysisSchema = z.object({
   reportId: z.string(),
 });
 
@@ -25,7 +24,7 @@ export async function POST(request: NextRequest) {
     await connectToDatabase();
 
     const body = await request.json();
-    const validation = scoringFixesSchema.safeParse(body);
+    const validation = aeoAnalysisSchema.safeParse(body);
 
     if (!validation.success) {
       return NextResponse.json(
@@ -41,27 +40,30 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Report not found" }, { status: 404 });
     }
 
-    if (report.progress !== "aeo_complete") {
+    // This step happens after issues_generated
+    if (report.progress !== "issues_generated") {
       return NextResponse.json(
         {
-          error: "Report is not in aeo_complete state",
+          error: "Report is not in issues_generated state",
           currentProgress: report.progress,
         },
         { status: 400 },
       );
     }
 
-    const promptInput = {
-      issues: normalizeIssues(report.issues || []),
-      firstImpressions: report.firstImpressions,
-      categoryInsights: report.categoryInsights,
-      websiteSummary: report.websiteSummary,
-    };
+    if (!report.tempData?.simplifiedContent) {
+      return NextResponse.json(
+        { error: "No content available for analysis" },
+        { status: 400 },
+      );
+    }
 
     const client = getOpenRouterClient();
+    const cleanContent = buildCleanContent(report);
+
     const aiResponse = await client.chat.send({
       chatGenerationParams: {
-        models: positioningClarityModels.models,
+        models: summaryModels.models,
         messages: [
           {
             role: "system",
@@ -69,56 +71,58 @@ export async function POST(request: NextRequest) {
           },
           {
             role: "system",
-            content: scoringAndFixesInstruction,
+            content: aeoAnalysisInstruction,
           },
           {
             role: "user",
-            content: `Persisted report issues from DB:\n\n${JSON.stringify(promptInput, null, 2)}`,
+            content: `Website content to analyze:\n\n${JSON.stringify(cleanContent, null, 2)}`,
           },
           {
             role: "user",
             content:
-              "Generate ONLY the scoring-and-fixes payload following the JSON schema provided. Keep the same issues and enrich them.",
+              "Perform the AEO Visibility Readiness analysis. Generate ONLY the payload following the JSON schema provided. Add new issues to the existing ones if needed.",
           },
         ],
         responseFormat: {
           type: "json_schema",
           jsonSchema: {
-            name: "sio_v2_scoring_and_fixes",
+            name: "sio_v2_aeo_analysis",
             strict: true,
-            schema: scoringFixesJsonSchema,
+            schema: aeoAnalysisJsonSchema,
           },
         },
-        provider: positioningClarityModels.provider,
+        provider: summaryModels.provider,
         stream: false,
         reasoning: {
-          effort: positioningClarityModels.reasoning,
+          effort: summaryModels.reasoning,
         },
       },
     });
-
+    console.log("====================================");
+    console.log(aiResponse.usage);
+    console.log("====================================");
     const aiContent = aiResponse.choices[0]?.message?.content;
     if (!aiContent) {
       throw new Error("No content returned from AI");
     }
 
     const aiData = JSON.parse(aiContent);
-    const issues = normalizeIssues(aiData.issues);
-    const overallScore = normalizeScore(aiData.scoring?.overall);
-    console.log("====================================");
-    console.log("scor", aiData.scoring);
-    console.log("====================================");
+    const newAeoIssues = normalizeIssues(aiData.issues);
+
+    // Merge existing issues with new AEO issues
+    const existingIssues = report.issues || [];
+    const mergedIssues = [...existingIssues, ...newAeoIssues];
+
+    // Update AEO category insight
+    const categoryInsights = report.categoryInsights || {};
+    if (aiData.categoryInsights?.aeo) {
+      categoryInsights.aeo = aiData.categoryInsights.aeo;
+    }
+
     await SIOReport.findByIdAndUpdate(reportId, {
-      progress: "scoring_complete",
-      issues,
-      overallScore,
-      reportBand: getV2Band(overallScore),
-      scoring: {
-        first_impression: normalizeScore(aiData.scoring?.first_impression),
-        positioning: normalizeScore(aiData.scoring?.positioning),
-        clarity: normalizeScore(aiData.scoring?.clarity),
-        aeo: normalizeScore(aiData.scoring?.aeo),
-      },
+      progress: "aeo_complete",
+      issues: mergedIssues,
+      categoryInsights,
     });
 
     const savedReport = await SIOReport.findById(reportId).lean();
@@ -131,40 +135,27 @@ export async function POST(request: NextRequest) {
       reportId,
       progress: savedReport.progress,
       data: buildV2ApiData(savedReport),
-      nextStep: "/api/sio-audit/v2/validation-improvement",
+      nextStep: "/api/sio-audit/v2/scoring-fixes",
     });
   } catch (error: any) {
-    console.error("SIO Audit V2 Scoring & Fixes Error:", error);
+    console.error("SIO Audit V2 AEO Analysis Error:", error);
 
     try {
       const body = await request.json().catch(() => null);
       if (body?.reportId) {
         await SIOReport.findByIdAndUpdate(body.reportId, {
           progress: "failed",
-          failedAt: "v2_scoring_and_fixes",
+          failedAt: "v2_aeo_analysis",
           errorMessage:
-            error.message || "Unknown error during scoring and fix generation",
+            error.message ||
+            "Unknown error during AEO visibility readiness analysis",
         });
       }
     } catch {}
 
-    const errordb = new ApiError({
-      path: "/api/sio-audit/v2/scoring-fixes",
-      content: JSON.stringify(error),
-      metadata: {
-        body: JSON.stringify(await request.json().catch(() => null)),
-      },
-    });
-    await errordb.save();
-
     return NextResponse.json(
-      { error: "Failed to generate scoring and fixes" },
+      { error: "Failed to perform AEO analysis" },
       { status: 500 },
     );
   }
-}
-
-function normalizeScore(value: unknown): number {
-  if (typeof value !== "number" || Number.isNaN(value)) return 0;
-  return Math.max(0, Math.min(100, value));
 }

@@ -11,6 +11,7 @@ import { useUserStore } from "@/stores/user-store";
 import {
   CategoryInsightsSection,
   FirstImpressionTeaser,
+  IssuesPreview,
   IssuesSection,
   OverallScoreCardV2,
   ScoringOverview,
@@ -40,7 +41,7 @@ export interface SIOV2ReportData {
     statement: string;
   };
   reportBand: "Dominant" | "Strong" | "Average" | "Weak" | "Ghost";
-  websiteSummaryV2: {
+  websiteSummary: {
     overview: string;
     problems: string[];
     solutions: string[];
@@ -112,8 +113,8 @@ export default function DashboardSIOReportV2({
   const navigation = [
     { id: "overview", label: "Overview", icon: "📊" },
     { id: "website-summary", label: "Website Summary", icon: "🌐" },
-    { id: "scoring", label: "Scoring Breakdown", icon: "📈" },
     { id: "issues", label: "Issues & Recommendations", icon: "⚠️" },
+    { id: "scoring", label: "Scoring Breakdown", icon: "📈" },
     { id: "strengths", label: "Strengths", icon: "💪" },
     { id: "insights", label: "Category Insights", icon: "💡" },
   ];
@@ -133,24 +134,17 @@ export default function DashboardSIOReportV2({
 
             <ScoringOverview scoring={report.scoring} />
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="bg-white rounded-lg border p-6">
-                <h3 className="text-lg font-semibold mb-4">First Impression</h3>
-                <p className="text-gray-700">
-                  {report.firstImpressions?.statement ||
-                    report.categoryInsights.first_impression.statement}
-                </p>
-              </div>
-              <div className="bg-white rounded-lg border p-6">
-                <h3 className="text-lg font-semibold mb-4">Report Summary</h3>
-                <p className="text-gray-700">{report.statement}</p>
-              </div>
-            </div>
+            <CategoryInsightsSection insights={report.categoryInsights} />
+
+            <IssuesPreview 
+              issues={report.issues} 
+              onViewAll={() => setActiveSection("issues")} 
+            />
           </div>
         );
 
       case "website-summary":
-        return <WebsiteSummarySectionV2 summary={report.websiteSummaryV2} />;
+        return <WebsiteSummarySectionV2 summary={report.websiteSummary} />;
 
       case "scoring":
         return <ScoringOverview scoring={report.scoring} detailed />;

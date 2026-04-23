@@ -1,29 +1,29 @@
 "use client";
 
 import {
-  AuditForm,
-  AuditLoader,
-  AuditProgress,
-  SIOV2Report,
-  useAudit2,
+    AuditForm,
+    AuditLoader,
+    AuditProgress,
+    SIOV2Report,
+    useAudit2,
 } from "@/components/audit";
 import { Button } from "@/components/ui/button";
 import { useUserStore } from "@/stores/user-store";
 import {
-  AlertCircle,
-  ArrowRight,
-  ExternalLink,
-  FileText,
-  Lock,
-  RefreshCw,
-  Sparkles,
+    AlertCircle,
+    ArrowRight,
+    ExternalLink,
+    FileText,
+    Lock,
+    RefreshCw,
+    Sparkles,
 } from "lucide-react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import {
-  DashboardSIOReportV2,
-  SIOV2ReportData,
+    DashboardSIOReportV2,
+    SIOV2ReportData,
 } from "../sio-report/dashboardV2";
 
 export default function PublicAuditPage() {
@@ -203,12 +203,7 @@ export default function PublicAuditPage() {
         {isComplete && status.data && (
           <div className={isComplete ? "pb-20" : ""}>
             <DashboardSIOReportV2
-              report={
-                {
-                  ...status.data,
-                  websiteSummaryV2: status.data.websiteSummary,
-                } as SIOV2ReportData
-              }
+              report={status.data as SIOV2ReportData}
               isGuest
             />
           </div>

@@ -26,6 +26,17 @@ const issueMetricKeyEnum = [
   "visual_hierarchy",
   "cta_clarity",
   "proof_placement",
+  "unclear_sentences",
+  "one_line_definition",
+  "audience_specificity",
+  "problem_solution_mapping",
+  "outcome_translation",
+  "use_case_intent",
+  "category_anchoring",
+  "intent_driven_qa",
+  "terminology_consistency",
+  "quantifiable_signals",
+  "parsing_structure",
 ];
 
 const firstImpressionsSchema = {
@@ -61,9 +72,23 @@ const websiteSummarySchema = {
   type: "object",
   additionalProperties: false,
   properties: {
-    overview: { type: "string" },
-    problems: { type: "array", items: { type: "string" } },
-    solutions: { type: "array", items: { type: "string" } },
+    overview: {
+      type: "string",
+      description:
+        "A neutral, factual description of what the product/company does.",
+    },
+    problems: {
+      type: "array",
+      items: { type: "string" },
+      description:
+        "The real-world USER PAINS or market problems that the PRODUCT claims to solve. These are NOT audit findings or website issues — they are the problems the product addresses for its customers.",
+    },
+    solutions: {
+      type: "array",
+      items: { type: "string" },
+      description:
+        "The capabilities, features, or value propositions the PRODUCT provides to solve those problems. These are NOT audit recommendations — they are what the product offers.",
+    },
   },
   required: ["overview", "problems", "solutions"],
 };
@@ -104,10 +129,35 @@ const enrichedIssueSchema = {
   required: ["id", ...issueGenerationIssueSchema.required],
 };
 
+export const aeoAnalysisJsonSchema = {
+  type: "object",
+  additionalProperties: false,
+  properties: {
+    issues: {
+      type: "array",
+      items: issueGenerationIssueSchema,
+    },
+    categoryInsights: {
+      type: "object",
+      additionalProperties: false,
+      properties: {
+        aeo: categoryInsightSchema,
+      },
+      required: ["aeo"],
+    },
+  },
+  required: ["issues", "categoryInsights"],
+};
+
 export const summaryAndIssuesJsonSchema = {
   type: "object",
   additionalProperties: false,
   properties: {
+    statement: {
+      type: "string",
+      description:
+        "A 2-3 sentence overall audit verdict about the product's positioning, messaging clarity and conversion readiness. This is NOT about first impressions — it is a holistic product-level diagnostic summary.",
+    },
     issues: {
       type: "array",
       items: issueGenerationIssueSchema,
@@ -127,6 +177,7 @@ export const summaryAndIssuesJsonSchema = {
     websiteSummary: websiteSummarySchema,
   },
   required: [
+    "statement",
     "issues",
     "firstImpressions",
     "categoryInsights",
@@ -168,6 +219,11 @@ export const validationImprovementJsonSchema = {
   type: "object",
   additionalProperties: false,
   properties: {
+    statement: {
+      type: "string",
+      description:
+        "A 2-3 sentence overall audit verdict about the product's positioning, messaging clarity and conversion readiness. This is NOT about first impressions — it is a holistic product-level diagnostic summary.",
+    },
     issues: {
       type: "array",
       items: enrichedIssueSchema,
@@ -178,6 +234,7 @@ export const validationImprovementJsonSchema = {
     websiteSummary: websiteSummarySchema,
   },
   required: [
+    "statement",
     "issues",
     "scoring",
     "firstImpressions",
@@ -260,11 +317,12 @@ export function normalizeFirstImpressions(rawFirstImpressions: any) {
 }
 
 export function getStoredWebsiteSummary(report: any): V2WebsiteSummary {
-  return normalizeWebsiteSummary(report?.websiteSummaryV2);
+  return normalizeWebsiteSummary(report?.websiteSummary);
 }
 
 export function buildV2ValidationInput(report: any) {
   return {
+    statement: report?.statement || "",
     issues: normalizeIssues(report?.issues || []),
     scoring: {
       overall: normalizeScore(report?.overallScore),

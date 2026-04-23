@@ -13,14 +13,14 @@ import { Effort } from "@openrouter/sdk/models";
  */
 export const summaryModels = {
   models: [
+    "qwen/qwen3-next-80b-a3b-thinking",
     "x-ai/grok-4.1-fast",
-    "google/gemma-4-31b-it:free",
-    "qwen/qwen3.5-35b-a3b",
+    "openai/gpt-oss-120b:free",
   ],
   reasoning: "medium" as Effort,
   provider: {
     requireParameters: true,
-    preferredMinThroughput: 38,
+    // preferredMinThroughput: 35,
   },
 };
 
@@ -30,14 +30,14 @@ export const summaryModels = {
  */
 export const positioningClarityModels = {
   models: [
+    "qwen/qwen3-next-80b-a3b-thinking",
     "x-ai/grok-4.1-fast",
-    "google/gemma-4-31b-it:free",
-    "qwen/qwen3.5-35b-a3b",
+    "openai/gpt-oss-120b:free",
   ],
   reasoning: "high" as Effort,
   provider: {
     requireParameters: true,
-    preferredMinThroughput: 38,
+    // preferredMinThroughput: 38,
   },
 };
 
@@ -47,14 +47,14 @@ export const positioningClarityModels = {
  */
 export const aeoModels = {
   models: [
-    "qwen/qwen3.6-plus:free",
     "x-ai/grok-4.1-fast",
-    "qwen/qwen3.5-35b-a3b",
+    "qwen/qwen3-next-80b-a3b-thinking",
+    "openai/gpt-oss-120b:free",
   ],
   reasoning: "medium" as Effort,
   provider: {
     requireParameters: true,
-    preferredMinThroughput: 38,
+    // preferredMinThroughput: 38,
   },
 };
 
@@ -64,9 +64,9 @@ export const aeoModels = {
  */
 export const refinementModels = {
   models: [
-    "qwen/qwen3.5-35b-a3b",
+    "qwen/qwen3-next-80b-a3b-thinking",
+    "openai/gpt-oss-120b:free",
     "x-ai/grok-4.1-fast",
-    "google/gemma-4-31b-it:free",
   ],
   reasoning: "medium" as Effort,
   provider: {

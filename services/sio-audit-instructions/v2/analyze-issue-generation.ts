@@ -2,126 +2,70 @@ export const analyzeAndIssueInstruction = `
 ## ⚙️ SIO-V6 — ANALYZE & ISSUE GENERATION (STEP 1)
 
 **Primary Objective**: Extract intelligence and create structured ISSUES. 
-Refer to **General Instructions** for core metric definitions and quality rules.
+Refer to **General Instructions** for core metric definitions, evaluation criteria, and quality rules.
 
 ---
 
-## 🧩 LOGICAL MAPPING (CRITICAL)
-- **isPositioningClear = FALSE** → MUST generate 2+ CRITICAL "positioning" issues.
-- **ten_second_test = FALSE** → MUST generate 2+ CRITICAL "first_impression" issues.
-- **isMessagingClear = FALSE** → MUST generate 2+ HIGH/CRITICAL "clarity" issues.
-
----
-
-## 🔍 CONTEXTUAL FLEXIBILITY (CRITICAL)
-Do NOT enforce a rigid "startup template". 
-- Some products need ICP + Outcome in headline; others don't.
-- Evaluate effectiveness and clarity for the specific context, not adherence to a specific framework.
-- Every startup has unique ways of implementing best practices.
-
----
-
-## 🔍 DIAGNOSTIC PRINCIPLE (CRITICAL)
-Do NOT rely only on provided examples. Apply these **first principles** to the unique website context. If a message is weak for a reason not listed but violates a principle, you MUST flag it.
-
-
----
-
-## 🔍 evaluation: headline
-- **What Matters**: Effectively capturing attention and communicating the "reason to exist" without forcing a rigid formula.
-- **Checks**: Ambiguity requiring multiple paragraphs to resolve; jargon that alienates the intended user; overall compelling nature and clarity.
-
-## 🔍 evaluation: subheadline
-- **What Matters**: Reducing cognitive load by expanding on the primary hook and providing context.
-- **Checks**: Pure repetition of headline; introduction of unsupported technical concepts; failure to bridge from promise to execution.
-
-## 🔍 evaluation: cta (first impression)
-- **What Matters**: A clear, low-friction trigger for the next logical step in the user journey.
-- **Checks**: "Mystery meat" links with no clear destination; language disconnected from hero section value; visual buried in layout.
-
-## 🔍 evaluation: category_ownership
-- **What Matters**: An immediate mental frame of reference so users know how to value the product.
-- **Checks**: Obscure "invented" categories that prevent comparison; lack of any baseline context; being too broad to be meaningful.
-
-## 🔍 evaluation: unique_value_proposition (uvp)
-- **What Matters**: Identifying the primary outcome or "edge" that makes the product worth choosing.
-- **Checks**: UVP indistinguishable from industry "table stakes"; primary benefits claimed without any evidence; non-measurable outcomes.
-
-## 🔍 evaluation: competitive_differentiation
-- **What Matters**: Clarifying the specific "delta" between this product and known alternatives.
-- **Checks**: Assuming the user already knows the competition; failure to state why this is better, faster, or more relevant for a specific niche.
-
-## 🔍 evaluation: target_audience
-- **What Matters**: Resonance with a specific ICP so the right user feels "spoken to."
-- **Checks**: "Everything for everyone" language; lack of industry-specific terminology; mismatch between capability and target audience.
-
-## 🔍 evaluation: problem_solution_fit
-- **What Matters**: Direct alignment between a recognizable, "burning" user pain and the product solution.
-- **Checks**: Trivial or "hallucinated" problems; solutions that look like a "feature looking for a problem"; weak bridge between pain and better state.
-
-## 🔍 evaluation: messaging_consistency
-- **What Matters**: A logical, aligned narrative flow from the top of the page to the bottom.
-- **Checks**: Pivoting to unrelated value props halfway down; testimonials praising features not in copy; "Frankenstein" messaging.
-
-## 🔍 evaluation: headline_clarity
-- **What Matters**: Passing the "glance test" (3-5 seconds) for basic comprehension.
-- **Checks**: Puns or clever wordplay prioritized over meaning; excessive jargon; requiring sub-copy reading to understand the main hook.
-
-## 🔍 evaluation: value_proposition (clarity)
-- **What Matters**: Making specific outcomes and benefits easy to find and digest during a quick scan.
-- **Checks**: Value buried in massive text blocks; vague high-level marketing speak; lack of concrete outcome statements.
-
-## 🔍 evaluation: feature_benefit_mapping
-- **What Matters**: Connecting the technical "what" to the practical or emotional "why."
-- **Checks**: "Laundry lists" of features without enabled outcomes; promising outcomes without showing the enabling features.
-
-## 🔍 evaluation: visual_hierarchy
-- **What Matters**: Guiding attention toward critical conversion and clarity elements through layout.
-- **Checks**: Critical text too small to notice; CTA blending into background; secondary elements louder than primary value prop.
-
-## 🔍 evaluation: cta_clarity
-- **What Matters**: Precise transparency regarding the immediate result of a click.
-- **Checks**: "Commitment-heavy" language before value is established; "commitment-vague" text that leaves the user guessing.
-
-## 🔍 evaluation: proof_placement
-- **What Matters**: Trust signals (logos, data) deployed at moments of maximum doubt or friction.
-- **Checks**: Social proof sequestered at the bottom only; generic/unverifiable reviews; missing proof near primary CTAs.
-
-## 🔍 evaluation: unclear_sentences
-- **What Matters**: A professional, high-momentum reading experience through clean copy.
-- **Checks**: Sentences so long the thread is lost; typos and grammar issues undermining credibility; passive voice stalling momentum.
-
+## 💎 QUALITY GENERATION (CRITICAL)
+- **High-Impact Focus**: Do not waste issues on trivialities. Focus on the 20% of problems that cause 80% of the friction.
+- **Diagnostic Depth**: Every issue statement must clearly articulate the IMPACT on conversion or AI comprehension.
+- **Evidence-Based**: Ensure every issue is grounded in the specific text and layout of the current site. Use the "current" field to prove the friction.
 
 ---
 
 ## 🧩 ISSUES CONTRACT
-Each issue MUST adhere to the **General Instructions** schema and quality rules. 
+Each issue MUST adhere to the **General Instructions** schema, logical mapping, and quality rules. 
 - **metricKey**: MUST be lowercase.
-- MIN issues: 7 | MAX: 20
+- MIN issues: 15 | MAX: 25
 - Categories: 3 Positioning, 3 Clarity, 1 First Impression.
+
+### ⚠️ MANDATORY COVERAGE RULE (DO NOT SKIP)
+You MUST generate **at least one LOW or MEDIUM severity issue** for EACH of the submetrics defined in **General Instructions**, even if the website performs well on it. This ensures founders always have actionable improvement suggestions.
+
+If a submetric is genuinely excellent, generate a LOW issue with a minor optimization suggestion. No submetric should have zero issues.
 
 ---
 
 ## ⚡ OUTPUT STRUCTURE
+
+### ⚠️ CRITICAL: TWO DIFFERENT STATEMENTS (DO NOT CONFUSE)
+1. **"statement"** (top-level): A 2-3 sentence **holistic audit verdict** about the product's overall positioning, messaging clarity, and conversion readiness across the ENTIRE website. This is the executive summary of the audit. It should cover the product as a whole — its strengths, core weaknesses, and overall state.
+2. **"firstImpressions.statement"**: A 2-3 sentence diagnostic ONLY about the **initial landing experience** — what a visitor sees, understands (or fails to understand) in the first 5-10 seconds. Focus strictly on the hero section, above-the-fold content, headline, and immediate visual/messaging impact.
+
+These two statements MUST be meaningfully different. The top-level statement is BROAD (whole product audit). The firstImpressions.statement is NARROW (first 10 seconds only). If they sound the same, you have FAILED.
+
 {
+  "statement": "2-3 sentence holistic audit of the product's positioning, messaging, and conversion readiness across the entire website.",
   "issues": [...],
   "firstImpressions": {
     "isPositioningClear": boolean,
     "isMessagingClear": boolean,
     "isUserLeftGuessing": boolean,
     "ten_second_test": boolean,
-    "statement": "Summary of current conversion state (1 sentence)"
+    "statement": "2-3 sentence diagnostic ONLY about the first 5-10 seconds of the landing experience. What does a visitor see, understand, or fail to grasp immediately?"
   },
   "categoryInsights": {
-    "positioning": { "statement": "Diagnostic synthesis", "summary": "Simplified explanation" },
-    "clarity": { "statement": "...", "summary": "..." },
-    "first_impression": { "statement": "...", "summary": "..." },
-    "aeo": { "statement": "...", "summary": "..." }
+    "positioning": { 
+      "summary": "Neutral description of the CURRENT positioning/target audience found on the site. NO analysis, NO diagnostic, NO interpretation.", 
+      "statement": "Critical diagnostic analysis of the current positioning effectiveness. NO recommendations, NO fixes, NO hints on 'how to' improve." 
+    },
+    "clarity": { 
+      "summary": "Neutral description of the CURRENT messaging/structure/hierarchy. NO analysis, NO diagnostic.", 
+      "statement": "Critical diagnostic analysis of the messaging clarity and cognitive load. NO solutions, NO hints." 
+    },
+    "first_impression": { 
+      "summary": "Neutral description of what visitors see first (Hero section). NO analysis, NO diagnostic.", 
+      "statement": "Critical diagnostic analysis of the first 5-10 seconds of impact. NO advice, NO fixes." 
+    },
+    "aeo": { 
+      "summary": "Neutral description of existing technical/semantic markup. NO analysis, NO diagnostic.", 
+      "statement": "Critical diagnostic analysis of AI-readiness and search-engine visibility. NO recommendations, NO solutions." 
+    }
   },
   "websiteSummary": {
-    "overview": "Neutral product description",
-    "problems": ["User pains addressed by product"],
-    "solutions": ["Product capabilities/value prop"]
+    "overview": "Neutral, factual description of what the product/company does",
+    "problems": ["Real-world USER PAINS or market problems that the PRODUCT claims to solve — NOT audit findings"],
+    "solutions": ["Capabilities, features, or value propositions the PRODUCT provides — NOT audit recommendations"]
   }
 }
 

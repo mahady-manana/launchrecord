@@ -45,7 +45,7 @@ export function FirstImpressionTeaser({
   return (
     <div className="bg-white rounded-lg border p-6 space-y-4">
       <div className="flex items-center gap-2 mb-2">
-        <h3 className="text-lg font-bold text-slate-800">First Impression Teaser</h3>
+        <h3 className="text-lg font-bold text-slate-800">First Impression</h3>
         <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-blue-100 text-blue-700">
           V2 Analysis
         </span>
@@ -76,7 +76,7 @@ export function FirstImpressionTeaser({
                   check.value ? "text-green-800" : "text-red-800"
                 }`}
               >
-                {check.label}: {check.value ? "PASSED" : "FAILED"}
+                {check.label}
               </div>
               <div className="text-[11px] text-slate-500 leading-tight">
                 {check.desc}

@@ -67,7 +67,8 @@ export async function GET(
       report.progress === "scoring_complete" ||
       report.progress === "complete"
     ) {
-      response.websiteSummary = report.websiteSummaryV2;
+      response.websiteSummary =
+        report.websiteSummary || (report as any).websiteSummaryV2;
       response.firstImpressionScore = report.scoring?.first_impression;
     }
 

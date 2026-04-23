@@ -6,6 +6,7 @@ export type Audit2Progress =
   | "idle"
   | "content_fetched"
   | "issues_generated"
+  | "aeo_complete"
   | "scoring_complete"
   | "complete"
   | "failed";
@@ -41,7 +42,18 @@ export interface SIOV2Report {
       | "feature_benefit_mapping"
       | "visual_hierarchy"
       | "cta_clarity"
-      | "proof_placement";
+      | "proof_placement"
+      | "unclear_sentences"
+      | "one_line_definition"
+      | "audience_specificity"
+      | "problem_solution_mapping"
+      | "outcome_translation"
+      | "use_case_intent"
+      | "category_anchoring"
+      | "intent_driven_qa"
+      | "terminology_consistency"
+      | "quantifiable_signals"
+      | "parsing_structure";
     severity: "critical" | "high" | "medium" | "low";
     statement: string;
     explanation?: string;
@@ -294,6 +306,7 @@ export function useAudit2(options: UseAudit2Options = {}) {
         const errorMessage = error.message || "Audit failed";
         const failedAtMap: Record<string, string> = {
           "summary-and-issues": "v2_summary_and_issues",
+          "aeo-analysis": "v2_aeo_analysis",
           "scoring-fixes": "v2_scoring_and_fixes",
           "validation-improvement": "v2_validation_improvement",
         };

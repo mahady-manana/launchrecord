@@ -38,10 +38,23 @@ export type ClarityMetric =
   | "proof_placement"
   | "unclear_sentences";
 
+export type AEOMetric =
+  | "one_line_definition"
+  | "audience_specificity"
+  | "problem_solution_mapping"
+  | "outcome_translation"
+  | "use_case_intent"
+  | "category_anchoring"
+  | "intent_driven_qa"
+  | "terminology_consistency"
+  | "quantifiable_signals"
+  | "parsing_structure";
+
 export type IssueMetricKey =
   | FirstImpressionMetric
   | PositioningMetric
-  | ClarityMetric;
+  | ClarityMetric
+  | AEOMetric;
 
 export interface IIssue {
   category: IssueCategory;
@@ -179,6 +192,16 @@ const issueMetricKeyEnum: IssueMetricKey[] = [
   "cta_clarity",
   "proof_placement",
   "unclear_sentences",
+  "one_line_definition",
+  "audience_specificity",
+  "problem_solution_mapping",
+  "outcome_translation",
+  "use_case_intent",
+  "category_anchoring",
+  "intent_driven_qa",
+  "terminology_consistency",
+  "quantifiable_signals",
+  "parsing_structure",
 ];
 
 /**

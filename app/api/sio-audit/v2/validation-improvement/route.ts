@@ -111,8 +111,10 @@ export async function POST(request: NextRequest) {
     const firstImpressions = normalizeFirstImpressions(aiData.firstImpressions);
     const issues = normalizeIssues(aiData.issues);
     const overallScore = normalizeScore(aiData.scoring?.overall);
-
-    report.statement = firstImpressions.statement || report.statement;
+    console.log("====================================");
+    console.log(aiData.scoring);
+    console.log("====================================");
+    report.statement = aiData.statement || report.statement;
     report.firstImpressions = firstImpressions as any;
     report.websiteSummary = websiteSummary as any;
     report.issues = issues;

@@ -117,7 +117,7 @@ export async function POST(request: NextRequest) {
 
     await SIOReport.findByIdAndUpdate(reportId, {
       progress: "issues_generated",
-      statement: firstImpressions.statement || "",
+      statement: aiData.statement || "",
       firstImpressions,
       websiteSummary: websiteSummary,
       issues,
@@ -135,7 +135,7 @@ export async function POST(request: NextRequest) {
       reportId,
       progress: savedReport.progress,
       data: buildV2ApiData(savedReport),
-      nextStep: "/api/sio-audit/v2/scoring-fixes",
+      nextStep: "/api/sio-audit/v2/aeo-analysis",
     });
   } catch (error: any) {
     console.error("SIO Audit V2 Summary & Issues Error:", error);
