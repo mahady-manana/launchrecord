@@ -254,23 +254,32 @@ export function buildCleanContent(report: any) {
 }
 
 export function normalizeIssues(rawIssues: any[] = []) {
-  return rawIssues.map((issue) => ({
-    id: typeof issue?.id === "string" && issue.id ? issue.id : randomUUID(),
-    category: issue?.category || "positioning",
-    metricKey: issue?.metricKey,
-    severity: issue?.severity || "low",
-    statement: issue?.statement || "",
-    explanation: issue?.explanation || "",
-    current:
-      typeof issue?.current === "string" && issue.current.trim().length > 0
-        ? issue.current
-        : undefined,
-    recommendations: normalizeStringArray(issue?.recommendations),
-    fixes: normalizeStringArray(issue?.fixes),
-    isVisibleInFree: Boolean(issue?.isVisibleInFree),
-    isFixLocked: Boolean(issue?.isFixLocked),
-    impactScore: normalizeImpactScore(issue?.impactScore),
-  }));
+  return rawIssues.map((issue) => {
+    const statement = issue?.statement || "";
+    const explanation = issue?.explanation || "";
+    const combinedStatement =
+      statement && explanation
+        ? `${statement} ${explanation}`
+        : statement || explanation;
+
+    return {
+      id: typeof issue?.id === "string" && issue.id ? issue.id : randomUUID(),
+      category: issue?.category || "positioning",
+      metricKey: issue?.metricKey,
+      severity: issue?.severity || "low",
+      statement: combinedStatement,
+      explanation: undefined, // Fully deprecated
+      current:
+        typeof issue?.current === "string" && issue.current.trim().length > 0
+          ? issue.current
+          : undefined,
+      recommendations: normalizeStringArray(issue?.recommendations),
+      fixes: normalizeStringArray(issue?.fixes),
+      isVisibleInFree: Boolean(issue?.isVisibleInFree),
+      isFixLocked: Boolean(issue?.isFixLocked),
+      impactScore: normalizeImpactScore(issue?.impactScore),
+    };
+  });
 }
 
 export function normalizeCategoryInsights(rawCategoryInsights: any) {

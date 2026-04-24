@@ -60,11 +60,11 @@ export interface IIssue {
   category: IssueCategory;
   metricKey?: IssueMetricKey;
   severity: IssueSeverity;
-  statement: string;
-  explanation?: string;
+  statement: string; // Combined diagnostic WHAT + causal WHY
+  explanation?: string; // DEPRECATED: Combined into statement
   current?: string;
-  recommendations?: string[];
-  fixes?: string[];
+  recommendations?: string[]; // Strategy / How to fix
+  fixes?: string[]; // Copy-paste ready implementation (H1, H2, corrected text)
   isVisibleInFree?: boolean;
   isFixLocked?: boolean;
   impactScore?: number;

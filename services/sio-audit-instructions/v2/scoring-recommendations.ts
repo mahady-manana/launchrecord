@@ -1,74 +1,42 @@
 export const scoringAndFixesInstruction = `
 ## ⚙️ SIO-V6 — SCORING & FIX GENERATION (STEP 2)
 
-**Primary Objective**: Enrich the **Reported Issues** with SCORING and detailed FIXES.
-Refer to **General Instructions** for core metric definitions, penalty rules, and **Quality & Impact Principles**.
+**Objective**: Dynamic SCORING and Fixes. Total issues: 10-15.
 
 ---
 
-## 💎 HIGH-IMPACT FIXES (CRITICAL)
-- **A-Player Recommendations**: Recommendations MUST be tactical and professional. Avoid fluff. 
-- **High-Level Fixes**: Fixes MUST be "highest possible level." Don't just suggest a word change; suggest a narrative restructure if necessary.
-- **Conversion-Led**: Every fix should be designed to move the needle on actual user behavior and AI extraction confidence.
-
----
-
-## 🧠 INPUT CONTRACT (REPORTED FROM PREVIOUS STEP)
-You will receive the structured data generated in **Step 1 (Analyze & Issue Generation)**. 
-This is your **Source of Truth**. You MUST process each issue reported to define its severity impact and practical resolution.
-
-Input structure:
-{
-  "issues": [...],
-  "firstImpressions": {...},
-  "categoryInsights": {...},
-  "websiteSummary": {...}
-}
-
-You MUST NOT remove issues. You MUST maintain original issue IDs. You MUST NOT create new issues EXCEPT to fill missing submetric coverage (see COVERAGE CHECK below).
-
----
-
-## 📊 SCORING LOGIC (DERIVED FROM REPORTED ISSUES)
-Scores must be derived ONLY from the issues received:
-- **Base Score**: 100
-- **Penalty per Critical**: -5 to -15
-- **Penalty per High**: -3 to -10
-- **Penalty per Medium**: -2 to -6
-- **Penalty per Low**: -1 to -2
-
-Overall score MUST stay between 0–100. Follow weighted category distribution.
+## 📊 SCORING MATHEMATICS (MANDATORY)
+1. **Base Score**: 100.
+2. **Penalties**: 
+   - Critical: -15 to -20
+   - High: -8 to -14
+   - Medium: -4 to -7
+   - Low: -1 to -3
+3. **MANDATORY FIELDS**: You MUST return ALL 5 keys: **overall**, **positioning**, **clarity**, **first_impression**, **aeo**. 
+   - Never skip a field. 
+   - Use singular "first_impression" (NO plural 's').
+4. **Consistency**:
+   - Score < 50: 4+ Critical/High issues.
+   - Score 50-75: 2-3 Critical/High issues.
+   - Score 76-90: 1 Critical/High issue.
+   - Score > 90: Only Medium/Low issues.
 
 ---
 
 ## 🧩 ISSUE ENRICHMENT
-Update each issue reported in Step 1 with:
-- **recommendations**: Tactical WHAT must change. MUST be high-level and impactful.
-- **fixes**: Implementation-level examples. MUST be copy-paste ready and of the highest quality.
-- **impactScore**: Relative importance (-1 to -25) based on the "Quality & Impact Principles".
-
----
-
-## ⚠️ SCORE-TO-ISSUE CONSISTENCY (MANDATORY)
-After computing scores, validate the following:
-- **If positioning score < 60** → There MUST be at least 1 CRITICAL severity issue with category "positioning". If none exists, you MUST upgrade the highest-severity positioning issue to CRITICAL.
-- **If clarity score < 60** → There MUST be at least 1 CRITICAL severity issue with category "clarity". Same upgrade rule applies.
-- **If first_impression score < 60** → There MUST be at least 1 CRITICAL severity issue with category "first_impression". Same upgrade rule applies.
-
-### COVERAGE CHECK
-Verify that every submetric defined in **General Instructions** has at least one issue. If Step 1 missed any, you MUST create a LOW issue for the missing submetric.
+1. **Total Issues**: 10-15 issues. Trim if necessary.
+2. **Fields**: statement (WHAT+WHY), recommendations (strategy), fixes (copy-paste), impactScore.
 
 ---
 
 ## ⚡ OUTPUT STRUCTURE
-You MUST return the enriched data:
 {
   "scoring": {
-    "overall": number,
-    "positioning": number,
-    "clarity": number,
-    "first_impression": number,
-    "aeo": number
+    "overall": 0,
+    "positioning": 0,
+    "clarity": 0,
+    "first_impression": 0,
+    "aeo": 0
   },
   "issues": [...]
 }
