@@ -1,6 +1,7 @@
 "use client";
 
-import { AuditLoader, useAudit } from "@/components/audit";
+import type { SIOV2Report } from "@/components/audit";
+import { AuditLoader, useAudit2 } from "@/components/audit";
 import { Button } from "@/components/ui/button";
 import { useProducts } from "@/hooks/use-products";
 import type { SIOV5Report } from "@/services/sio-report/schema";
@@ -9,13 +10,13 @@ import { ArrowLeft } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
 import {
-  AuditErrorCard,
-  AuditPreviewCard,
-  AuditRateLimitedCard,
-  AuditStartCard,
-  AuditSuccessCard,
-  AuditUpgradeCard,
-  ExistingAuditCard,
+    AuditErrorCard,
+    AuditPreviewCard,
+    AuditRateLimitedCard,
+    AuditStartCard,
+    AuditSuccessCard,
+    AuditUpgradeCard,
+    ExistingAuditCard,
 } from "./components";
 
 interface AuditPageProps {
@@ -48,9 +49,9 @@ function ProductAuditPageContent({ params }: AuditPageProps) {
   const { fetchProducts } = useProducts();
 
   const [product, setProduct] = useState<typeof selectedProduct>(null);
-  const [existingReport, setExistingReport] = useState<SIOV5Report | null>(
-    null,
-  );
+  const [existingReport, setExistingReport] = useState<
+    SIOV5Report | SIOV2Report | null
+  >(null);
   const [isLoading, setIsLoading] = useState(true);
   const [auditStatus, setAuditStatus] = useState<AuditStatus>("idle");
   const [errorMessage, setErrorMessage] = useState<string>("");
@@ -66,9 +67,9 @@ function ProductAuditPageContent({ params }: AuditPageProps) {
     isRunning,
     isComplete,
     isFailed,
-  } = useAudit({
+  } = useAudit2({
     isGuest: false,
-    onComplete: async (report: SIOV5Report) => {
+    onComplete: async (report: SIOV2Report) => {
       setAuditStatus("success");
       setExistingReport(report);
       await fetchProducts();
@@ -268,7 +269,7 @@ function ProductAuditPageContent({ params }: AuditPageProps) {
                   ? "complete"
                   : auditProgress.progress === "idle"
                     ? "content_fetched"
-                    : auditProgress.progress
+                    : (auditProgress.progress as any)
             }
             url={product.website}
             className="max-w-none"

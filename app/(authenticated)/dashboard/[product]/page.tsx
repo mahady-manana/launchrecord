@@ -3,24 +3,25 @@
 import { MissingDataBanner } from "@/components/missing-data-banner";
 import { ProductDashboardHeader } from "@/components/product-dashboard";
 import DashboardSIOReport from "@/components/sio-report/DashboardSIOReport";
+import DashboardSIOReportV2 from "@/components/sio-report/dashboardV2/DashboardSIOReportV2";
 import { Button } from "@/components/ui/button";
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
 } from "@/components/ui/card";
 import { useSubscription } from "@/hooks/use-subscription";
 import { SIOV5Report } from "@/services/sio-report/schema";
 import { useProductStore } from "@/stores/product-store";
 import {
-  ArrowRight,
-  BarChart3,
-  CheckCircle2,
-  RefreshCcw,
-  Sparkles,
-  TrendingUp,
+    ArrowRight,
+    BarChart3,
+    CheckCircle2,
+    RefreshCcw,
+    Sparkles,
+    TrendingUp,
 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -175,14 +176,16 @@ export default function ProductDashboard() {
             </Button>
           </CardContent>
         </Card>
+      ) : (report as any).version === 2 ? (
+        <DashboardSIOReportV2
+          report={report as any}
+          subscription={subscription}
+        />
       ) : (
-        <>
-          {/* Audit Date Badge */}
-          <DashboardSIOReport
-            report={report as any}
-            subscription={subscription}
-          />
-        </>
+        <DashboardSIOReport
+          report={report as any}
+          subscription={subscription}
+        />
       )}
     </div>
   );

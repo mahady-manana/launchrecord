@@ -21,6 +21,7 @@ import {
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
+import DashboardSIOReport from "../sio-report/DashboardSIOReport";
 import {
     DashboardSIOReportV2,
     SIOV2ReportData,
@@ -202,10 +203,14 @@ export default function PublicAuditPage() {
         {/* Report Display */}
         {isComplete && status.data && (
           <div className={isComplete ? "pb-20" : ""}>
-            <DashboardSIOReportV2
-              report={status.data as SIOV2ReportData}
-              isGuest
-            />
+            {(status.data as any).version === 2 ? (
+              <DashboardSIOReportV2
+                report={status.data as SIOV2ReportData}
+                isGuest
+              />
+            ) : (
+              <DashboardSIOReport report={status.data as any} isGuest />
+            )}
           </div>
         )}
 

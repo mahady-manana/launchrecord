@@ -3,6 +3,7 @@ import { getOpenRouterClient } from "@/lib/openrouter";
 import {
   aeoAnalysisInstruction,
   generalInstructions,
+  refinementGeneralInstructions,
   scoringAndFixesInstruction,
   summaryAndIssuesInstruction,
   validationAndImprovementInstruction,
@@ -47,8 +48,15 @@ export async function runSummaryAndIssues(cleanContent: any) {
       messages: [
         { role: "system", content: generalInstructions },
         { role: "system", content: summaryAndIssuesInstruction },
-        { role: "user", content: `Website content to analyze:\n\n${JSON.stringify(cleanContent, null, 2)}` },
-        { role: "user", content: "Analyze this website and generate ONLY the summary-and-issues payload following the JSON schema provided." },
+        {
+          role: "user",
+          content: `Website content to analyze:\n\n${JSON.stringify(cleanContent, null, 2)}`,
+        },
+        {
+          role: "user",
+          content:
+            "Analyze this website and generate ONLY the summary-and-issues payload following the JSON schema provided.",
+        },
       ],
       response_format: {
         type: "json_schema",
@@ -58,7 +66,6 @@ export async function runSummaryAndIssues(cleanContent: any) {
           schema: summaryAndIssuesJsonSchema as any,
         },
       },
-      reasoning_effort: "high",
     });
     return parseAiJson(response.choices[0]?.message?.content);
   } else {
@@ -69,8 +76,15 @@ export async function runSummaryAndIssues(cleanContent: any) {
         messages: [
           { role: "system", content: generalInstructions },
           { role: "system", content: summaryAndIssuesInstruction },
-          { role: "user", content: `Website content to analyze:\n\n${JSON.stringify(cleanContent, null, 2)}` },
-          { role: "user", content: "Analyze this website and generate ONLY the summary-and-issues payload following the JSON schema provided." },
+          {
+            role: "user",
+            content: `Website content to analyze:\n\n${JSON.stringify(cleanContent, null, 2)}`,
+          },
+          {
+            role: "user",
+            content:
+              "Analyze this website and generate ONLY the summary-and-issues payload following the JSON schema provided.",
+          },
         ],
         responseFormat: {
           type: "json_schema",
@@ -99,8 +113,15 @@ export async function runAeoAnalysis(cleanContent: any) {
       messages: [
         { role: "system", content: generalInstructions },
         { role: "system", content: aeoAnalysisInstruction },
-        { role: "user", content: `Website content to analyze:\n\n${JSON.stringify(cleanContent, null, 2)}` },
-        { role: "user", content: "Perform the AEO Visibility Readiness analysis. Generate ONLY the payload following the JSON schema provided. Add new issues to the existing ones if needed." },
+        {
+          role: "user",
+          content: `Website content to analyze:\n\n${JSON.stringify(cleanContent, null, 2)}`,
+        },
+        {
+          role: "user",
+          content:
+            "Perform the AEO Visibility Readiness analysis. Generate ONLY the payload following the JSON schema provided. Add new issues to the existing ones if needed.",
+        },
       ],
       response_format: {
         type: "json_schema",
@@ -120,8 +141,15 @@ export async function runAeoAnalysis(cleanContent: any) {
         messages: [
           { role: "system", content: generalInstructions },
           { role: "system", content: aeoAnalysisInstruction },
-          { role: "user", content: `Website content to analyze:\n\n${JSON.stringify(cleanContent, null, 2)}` },
-          { role: "user", content: "Perform the AEO Visibility Readiness analysis. Generate ONLY the payload following the JSON schema provided. Add new issues to the existing ones if needed." },
+          {
+            role: "user",
+            content: `Website content to analyze:\n\n${JSON.stringify(cleanContent, null, 2)}`,
+          },
+          {
+            role: "user",
+            content:
+              "Perform the AEO Visibility Readiness analysis. Generate ONLY the payload following the JSON schema provided. Add new issues to the existing ones if needed.",
+          },
         ],
         responseFormat: {
           type: "json_schema",
@@ -150,8 +178,15 @@ export async function runScoringAndFixes(promptInput: any) {
       messages: [
         { role: "system", content: generalInstructions },
         { role: "system", content: scoringAndFixesInstruction },
-        { role: "user", content: `Persisted report issues from DB:\n\n${JSON.stringify(promptInput, null, 2)}` },
-        { role: "user", content: "Generate ONLY the scoring-and-fixes payload following the JSON schema provided. Keep the same issues and enrich them." },
+        {
+          role: "user",
+          content: `Persisted report issues from DB:\n\n${JSON.stringify(promptInput, null, 2)}`,
+        },
+        {
+          role: "user",
+          content:
+            "Generate ONLY the scoring-and-fixes payload following the JSON schema provided. Keep the same issues and enrich them.",
+        },
       ],
       response_format: {
         type: "json_schema",
@@ -171,8 +206,15 @@ export async function runScoringAndFixes(promptInput: any) {
         messages: [
           { role: "system", content: generalInstructions },
           { role: "system", content: scoringAndFixesInstruction },
-          { role: "user", content: `Persisted report issues from DB:\n\n${JSON.stringify(promptInput, null, 2)}` },
-          { role: "user", content: "Generate ONLY the scoring-and-fixes payload following the JSON schema provided. Keep the same issues and enrich them." },
+          {
+            role: "user",
+            content: `Persisted report issues from DB:\n\n${JSON.stringify(promptInput, null, 2)}`,
+          },
+          {
+            role: "user",
+            content:
+              "Generate ONLY the scoring-and-fixes payload following the JSON schema provided. Keep the same issues and enrich them.",
+          },
         ],
         responseFormat: {
           type: "json_schema",
@@ -199,10 +241,17 @@ export async function runValidationImprovement(promptInput: any) {
     const response = await client.chat.completions.create({
       model: openAIModels.refinement,
       messages: [
-        { role: "system", content: generalInstructions },
+        { role: "system", content: refinementGeneralInstructions },
         { role: "system", content: validationAndImprovementInstruction },
-        { role: "user", content: `Persisted report state from DB:\n\n${JSON.stringify(promptInput, null, 2)}` },
-        { role: "user", content: "Validate and improve this report without breaking consistency. Return ONLY the validation-improvement payload following the JSON schema provided." },
+        {
+          role: "user",
+          content: `Persisted report state from DB:\n\n${JSON.stringify(promptInput, null, 2)}`,
+        },
+        {
+          role: "user",
+          content:
+            "Validate and improve this report without breaking consistency. Return ONLY the validation-improvement payload following the JSON schema provided.",
+        },
       ],
       response_format: {
         type: "json_schema",
@@ -212,7 +261,6 @@ export async function runValidationImprovement(promptInput: any) {
           schema: validationImprovementJsonSchema as any,
         },
       },
-      reasoning_effort: "high",
     });
 
     return parseAiJson(response.choices[0]?.message?.content);
@@ -222,10 +270,17 @@ export async function runValidationImprovement(promptInput: any) {
       chatGenerationParams: {
         models: refinementModels.models,
         messages: [
-          { role: "system", content: generalInstructions },
+          { role: "system", content: refinementGeneralInstructions },
           { role: "system", content: validationAndImprovementInstruction },
-          { role: "user", content: `Persisted report state from DB:\n\n${JSON.stringify(promptInput, null, 2)}` },
-          { role: "user", content: "Validate and improve this report without breaking consistency. Return ONLY the validation-improvement payload following the JSON schema provided." },
+          {
+            role: "user",
+            content: `Persisted report state from DB:\n\n${JSON.stringify(promptInput, null, 2)}`,
+          },
+          {
+            role: "user",
+            content:
+              "Validate and improve this report without breaking consistency. Return ONLY the validation-improvement payload following the JSON schema provided.",
+          },
         ],
         responseFormat: {
           type: "json_schema",

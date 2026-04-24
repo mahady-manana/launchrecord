@@ -2,12 +2,13 @@
 
 import { Button } from "@/components/ui/button";
 import { useSubscription } from "@/hooks/use-subscription";
+import { useUserStore } from "@/stores/user-store";
 import { SubscriptionRecord } from "@/types/subscription";
 import { ArrowRight, FileText, Lightbulb, Lock } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 
-import { useUserStore } from "@/stores/user-store";
+import { useProductStore } from "@/stores/product-store";
 import {
   CategoryInsightsSection,
   FirstImpressionTeaser,
@@ -96,18 +97,21 @@ interface DashboardSIOReportV2Props {
 
 export default function DashboardSIOReportV2({
   report,
+  isGuest: propsIsGuest,
   subscription = null,
 }: DashboardSIOReportV2Props) {
   const [view, setView] = useState<ReportView>("full");
   const [activeSection, setActiveSection] = useState("overview");
   const { isFree, isPaid } = useSubscription();
-  const isGuest = useUserStore((s) => s.isGuest);
+  const isGuestFromStore = useUserStore((s: any) => s.isGuest);
+  const selectedProduct = useProductStore((s) => s.selectedProduct);
+  // Allow prop override or use store
+  const isGuest = propsIsGuest !== undefined ? propsIsGuest : isGuestFromStore;
+
   const reportUrl = report.url || "";
   const reportId = report.reportId || "unknown";
 
-  const ctaHref = isFree
-    ? `/dashboard/${reportId}/subscription`
-    : `/register?productUrl=${encodeURIComponent(reportUrl)}`;
+  const isLocked = (isGuest || isFree) && activeSection !== "overview";
 
   // Navigation sections for v2
   const navigation = [
@@ -119,7 +123,158 @@ export default function DashboardSIOReportV2({
     { id: "insights", label: "Category Insights", icon: "💡" },
   ];
 
+  const criticalIssuesCount =
+    report.issues?.filter((i) => i.severity === "critical").length || 0;
+  const highIssuesCount =
+    report.issues?.filter((i) => i.severity === "high").length || 0;
+  const mediumIssuesCount =
+    report.issues?.filter((i) => i.severity === "medium").length || 0;
+  const lowIssuesCount =
+    report.issues?.filter((i) => i.severity === "low").length || 0;
+
+  const ctaHref = isGuest
+    ? `/register?productUrl=${encodeURIComponent(reportUrl)}`
+    : `/dashboard/${selectedProduct?._id}/subscription`;
+
+  // Internal Paywall Component
+  const PaywallSection = ({
+    title,
+    context,
+  }: {
+    title: string;
+    context: string;
+  }) => {
+    const issueParts = [];
+    if (criticalIssuesCount > 0) {
+      issueParts.push(
+        <span key="crit" className="text-red-600 font-bold underline">
+          {criticalIssuesCount} critical issues
+        </span>,
+      );
+    }
+    if (highIssuesCount > 0) {
+      if (issueParts.length > 0) issueParts.push(<span key="sep1">, </span>);
+      issueParts.push(
+        <span key="high" className="text-orange-600 font-bold">
+          {highIssuesCount} high friction issues
+        </span>,
+      );
+    }
+    if (mediumIssuesCount > 0) {
+      if (issueParts.length > 0) issueParts.push(<span key="sep2">, </span>);
+      issueParts.push(
+        <span key="med" className="text-amber-600 font-bold">
+          {mediumIssuesCount} medium issues
+        </span>,
+      );
+    }
+    if (lowIssuesCount > 0) {
+      if (issueParts.length > 0) issueParts.push(<span key="sep2"> and </span>);
+      issueParts.push(
+        <span key="low" className="text-blue-600 font-bold">
+          {lowIssuesCount} recommendations
+        </span>,
+      );
+    }
+
+    return (
+      <div className="flex flex-col items-center justify-center py-12 px-6 text-center bg-slate-50/50 rounded-2xl border-2 border-dashed border-slate-200">
+        <div className="relative mb-8">
+          <div className="absolute inset-0 bg-red-400 blur-2xl opacity-20 animate-pulse"></div>
+          <div className="relative bg-white p-5 rounded-2xl shadow-xl border border-slate-100">
+            <Lock className="w-10 h-10 text-red-600" />
+          </div>
+        </div>
+
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-red-100 text-red-700 text-xs font-bold uppercase tracking-wider mb-4 animate-bounce">
+          Action Required
+        </div>
+
+        <h3 className="text-xl font-bold text-red-700 mb-4 tracking-tight leading-[1.1]">
+          {criticalIssuesCount > 0
+            ? `We found ${criticalIssuesCount + highIssuesCount} high friction issues in your positioning and messaging clarity`
+            : `See your full ${title} analysis`}
+        </h3>
+
+        <p className="text-slate-600 max-w-lg text-lg leading-relaxed">
+          Our analysis detected {issueParts} on your website. This is costing
+          you on conversions.
+        </p>
+
+        <p className="font-bold text-slate-900 underline block my-4">
+          Get full access to fix these issues and improve your website
+        </p>
+
+        <div className="w-full max-w-md grid grid-cols-1 gap-3 mb-10 text-left">
+          {[
+            "Detailed analysis of each issue",
+            "Step-by-step implementation roadmap",
+            "Copy-paste ready solutions",
+            "AI-Search Visibility (AEO) expansion strategy",
+          ].map((item, i) => (
+            <div
+              key={i}
+              className="flex items-center gap-3 p-3 bg-white border border-slate-100 rounded-xl shadow-sm"
+            >
+              <div className="w-5 h-5 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0">
+                <svg
+                  className="w-3 text-green-700"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                >
+                  <path d="M20 6L9 17l-5-5" />
+                </svg>
+              </div>
+              <span className="text-sm font-medium text-slate-700">{item}</span>
+            </div>
+          ))}
+        </div>
+
+        <Button
+          asChild
+          size="lg"
+          className="h-16 px-10 text-lg font-bold bg-slate-900 hover:bg-black text-white rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.2)] transition-all hover:-translate-y-1 active:translate-y-0 active:shadow-none"
+        >
+          <Link href={ctaHref}>
+            {isGuest ? "Sign Up to Stop Bounces" : "Upgrade to Stop Bounces"}
+            <ArrowRight className="w-5 h-5 ml-2" />
+          </Link>
+        </Button>
+
+        <p className="mt-6 text-slate-400 text-sm font-medium">
+          ⚡️ Takes 30 seconds. Unlock instant access.
+        </p>
+      </div>
+    );
+  };
+
   const getSectionContent = (sectionId: string) => {
+    // If locked and not overview, show paywall
+    if (isLocked) {
+      const sectionLabels: Record<string, string> = {
+        "website-summary": "Website Summary",
+        scoring: "Scoring Breakdown",
+        issues: "Issues & Recommendations",
+        strengths: "Strengths to keep",
+        insights: "Category Insights",
+      };
+
+      const sectionContext: Record<string, string> = {
+        "website-summary": "Structure",
+        scoring: "Scores",
+        issues: "Strategy",
+        strengths: "Defensibility",
+        insights: "Positioning",
+      };
+
+      const currentLabel = sectionLabels[sectionId] || "This section";
+      const context = sectionContext[sectionId] || "Website";
+
+      return <PaywallSection title={currentLabel} context={context} />;
+    }
+
     switch (sectionId) {
       case "overview":
         return (
@@ -136,10 +291,11 @@ export default function DashboardSIOReportV2({
 
             <CategoryInsightsSection insights={report.categoryInsights} />
 
-            <IssuesPreview 
-              issues={report.issues} 
-              onViewAll={() => setActiveSection("issues")} 
+            <IssuesPreview
+              issues={report.issues}
+              onViewAll={() => setActiveSection("issues")}
             />
+            <PaywallSection title="" context="" />
           </div>
         );
 
@@ -180,7 +336,10 @@ export default function DashboardSIOReportV2({
       <Button
         variant={view === "issues" ? "default" : "outline"}
         size="sm"
-        onClick={() => setView("issues")}
+        onClick={() => {
+          setView("issues");
+          if (!isLocked) setActiveSection("issues");
+        }}
       >
         <Lightbulb className="w-4 h-4 mr-2" />
         Issues Only
@@ -188,14 +347,20 @@ export default function DashboardSIOReportV2({
       <Button
         variant={view === "strengths" ? "default" : "outline"}
         size="sm"
-        onClick={() => setView("strengths")}
+        onClick={() => {
+          setView("strengths");
+          if (!isLocked) setActiveSection("strengths");
+        }}
       >
         💪 Strengths Only
       </Button>
       <Button
         variant={view === "scoring" ? "default" : "outline"}
         size="sm"
-        onClick={() => setView("scoring")}
+        onClick={() => {
+          setView("scoring");
+          if (!isLocked) setActiveSection("scoring");
+        }}
       >
         📈 Scoring Only
       </Button>
@@ -203,16 +368,29 @@ export default function DashboardSIOReportV2({
   );
 
   const renderContent = () => {
+    // If not full view, the view switcher handles the section
     if (view === "issues") {
-      return <IssuesSection issues={report.issues} isFree={isFree} />;
+      return isLocked ? (
+        <PaywallSection title="Issues & Recommendations" context="Strategy" />
+      ) : (
+        <IssuesSection issues={report.issues} isFree={isFree} />
+      );
     }
 
     if (view === "strengths") {
-      return <StrengthsSection strengths={report.strengths} />;
+      return isLocked ? (
+        <PaywallSection title="Strengths" context="Defensibility" />
+      ) : (
+        <StrengthsSection strengths={report.strengths} />
+      );
     }
 
     if (view === "scoring") {
-      return <ScoringOverview scoring={report.scoring} detailed />;
+      return isLocked ? (
+        <PaywallSection title="Scoring Breakdown" context="Scores" />
+      ) : (
+        <ScoringOverview scoring={report.scoring} detailed />
+      );
     }
 
     // Full view with navigation
@@ -235,6 +413,9 @@ export default function DashboardSIOReportV2({
                 >
                   <span className="mr-2">{section.icon}</span>
                   {section.label}
+                  {!isPaid && section.id !== "overview" ? (
+                    <Lock className="w-3 h-3 ml-2 text-gray-400 inline" />
+                  ) : null}
                 </button>
               ))}
             </nav>
@@ -282,23 +463,6 @@ export default function DashboardSIOReportV2({
       {renderContent()}
 
       {/* Footer CTA */}
-      {isFree && (
-        <div className="mt-12 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-8 text-center">
-          <Lock className="w-12 h-12 text-blue-600 mx-auto mb-4" />
-          <h3 className="text-xl font-semibold text-gray-900 mb-2">
-            Unlock Full Report & Recommendations
-          </h3>
-          <p className="text-gray-600 mb-6 max-w-2xl mx-auto">
-            Get detailed fixes, implementation guides, and priority
-            recommendations to improve your website's conversion potential.
-          </p>
-          <Button asChild size="lg">
-            <Link href={ctaHref}>
-              Upgrade to Unlock <ArrowRight className="w-4 h-4 ml-2" />
-            </Link>
-          </Button>
-        </div>
-      )}
     </div>
   );
 }

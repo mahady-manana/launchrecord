@@ -1,17 +1,36 @@
+import type { SIOV2Report } from "@/components/audit";
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
 } from "@/components/ui/card";
 import type { SIOV5Report } from "@/services/sio-report/schema";
 
 interface AuditPreviewCardProps {
-  report: SIOV5Report;
+  report: SIOV5Report | SIOV2Report;
 }
 
 export function AuditPreviewCard({ report }: AuditPreviewCardProps) {
+  const isV2 = (report as any).version === 2;
+
+  const scores = isV2
+    ? {
+        overall: (report as SIOV2Report).overallScore,
+        firstImpression: (report as SIOV2Report).scoring.first_impression,
+        positioning: (report as SIOV2Report).scoring.positioning,
+        clarity: (report as SIOV2Report).scoring.clarity,
+        aeo: (report as SIOV2Report).scoring.aeo,
+      }
+    : {
+        overall: (report as SIOV5Report).overallScore,
+        firstImpression: (report as SIOV5Report).firstImpression.score,
+        positioning: (report as SIOV5Report).positioning.score,
+        clarity: (report as SIOV5Report).clarity.score,
+        aeo: (report as SIOV5Report).aeo.score,
+      };
+
   return (
     <Card>
       <CardHeader>
@@ -20,27 +39,19 @@ export function AuditPreviewCard({ report }: AuditPreviewCardProps) {
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-2 gap-4 md:grid-cols-5">
-          <ScoreCard
-            label="Overall"
-            score={report.overallScore}
-            color="slate"
-          />
+          <ScoreCard label="Overall" score={scores.overall} color="slate" />
           <ScoreCard
             label="First Impression"
-            score={report.firstImpression.score}
+            score={scores.firstImpression}
             color="blue"
           />
           <ScoreCard
             label="Positioning"
-            score={report.positioning.score}
+            score={scores.positioning}
             color="purple"
           />
-          <ScoreCard
-            label="Clarity"
-            score={report.clarity.score}
-            color="green"
-          />
-          <ScoreCard label="AEO" score={report.aeo.score} color="red" />
+          <ScoreCard label="Clarity" score={scores.clarity} color="green" />
+          <ScoreCard label="AEO" score={scores.aeo} color="red" />
         </div>
       </CardContent>
     </Card>

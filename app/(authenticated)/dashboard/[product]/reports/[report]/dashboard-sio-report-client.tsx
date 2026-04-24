@@ -1,6 +1,7 @@
 "use client";
 
 import DashboardSIOReport from "@/components/sio-report/DashboardSIOReport";
+import DashboardSIOReportV2 from "@/components/sio-report/dashboardV2/DashboardSIOReportV2";
 import { Button } from "@/components/ui/button";
 import { useSubscription } from "@/hooks/use-subscription";
 import { SIOV5Report } from "@/services/sio-report/schema";
@@ -90,7 +91,17 @@ export default function DashboardSIOReportClient({
       </Button>
 
       {/* Report */}
-      <DashboardSIOReport report={report as any} subscription={subscription} />
+      {(report as any).version === 2 ? (
+        <DashboardSIOReportV2
+          report={report as any}
+          subscription={subscription}
+        />
+      ) : (
+        <DashboardSIOReport
+          report={report as any}
+          subscription={subscription}
+        />
+      )}
     </div>
   );
 }
