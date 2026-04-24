@@ -117,9 +117,9 @@ export async function POST(request: NextRequest) {
         },
         provider: summaryModels.provider,
         stream: false,
-        reasoning: {
-          effort: summaryModels.reasoning,
-        },
+        // reasoning: {
+        //   effort: summaryModels.reasoning,
+        // },
       },
     });
 

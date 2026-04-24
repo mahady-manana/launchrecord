@@ -372,11 +372,11 @@ export async function POST(request: NextRequest) {
       overallScore: 0,
       statement: "",
       reportBand: "Ghost",
-      websiteSummaryV2: {
-        overview: "",
-        problems: [],
-        solutions: [],
-      },
+      // websiteSummaryV2: {
+      //   overview: "",
+      //   problems: [],
+      //   solutions: [],
+      // },
       issues: [],
       strengths: [],
       scoring: {

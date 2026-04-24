@@ -73,11 +73,11 @@ export async function POST(request: NextRequest) {
 
     // Prepare context from ALL previous steps
     const previousContext = {
-      websiteSummary: {
-        overview: report.websiteSummaryV2?.overview,
-        problems: report.websiteSummaryV2?.problems,
-        solutions: report.websiteSummaryV2?.solutions,
-      },
+      // websiteSummary: {
+      //   overview: report.websiteSummaryV2?.overview,
+      //   problems: report.websiteSummaryV2?.problems,
+      //   solutions: report.websiteSummaryV2?.solutions,
+      // },
       firstImpression: {
         score: report.scoring?.first_impression,
         statement: report.categoryInsights?.first_impression?.statement,
@@ -104,7 +104,7 @@ export async function POST(request: NextRequest) {
     const stepInstructions = step5AEOInstructions
       .replace(
         "{WEBSITE_SUMMARY_CONTEXT}",
-        JSON.stringify(previousContext.websiteSummary, null, 2),
+        "D", // JSON.stringify(previousContext.websiteSummary, null, 2),
       )
       .replace(
         "{FIRST_IMPRESSION_CONTEXT}",
@@ -160,9 +160,9 @@ export async function POST(request: NextRequest) {
         },
         provider: aeoModels.provider,
         stream: false,
-        reasoning: {
-          effort: aeoModels.reasoning,
-        },
+        // reasoning: {
+        //   effort: aeoModels.reasoning,
+        // },
       },
     });
 

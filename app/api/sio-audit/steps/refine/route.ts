@@ -70,7 +70,7 @@ export async function POST(request: NextRequest) {
       overallScore: report.overallScore,
       statement: report.statement,
       reportBand: report.reportBand,
-      websiteSummaryV2: report.websiteSummaryV2,
+      // websiteSummaryV2: report.websiteSummaryV2,
       issues: report.issues,
       strengths: report.strengths,
       scoring: report.scoring,
@@ -117,9 +117,9 @@ export async function POST(request: NextRequest) {
         },
         provider: refinementModels.provider,
         stream: false,
-        reasoning: {
-          effort: refinementModels.reasoning,
-        },
+        // reasoning: {
+        //   effort: refinementModels.reasoning,
+        // },
       },
     });
 
@@ -150,8 +150,9 @@ export async function POST(request: NextRequest) {
       if (refinedReport.categoryInsights)
         report.categoryInsights = refinedReport.categoryInsights;
       if (refinedReport.websiteSummaryV2)
-        report.websiteSummaryV2 = refinedReport.websiteSummaryV2;
-      if (refinedReport.issues) report.issues = refinedReport.issues;
+        if (refinedReport.issues)
+          // report.websiteSummaryV2 = refinedReport.websiteSummaryV2;
+          report.issues = refinedReport.issues;
       if (refinedReport.strengths) report.strengths = refinedReport.strengths;
     }
 

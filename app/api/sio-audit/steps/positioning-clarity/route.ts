@@ -77,11 +77,11 @@ export async function POST(request: NextRequest) {
 
     // Prepare context from previous steps
     const previousContext = {
-      websiteSummary: {
-        overview: report.websiteSummaryV2?.overview,
-        problems: report.websiteSummaryV2?.problems,
-        solutions: report.websiteSummaryV2?.solutions,
-      },
+      // websiteSummary: {
+      //   overview: report.websiteSummaryV2?.overview,
+      //   problems: report.websiteSummaryV2?.problems,
+      //   solutions: report.websiteSummaryV2?.solutions,
+      // },
       firstImpression: {
         score: report.scoring?.first_impression,
         statement: report.categoryInsights?.first_impression?.statement,
@@ -91,10 +91,10 @@ export async function POST(request: NextRequest) {
 
     // Replace context placeholders in instructions
     const stepInstructions = positioningClarityInstruction
-      .replace(
-        "{WEBSITE_SUMMARY_CONTEXT}",
-        JSON.stringify(previousContext.websiteSummary, null, 2),
-      )
+      // .replace(
+      //   "{WEBSITE_SUMMARY_CONTEXT}",
+      //   JSON.stringify(previousContext.websiteSummary, null, 2),
+      // )
       .replace(
         "{FIRST_IMPRESSION_CONTEXT}",
         JSON.stringify(previousContext.firstImpression, null, 2),
@@ -142,9 +142,9 @@ export async function POST(request: NextRequest) {
         },
         provider: positioningClarityModels.provider,
         stream: false,
-        reasoning: {
-          effort: positioningClarityModels.reasoning,
-        },
+        // reasoning: {
+        //   effort: positioningClarityModels.reasoning,
+        // },
       },
     });
 
