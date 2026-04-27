@@ -9,8 +9,8 @@ export const validationAndImprovementInstruction = `
 3. **MANDATORY SCORING**: You MUST return ALL 5 keys: **overall**, **positioning**, **clarity**, **first_impression**, **aeo**. 
    - Ensure "first_impression" is singular.
 4. **Issue Quality**: 
-   - **statement**: Combined WHAT + WHY.
-   - **fixes**: Copy-paste ready implementation.
+   - **statement**: Combined WHAT + WHY. NEVER mention internal scoring processes or severity concentration.
+   - **fixes**: Copy-paste ready implementation. NEVER include labels like "New H1:". Return ONLY the rewrite.
    - **recommendations**: Strategy.
 5. **distinction**: Verify top-level "statement" vs "firstImpressions.statement".
 

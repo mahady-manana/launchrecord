@@ -35,7 +35,7 @@ Each issue MUST include:
 - impactScore (-1 to -25)
 
 Rules:
-- ONLY use observable content
+- ONLY use observable content. NEVER create issues related to word spacing artifacts (e.g., 'FORYOUR') or parsing errors.
 - DO NOT invent missing context
 - DO NOT create new categories or metricKeys
 

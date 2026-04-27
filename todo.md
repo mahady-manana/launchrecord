@@ -1,6 +1,4 @@
-Append report id to signup and user product
-Redirect all public audit to sioreport
-auto run report
-Add progression bar
-Update dashboard reports list
-Update dashboard rerun audit
+- Free audit remove navigation
+- Main statement NEVER metions internal process like this example: '...Updated scoring mirrors the severity concentration and remediation effort needed.'
+- fixes: dont add additional text like this, directly the fixes: NOT '"New H1: Compliance for Your Business"' should be just 'Compliance for Your Business'
+- we have internal proble parsing website so never create a issues related to spacing between word like this: "H1 typography exhibits spacing and uppercase issues ('FORYOUR'), hurting readability and credibility"

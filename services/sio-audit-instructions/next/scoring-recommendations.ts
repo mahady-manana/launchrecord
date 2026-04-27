@@ -88,7 +88,7 @@ Each issue MUST include:
   "category": "...",
   "metricKey": "...",
   "severity": "...",
-  "statement": "string",
+  "statement": "string", // Diagnostic WHAT + Causal WHY. NEVER mention internal scoring processes, severity concentration, or calculation logic.
   "explanation": "string",
   "current": "string | null",
   "recommendations": ["string"],
@@ -122,11 +122,11 @@ You MUST generate fixes ONLY when:
 - severity = critical OR medium
 
 Fixes MUST:
-
 - be concrete
 - be directly usable
 - be high-impact only
 - max 1–3 per issue
+- NEVER include labels like "New H1:", "Suggested:", or "Corrected:". Return ONLY the rewrite itself.
 
 Types of fixes:
 - headline rewrite
