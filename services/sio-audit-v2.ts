@@ -44,11 +44,31 @@ const firstImpressionsSchema = {
   type: "object",
   additionalProperties: false,
   properties: {
-    isPositioningClear: { type: "boolean" },
-    isMessagingClear: { type: "boolean" },
-    isUserLeftGuessing: { type: "boolean" },
-    ten_second_test: { type: "boolean" },
-    statement: { type: "string" },
+    isPositioningClear: {
+      type: "boolean",
+      description:
+        "True when the product, audience, and value are immediately understandable from the hero or opening message.",
+    },
+    isMessagingClear: {
+      type: "boolean",
+      description:
+        "True when the value proposition can be understood quickly without guessing.",
+    },
+    isUserLeftGuessing: {
+      type: "boolean",
+      description:
+        "True when a first-time visitor still has to infer what the product does or who it is for.",
+    },
+    ten_second_test: {
+      type: "boolean",
+      description:
+        "True only when the page fails the 10-second understanding test.",
+    },
+    statement: {
+      type: "string",
+      description:
+        "Diagnostic summary of the first impression only. No fixes.",
+    },
   },
   required: [
     "isPositioningClear",
@@ -195,11 +215,41 @@ const fullScoringSchema = {
   type: "object",
   additionalProperties: false,
   properties: {
-    overall: { type: "number", minimum: 0, maximum: 100 },
-    positioning: { type: "number", minimum: 0, maximum: 100 },
-    clarity: { type: "number", minimum: 0, maximum: 100 },
-    first_impression: { type: "number", minimum: 0, maximum: 100 },
-    aeo: { type: "number", minimum: 0, maximum: 100 },
+    overall: {
+      type: "number",
+      minimum: 0,
+      maximum: 100,
+      description:
+        "Holistic overall score. Do not calculate as an issue penalty sum.",
+    },
+    positioning: {
+      type: "number",
+      minimum: 0,
+      maximum: 100,
+      description:
+        "Positioning clarity score. Use generous calibration when the offer is understandable.",
+    },
+    clarity: {
+      type: "number",
+      minimum: 0,
+      maximum: 100,
+      description:
+        "Messaging clarity score. Do not collapse into the 40s unless the page is genuinely muddled.",
+    },
+    first_impression: {
+      type: "number",
+      minimum: 0,
+      maximum: 100,
+      description:
+        "First impression score. Strong if the hero communicates what it is, who it is for, and why it matters.",
+    },
+    aeo: {
+      type: "number",
+      minimum: 0,
+      maximum: 100,
+      description:
+        "AEO score. Score machine readability and terminology clarity, not issue count.",
+    },
   },
   required: ["overall", "positioning", "clarity", "first_impression", "aeo"],
 };

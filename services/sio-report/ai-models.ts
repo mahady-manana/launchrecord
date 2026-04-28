@@ -11,9 +11,9 @@ export const AI_PROVIDER: "openrouter" | "openai" = "openai"; // Switch here
  * OpenAI Model Definitions
  */
 export const openAIModels = {
-  summary: "gpt-4o-mini",
-  analysis: "gpt-4o-mini",
-  refinement: "gpt-4o-mini",
+  summary: "gpt-5.4-nano",
+  analysis: "gpt-5.4-nano",
+  refinement: "gpt-5.4-nano",
 };
 
 /**

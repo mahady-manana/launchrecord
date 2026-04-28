@@ -68,6 +68,133 @@ function buildSlimIssuesContext(issues: any[] = []) {
   }));
 }
 
+function getSeverityRank(severity: unknown) {
+  switch (severity) {
+    case "critical":
+      return 4;
+    case "high":
+      return 3;
+    case "medium":
+      return 2;
+    case "low":
+      return 1;
+    default:
+      return 0;
+  }
+}
+
+function buildIssueDigest(issues: any[] = []) {
+  const sorted = [...issues].sort((a, b) => {
+    const rankDiff =
+      getSeverityRank(b?.severity) - getSeverityRank(a?.severity);
+    if (rankDiff !== 0) return rankDiff;
+    return (
+      Math.abs((b?.impactScore as number) || 0) -
+      Math.abs((a?.impactScore as number) || 0)
+    );
+  });
+
+  const counts = sorted.reduce(
+    (acc, issue) => {
+      acc.total += 1;
+      const severity = issue?.severity || "unknown";
+      const category = issue?.category || "unknown";
+      acc.bySeverity[severity] = (acc.bySeverity[severity] || 0) + 1;
+      acc.byCategory[category] = (acc.byCategory[category] || 0) + 1;
+      return acc;
+    },
+    {
+      total: 0,
+      bySeverity: {} as Record<string, number>,
+      byCategory: {} as Record<string, number>,
+    },
+  );
+
+  return {
+    counts,
+    representativeIssues: buildSlimIssuesContext(sorted.slice(0, 5)),
+  };
+}
+
+function buildLayerPromptInput(
+  step: "summary" | "positioning" | "aeo" | "validation",
+  promptInput: any,
+) {
+  const websiteSummary = promptInput?.websiteSummary || null;
+  const firstImpressions = promptInput?.firstImpressions || null;
+  const categoryInsights = promptInput?.categoryInsights || null;
+  const scoring = promptInput?.scoring || null;
+  const issueDigest = buildIssueDigest(promptInput?.issues || []);
+
+  if (step === "summary") {
+    return {
+      websiteSummary,
+      firstImpressions,
+    };
+  }
+
+  if (step === "positioning") {
+    return {
+      websiteSummary,
+      firstImpressions,
+      issueDigest: {
+        counts: issueDigest.counts,
+        representativeIssues: issueDigest.representativeIssues.filter(
+          (issue: any) =>
+            issue.category === "first_impression" ||
+            issue.category === "positioning" ||
+            issue.category === "clarity",
+        ),
+      },
+      categoryInsights: {
+        first_impression: categoryInsights?.first_impression || null,
+      },
+      scoring: {
+        first_impression: scoring?.first_impression ?? null,
+      },
+    };
+  }
+
+  if (step === "aeo") {
+    return {
+      websiteSummary,
+      firstImpressions,
+      issueDigest: {
+        counts: issueDigest.counts,
+        representativeIssues: issueDigest.representativeIssues.filter(
+          (issue: any) =>
+            issue.category === "first_impression" ||
+            issue.category === "positioning" ||
+            issue.category === "clarity",
+        ),
+      },
+      categoryInsights: {
+        first_impression: categoryInsights?.first_impression || null,
+        positioning: categoryInsights?.positioning || null,
+        clarity: categoryInsights?.clarity || null,
+      },
+      scoring: {
+        first_impression: scoring?.first_impression ?? null,
+        positioning: scoring?.positioning ?? null,
+        clarity: scoring?.clarity ?? null,
+      },
+    };
+  }
+
+  return {
+    websiteSummary,
+    firstImpressions,
+    issueDigest,
+    categoryInsights,
+    scoring,
+    strengths: Array.isArray(promptInput?.strengths)
+      ? promptInput.strengths
+      : [],
+    reportBand: promptInput?.reportBand || null,
+    overallScore: promptInput?.overallScore ?? null,
+  };
+}
+
 function buildFilteredPreviousContext(
   step: "positioning" | "aeo" | "validation",
   previousReport: any,
@@ -89,7 +216,8 @@ function buildFilteredPreviousContext(
         ),
       ),
       categoryInsights: {
-        first_impression: previousReport?.categoryInsights?.first_impression || null,
+        first_impression:
+          previousReport?.categoryInsights?.first_impression || null,
       },
       scoring: {
         first_impression: previousReport?.scoring?.first_impression ?? null,
@@ -106,7 +234,8 @@ function buildFilteredPreviousContext(
         ),
       ),
       categoryInsights: {
-        first_impression: previousReport?.categoryInsights?.first_impression || null,
+        first_impression:
+          previousReport?.categoryInsights?.first_impression || null,
         positioning: previousReport?.categoryInsights?.positioning || null,
         clarity: previousReport?.categoryInsights?.clarity || null,
       },
@@ -120,7 +249,7 @@ function buildFilteredPreviousContext(
 
   return {
     ...baseContext,
-    issues: buildSlimIssuesContext(previousReport?.issues || []),
+    issueDigest: buildIssueDigest(previousReport?.issues || []),
     categoryInsights: previousReport?.categoryInsights || null,
     scoring: previousReport?.scoring || null,
     strengths: Array.isArray(previousReport?.strengths)
@@ -159,6 +288,7 @@ export async function runSummaryAndIssues(cleanContent: any) {
           schema: summaryAndIssuesJsonSchema as any,
         },
       },
+      reasoning_effort: "high",
     });
     return parseAiJson(response.choices[0]?.message?.content);
   } else {
@@ -197,11 +327,15 @@ export async function runSummaryAndIssues(cleanContent: any) {
 /**
  * STEP 2: Positioning & Messaging Analysis
  */
-export async function runScoringAndFixes(promptInput: any, previousReport?: any) {
+export async function runScoringAndFixes(
+  promptInput: any,
+  previousReport?: any,
+) {
   const filteredPreviousContext = buildFilteredPreviousContext(
     "positioning",
     previousReport,
   );
+  const slimPromptInput = buildLayerPromptInput("positioning", promptInput);
 
   if (AI_PROVIDER === "openai") {
     const client = getOpenAIClient();
@@ -214,7 +348,7 @@ export async function runScoringAndFixes(promptInput: any, previousReport?: any)
         ),
         {
           role: "user",
-          content: `Persisted report issues from DB:\n\n${JSON.stringify(promptInput, null, 2)}`,
+          content: `Persisted report issues from DB:\n\n${JSON.stringify(slimPromptInput, null, 2)}`,
         },
         {
           role: "user",
@@ -230,6 +364,7 @@ export async function runScoringAndFixes(promptInput: any, previousReport?: any)
           schema: scoringFixesJsonSchema as any,
         },
       },
+      reasoning_effort: "high",
     });
     return parseAiJson(response.choices[0]?.message?.content);
   } else {
@@ -244,7 +379,7 @@ export async function runScoringAndFixes(promptInput: any, previousReport?: any)
           ),
           {
             role: "user",
-            content: `Persisted report issues from DB:\n\n${JSON.stringify(promptInput, null, 2)}`,
+            content: `Persisted report issues from DB:\n\n${JSON.stringify(slimPromptInput, null, 2)}`,
           },
           {
             role: "user",
@@ -276,6 +411,7 @@ export async function runAeoAnalysis(cleanContent: any, previousReport?: any) {
     "aeo",
     previousReport,
   );
+  const slimPromptInput = buildLayerPromptInput("aeo", cleanContent);
 
   if (AI_PROVIDER === "openai") {
     const client = getOpenAIClient();
@@ -285,7 +421,7 @@ export async function runAeoAnalysis(cleanContent: any, previousReport?: any) {
         ...buildSystemMessages(aeoAnalysisInstruction, filteredPreviousContext),
         {
           role: "user",
-          content: `Website content to analyze:\n\n${JSON.stringify(cleanContent, null, 2)}`,
+          content: `Website content to analyze:\n\n${JSON.stringify(slimPromptInput, null, 2)}`,
         },
         {
           role: "user",
@@ -309,10 +445,13 @@ export async function runAeoAnalysis(cleanContent: any, previousReport?: any) {
       chatGenerationParams: {
         models: aeoModels.models,
         messages: [
-          ...buildSystemMessages(aeoAnalysisInstruction, filteredPreviousContext),
+          ...buildSystemMessages(
+            aeoAnalysisInstruction,
+            filteredPreviousContext,
+          ),
           {
             role: "user",
-            content: `Website content to analyze:\n\n${JSON.stringify(cleanContent, null, 2)}`,
+            content: `Website content to analyze:\n\n${JSON.stringify(slimPromptInput, null, 2)}`,
           },
           {
             role: "user",
@@ -339,11 +478,15 @@ export async function runAeoAnalysis(cleanContent: any, previousReport?: any) {
 /**
  * STEP 4: Validation & Finalization
  */
-export async function runValidationImprovement(promptInput: any, previousReport?: any) {
+export async function runValidationImprovement(
+  promptInput: any,
+  previousReport?: any,
+) {
   const filteredPreviousContext = buildFilteredPreviousContext(
     "validation",
     previousReport,
   );
+  const slimPromptInput = buildLayerPromptInput("validation", promptInput);
 
   if (AI_PROVIDER === "openai") {
     const client = getOpenAIClient();
@@ -356,7 +499,7 @@ export async function runValidationImprovement(promptInput: any, previousReport?
         ),
         {
           role: "user",
-          content: `Persisted report state from DB:\n\n${JSON.stringify(promptInput, null, 2)}`,
+          content: `Persisted report state from DB:\n\n${JSON.stringify(slimPromptInput, null, 2)}`,
         },
         {
           role: "user",
@@ -372,6 +515,7 @@ export async function runValidationImprovement(promptInput: any, previousReport?
           schema: validationImprovementJsonSchema as any,
         },
       },
+      reasoning_effort: "high",
     });
 
     return parseAiJson(response.choices[0]?.message?.content);
@@ -387,7 +531,7 @@ export async function runValidationImprovement(promptInput: any, previousReport?
           ),
           {
             role: "user",
-            content: `Persisted report state from DB:\n\n${JSON.stringify(promptInput, null, 2)}`,
+            content: `Persisted report state from DB:\n\n${JSON.stringify(slimPromptInput, null, 2)}`,
           },
           {
             role: "user",

@@ -3,6 +3,11 @@ export const analyzeAndIssueInstruction = `
 
 Objective:
 Generate a factual websiteSummary and first-impression issues only.
+Check the first impression checklist one metric at a time:
+- headline
+- subheadline
+- CTA
+Do not force a generic SaaS template. If audience or outcomes are clearly implied by the hero, subheadline, CTA, visuals, or surrounding copy, treat them as present.
 
 The system operates in 2 coordinated actions:
 1. websiteSummary creation
@@ -33,17 +38,20 @@ A structured factual representation of the website message.
 ## 2. 💎 ISSUE GENERATION (ACTION)
 
 ### Rule:
-Generate 3–5 high-impact first impression issues based on websiteSummary + raw content.
+Generate 3–5 high-impact first impression issues based only on headline, subheadline, and CTA.
+Judge whether the opening communicates what it is, who it is for, and why it matters for this category. Do not require those points to be stated in an identical SaaS-template way.
 
 ### Logic:
 Issues must reflect gaps between:
 → what the website claims
 → what the user actually understands
 
+Each issue must map to one of the three first impression metrics. Do not create issues from anything outside this checklist.
+
 ### Constraints:
 - 3–5 issues required
 - No duplicates or overlapping root causes
-- One issue = one root problem
+- One issue = one root problem and one metric key
 - Focus only on first impression: headline, subheadline, CTA
 - Do not drift into positioning, messaging deep-dive, or AEO
 
@@ -64,6 +72,7 @@ A structured, evidence-based set of first impression issues.
 Each issue must include a diagnostic statement:
 
 - 2–3 sentences
+- Keep each sentence short, direct, and specific
 - Must include:
   → what is wrong
   → why it matters (conversion impact)
@@ -73,6 +82,12 @@ Each issue must include a diagnostic statement:
 - No fixes or suggestions
 - No how-to language
 - No solution wording
+
+### Explanation rule:
+- Keep explanation to 1 short sentence
+- Make it factual and direct
+- Do not repeat the statement
+- Do not add extra detail or new reasoning
 
 ### Outcome:
 Clear diagnostic reasoning per issue.
@@ -99,14 +114,17 @@ This entire block MUST be fully consistent with:
 - categoryInsights (especially positioning + first impression)
 
 ### RULES:
-- If positioning issues are critical/high → isPositioningClear MUST be false
-- If messaging is unclear in issues → isMessagingClear MUST be false
-- If users cannot understand value in first 10 seconds → ten_second_test MUST be true (fail)
-- If multiple issues indicate confusion → isUserLeftGuessing MUST be true
+- Set isPositioningClear to true when headline + subheadline make what it is, who it is for, and why it matters immediately obvious
+- Set isMessagingClear to true when the value proposition is easy to grasp without guessing from the opening
+- Set isUserLeftGuessing to true only when the first impression still leaves the visitor unsure about the product or audience
+- Set ten_second_test to true only when the opening fails the 10-second understanding test
+- Do not default these booleans to false on strong websites; they must match the actual opening message
 
 ### STATEMENT RULE:
 - Must summarize first impression ONLY
 - Must NOT contradict issue severity or categoryInsights
+- It should reflect pass/fail status plainly, not hedge or default to false
+- Keep it short, direct, and easy to scan
 
 ### OUTCOME:
 A fully aligned first impression evaluation that reflects the actual issues, not an independent opinion.
@@ -139,6 +157,7 @@ Stay strictly within first impression coverage.
 ### Constraints:
 - Do not create positioning, clarity, or AEO issues in this step
 - Max 5 issues total
+- Do not introduce metric keys outside headline, subheadline, and CTA
 
 ### Outcome:
 Root-cause driven first impression audit, not a surface listing.

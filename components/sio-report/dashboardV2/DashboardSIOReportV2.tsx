@@ -7,6 +7,7 @@ import { ArrowRight, FileText, Lightbulb, Lock } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 
+import { useSubscription } from "@/hooks/use-subscription";
 import { useProductStore } from "@/stores/product-store";
 import {
   CategoryInsightsSection,
@@ -105,13 +106,13 @@ export default function DashboardSIOReportV2({
 }: DashboardSIOReportV2Props) {
   const [view, setView] = useState<ReportView>("full");
   const [activeSection, setActiveSection] = useState("overview");
-  // const { isFree, c } = useSubscription();
-  const isFree = false;
-  const isPaid = true;
+  const { isFree, isPaid } = useSubscription();
+  // const isFree = false;
+  // const isPaid = true;
   const isGuestFromStore = useUserStore((s: any) => s.isGuest);
   const selectedProduct = useProductStore((s) => s.selectedProduct);
   // Allow prop override or use store
-  const isGuest = false; // propsIsGuest !== undefined ? propsIsGuest : isGuestFromStore;
+  const isGuest = propsIsGuest !== undefined ? propsIsGuest : isGuestFromStore;
 
   const reportUrl = report.url || "";
   const reportId = report.reportId || "unknown";
