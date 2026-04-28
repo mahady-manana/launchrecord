@@ -105,13 +105,13 @@ export default function PublicAuditPage() {
         "Failed to fetch website content. The site may be unavailable or client-side rendered.",
       content_validation:
         "This website has insufficient content for analysis. We don't support client-side rendered websites yet.",
-      summary_generation:
-        "Failed to analyze website summary. Please try again.",
-      positioning_clarity_generation:
-        "Failed to analyze positioning and clarity. Please try again.",
-      aeo_generation: "Failed to analyze AEO visibility. Please try again.",
-      scoring: "Failed to calculate audit scores. Please try again.",
-      refinement: "Failed to finalize audit report. Please try again.",
+      v2_summary_and_issues:
+        "Failed to analyze summary and first impressions. Please try again.",
+      v2_scoring_and_fixes:
+        "Failed to analyze positioning and messaging. Please try again.",
+      v2_aeo_analysis: "Failed to analyze AEO visibility. Please try again.",
+      v2_validation_improvement:
+        "Failed to validate and finalize the report. Please try again.",
       polling:
         "Lost connection to audit service. Please refresh and try again.",
     };

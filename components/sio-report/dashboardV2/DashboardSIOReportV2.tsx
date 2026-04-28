@@ -1,7 +1,6 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { useSubscription } from "@/hooks/use-subscription";
 import { useUserStore } from "@/stores/user-store";
 import { SubscriptionRecord } from "@/types/subscription";
 import { ArrowRight, FileText, Lightbulb, Lock } from "lucide-react";
@@ -45,6 +44,7 @@ export interface SIOV2ReportData {
   websiteSummary: {
     overview: string;
     problems: string[];
+    outcomes: string[];
     solutions: string[];
   };
   issues: Array<{
@@ -81,10 +81,13 @@ export interface SIOV2ReportData {
   progress:
     | "idle"
     | "content_fetched"
-    | "issues_generated"
-    | "scoring_complete"
+    | "summary_complete"
+    | "positioning_clarity_complete"
+    | "aeo_complete"
     | "complete"
-    | "failed";
+    | "failed"
+    | "issues_generated"
+    | "scoring_complete";
   createdAt?: string;
   updatedAt?: string;
 }
@@ -102,11 +105,13 @@ export default function DashboardSIOReportV2({
 }: DashboardSIOReportV2Props) {
   const [view, setView] = useState<ReportView>("full");
   const [activeSection, setActiveSection] = useState("overview");
-  const { isFree, isPaid } = useSubscription();
+  // const { isFree, c } = useSubscription();
+  const isFree = false;
+  const isPaid = true;
   const isGuestFromStore = useUserStore((s: any) => s.isGuest);
   const selectedProduct = useProductStore((s) => s.selectedProduct);
   // Allow prop override or use store
-  const isGuest = propsIsGuest !== undefined ? propsIsGuest : isGuestFromStore;
+  const isGuest = false; // propsIsGuest !== undefined ? propsIsGuest : isGuestFromStore;
 
   const reportUrl = report.url || "";
   const reportId = report.reportId || "unknown";

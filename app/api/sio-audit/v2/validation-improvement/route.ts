@@ -44,10 +44,10 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Report not found" }, { status: 404 });
     }
 
-    if (report.progress !== "scoring_complete") {
+    if (report.progress !== "aeo_complete") {
       return NextResponse.json(
         {
-          error: "Report is not in scoring_complete state",
+          error: "Report is not in aeo_complete state",
           currentProgress: report.progress,
         },
         { status: 400 },
@@ -55,28 +55,27 @@ export async function POST(request: NextRequest) {
     }
 
     const promptInput = buildV2ValidationInput(report);
-    const aiData = await runValidationImprovement(promptInput);
+    const previousReport = buildV2ApiData(report);
+    const aiData = await runValidationImprovement(promptInput, previousReport);
 
     const websiteSummary = normalizeWebsiteSummary(aiData.websiteSummary);
     const firstImpressions = normalizeFirstImpressions(aiData.firstImpressions);
     const issues = normalizeIssues(aiData.issues);
-    const overallScore = normalizeScore(aiData.scoring?.overall);
-    console.log("====================================");
-    console.log(aiData.scoring);
-    console.log("====================================");
+    const overallScore = normalizeScore(aiData.scoring?.overall ?? report.overallScore);
     report.statement = aiData.statement || report.statement;
     report.firstImpressions = firstImpressions as any;
     report.websiteSummary = websiteSummary as any;
     report.issues = issues;
-    report.overallScore = overallScore;
-    report.reportBand = getV2Band(overallScore);
-    report.scoring = {
+    const mergedScoring = {
       overall: overallScore,
-      first_impression: normalizeScore(aiData.scoring?.first_impression),
-      positioning: normalizeScore(aiData.scoring?.positioning),
-      clarity: normalizeScore(aiData.scoring?.clarity),
-      aeo: normalizeScore(aiData.scoring?.aeo),
+      first_impression: normalizeScore(report.scoring?.first_impression),
+      positioning: normalizeScore(report.scoring?.positioning),
+      clarity: normalizeScore(report.scoring?.clarity),
+      aeo: normalizeScore(report.scoring?.aeo),
     };
+    report.overallScore = mergedScoring.overall;
+    report.reportBand = getV2Band(overallScore);
+    report.scoring = mergedScoring;
     report.categoryInsights = normalizeCategoryInsights(
       aiData.categoryInsights,
     );
@@ -132,7 +131,7 @@ export async function POST(request: NextRequest) {
     });
     await errordb.save();
 
-    return NextResponse.json(
+  return NextResponse.json(
       { error: "Failed to validate and improve report" },
       { status: 500 },
     );

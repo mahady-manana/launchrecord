@@ -277,6 +277,7 @@ export async function POST(request: NextRequest) {
       websiteSummary: {
         overview: "",
         problems: [],
+        outcomes: [],
         solutions: [],
       },
       issues: [],
@@ -306,7 +307,6 @@ export async function POST(request: NextRequest) {
         },
       },
       tempData: {
-        rawWebsiteContent: JSON.stringify(websiteContent),
         simplifiedContent: websiteContent.simplifiedContent,
         metadata: websiteContent.meta,
         ldJson: websiteContent.ldJson,

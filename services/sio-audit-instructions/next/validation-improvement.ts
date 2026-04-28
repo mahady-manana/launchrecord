@@ -52,7 +52,7 @@ For each issue:
 
 - ensure severity matches impact
 - ensure metricKey matches the problem
-- ensure statement is clear and non-vague
+- ensure statement is clear, non-vague, and diagnostic only
 - ensure explanation logically supports the statement
 
 You MAY:
@@ -84,6 +84,10 @@ For each issue:
 You MAY:
 - rewrite fixes for clarity and impact
 - remove weak fixes
+
+### Statements:
+- must not contain fixes, how-to guidance, rewrite suggestions, or implementation steps
+- must stay focused on impact and diagnosis
 
 You MUST NOT:
 - add excessive fixes

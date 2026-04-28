@@ -58,6 +58,12 @@ Each issue MUST include:
 - fixes (optional)
 - impactScore (-1 to -25)
 
+Statement rule:
+- statement must be diagnostic only.
+- It may describe what is broken and why it matters.
+- It must NOT include fixes, recommendations, rewrites, next steps, or "how to solve" language.
+- Only recommendations and fixes may contain solution language.
+
 ---
 
 ## 🧠 ISSUE CATEGORIES (STRICT ENUM)

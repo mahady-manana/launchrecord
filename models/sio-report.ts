@@ -78,6 +78,7 @@ type CategoryInsight = {
 type V2WebsiteSummary = {
   overview: string;
   problems: string[];
+  outcomes: string[];
   solutions: string[];
 };
 
@@ -278,6 +279,7 @@ const SIOReportSchema = new Schema<ISIOReport>(
     websiteSummary: {
       overview: { type: String, default: "" },
       problems: { type: [String], default: [] },
+      outcomes: { type: [String], default: [] },
       solutions: { type: [String], default: [] },
     },
     firstImpressions: {

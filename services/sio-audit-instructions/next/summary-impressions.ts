@@ -34,6 +34,12 @@ Each issue MUST include:
 - fixes (optional exact, precise improvements)
 - impactScore (-1 to -25)
 
+Statement rule:
+- issue statement is diagnostic only.
+- it must describe the conversion impact and why the issue matters.
+- it must not include fixes, how-to guidance, rewrite suggestions, or implementation steps.
+- put all solution language in  recommendations  or  fixes .
+
 Rules:
 - ONLY use observable content. NEVER create issues related to word spacing artifacts (e.g., 'FORYOUR') or parsing errors.
 - DO NOT invent missing context

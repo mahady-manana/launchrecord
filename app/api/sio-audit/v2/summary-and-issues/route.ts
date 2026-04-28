@@ -4,6 +4,7 @@ import SIOReport from "@/models/sio-report";
 import {
   buildCleanContent,
   buildV2ApiData,
+  getV2Band,
   mapStrengthsFromSummary,
   normalizeCategoryInsights,
   normalizeFirstImpressions,
@@ -64,13 +65,24 @@ export async function POST(request: NextRequest) {
     const issues = normalizeIssues(aiData.issues);
     const categoryInsights = normalizeCategoryInsights(aiData.categoryInsights);
     const strengths = mapStrengthsFromSummary(websiteSummary);
+    const scoring = {
+      overall: normalizeScore(report.overallScore),
+      positioning: normalizeScore(report.scoring?.positioning),
+      clarity: normalizeScore(report.scoring?.clarity),
+      first_impression: normalizeScore(aiData.scoring?.first_impression),
+      aeo: normalizeScore(report.scoring?.aeo),
+    };
+    const overallScore = scoring.overall;
 
     await SIOReport.findByIdAndUpdate(reportId, {
-      progress: "issues_generated",
+      progress: "summary_complete",
       statement: aiData.statement || "",
       firstImpressions,
       websiteSummary: websiteSummary,
       issues,
+      overallScore,
+      reportBand: getV2Band(overallScore),
+      scoring,
       categoryInsights,
       strengths,
     });
@@ -85,7 +97,7 @@ export async function POST(request: NextRequest) {
       reportId,
       progress: savedReport.progress,
       data: buildV2ApiData(savedReport),
-      nextStep: "/api/sio-audit/v2/aeo-analysis",
+      nextStep: "/api/sio-audit/v2/scoring-fixes",
     });
   } catch (error: any) {
     console.error("SIO Audit V2 Summary & Issues Error:", error);
@@ -117,4 +129,9 @@ export async function POST(request: NextRequest) {
       { status: 500 },
     );
   }
+}
+
+function normalizeScore(value: unknown): number {
+  if (typeof value !== "number" || Number.isNaN(value)) return 0;
+  return Math.max(0, Math.min(100, value));
 }

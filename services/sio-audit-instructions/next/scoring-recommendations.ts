@@ -96,6 +96,12 @@ Each issue MUST include:
   "impactScore": number
 }
 
+Statement rule:
+- statement must stay diagnostic only.
+- It may explain what is wrong and why it impacts conversion.
+- It must not include fixes, solution paths, rewrite suggestions, or implementation guidance.
+- All "how to improve" language belongs in recommendations or fixes.
+
 ---
 
 ## 🛠 RECOMMENDATIONS RULES

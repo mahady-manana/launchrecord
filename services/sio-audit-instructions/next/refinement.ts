@@ -68,6 +68,7 @@ Each statement MUST:
 - clearly describe WHAT is happening
 - clearly identify WHAT is wrong (if any)
 - explain WHY it impacts clarity, positioning, or conversion
+- stay diagnostic only, with no fixes, rewrites, solution paths, or implementation advice
 
 Must be:
 

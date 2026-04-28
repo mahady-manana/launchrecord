@@ -3,7 +3,6 @@ import { getOpenRouterClient } from "@/lib/openrouter";
 import {
   aeoAnalysisInstruction,
   generalInstructions,
-  refinementGeneralInstructions,
   scoringAndFixesInstruction,
   summaryAndIssuesInstruction,
   validationAndImprovementInstruction,
@@ -16,6 +15,7 @@ import {
 } from "@/services/sio-audit-v2";
 import {
   AI_PROVIDER,
+  aeoModels,
   openAIModels,
   positioningClarityModels,
   refinementModels,
@@ -37,8 +37,102 @@ function parseAiJson(content: string | null | undefined) {
   }
 }
 
+function buildSystemMessages(
+  stepInstruction: string,
+  previousReport?: unknown,
+) {
+  const messages: Array<{ role: "system"; content: string }> = [
+    { role: "system", content: generalInstructions },
+  ];
+
+  if (previousReport) {
+    messages.push({
+      role: "system",
+      content: `Previous step report context. Preserve this as the base state and only change what the current step owns:\n\n${JSON.stringify(previousReport, null, 2)}`,
+    });
+  }
+
+  messages.push({ role: "system", content: stepInstruction });
+  return messages;
+}
+
+function buildSlimIssuesContext(issues: any[] = []) {
+  return issues.map((issue) => ({
+    id: issue?.id,
+    category: issue?.category,
+    metricKey: issue?.metricKey,
+    severity: issue?.severity,
+    statement: issue?.statement,
+    current: issue?.current ?? null,
+    impactScore: issue?.impactScore,
+  }));
+}
+
+function buildFilteredPreviousContext(
+  step: "positioning" | "aeo" | "validation",
+  previousReport: any,
+) {
+  if (!previousReport) return undefined;
+
+  const baseContext = {
+    statement: previousReport?.statement || "",
+    websiteSummary: previousReport?.websiteSummary || null,
+    firstImpressions: previousReport?.firstImpressions || null,
+  };
+
+  if (step === "positioning") {
+    return {
+      ...baseContext,
+      issues: buildSlimIssuesContext(
+        (previousReport?.issues || []).filter(
+          (issue: any) => issue?.category === "first_impression",
+        ),
+      ),
+      categoryInsights: {
+        first_impression: previousReport?.categoryInsights?.first_impression || null,
+      },
+      scoring: {
+        first_impression: previousReport?.scoring?.first_impression ?? null,
+      },
+    };
+  }
+
+  if (step === "aeo") {
+    return {
+      ...baseContext,
+      issues: buildSlimIssuesContext(
+        (previousReport?.issues || []).filter(
+          (issue: any) => issue?.category !== "aeo",
+        ),
+      ),
+      categoryInsights: {
+        first_impression: previousReport?.categoryInsights?.first_impression || null,
+        positioning: previousReport?.categoryInsights?.positioning || null,
+        clarity: previousReport?.categoryInsights?.clarity || null,
+      },
+      scoring: {
+        first_impression: previousReport?.scoring?.first_impression ?? null,
+        positioning: previousReport?.scoring?.positioning ?? null,
+        clarity: previousReport?.scoring?.clarity ?? null,
+      },
+    };
+  }
+
+  return {
+    ...baseContext,
+    issues: buildSlimIssuesContext(previousReport?.issues || []),
+    categoryInsights: previousReport?.categoryInsights || null,
+    scoring: previousReport?.scoring || null,
+    strengths: Array.isArray(previousReport?.strengths)
+      ? previousReport.strengths
+      : [],
+    reportBand: previousReport?.reportBand || null,
+    overallScore: previousReport?.overallScore ?? null,
+  };
+}
+
 /**
- * STEP 1: Summary & Issues Generation
+ * STEP 1: Summary & First Impression Analysis
  */
 export async function runSummaryAndIssues(cleanContent: any) {
   if (AI_PROVIDER === "openai") {
@@ -46,8 +140,7 @@ export async function runSummaryAndIssues(cleanContent: any) {
     const response = await client.chat.completions.create({
       model: openAIModels.summary,
       messages: [
-        { role: "system", content: generalInstructions },
-        { role: "system", content: summaryAndIssuesInstruction },
+        ...buildSystemMessages(summaryAndIssuesInstruction),
         {
           role: "user",
           content: `Website content to analyze:\n\n${JSON.stringify(cleanContent, null, 2)}`,
@@ -55,7 +148,7 @@ export async function runSummaryAndIssues(cleanContent: any) {
         {
           role: "user",
           content:
-            "Analyze this website and generate ONLY the summary-and-issues payload following the JSON schema provided.",
+            "Generate the step 1 summary-and-first-impressions payload only. Keep the focus on the website message and first impression issues.",
         },
       ],
       response_format: {
@@ -74,8 +167,7 @@ export async function runSummaryAndIssues(cleanContent: any) {
       chatGenerationParams: {
         models: summaryModels.models,
         messages: [
-          { role: "system", content: generalInstructions },
-          { role: "system", content: summaryAndIssuesInstruction },
+          ...buildSystemMessages(summaryAndIssuesInstruction),
           {
             role: "user",
             content: `Website content to analyze:\n\n${JSON.stringify(cleanContent, null, 2)}`,
@@ -83,7 +175,7 @@ export async function runSummaryAndIssues(cleanContent: any) {
           {
             role: "user",
             content:
-              "Analyze this website and generate ONLY the summary-and-issues payload following the JSON schema provided.",
+              "Generate the step 1 summary-and-first-impressions payload only. Keep the focus on the website message and first impression issues.",
           },
         ],
         responseFormat: {
@@ -103,81 +195,23 @@ export async function runSummaryAndIssues(cleanContent: any) {
 }
 
 /**
- * STEP 2: AEO Visibility Readiness Analysis
+ * STEP 2: Positioning & Messaging Analysis
  */
-export async function runAeoAnalysis(cleanContent: any) {
-  if (AI_PROVIDER === "openai") {
-    const client = getOpenAIClient();
-    const response = await client.chat.completions.create({
-      model: openAIModels.analysis,
-      messages: [
-        { role: "system", content: generalInstructions },
-        { role: "system", content: aeoAnalysisInstruction },
-        {
-          role: "user",
-          content: `Website content to analyze:\n\n${JSON.stringify(cleanContent, null, 2)}`,
-        },
-        {
-          role: "user",
-          content:
-            "Perform the AEO Visibility Readiness analysis. Generate ONLY the payload following the JSON schema provided. Add new issues to the existing ones if needed.",
-        },
-      ],
-      response_format: {
-        type: "json_schema",
-        json_schema: {
-          name: "sio_v2_aeo_analysis",
-          strict: true,
-          schema: aeoAnalysisJsonSchema as any,
-        },
-      },
-    });
-    return parseAiJson(response.choices[0]?.message?.content);
-  } else {
-    const client = getOpenRouterClient();
-    const response = await client.chat.send({
-      chatGenerationParams: {
-        models: summaryModels.models, // AEO step uses summaryModels in previous implementation
-        messages: [
-          { role: "system", content: generalInstructions },
-          { role: "system", content: aeoAnalysisInstruction },
-          {
-            role: "user",
-            content: `Website content to analyze:\n\n${JSON.stringify(cleanContent, null, 2)}`,
-          },
-          {
-            role: "user",
-            content:
-              "Perform the AEO Visibility Readiness analysis. Generate ONLY the payload following the JSON schema provided. Add new issues to the existing ones if needed.",
-          },
-        ],
-        responseFormat: {
-          type: "json_schema",
-          jsonSchema: {
-            name: "sio_v2_aeo_analysis",
-            strict: true,
-            schema: aeoAnalysisJsonSchema,
-          },
-        },
-        provider: summaryModels.provider,
-        stream: false,
-      },
-    });
-    return parseAiJson(response.choices[0]?.message?.content);
-  }
-}
+export async function runScoringAndFixes(promptInput: any, previousReport?: any) {
+  const filteredPreviousContext = buildFilteredPreviousContext(
+    "positioning",
+    previousReport,
+  );
 
-/**
- * STEP 3: Scoring & Fix Generation
- */
-export async function runScoringAndFixes(promptInput: any) {
   if (AI_PROVIDER === "openai") {
     const client = getOpenAIClient();
     const response = await client.chat.completions.create({
       model: openAIModels.analysis,
       messages: [
-        { role: "system", content: generalInstructions },
-        { role: "system", content: scoringAndFixesInstruction },
+        ...buildSystemMessages(
+          scoringAndFixesInstruction,
+          filteredPreviousContext,
+        ),
         {
           role: "user",
           content: `Persisted report issues from DB:\n\n${JSON.stringify(promptInput, null, 2)}`,
@@ -185,7 +219,7 @@ export async function runScoringAndFixes(promptInput: any) {
         {
           role: "user",
           content:
-            "Generate ONLY the scoring-and-fixes payload following the JSON schema provided. Keep the same issues and enrich them.",
+            "Generate the step 2 positioning-and-messaging payload only. Focus on positioning and clarity issues, and preserve the earlier first-impression findings.",
         },
       ],
       response_format: {
@@ -204,8 +238,10 @@ export async function runScoringAndFixes(promptInput: any) {
       chatGenerationParams: {
         models: positioningClarityModels.models,
         messages: [
-          { role: "system", content: generalInstructions },
-          { role: "system", content: scoringAndFixesInstruction },
+          ...buildSystemMessages(
+            scoringAndFixesInstruction,
+            filteredPreviousContext,
+          ),
           {
             role: "user",
             content: `Persisted report issues from DB:\n\n${JSON.stringify(promptInput, null, 2)}`,
@@ -213,7 +249,7 @@ export async function runScoringAndFixes(promptInput: any) {
           {
             role: "user",
             content:
-              "Generate ONLY the scoring-and-fixes payload following the JSON schema provided. Keep the same issues and enrich them.",
+              "Generate the step 2 positioning-and-messaging payload only. Focus on positioning and clarity issues, and preserve the earlier first-impression findings.",
           },
         ],
         responseFormat: {
@@ -233,16 +269,91 @@ export async function runScoringAndFixes(promptInput: any) {
 }
 
 /**
- * STEP 4: Validation & Improvement
+ * STEP 3: AEO Visibility Readiness Analysis
  */
-export async function runValidationImprovement(promptInput: any) {
+export async function runAeoAnalysis(cleanContent: any, previousReport?: any) {
+  const filteredPreviousContext = buildFilteredPreviousContext(
+    "aeo",
+    previousReport,
+  );
+
+  if (AI_PROVIDER === "openai") {
+    const client = getOpenAIClient();
+    const response = await client.chat.completions.create({
+      model: openAIModels.analysis,
+      messages: [
+        ...buildSystemMessages(aeoAnalysisInstruction, filteredPreviousContext),
+        {
+          role: "user",
+          content: `Website content to analyze:\n\n${JSON.stringify(cleanContent, null, 2)}`,
+        },
+        {
+          role: "user",
+          content:
+            "Perform the AEO Visibility Readiness analysis only. Generate AEO issues and AEO scoring, and preserve earlier report sections.",
+        },
+      ],
+      response_format: {
+        type: "json_schema",
+        json_schema: {
+          name: "sio_v2_aeo_analysis",
+          strict: true,
+          schema: aeoAnalysisJsonSchema as any,
+        },
+      },
+    });
+    return parseAiJson(response.choices[0]?.message?.content);
+  } else {
+    const client = getOpenRouterClient();
+    const response = await client.chat.send({
+      chatGenerationParams: {
+        models: aeoModels.models,
+        messages: [
+          ...buildSystemMessages(aeoAnalysisInstruction, filteredPreviousContext),
+          {
+            role: "user",
+            content: `Website content to analyze:\n\n${JSON.stringify(cleanContent, null, 2)}`,
+          },
+          {
+            role: "user",
+            content:
+              "Perform the AEO Visibility Readiness analysis only. Generate AEO issues and AEO scoring, and preserve earlier report sections.",
+          },
+        ],
+        responseFormat: {
+          type: "json_schema",
+          jsonSchema: {
+            name: "sio_v2_aeo_analysis",
+            strict: true,
+            schema: aeoAnalysisJsonSchema,
+          },
+        },
+        provider: aeoModels.provider,
+        stream: false,
+      },
+    });
+    return parseAiJson(response.choices[0]?.message?.content);
+  }
+}
+
+/**
+ * STEP 4: Validation & Finalization
+ */
+export async function runValidationImprovement(promptInput: any, previousReport?: any) {
+  const filteredPreviousContext = buildFilteredPreviousContext(
+    "validation",
+    previousReport,
+  );
+
   if (AI_PROVIDER === "openai") {
     const client = getOpenAIClient();
     const response = await client.chat.completions.create({
       model: openAIModels.refinement,
       messages: [
-        { role: "system", content: refinementGeneralInstructions },
-        { role: "system", content: validationAndImprovementInstruction },
+        ...buildSystemMessages(
+          validationAndImprovementInstruction,
+          filteredPreviousContext,
+        ),
         {
           role: "user",
           content: `Persisted report state from DB:\n\n${JSON.stringify(promptInput, null, 2)}`,
@@ -250,7 +361,7 @@ export async function runValidationImprovement(promptInput: any) {
         {
           role: "user",
           content:
-            "Validate and improve this report without breaking consistency. Return ONLY the validation-improvement payload following the JSON schema provided.",
+            "Validate and finalize the report. Preserve previous step outputs, set the overall score, and return only the validation-improvement payload.",
         },
       ],
       response_format: {
@@ -270,8 +381,10 @@ export async function runValidationImprovement(promptInput: any) {
       chatGenerationParams: {
         models: refinementModels.models,
         messages: [
-          { role: "system", content: refinementGeneralInstructions },
-          { role: "system", content: validationAndImprovementInstruction },
+          ...buildSystemMessages(
+            validationAndImprovementInstruction,
+            filteredPreviousContext,
+          ),
           {
             role: "user",
             content: `Persisted report state from DB:\n\n${JSON.stringify(promptInput, null, 2)}`,
@@ -279,7 +392,7 @@ export async function runValidationImprovement(promptInput: any) {
           {
             role: "user",
             content:
-              "Validate and improve this report without breaking consistency. Return ONLY the validation-improvement payload following the JSON schema provided.",
+              "Validate and finalize the report. Preserve previous step outputs, set the overall score, and return only the validation-improvement payload.",
           },
         ],
         responseFormat: {

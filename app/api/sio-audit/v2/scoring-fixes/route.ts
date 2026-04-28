@@ -35,10 +35,10 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Report not found" }, { status: 404 });
     }
 
-    if (report.progress !== "aeo_complete") {
+    if (report.progress !== "summary_complete") {
       return NextResponse.json(
         {
-          error: "Report is not in aeo_complete state",
+          error: "Report is not in summary_complete state",
           currentProgress: report.progress,
         },
         { status: 400 },
@@ -50,25 +50,30 @@ export async function POST(request: NextRequest) {
       firstImpressions: report.firstImpressions,
       categoryInsights: report.categoryInsights,
       websiteSummary: report.websiteSummary,
+      scoring: report.scoring,
     };
 
-    const aiData = await runScoringAndFixes(promptInput);
+    const previousReport = buildV2ApiData(report);
+    const aiData = await runScoringAndFixes(promptInput, previousReport);
 
-    const issues = normalizeIssues(aiData.issues);
-    const overallScore = normalizeScore(aiData.scoring?.overall);
-    console.log("====================================");
-    console.log("scor", aiData.scoring);
-    console.log("====================================");
+    const issues = [...normalizeIssues(report.issues || []), ...normalizeIssues(aiData.issues)];
+    const scoring = {
+      overall: normalizeScore(report.overallScore),
+      positioning: normalizeScore(aiData.scoring?.positioning ?? report.scoring?.positioning),
+      clarity: normalizeScore(aiData.scoring?.clarity ?? report.scoring?.clarity),
+      first_impression: normalizeScore(report.scoring?.first_impression),
+      aeo: normalizeScore(report.scoring?.aeo),
+    };
     await SIOReport.findByIdAndUpdate(reportId, {
-      progress: "scoring_complete",
+      progress: "positioning_clarity_complete",
       issues,
-      overallScore,
-      reportBand: getV2Band(overallScore),
-      scoring: {
-        first_impression: normalizeScore(aiData.scoring?.first_impression),
-        positioning: normalizeScore(aiData.scoring?.positioning),
-        clarity: normalizeScore(aiData.scoring?.clarity),
-        aeo: normalizeScore(aiData.scoring?.aeo),
+      overallScore: scoring.overall,
+      reportBand: getV2Band(scoring.overall),
+      scoring,
+      categoryInsights: {
+        ...(report.categoryInsights || {}),
+        positioning: aiData.categoryInsights?.positioning || report.categoryInsights?.positioning,
+        clarity: aiData.categoryInsights?.clarity || report.categoryInsights?.clarity,
       },
     });
 
@@ -82,7 +87,7 @@ export async function POST(request: NextRequest) {
       reportId,
       progress: savedReport.progress,
       data: buildV2ApiData(savedReport),
-      nextStep: "/api/sio-audit/v2/validation-improvement",
+      nextStep: "/api/sio-audit/v2/aeo-analysis",
     });
   } catch (error: any) {
     console.error("SIO Audit V2 Scoring & Fixes Error:", error);
@@ -108,7 +113,7 @@ export async function POST(request: NextRequest) {
     });
     await errordb.save();
 
-    return NextResponse.json(
+  return NextResponse.json(
       { error: "Failed to generate scoring and fixes" },
       { status: 500 },
     );

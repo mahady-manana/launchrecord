@@ -34,11 +34,11 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Report not found" }, { status: 404 });
     }
 
-    // This step happens after issues_generated
-    if (report.progress !== "issues_generated") {
+    // This step happens after positioning_clarity_complete
+    if (report.progress !== "positioning_clarity_complete") {
       return NextResponse.json(
         {
-          error: "Report is not in issues_generated state",
+          error: "Report is not in positioning_clarity_complete state",
           currentProgress: report.progress,
         },
         { status: 400 },
@@ -53,7 +53,8 @@ export async function POST(request: NextRequest) {
     }
 
     const cleanContent = buildCleanContent(report);
-    const aiData = await runAeoAnalysis(cleanContent);
+    const previousReport = buildV2ApiData(report);
+    const aiData = await runAeoAnalysis(cleanContent, previousReport);
 
     const newAeoIssues = normalizeIssues(aiData.issues);
 
@@ -67,10 +68,19 @@ export async function POST(request: NextRequest) {
       categoryInsights.aeo = aiData.categoryInsights.aeo;
     }
 
+    const scoring = {
+      overall: normalizeScore(report.overallScore),
+      positioning: normalizeScore(report.scoring?.positioning),
+      clarity: normalizeScore(report.scoring?.clarity),
+      first_impression: normalizeScore(report.scoring?.first_impression),
+      aeo: normalizeScore(aiData.scoring?.aeo ?? report.scoring?.aeo),
+    };
+
     await SIOReport.findByIdAndUpdate(reportId, {
       progress: "aeo_complete",
       issues: mergedIssues,
       categoryInsights,
+      scoring,
     });
 
     const savedReport = await SIOReport.findById(reportId).lean();
@@ -83,7 +93,7 @@ export async function POST(request: NextRequest) {
       reportId,
       progress: savedReport.progress,
       data: buildV2ApiData(savedReport),
-      nextStep: "/api/sio-audit/v2/scoring-fixes",
+      nextStep: "/api/sio-audit/v2/validation-improvement",
     });
   } catch (error: any) {
     console.error("SIO Audit V2 AEO Analysis Error:", error);
@@ -106,4 +116,9 @@ export async function POST(request: NextRequest) {
       { status: 500 },
     );
   }
+}
+
+function normalizeScore(value: unknown): number {
+  if (typeof value !== "number" || Number.isNaN(value)) return 0;
+  return Math.max(0, Math.min(100, value));
 }

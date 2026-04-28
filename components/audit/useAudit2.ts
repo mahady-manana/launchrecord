@@ -5,11 +5,13 @@ import { useCallback, useEffect, useRef, useState } from "react";
 export type Audit2Progress =
   | "idle"
   | "content_fetched"
-  | "issues_generated"
+  | "summary_complete"
+  | "positioning_clarity_complete"
   | "aeo_complete"
-  | "scoring_complete"
   | "complete"
-  | "failed";
+  | "failed"
+  | "issues_generated"
+  | "scoring_complete";
 
 export interface SIOV2Report {
   reportId: string;
@@ -22,6 +24,7 @@ export interface SIOV2Report {
   websiteSummary: {
     overview: string;
     problems: string[];
+    outcomes: string[];
     solutions: string[];
   };
   issues: Array<{

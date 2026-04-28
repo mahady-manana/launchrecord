@@ -3,6 +3,7 @@ import { randomUUID } from "crypto";
 export type V2WebsiteSummary = {
   overview: string;
   problems: string[];
+  outcomes: string[];
   solutions: string[];
 };
 
@@ -71,6 +72,8 @@ const categoryInsightSchema = {
 const websiteSummarySchema = {
   type: "object",
   additionalProperties: false,
+  description:
+    "A factual extraction of the current website content. This is not an audit diagnosis.",
   properties: {
     overview: {
       type: "string",
@@ -83,6 +86,12 @@ const websiteSummarySchema = {
       description:
         "The real-world USER PAINS or market problems that the PRODUCT claims to solve. These are NOT audit findings or website issues — they are the problems the product addresses for its customers.",
     },
+    outcomes: {
+      type: "array",
+      items: { type: "string" },
+      description:
+        "The outcomes, transformations, or results the PRODUCT promises to deliver to customers.",
+    },
     solutions: {
       type: "array",
       items: { type: "string" },
@@ -90,7 +99,7 @@ const websiteSummarySchema = {
         "The capabilities, features, or value propositions the PRODUCT provides to solve those problems. These are NOT audit recommendations — they are what the product offers.",
     },
   },
-  required: ["overview", "problems", "solutions"],
+  required: ["overview", "problems", "outcomes", "solutions"],
 };
 
 const issueGenerationIssueSchema = {
@@ -129,24 +138,166 @@ const enrichedIssueSchema = {
   required: ["id", ...issueGenerationIssueSchema.required],
 };
 
+function buildScopedIssueSchema(categoryEnum: string[], metricKeyEnum: string[]) {
+  return {
+    type: "object",
+    additionalProperties: false,
+    properties: {
+      ...issueGenerationIssueSchema.properties,
+      category: { type: "string", enum: categoryEnum },
+      metricKey: { type: "string", enum: metricKeyEnum },
+    },
+    required: issueGenerationIssueSchema.required,
+  };
+}
+
+const firstImpressionIssueSchema = buildScopedIssueSchema(
+  ["first_impression"],
+  ["headline", "subheadline", "cta"],
+);
+
+const positioningMessagingIssueSchema = buildScopedIssueSchema(
+  ["positioning", "clarity"],
+  [
+    "category_ownership",
+    "unique_value_proposition",
+    "competitive_differentiation",
+    "target_audience",
+    "problem_solution_fit",
+    "messaging_consistency",
+    "headline_clarity",
+    "value_proposition",
+    "feature_benefit_mapping",
+    "visual_hierarchy",
+    "cta_clarity",
+    "proof_placement",
+    "unclear_sentences",
+  ],
+);
+
+const aeoIssueSchema = buildScopedIssueSchema(
+  ["aeo"],
+  [
+    "one_line_definition",
+    "audience_specificity",
+    "problem_solution_mapping",
+    "outcome_translation",
+    "use_case_intent",
+    "category_anchoring",
+    "intent_driven_qa",
+    "terminology_consistency",
+    "quantifiable_signals",
+    "parsing_structure",
+  ],
+);
+
+const fullScoringSchema = {
+  type: "object",
+  additionalProperties: false,
+  properties: {
+    overall: { type: "number", minimum: 0, maximum: 100 },
+    positioning: { type: "number", minimum: 0, maximum: 100 },
+    clarity: { type: "number", minimum: 0, maximum: 100 },
+    first_impression: { type: "number", minimum: 0, maximum: 100 },
+    aeo: { type: "number", minimum: 0, maximum: 100 },
+  },
+  required: ["overall", "positioning", "clarity", "first_impression", "aeo"],
+};
+
+const firstImpressionScoringSchema = {
+  type: "object",
+  additionalProperties: false,
+  properties: {
+    first_impression: { type: "number", minimum: 0, maximum: 100 },
+  },
+  required: ["first_impression"],
+};
+
+const positioningMessagingScoringSchema = {
+  type: "object",
+  additionalProperties: false,
+  properties: {
+    positioning: { type: "number", minimum: 0, maximum: 100 },
+    clarity: { type: "number", minimum: 0, maximum: 100 },
+  },
+  required: ["positioning", "clarity"],
+};
+
+const aeoScoringSchema = {
+  type: "object",
+  additionalProperties: false,
+  properties: {
+    aeo: { type: "number", minimum: 0, maximum: 100 },
+  },
+  required: ["aeo"],
+};
+
+const overallScoringSchema = {
+  type: "object",
+  additionalProperties: false,
+  properties: {
+    overall: { type: "number", minimum: 0, maximum: 100 },
+  },
+  required: ["overall"],
+};
+
+const firstImpressionCategoryInsightsSchema = {
+  type: "object",
+  additionalProperties: false,
+  properties: {
+    first_impression: categoryInsightSchema,
+  },
+  required: ["first_impression"],
+};
+
+const positioningMessagingCategoryInsightsSchema = {
+  type: "object",
+  additionalProperties: false,
+  properties: {
+    positioning: categoryInsightSchema,
+    clarity: categoryInsightSchema,
+  },
+  required: ["positioning", "clarity"],
+};
+
+const aeoCategoryInsightsSchema = {
+  type: "object",
+  additionalProperties: false,
+  properties: {
+    aeo: categoryInsightSchema,
+  },
+  required: ["aeo"],
+};
+
+const fullCategoryInsightsSchema = {
+  type: "object",
+  additionalProperties: false,
+  properties: {
+    positioning: categoryInsightSchema,
+    clarity: categoryInsightSchema,
+    first_impression: categoryInsightSchema,
+    aeo: categoryInsightSchema,
+  },
+  required: ["positioning", "clarity", "first_impression", "aeo"],
+};
+
 export const aeoAnalysisJsonSchema = {
   type: "object",
   additionalProperties: false,
   properties: {
     issues: {
       type: "array",
-      items: issueGenerationIssueSchema,
+      items: aeoIssueSchema,
     },
+    scoring: aeoScoringSchema,
     categoryInsights: {
       type: "object",
       additionalProperties: false,
-      properties: {
-        aeo: categoryInsightSchema,
-      },
-      required: ["aeo"],
+      properties: aeoCategoryInsightsSchema.properties,
+      required: aeoCategoryInsightsSchema.required,
     },
   },
-  required: ["issues", "categoryInsights"],
+  required: ["issues", "scoring", "categoryInsights"],
 };
 
 export const summaryAndIssuesJsonSchema = {
@@ -156,29 +307,26 @@ export const summaryAndIssuesJsonSchema = {
     statement: {
       type: "string",
       description:
-        "A 2-3 sentence overall audit verdict about the product's positioning, messaging clarity and conversion readiness. This is NOT about first impressions — it is a holistic product-level diagnostic summary.",
+        "A 2-3 sentence summary of the website's message and first impression performance. This is diagnostic only and must not include fixes.",
     },
     issues: {
       type: "array",
-      items: issueGenerationIssueSchema,
+      items: firstImpressionIssueSchema,
     },
+    scoring: firstImpressionScoringSchema,
     firstImpressions: firstImpressionsSchema,
     categoryInsights: {
       type: "object",
       additionalProperties: false,
-      properties: {
-        positioning: categoryInsightSchema,
-        clarity: categoryInsightSchema,
-        first_impression: categoryInsightSchema,
-        aeo: categoryInsightSchema,
-      },
-      required: ["positioning", "clarity", "first_impression", "aeo"],
+      properties: firstImpressionCategoryInsightsSchema.properties,
+      required: firstImpressionCategoryInsightsSchema.required,
     },
     websiteSummary: websiteSummarySchema,
   },
   required: [
     "statement",
     "issues",
+    "scoring",
     "firstImpressions",
     "categoryInsights",
     "websiteSummary",
@@ -189,30 +337,14 @@ export const scoringFixesJsonSchema = {
   type: "object",
   additionalProperties: false,
   properties: {
-    scoring: {
-      type: "object",
-      additionalProperties: false,
-      properties: {
-        overall: { type: "number", minimum: 0, maximum: 100 },
-        positioning: { type: "number", minimum: 0, maximum: 100 },
-        clarity: { type: "number", minimum: 0, maximum: 100 },
-        first_impression: { type: "number", minimum: 0, maximum: 100 },
-        aeo: { type: "number", minimum: 0, maximum: 100 },
-      },
-      required: [
-        "overall",
-        "positioning",
-        "clarity",
-        "first_impression",
-        "aeo",
-      ],
-    },
+    scoring: positioningMessagingScoringSchema,
     issues: {
       type: "array",
-      items: enrichedIssueSchema,
+      items: positioningMessagingIssueSchema,
     },
+    categoryInsights: positioningMessagingCategoryInsightsSchema,
   },
-  required: ["scoring", "issues"],
+  required: ["scoring", "issues", "categoryInsights"],
 };
 
 export const validationImprovementJsonSchema = {
@@ -222,15 +354,15 @@ export const validationImprovementJsonSchema = {
     statement: {
       type: "string",
       description:
-        "A 2-3 sentence overall audit verdict about the product's positioning, messaging clarity and conversion readiness. This is NOT about first impressions — it is a holistic product-level diagnostic summary.",
+        "A 2-3 sentence overall audit verdict about the full report. This is diagnostic only and should reconcile the step outputs without introducing new direction.",
     },
     issues: {
       type: "array",
       items: enrichedIssueSchema,
     },
-    scoring: scoringFixesJsonSchema.properties.scoring,
+    scoring: overallScoringSchema,
     firstImpressions: firstImpressionsSchema,
-    categoryInsights: summaryAndIssuesJsonSchema.properties.categoryInsights,
+    categoryInsights: fullCategoryInsightsSchema,
     websiteSummary: websiteSummarySchema,
   },
   required: [
@@ -311,6 +443,7 @@ export function normalizeWebsiteSummary(
   return {
     overview: rawWebsiteSummary?.overview || "",
     problems: normalizeStringArray(rawWebsiteSummary?.problems),
+    outcomes: normalizeStringArray(rawWebsiteSummary?.outcomes),
     solutions: normalizeStringArray(rawWebsiteSummary?.solutions),
   };
 }
@@ -388,9 +521,13 @@ export function getV2Band(score: number) {
 }
 
 export function mapStrengthsFromSummary(websiteSummary: V2WebsiteSummary) {
-  return websiteSummary.solutions.map((statement) => ({
+  const uniqueStrengths = Array.from(
+    new Set([...websiteSummary.outcomes, ...websiteSummary.solutions]),
+  );
+
+  return uniqueStrengths.map((statement) => ({
     statement,
-    impact: "Suggested solution direction derived from the summary layer.",
+    impact: "Promised outcome or solution direction derived from the summary layer.",
   }));
 }
 

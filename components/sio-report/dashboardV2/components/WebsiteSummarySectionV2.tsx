@@ -6,6 +6,7 @@ import { AlertTriangle, Lightbulb } from "lucide-react";
 interface WebsiteSummary {
   overview: string;
   problems: string[];
+  outcomes: string[];
   solutions: string[];
 }
 
@@ -27,7 +28,7 @@ export function WebsiteSummarySectionV2({
           <p className="text-gray-700 leading-relaxed">{summary.overview}</p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {/* Problems */}
           <Card>
             <CardHeader className="pb-3">
@@ -49,6 +50,32 @@ export function WebsiteSummarySectionV2({
               ) : (
                 <p className="text-sm text-gray-500 italic">
                   No major problems identified
+                </p>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Outcomes */}
+          <Card>
+            <CardHeader className="pb-3">
+              <CardTitle className="text-base flex items-center gap-2">
+                <Lightbulb className="w-5 h-5 text-indigo-500" />
+                Outcomes Promised
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              {summary.outcomes.length > 0 ? (
+                <ul className="space-y-2">
+                  {summary.outcomes.map((outcome, index) => (
+                    <li key={index} className="flex items-start gap-2">
+                      <span className="text-indigo-500 mt-1">•</span>
+                      <span className="text-sm text-gray-700">{outcome}</span>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p className="text-sm text-gray-500 italic">
+                  No specific outcomes highlighted
                 </p>
               )}
             </CardContent>
@@ -87,11 +114,17 @@ export function WebsiteSummarySectionV2({
         <h4 className="font-semibold text-blue-800 mb-3">
           📊 Analysis Summary
         </h4>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 text-sm">
           <div className="bg-white rounded p-3">
             <div className="font-medium text-blue-800">Problems Found</div>
             <div className="text-2xl font-bold text-blue-600">
               {summary.problems.length}
+            </div>
+          </div>
+          <div className="bg-white rounded p-3">
+            <div className="font-medium text-blue-800">Outcomes Promised</div>
+            <div className="text-2xl font-bold text-blue-600">
+              {summary.outcomes.length}
             </div>
           </div>
           <div className="bg-white rounded p-3">
