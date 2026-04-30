@@ -11,35 +11,6 @@ const issueCategoryEnum = ["positioning", "clarity", "first_impression", "aeo"];
 
 const issueSeverityEnum = ["critical", "high", "medium", "low"];
 
-const issueMetricKeyEnum = [
-  "headline",
-  "subheadline",
-  "cta",
-  "category_ownership",
-  "unique_value_proposition",
-  "competitive_differentiation",
-  "target_audience",
-  "problem_solution_fit",
-  "messaging_consistency",
-  "headline_clarity",
-  "value_proposition",
-  "feature_benefit_mapping",
-  "visual_hierarchy",
-  "cta_clarity",
-  "proof_placement",
-  "unclear_sentences",
-  "one_line_definition",
-  "audience_specificity",
-  "problem_solution_mapping",
-  "outcome_translation",
-  "use_case_intent",
-  "category_anchoring",
-  "intent_driven_qa",
-  "terminology_consistency",
-  "quantifiable_signals",
-  "parsing_structure",
-];
-
 const firstImpressionsSchema = {
   type: "object",
   additionalProperties: false,
@@ -126,7 +97,7 @@ const issueGenerationIssueSchema = {
   additionalProperties: false,
   properties: {
     category: { type: "string", enum: issueCategoryEnum },
-    metricKey: { type: "string", enum: issueMetricKeyEnum },
+    metricKey: { type: "string" },
     severity: { type: "string", enum: issueSeverityEnum },
     statement: { type: "string" },
     explanation: { type: "string" },
@@ -157,61 +128,26 @@ const enrichedIssueSchema = {
   required: ["id", ...issueGenerationIssueSchema.required],
 };
 
-function buildScopedIssueSchema(
-  categoryEnum: string[],
-  metricKeyEnum: string[],
-) {
+function buildScopedIssueSchema(categoryEnum: string[]) {
   return {
     type: "object",
     additionalProperties: false,
     properties: {
       ...issueGenerationIssueSchema.properties,
       category: { type: "string", enum: categoryEnum },
-      metricKey: { type: "string", enum: metricKeyEnum },
     },
     required: issueGenerationIssueSchema.required,
   };
 }
 
-const firstImpressionIssueSchema = buildScopedIssueSchema(
-  ["first_impression"],
-  ["headline", "subheadline", "cta"],
-);
+const firstImpressionIssueSchema = buildScopedIssueSchema(["first_impression"]);
 
-const positioningMessagingIssueSchema = buildScopedIssueSchema(
-  ["positioning", "clarity"],
-  [
-    "category_ownership",
-    "unique_value_proposition",
-    "competitive_differentiation",
-    "target_audience",
-    "problem_solution_fit",
-    "messaging_consistency",
-    "headline_clarity",
-    "value_proposition",
-    "feature_benefit_mapping",
-    "visual_hierarchy",
-    "cta_clarity",
-    "proof_placement",
-    "unclear_sentences",
-  ],
-);
+const positioningMessagingIssueSchema = buildScopedIssueSchema([
+  "positioning",
+  "clarity",
+]);
 
-const aeoIssueSchema = buildScopedIssueSchema(
-  ["aeo"],
-  [
-    "one_line_definition",
-    "audience_specificity",
-    "problem_solution_mapping",
-    "outcome_translation",
-    "use_case_intent",
-    "category_anchoring",
-    "intent_driven_qa",
-    "terminology_consistency",
-    "quantifiable_signals",
-    "parsing_structure",
-  ],
-);
+const aeoIssueSchema = buildScopedIssueSchema(["aeo"]);
 
 const fullScoringSchema = {
   type: "object",
@@ -266,17 +202,16 @@ const firstImpressionScoringSchema = {
 };
 
 const metricsSchema = {
-  type: "object",
-  description:
-    "A dictionary where the key is the metric name and value is the check result.",
-  additionalProperties: {
+  type: "array",
+  description: "An array of all processed metrics checks.",
+  items: {
     type: "object",
     additionalProperties: false,
     properties: {
+      name: { type: "string" },
       check: { type: "boolean" },
-      statement: { type: "string" },
     },
-    required: ["check", "statement"],
+    required: ["name", "check"],
   },
 };
 
@@ -640,4 +575,46 @@ function normalizeReportBand(value: unknown) {
   }
   if (value === "Blended") return "Average";
   return getV2Band(normalizeScore(value));
+}
+
+export function normalizeMetricsArray(
+  rawMetrics: any,
+): Array<{ name: string; check: boolean }> {
+  const metrics: Array<{ name: string; check: boolean }> = [];
+
+  if (Array.isArray(rawMetrics)) {
+    for (const item of rawMetrics) {
+      if (item && item.name && typeof item.check === "boolean") {
+        metrics.push({
+          name: String(item.name),
+          check: item.check,
+        });
+      }
+    }
+  } else if (rawMetrics && typeof rawMetrics === "object") {
+    // Fallback if AI ignores structure and generates dict directly
+    for (const [key, val] of Object.entries(rawMetrics)) {
+      if (val && typeof val === "object" && "check" in val) {
+        metrics.push({
+          name: key,
+          check: Boolean((val as any).check),
+        });
+      }
+    }
+  }
+  return metrics;
+}
+
+export function mergeMetricsArrays(
+  current: Array<{ name: string; check: boolean }> | undefined,
+  incoming: any,
+): Array<{ name: string; check: boolean }> {
+  const currentArray = Array.isArray(current) ? current : [];
+  const incomingArray = normalizeMetricsArray(incoming);
+
+  const mergedMap = new Map<string, { name: string; check: boolean }>();
+  for (const m of currentArray) mergedMap.set(m.name, m);
+  for (const m of incomingArray) mergedMap.set(m.name, m);
+
+  return Array.from(mergedMap.values());
 }

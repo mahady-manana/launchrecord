@@ -4,6 +4,7 @@ import {
   buildCleanContent,
   buildV2ApiData,
   getV2Band,
+  mergeMetricsArrays,
   normalizeCategoryInsights,
   normalizeIssues,
 } from "@/services/sio-audit-v2";
@@ -50,26 +51,23 @@ export async function POST(request: NextRequest) {
     const aiData = await runPositioningClarity(cleanContent, report);
 
     // Merge issues from previous step
-    const existingIssues = report.issues || [];
+    const currentIssues = report.issues || [];
     const newIssues = normalizeIssues(aiData.issues);
-    const combinedIssues = [...existingIssues, ...newIssues];
+    const mergedIssues = [...currentIssues, ...newIssues];
 
     // Merge category insights
-    const existingCategoryInsights = report.categoryInsights || {};
     const newCategoryInsights = normalizeCategoryInsights(
       aiData.categoryInsights,
     );
-    const combinedCategoryInsights = {
-      ...existingCategoryInsights,
+    const mergedCategoryInsights = {
+      ...report.categoryInsights,
       ...newCategoryInsights,
     };
 
     // Merge metrics
-    const existingMetrics = report.metrics || {};
-    const newMetrics = aiData.metrics || {};
-    const combinedMetrics = { ...existingMetrics, ...newMetrics };
+    const metrics = mergeMetricsArrays(report.metrics, aiData.metrics);
 
-    const scoring = {
+    const newScoring = {
       overall: aiData.scoring?.overall ?? report.scoring?.overall ?? 0,
       positioning:
         aiData.scoring?.positioning ?? report.scoring?.positioning ?? 0,
@@ -77,17 +75,17 @@ export async function POST(request: NextRequest) {
       first_impression: report.scoring?.first_impression ?? 0,
       aeo: 0,
     };
-    const overallScore = aiData.overallScore ?? scoring.overall;
+    const overallScore = aiData.overallScore ?? newScoring.overall;
 
     await SIOReport.findByIdAndUpdate(reportId, {
       progress: "positioning_clarity_complete",
       statement: aiData.statement || report.statement || "",
-      issues: combinedIssues,
+      issues: mergedIssues,
       overallScore,
       reportBand: getV2Band(overallScore),
-      scoring,
-      metrics: combinedMetrics,
-      categoryInsights: combinedCategoryInsights,
+      scoring: newScoring,
+      metrics: metrics,
+      categoryInsights: mergedCategoryInsights,
     });
 
     const savedReport = await SIOReport.findById(reportId).lean();

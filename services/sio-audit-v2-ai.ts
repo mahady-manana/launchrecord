@@ -4,7 +4,6 @@ import {
   aeoAnalysisInstruction,
   generalInstructions,
   positioningClarityInstruction,
-  scoringAndFixesInstruction,
   summaryFirstImpressionsInstruction,
   validationInstruction,
 } from "@/services/sio-audit-instructions/v2";
@@ -360,6 +359,7 @@ export async function runSummaryFirstImpressions(cleanContent: any) {
       },
       reasoning_effort: "high",
     });
+
     return parseAiJson(response.choices[0]?.message?.content);
   } else {
     const client = getOpenRouterClient();
@@ -389,87 +389,12 @@ export async function runSummaryFirstImpressions(cleanContent: any) {
         },
         provider: summaryModels.provider,
         stream: false,
-      },
-    });
-    return parseAiJson(response.choices[0]?.message?.content);
-  }
-}
-
-/**
- * STEP 2: Positioning & Messaging Analysis
- */
-export async function runScoringAndFixes(
-  promptInput: any,
-  previousReport?: any,
-) {
-  const filteredPreviousContext = buildFilteredPreviousContext(
-    "positioning",
-    previousReport,
-  );
-  const slimPromptInput = buildLayerPromptInput("positioning", promptInput);
-
-  if (AI_PROVIDER === "openai") {
-    const client = getOpenAIClient();
-    const response = await client.chat.completions.create({
-      model: openAIModels.analysis,
-      messages: [
-        ...buildSystemMessages(
-          scoringAndFixesInstruction,
-          filteredPreviousContext,
-        ),
-        {
-          role: "user",
-          content: `Persisted report issues from DB:\n\n${JSON.stringify(slimPromptInput, null, 2)}`,
-        },
-        {
-          role: "user",
-          content:
-            "Generate the step 2 positioning-and-messaging payload only. Focus on positioning and clarity issues, and preserve the earlier first-impression findings.",
-        },
-      ],
-      response_format: {
-        type: "json_schema",
-        json_schema: {
-          name: "sio_v2_scoring_and_fixes",
-          strict: true,
-          schema: scoringFixesJsonSchema as any,
+        reasoning: {
+          effort: "high",
         },
       },
-      reasoning_effort: "high",
     });
-    return parseAiJson(response.choices[0]?.message?.content);
-  } else {
-    const client = getOpenRouterClient();
-    const response = await client.chat.send({
-      chatGenerationParams: {
-        models: positioningClarityModels.models,
-        messages: [
-          ...buildSystemMessages(
-            scoringAndFixesInstruction,
-            filteredPreviousContext,
-          ),
-          {
-            role: "user",
-            content: `Persisted report issues from DB:\n\n${JSON.stringify(slimPromptInput, null, 2)}`,
-          },
-          {
-            role: "user",
-            content:
-              "Generate the step 2 positioning-and-messaging payload only. Focus on positioning and clarity issues, and preserve the earlier first-impression findings.",
-          },
-        ],
-        responseFormat: {
-          type: "json_schema",
-          jsonSchema: {
-            name: "sio_v2_scoring_and_fixes",
-            strict: true,
-            schema: scoringFixesJsonSchema,
-          },
-        },
-        provider: positioningClarityModels.provider,
-        stream: false,
-      },
-    });
+    console.log("openai", response.usage);
     return parseAiJson(response.choices[0]?.message?.content);
   }
 }
@@ -521,8 +446,8 @@ export async function runPositioningClarity(
     const client = getOpenRouterClient();
     const response = await client.chat.send({
       chatGenerationParams: {
-        // models: positioningClarityModels.models,
-        models: ["deepseek/deepseek-v3.2"],
+        models: positioningClarityModels.models,
+        // models: ["deepseek/deepseek-v3.2"],
         messages: [
           ...buildSystemMessages(
             positioningClarityInstruction,
@@ -548,6 +473,9 @@ export async function runPositioningClarity(
         },
         provider: positioningClarityModels.provider,
         stream: false,
+        reasoning: {
+          effort: "high",
+        },
       },
     });
     return parseAiJson(response.choices[0]?.message?.content);
@@ -774,6 +702,9 @@ export async function runValidation(cleanContent: any, previousReport?: any) {
         },
         provider: refinementModels.provider,
         stream: false,
+        reasoning: {
+          effort: "high",
+        },
       },
     });
     return parseAiJson(response.choices[0]?.message?.content);

@@ -24,9 +24,9 @@ export const openAIModels = {
  */
 export const summaryModels = {
   models: [
+    "deepseek/deepseek-v3.2",
     "x-ai/grok-4.1-fast",
-    "tencent/hy3-preview:free",
-    "openai/gpt-oss-120b:free",
+    "moonshotai/kimi-k2.5",
   ],
   reasoning: "high" as Effort,
   provider: {
@@ -41,14 +41,14 @@ export const summaryModels = {
  */
 export const positioningClarityModels = {
   models: [
+    "deepseek/deepseek-v3.2",
     "x-ai/grok-4.1-fast",
-    "tencent/hy3-preview:free",
-    "openai/gpt-oss-120b:free",
+    "moonshotai/kimi-k2.5",
   ],
   reasoning: "high" as Effort,
   provider: {
     requireParameters: true,
-    preferredMinThroughput: 38,
+    // preferredMinThroughput: 38,
   },
 };
 
@@ -58,9 +58,9 @@ export const positioningClarityModels = {
  */
 export const aeoModels = {
   models: [
+    "deepseek/deepseek-v3.2",
     "x-ai/grok-4.1-fast",
-    "tencent/hy3-preview:free",
-    "openai/gpt-oss-120b:free",
+    "moonshotai/kimi-k2.5",
   ],
   provider: {
     requireParameters: true,

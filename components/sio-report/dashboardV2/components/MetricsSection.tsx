@@ -1,11 +1,11 @@
 import { AlertCircle, CheckCircle2 } from "lucide-react";
 
 interface MetricsSectionProps {
-  metrics?: Record<string, { check: boolean; statement: string }>;
+  metrics?: Array<{ name: string; check: boolean; statement: string }>;
 }
 
 export function MetricsSection({ metrics }: MetricsSectionProps) {
-  if (!metrics || Object.keys(metrics).length === 0) {
+  if (!metrics || metrics.length === 0) {
     return (
       <div className="text-center py-12">
         <p className="text-gray-500">
@@ -15,12 +15,12 @@ export function MetricsSection({ metrics }: MetricsSectionProps) {
     );
   }
 
-  const sortedKeys = Object.keys(metrics).sort((a, b) => {
+  const sortedMetrics = [...metrics].sort((a, b) => {
     // Show failed checks first, then sort alphabetically
-    if (metrics[a].check === metrics[b].check) {
-      return a.localeCompare(b);
+    if (a.check === b.check) {
+      return a.name.localeCompare(b.name);
     }
-    return metrics[a].check ? 1 : -1;
+    return a.check ? 1 : -1;
   });
 
   return (
@@ -36,12 +36,11 @@ export function MetricsSection({ metrics }: MetricsSectionProps) {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {sortedKeys.map((key) => {
-          const metric = metrics[key];
+        {sortedMetrics.map((metric) => {
           const isPass = metric.check;
 
           // Format key nicely (e.g., category_ownership -> Category Ownership)
-          const formattedKey = key
+          const formattedKey = metric.name
             .split("_")
             .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
             .join(" ");
@@ -51,11 +50,10 @@ export function MetricsSection({ metrics }: MetricsSectionProps) {
             : "bg-red-50/50 border-red-100";
 
           const titleClass = isPass ? "text-green-900" : "text-red-900";
-          const descClass = isPass ? "text-green-700" : "text-red-700";
 
           return (
             <div
-              key={key}
+              key={metric.name}
               className={`flex items-start p-4 rounded-xl border ${containerClass}`}
             >
               <div className="mt-0.5 mr-3 flex-shrink-0">
@@ -69,7 +67,6 @@ export function MetricsSection({ metrics }: MetricsSectionProps) {
                 <h4 className={`text-sm font-semibold mb-1 ${titleClass}`}>
                   {formattedKey}
                 </h4>
-                <p className={`text-sm ${descClass}`}>{metric.statement}</p>
               </div>
             </div>
           );

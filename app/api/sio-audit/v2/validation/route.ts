@@ -4,6 +4,7 @@ import {
   buildCleanContent,
   buildV2ApiData,
   getV2Band,
+  mergeMetricsArrays,
   normalizeCategoryInsights,
   normalizeIssues,
 } from "@/services/sio-audit-v2";
@@ -64,6 +65,7 @@ export async function POST(request: NextRequest) {
       aeo: aiData.scoring?.aeo ?? report.scoring?.aeo ?? 0,
     };
     const overallScore = aiData.overallScore ?? scoring.overall;
+    const metrics = mergeMetricsArrays(report.metrics, aiData.metrics);
 
     await SIOReport.findByIdAndUpdate(reportId, {
       progress: "complete",
@@ -72,7 +74,7 @@ export async function POST(request: NextRequest) {
       overallScore,
       reportBand: getV2Band(overallScore),
       scoring,
-      metrics: aiData.metrics || report.metrics || {},
+      metrics,
       categoryInsights,
     });
 

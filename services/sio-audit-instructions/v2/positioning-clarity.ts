@@ -1,54 +1,82 @@
 export const positioningClarityInstruction = `
-# SIO-v5 Audit Engine - Step 2: Positioning & Clarity (RULES-BASED)
-## ⚠️ USE DETERMINISTIC RULES ONLY - NO MODEL JUDGMENT
+# SIO-v5 Audit Engine - Step 2: Positioning & Clarity
 
-This step evaluates Positioning and Clarity metrics using EXPLICIT RULES from \`deterministic-rules.ts\`.
+## ⚠️ STRICT EXECUTION ORDER — DO NOT DEVIATE
 
-**DO NOT use subjective judgment. DO NOT estimate. ONLY apply the rules.**
+You MUST score each metric before generating any issues. Scoring is not derived from issues. Issues are derived from scores.
 
-### Step-by-Step Process for This Step
+---
 
-1. **Positioning & Clarity Evaluation (RULE-BASED)**:
+## 📊 PHASE 1 — SCORE EACH METRIC FIRST
 
-   For each metric below, follow this process:
-   1. Extract relevant content from website
-   2. Check all PASS criteria: "Is this true?"
-   3. Check all FAIL criteria: "Is this true?"
-   4. Count fail criteria met
-   5. Calculate score: 100 - (failCount × penalty from rule)
-   6. Generate ONE issue per fail criterion met
+For each metric below, evaluate it directly from the website content.
+Decide pass or fail based on criteria on BASE INSTRUCTION → METRICS LAYER above, then assign a score. 
+Do this for ALL metrics before writing a single issue.
 
-   **Positioning Metrics** (Use rules from deterministic-rules.ts):
-   - category_ownership (Rule: categoryOwnershipRule)
-   - unique_value_proposition (Rule: uniqueValuePropositionRule)
-   - competitive_differentiation (Rule: competitiveDifferentiationRule)
-   - target_audience (Rule: targetAudienceRule)
-   - problem_solution_fit (Rule: problemSolutionFitRule)
-   - messaging_consistency (Rule: messagingConsistencyRule)
+**Positioning Metrics (score each 0–89)**
 
-   **Clarity Metrics** (Use rules from deterministic-rules.ts):
-   - headline_clarity (Rule: headlineClarityRule)
-   - value_proposition (Rule: valuePropositionClarityRule)
-   - feature_benefit_mapping (Rule: featureBenefitMappingRule)
-   - visual_hierarchy (Rule: visualHierarchyRule)
-   - cta_clarity (Rule: ctaClarityRule)
-   - proof_placement (Rule: proofPlacementRule)
+Check BASE INSTRUCTION → METRICS LAYER  → Positioning Metrics above for criteria  before generating issues.
+Some metricKeys may PASS the critiria but need improvement some may not.
 
-2. **Scoring Updates (SEMI-DETERMINISTIC)**:
-   - Do NOT calculate arbitrary equations (e.g., 100 - (failCount * penalty)). Instead, evaluate the overall density and severity of the issues found.
-   - Use the centralized **Score Mapping Tiers** (defined in the Scoring & Recommendations prompt) to arrive at the scores. Max score is 89.
+- \`category_ownership\`
+- \`unique_value_proposition\`
+- \`competitive_differentiation\`
+- \`target_audience\`
+- \`problem_solution_fit\`
+- \`messaging_consistency\`
 
-3. **Issues Generation**:
-   - Determine the subset of failed metrics that actually block conversion (use Judgment Layer).
-   - Do NOT pad the issues quota arbitrarily. Use the organic constraints governed in the General Instructions.
 
-4. **Category Insights Updates**:
-   - \`positioning.statement\`: Diagnostic summary of positioning issues only.
-   - \`clarity.statement\`: Diagnostic summary of clarity issues only.
+**Clarity Metrics (score each 0–89)**
+
+Check BASE INSTRUCTION → METRICS LAYER  → Positioning Metrics above for criteria  before generating issues.
+Some metricKeys may PASS the critiria but need improvement some may not.
+
+- \`headline_clarity\`
+- \`value_proposition\`
+- \`feature_benefit_mapping\`
+- \`visual_hierarchy\`
+- \`cta_clarity\`
+- \`proof_placement\`
+- \`unclear_sentences\`
+
+**Scoring Tiers (use per-metric)**
+- 75–89: Excellent, zero friction on this dimension
+- 60–74: Good, minor gaps that don't break understanding
+- 45–59: Weak, user must work to understand this
+- Below 45: Broken, actively misleads or confuses
+
+**Category Score = weighted average of sub-metric scores**
+
+⚠️ LOCK category scores for \`positioning\` and \`clarity\` before Phase 2.
+
+---
+
+## 🧩 PHASE 2 — GENERATE ISSUES (Grounded in Phase 1 scores)
+
+Now generate issues for categories \`"positioning"\` and \`"clarity"\` only.
+Do NOT generate issues to hit a quota. Stop when real blockers are exhausted.
+
+Issue fields:
+- **id**: UUID
+- **category**: \`"positioning"\` or \`"clarity"\`
+- **metricKey**: exact metric name that failed
+- **severity**: must align to score tier (low for 75+, medium for 60-74, high/critical below 60)
+- **statement**: DIAGNOSTIC ONLY — what is broken and why it matters. No fixes.
+- **explanation**: null
+- **current**: verbatim extracted text from the website
+- **recommendations**: strategic HOW-TO guidance
+- **fixes**: copy-paste ready rewrites (max 3)
+- **impactScore**: negative number
+
+---
+
+## 🧩 PHASE 3 — CATEGORY INSIGHTS
+
+Write \`categoryInsights\` for \`positioning\` and \`clarity\`:
+- \`statement\`: compressed diagnostic from the issues
+- \`summary\`: current state plain language summary
 
 ## 🔗 CENTRALIZED RULES
-
-Refer strictly to the Base Instructions for Statement formatting constraints (must be purely diagnostic) and to the Scoring & Recommendations prompt for final score bounds, severities, and the JSON Output Schema.
-
+Refer to Base Instructions for Statement rules and score ceiling (max 89).
 Return ONLY the JSON.
 `;

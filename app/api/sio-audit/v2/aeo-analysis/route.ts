@@ -3,6 +3,8 @@ import SIOReport from "@/models/sio-report";
 import {
   buildCleanContent,
   buildV2ApiData,
+  mergeMetricsArrays,
+  normalizeCategoryInsights,
   normalizeIssues,
 } from "@/services/sio-audit-v2";
 import { runAeoAnalysis } from "@/services/sio-audit-v2-ai";
@@ -62,18 +64,17 @@ export async function POST(request: NextRequest) {
     const existingIssues = report.issues || [];
     const mergedIssues = [...existingIssues, ...newAeoIssues];
 
-    // Merge metrics
-    const existingMetrics = report.metrics || {};
-    const newMetrics = aiData.metrics || {};
-    const combinedMetrics = { ...existingMetrics, ...newMetrics };
+    const newCategoryInsights = normalizeCategoryInsights(
+      aiData.categoryInsights,
+    );
+    const mergedCategoryInsights = {
+      ...report.categoryInsights,
+      ...newCategoryInsights,
+    };
 
-    // Update AEO category insight
-    const categoryInsights = report.categoryInsights || {};
-    if (aiData.categoryInsights?.aeo) {
-      categoryInsights.aeo = aiData.categoryInsights.aeo;
-    }
+    const metrics = mergeMetricsArrays(report.metrics, aiData.metrics);
 
-    const scoring = {
+    const newScoring = {
       overall: normalizeScore(report.overallScore),
       positioning: normalizeScore(report.scoring?.positioning),
       clarity: normalizeScore(report.scoring?.clarity),
@@ -84,9 +85,9 @@ export async function POST(request: NextRequest) {
     await SIOReport.findByIdAndUpdate(reportId, {
       progress: "aeo_complete",
       issues: mergedIssues,
-      categoryInsights,
-      metrics: combinedMetrics,
-      scoring,
+      categoryInsights: mergedCategoryInsights,
+      metrics: metrics,
+      scoring: newScoring,
     });
 
     const savedReport = await SIOReport.findById(reportId).lean();

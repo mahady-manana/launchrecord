@@ -5,6 +5,7 @@ import {
   buildV2ApiData,
   getV2Band,
   mapStrengthsFromSummary,
+  mergeMetricsArrays,
   normalizeCategoryInsights,
   normalizeFirstImpressions,
   normalizeIssues,
@@ -64,7 +65,7 @@ export async function POST(request: NextRequest) {
     const issues = normalizeIssues(aiData.issues);
     const categoryInsights = normalizeCategoryInsights(aiData.categoryInsights);
     const strengths = mapStrengthsFromSummary(websiteSummary);
-    const metrics = aiData.metrics || {};
+    const metrics = mergeMetricsArrays(report.metrics, aiData.metrics);
     const scoring = {
       overall: aiData.scoring?.overall ?? 0,
       positioning: aiData.scoring?.positioning ?? 0,

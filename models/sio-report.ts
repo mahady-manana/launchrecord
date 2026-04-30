@@ -19,46 +19,9 @@ export type IssueCategory =
   | "first_impression"
   | "aeo";
 
-export type FirstImpressionMetric = "headline" | "subheadline" | "cta";
-
-export type PositioningMetric =
-  | "category_ownership"
-  | "unique_value_proposition"
-  | "competitive_differentiation"
-  | "target_audience"
-  | "problem_solution_fit"
-  | "messaging_consistency";
-
-export type ClarityMetric =
-  | "headline_clarity"
-  | "value_proposition"
-  | "feature_benefit_mapping"
-  | "visual_hierarchy"
-  | "cta_clarity"
-  | "proof_placement"
-  | "unclear_sentences";
-
-export type AEOMetric =
-  | "one_line_definition"
-  | "audience_specificity"
-  | "problem_solution_mapping"
-  | "outcome_translation"
-  | "use_case_intent"
-  | "category_anchoring"
-  | "intent_driven_qa"
-  | "terminology_consistency"
-  | "quantifiable_signals"
-  | "parsing_structure";
-
-export type IssueMetricKey =
-  | FirstImpressionMetric
-  | PositioningMetric
-  | ClarityMetric
-  | AEOMetric;
-
 export interface IIssue {
   category: IssueCategory;
-  metricKey?: IssueMetricKey;
+  metricKey?: string;
   severity: IssueSeverity;
   statement: string; // Combined diagnostic WHAT + causal WHY
   explanation?: string; // DEPRECATED: Combined into statement
@@ -146,13 +109,10 @@ export interface ISIOReport extends Document {
   };
 
   // Metrics
-  metrics?: Record<
-    string,
-    {
-      check: boolean;
-      statement: string;
-    }
-  >;
+  metrics?: Array<{
+    name: string;
+    check: boolean;
+  }>;
 
   // Category Insights
   categoryInsights: {
@@ -184,36 +144,6 @@ export interface ISIOReport extends Document {
   createdAt: Date;
   updatedAt: Date;
 }
-
-const issueMetricKeyEnum: IssueMetricKey[] = [
-  "headline",
-  "subheadline",
-  "cta",
-  "category_ownership",
-  "unique_value_proposition",
-  "competitive_differentiation",
-  "target_audience",
-  "problem_solution_fit",
-  "messaging_consistency",
-  "headline_clarity",
-  "value_proposition",
-  "feature_benefit_mapping",
-  "visual_hierarchy",
-  "cta_clarity",
-  "proof_placement",
-  "unclear_sentences",
-  "one_line_definition",
-  "audience_specificity",
-  "problem_solution_mapping",
-  "outcome_translation",
-  "use_case_intent",
-  "category_anchoring",
-  "intent_driven_qa",
-  "terminology_consistency",
-  "quantifiable_signals",
-  "parsing_structure",
-];
-
 /**
  * SIO-V5 Report Schema
  */
@@ -339,7 +269,6 @@ const SIOReportSchema = new Schema<ISIOReport>(
           },
           metricKey: {
             type: String,
-            enum: issueMetricKeyEnum,
             default: undefined,
           },
           severity: {
@@ -382,15 +311,13 @@ const SIOReportSchema = new Schema<ISIOReport>(
 
     // Metrics
     metrics: {
-      type: Map,
-      of: new Schema(
+      type: [
         {
+          name: { type: String, required: true },
           check: { type: Boolean, required: true },
-          statement: { type: String, required: true },
         },
-        { _id: false },
-      ),
-      default: {},
+      ],
+      default: [],
     },
 
     // Category Insights

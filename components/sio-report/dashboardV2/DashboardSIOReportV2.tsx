@@ -7,7 +7,6 @@ import { ArrowRight, FileText, Lightbulb, Lock } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 
-import { useSubscription } from "@/hooks/use-subscription";
 import { useProductStore } from "@/stores/product-store";
 import {
   CategoryInsightsSection,
@@ -114,14 +113,14 @@ export default function DashboardSIOReportV2({
 }: DashboardSIOReportV2Props) {
   const [view, setView] = useState<ReportView>("full");
   const [activeSection, setActiveSection] = useState("overview");
-  const { isFree, isPaid } = useSubscription();
-  // const isFree = false;
-  // const isPaid = true;
+  // const { isFree, isPaid } = useSubscription();
+  const isFree = false;
+  const isPaid = true;
   const isGuestFromStore = useUserStore((s: any) => s.isGuest);
   const selectedProduct = useProductStore((s) => s.selectedProduct);
   // Allow prop override or use store
-  const isGuest = propsIsGuest !== undefined ? propsIsGuest : isGuestFromStore;
-
+  // const isGuest = propsIsGuest !== undefined ? propsIsGuest : isGuestFromStore;
+  const isGuest = false;
   const reportUrl = report.url || "";
   const reportId = report.reportId || "unknown";
 
@@ -131,11 +130,11 @@ export default function DashboardSIOReportV2({
   const navigation = [
     { id: "overview", label: "Overview", icon: "📊" },
     { id: "website-summary", label: "Website Summary", icon: "🌐" },
-    { id: "metrics", label: "Audit Metrics", icon: "✅" },
     { id: "issues", label: "Issues & Recommendations", icon: "⚠️" },
-    { id: "scoring", label: "Scoring Breakdown", icon: "📈" },
-    { id: "strengths", label: "Strengths", icon: "💪" },
+    { id: "metrics", label: "Metrics & Impact", icon: "✅" },
     { id: "insights", label: "Category Insights", icon: "💡" },
+    { id: "strengths", label: "Strengths", icon: "💪" },
+    { id: "scoring", label: "Scoring Breakdown", icon: "📈" },
   ];
 
   const criticalIssuesCount =
@@ -319,8 +318,20 @@ export default function DashboardSIOReportV2({
       case "website-summary":
         return <WebsiteSummarySectionV2 summary={report.websiteSummary} />;
 
-      case "metrics":
-        return <MetricsSection metrics={report.metrics} />;
+      case "metrics": {
+        const metricsArray: Array<{
+          name: string;
+          check: boolean;
+          statement: string;
+        }> = Array.isArray(report.metrics)
+          ? (report.metrics as Array<{
+              name: string;
+              check: boolean;
+              statement: string;
+            }>)
+          : [];
+        return <MetricsSection metrics={metricsArray} />;
+      }
 
       case "scoring":
         return <ScoringOverview scoring={report.scoring} detailed />;
