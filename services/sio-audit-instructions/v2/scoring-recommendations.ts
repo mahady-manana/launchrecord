@@ -1,120 +1,117 @@
 export const scoringAndFixesInstruction = `
-## ⚙️ SIO-V5 — POSITIONING & MESSAGING (STEP 2)
+## ⚙️ SIO-V5 — SCORING & RECOMMENDATIONS
 
 Objective:
-Analyze positioning and messaging only.
-Use the previous step report as the base state.
-Do not change first impression findings except to preserve consistency.
-Check the positioning and clarity checklist one metric at a time.
-Do not force a universal SaaS template. Judge the page by how clearly its category, audience, and value are communicated in context, even if some of that is only implied.
+Analyze positioning and messaging using explicit metrics. 
+All scoring is semi-deterministic and mapped closely to actual issue severities and counts identified in the previous steps.
 
 ---
 
-## 📊 SCORING (MANDATORY)
+## 📊 SCORING (SEMI-DETERMINISTIC BANDS)
 
-1. Score only positioning and clarity here.
-2. Do not recalculate first impression score.
-3. Do not treat issue count or issue severity as a direct score formula.
-4. Two critical issues can still coexist with a reasonably strong layer score if the rest of the message is coherent.
-5. Use this calibration:
-- 85–100 when the product is clearly positioned, differentiated, and easy to understand
-- 70–84 when the message is clear but still has some generic or incomplete areas
-- 60–69 when the positioning is understandable but not yet sharp or distinctive
-- 45–59 when the core message is materially vague or muddled
-- Below 45 only when the layer is broadly broken
+Base your scores strictly on the organic quality of the website, penalized by the real issues you identify. Do not use rigid mathematical subtraction formulas—instead, evaluate holistically against these explicit bounds.
 
----
+**CRITICAL SCORE CEILING:**
+Maximum score is 89. *No website achieves a 90 or above.*
 
-## 🧩 ISSUE ENRICHMENT
+**Score Mapping Tiers:**
+- **80-89 (Exceptional):** Website has strong, precise, clear positioning and first impressions. Zero critical blockers. Only 2-4 minor refinement issues max.
+- **70-79 (Solid but Flawed):** Clear core messaging but exhibits 3-5 moderate issues (e.g., generic subheadline, minor positioning gaps).
+- **60-69 (Weak / Moderate Problems):** Real friction exists. Fails multiple clarity or positioning metrics. 5-8 significant issues.
+- **45-59 (Conversion Blocked):** Major foundational problems. Confusing messaging, missing audience, weak positioning. 8+ issues.
+- **Below 45 (Broken):** Does not pass basic understanding thresholds.
 
-1. Total Issues:
-- Generate 6–8 positioning and messaging issues
-- Remove duplicates, overlaps, and low-signal items
-- Keep the first impression issues from the previous step intact
-- If the layer is short, add distinct low-severity positioning/messaging issues to reach the minimum
-- Only use these metrics:
-  - category_ownership
-  - unique_value_proposition
-  - competitive_differentiation
-  - target_audience
-  - problem_solution_fit
-  - messaging_consistency
-  - headline_clarity
-  - value_proposition
-  - feature_benefit_mapping
-  - visual_hierarchy
-  - cta_clarity
-  - proof_placement
-  - unclear_sentences
-- Each issue must map to one metric key from this checklist
-- Review the metrics one by one and surface only the issues that actually exist
-- If a metric is clearly implied by the page, do not mark it broken just because it is not spelled out in a generic SaaS way
-
-2. Statement:
-- Keep diagnostic only (WHAT + WHY)
-- Keep it short, direct, and specific
-- Use short sentences instead of long explanations
-- No fixes, no suggestions
-
-3. Explanation:
-- Keep explanation to 1 short sentence
-- Stay factual and specific
-- Do not restate the statement
-- Do not expand into a paragraph
-4. Recommendations:
-- Strategic direction (what should change)
-- No vague advice
-
-5. Fixes:
-- Must be concrete and copy-paste ready
-- Specific to the context (no generic templates)
-- Prefer rewritten headlines, CTAs, or sentences when relevant
-
-6. Priority:
-- Positioning and messaging issues take precedence
-- Positioning metrics answer what it is, who it is for, why it matters, and why it wins
-- Clarity metrics answer how clearly the value is communicated and understood
-
-7. Low-severity:
-- Keep only if distinct and useful
-- Use them to reach the layer-specific issue count if needed
-- Low-severity issues are acceptable here only when they are concrete and distinct
+**Weighting Guidance (Approximate impact on overall score):**
+- Positioning: ~35%
+- Clarity: ~30%
+- First Impression: ~25%
+- AEO: ~10%
 
 ---
 
-## 🔗 CONSISTENCY
+## 🧩 ISSUE GENERATION
 
-- Scores must stay aligned with the step 1 report for first impression
-- Positioning and clarity scores belong to this step
-- impactScore must justify penalty applied
-- Score is a holistic judgment, not a simple sum of issue penalties
-- No contradiction between scoring and issues
-- Keep the score anchored to clarity and differentiation, not the raw number of findings
-- A few severe issues should not automatically collapse a mostly understandable product into the 40s
-- Strong product stories with some weaknesses should still land in the 60s or low 70s
+### Issue Count and Severity
+**Total Issue Quota:** Organic. Generate ONLY what is real.
+- If the score is 85, you should generate roughly 2-4 minor issues.
+- If the score is 60, you should generate roughly 5-8 moderate/high issues.
+- Do NOT pad the issues list to reach 12-15 if the blockers do not exist.
+
+### Issue Generation Process
+1. For EACH failed criteria evaluated, confirm it organically impacts conversion (per the Judgment Layer).
+2. For validated blockers, generate ONE issue object with all required fields.
+3. Provide concrete recommendations and execution-ready copy fixes.
+
+**Always:**
+- Map each issue to the specific metric broken.
+- Customize your fixes with actual website context.
+- Keep statements fully diagnostic (as directed in Base Instructions).
 
 ---
 
-## websiteSummary
+## 🎯 FINAL ALIGNMENT CHECK
 
-- Keep unchanged
-- Factual only (no diagnosis)
+Before returning the report, verify:
+- [ ] No category or overall score exceeds 89.
+- [ ] Scores above 80 are only given to websites with exceptional clarity and positioning.
+- [ ] Issue count directly aligns with the score band (e.g., high scores = very few issues).
+- [ ] All statements are strictly diagnostic (no "should/must/needs to").
 
 ---
 
-## ⚡ OUTPUT
+## ⚡ OUTPUT SCHEMA 
 
+You must process ALL of the following metrics and return their evaluation in the \`metrics\` object:
+- headline, subheadline, cta, category_ownership, unique_value_proposition, competitive_differentiation, target_audience, problem_solution_fit, messaging_consistency, headline_clarity, value_proposition, feature_benefit_mapping, visual_hierarchy, cta_clarity, proof_placement, unclear_sentences, one_line_definition, audience_specificity, problem_solution_mapping, outcome_translation, use_case_intent, category_anchoring, intent_driven_qa, terminology_consistency, quantifiable_signals, parsing_structure
+
+\`\`\`json
 {
-  "scoring": {
-    "positioning": 0,
-    "clarity": 0
+  "metrics": {
+    "headline": {
+      "check": false,
+      "statement": "Diagnostic statement here"
+    },
+    "subheadline": {
+      "check": true,
+      "statement": "Passes clarity test."
+    }
+    // ... Process ALL listed metrics without using an enum array (dynamic object keys)
   },
-  "issues": [...],
+  "overallScore": 0,
+  "statement": "",
+  "scoring": {
+    "overall": 0,
+    "positioning": 0,
+    "clarity": 0,
+    "first_impression": 0,
+    "aeo": 0
+  },
+  "issues": [
+    {
+      "id": "uuid-here",
+      "category": "positioning",
+      "metricKey": "unique_value_proposition",
+      "severity": "critical",
+      "statement": "No explicit differentiation from alternatives; relies on generic SaaS language.",
+      "explanation": null,
+      "current": "Tagline on page: 'The platform for modern teams'",
+      "recommendations": [
+        "State specific advantage that distinguishes from competitors."
+      ],
+      "fixes": [
+        "Instead of 'The platform for modern teams', use: 'Close deals 30% faster by eliminating manual data entry'"
+      ],
+      "impactScore": -40
+    }
+  ],
   "categoryInsights": {
-    "positioning": { "summary": "...", "statement": "..." },
-    "clarity": { "summary": "...", "statement": "..." }
+    "first_impression": { "statement": "...", "summary": "..." },
+    "positioning": { "statement": "...", "summary": "..." },
+    "clarity": { "statement": "...", "summary": "..." },
+    "aeo": { "statement": "...", "summary": "..." }
   }
 }
+\`\`\`
 
-RETURN ONLY JSON
+RETURN ONLY JSON.
 `;

@@ -5,7 +5,9 @@
  * Change models here to update across all steps.
  */
 
-export const AI_PROVIDER: "openrouter" | "openai" = "openai"; // Switch here
+import { Effort } from "@openrouter/sdk/models";
+
+export const AI_PROVIDER: "openrouter" | "openai" = "openrouter"; // Switch here
 
 /**
  * OpenAI Model Definitions
@@ -22,11 +24,11 @@ export const openAIModels = {
  */
 export const summaryModels = {
   models: [
+    "x-ai/grok-4.1-fast",
     "tencent/hy3-preview:free",
-    // "x-ai/grok-4.1-fast",
     "openai/gpt-oss-120b:free",
   ],
-  // reasoning: "medium" as Effort,
+  reasoning: "high" as Effort,
   provider: {
     requireParameters: true,
     // preferredMinThroughput: 35,
@@ -39,14 +41,14 @@ export const summaryModels = {
  */
 export const positioningClarityModels = {
   models: [
+    "x-ai/grok-4.1-fast",
     "tencent/hy3-preview:free",
-    // "x-ai/grok-4.1-fast",
     "openai/gpt-oss-120b:free",
   ],
-  // reasoning: "high" as Effort,
+  reasoning: "high" as Effort,
   provider: {
     requireParameters: true,
-    // preferredMinThroughput: 38,
+    preferredMinThroughput: 38,
   },
 };
 
@@ -56,14 +58,13 @@ export const positioningClarityModels = {
  */
 export const aeoModels = {
   models: [
-    // "x-ai/grok-4.1-fast",
+    "x-ai/grok-4.1-fast",
     "tencent/hy3-preview:free",
     "openai/gpt-oss-120b:free",
   ],
-  // reasoning: "medium" as Effort,
   provider: {
     requireParameters: true,
-    // preferredMinThroughput: 38,
+    preferredMinThroughput: 38,
   },
 };
 
@@ -73,11 +74,11 @@ export const aeoModels = {
  */
 export const refinementModels = {
   models: [
+    "x-ai/grok-4.1-fast",
     "tencent/hy3-preview:free",
     "openai/gpt-oss-120b:free",
-    // "x-ai/grok-4.1-fast",
   ],
-  // reasoning: "medium" as Effort,
+  reasoning: "high" as Effort,
   provider: {
     requireParameters: true,
   },

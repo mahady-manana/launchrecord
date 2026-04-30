@@ -1,0 +1,58 @@
+{
+  "overallScore": 0,
+  "statement": "",
+  "websiteSummary": {
+    "overview": "",
+    "problems": [],
+    "outcomes": [],
+    "solutions": [],
+    "icp": []
+  },
+  "firstImpressions": {
+    "isPositioningClear": false,
+    "isMessagingClear": true,
+    "isUserLeftGuessing": true,
+    "ten_second_test": true,
+    "statement": ""
+  },
+
+  "issues": [
+    {
+      "id": "",
+      "category": "",
+      "metricKey": "",
+      "severity": "",
+      "statement": "",
+      "explanation": null,
+      "current": "",
+      "recommendations": [],
+      "fixes": [],
+      "impactScore": -0
+    }
+  ],
+  "scoring": {
+    "overall": 0,
+    "positioning": 0,
+    "clarity": 0,
+    "first_impression": 0,
+    "aeo": 0
+  },
+  "categoryInsights": {
+    "positioning": {
+      "statement": "",
+      "summary": ""
+    },
+    "clarity": {
+      "statement": "",
+      "summary": ""
+    },
+    "first_impression": {
+      "statement": "",
+      "summary": ""
+    },
+    "aeo": {
+      "statement": "",
+      "summary": ""
+    }
+  }
+}

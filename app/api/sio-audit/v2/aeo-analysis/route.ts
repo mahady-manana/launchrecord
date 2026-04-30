@@ -1,9 +1,9 @@
 import { connectToDatabase } from "@/lib/db";
 import SIOReport from "@/models/sio-report";
 import {
-    buildCleanContent,
-    buildV2ApiData,
-    normalizeIssues,
+  buildCleanContent,
+  buildV2ApiData,
+  normalizeIssues,
 } from "@/services/sio-audit-v2";
 import { runAeoAnalysis } from "@/services/sio-audit-v2-ai";
 import { NextRequest, NextResponse } from "next/server";
@@ -62,6 +62,11 @@ export async function POST(request: NextRequest) {
     const existingIssues = report.issues || [];
     const mergedIssues = [...existingIssues, ...newAeoIssues];
 
+    // Merge metrics
+    const existingMetrics = report.metrics || {};
+    const newMetrics = aiData.metrics || {};
+    const combinedMetrics = { ...existingMetrics, ...newMetrics };
+
     // Update AEO category insight
     const categoryInsights = report.categoryInsights || {};
     if (aiData.categoryInsights?.aeo) {
@@ -80,6 +85,7 @@ export async function POST(request: NextRequest) {
       progress: "aeo_complete",
       issues: mergedIssues,
       categoryInsights,
+      metrics: combinedMetrics,
       scoring,
     });
 
@@ -93,7 +99,7 @@ export async function POST(request: NextRequest) {
       reportId,
       progress: savedReport.progress,
       data: buildV2ApiData(savedReport),
-      nextStep: "/api/sio-audit/v2/validation-improvement",
+      nextStep: "/api/sio-audit/v2/validation",
     });
   } catch (error: any) {
     console.error("SIO Audit V2 AEO Analysis Error:", error);

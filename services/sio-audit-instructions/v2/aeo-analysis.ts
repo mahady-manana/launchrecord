@@ -26,44 +26,14 @@ Check the AEO checklist one metric at a time.
    - **explanation**: One short sentence. Keep it factual and tighter than the statement.
    - **recommendations**: Strategic advisory.
    - **fixes**: Copy-paste ready implementation content (H2, H3, FAQ content).
-5. **Scoring**: Only score the AEO layer here.
-6. **Insight**: Provide a critical diagnostic analysis in categoryInsights.aeo.
+5. **Scoring**: Follow the global Semi-Deterministic Score Mapping Tiers found in Scoring & Recommendations. Scale 0-89. Max output organic issues only.
+6. **Insight**: Provide a critical diagnostic analysis in \`categoryInsights.aeo\`.
 7. **No filler**: Do not add generic AI SEO advice or micro-optimizations that do not change discoverability.
-8. **Calibration**:
-   - 85–100 when the page is structurally understandable to machines and uses clear, consistent terminology
-   - 70–84 when the page is reasonably parseable but still missing some structured cues
-   - 60–69 when AEO is partially present but inconsistent or incomplete
-   - 45–59 when machine understanding is materially hindered
-   - Below 45 only when the page is broadly opaque to parsers and answer engines
-9. **Distinctness**:
-   - Each issue must target a different AEO root cause
-   - If the page only shows a few AEO gaps, do not duplicate or pad
-10. **Metric discipline**:
-   - Each issue must map to one metric from the checklist above
-   - Do not use metrics outside the checklist
+8. **Calibration**: Use the central Scoring & Recommendations tiers (80-89 Exceptional, 70-79 Solid, 60-69 Weak, 45-59 Blocked, Below 45 Broken).
 
----
+## 🔗 CENTRALIZED RULES
 
-## ⚡ OUTPUT STRUCTURE
-{
-  "issues": [
-    {
-      "category": "aeo",
-      "metricKey": "...",
-      "severity": "...",
-      "statement": "...",
-      "current": "...",
-      "recommendations": ["..."],
-      "fixes": ["..."]
-    }
-  ],
-  "scoring": {
-    "aeo": 0
-  },
-  "categoryInsights": {
-    "aeo": { "summary": "Current state", "statement": "Diagnostic" }
-  }
-}
+Refer strictly to the Base Instructions for Statement formatting constraints (must be purely diagnostic) and to the Scoring & Recommendations prompt for final score bounds, severities, and the JSON Output Schema.
 
-RETURN ONLY JSON.
+Return ONLY the JSON.
 `;

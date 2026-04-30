@@ -66,8 +66,7 @@ const firstImpressionsSchema = {
     },
     statement: {
       type: "string",
-      description:
-        "Diagnostic summary of the first impression only. No fixes.",
+      description: "Diagnostic summary of the first impression only. No fixes.",
     },
   },
   required: [
@@ -158,7 +157,10 @@ const enrichedIssueSchema = {
   required: ["id", ...issueGenerationIssueSchema.required],
 };
 
-function buildScopedIssueSchema(categoryEnum: string[], metricKeyEnum: string[]) {
+function buildScopedIssueSchema(
+  categoryEnum: string[],
+  metricKeyEnum: string[],
+) {
   return {
     type: "object",
     additionalProperties: false,
@@ -263,6 +265,21 @@ const firstImpressionScoringSchema = {
   required: ["first_impression"],
 };
 
+const metricsSchema = {
+  type: "object",
+  description:
+    "A dictionary where the key is the metric name and value is the check result.",
+  additionalProperties: {
+    type: "object",
+    additionalProperties: false,
+    properties: {
+      check: { type: "boolean" },
+      statement: { type: "string" },
+    },
+    required: ["check", "statement"],
+  },
+};
+
 const positioningMessagingScoringSchema = {
   type: "object",
   additionalProperties: false,
@@ -335,6 +352,7 @@ export const aeoAnalysisJsonSchema = {
   type: "object",
   additionalProperties: false,
   properties: {
+    metrics: metricsSchema,
     issues: {
       type: "array",
       items: aeoIssueSchema,
@@ -347,7 +365,7 @@ export const aeoAnalysisJsonSchema = {
       required: aeoCategoryInsightsSchema.required,
     },
   },
-  required: ["issues", "scoring", "categoryInsights"],
+  required: ["metrics", "issues", "scoring", "categoryInsights"],
 };
 
 export const summaryAndIssuesJsonSchema = {
@@ -359,6 +377,7 @@ export const summaryAndIssuesJsonSchema = {
       description:
         "A 2-3 sentence summary of the website's message and first impression performance. This is diagnostic only and must not include fixes.",
     },
+    metrics: metricsSchema,
     issues: {
       type: "array",
       items: firstImpressionIssueSchema,
@@ -375,6 +394,7 @@ export const summaryAndIssuesJsonSchema = {
   },
   required: [
     "statement",
+    "metrics",
     "issues",
     "scoring",
     "firstImpressions",
@@ -387,6 +407,7 @@ export const scoringFixesJsonSchema = {
   type: "object",
   additionalProperties: false,
   properties: {
+    metrics: metricsSchema,
     scoring: positioningMessagingScoringSchema,
     issues: {
       type: "array",
@@ -394,7 +415,7 @@ export const scoringFixesJsonSchema = {
     },
     categoryInsights: positioningMessagingCategoryInsightsSchema,
   },
-  required: ["scoring", "issues", "categoryInsights"],
+  required: ["metrics", "scoring", "issues", "categoryInsights"],
 };
 
 export const validationImprovementJsonSchema = {
@@ -406,6 +427,7 @@ export const validationImprovementJsonSchema = {
       description:
         "A 2-3 sentence overall audit verdict about the full report. This is diagnostic only and should reconcile the step outputs without introducing new direction.",
     },
+    metrics: metricsSchema,
     issues: {
       type: "array",
       items: enrichedIssueSchema,
@@ -417,6 +439,7 @@ export const validationImprovementJsonSchema = {
   },
   required: [
     "statement",
+    "metrics",
     "issues",
     "scoring",
     "firstImpressions",
@@ -552,6 +575,7 @@ export function buildV2ApiData(report: any) {
       first_impression: normalizeScore(report?.scoring?.first_impression),
       aeo: normalizeScore(report?.scoring?.aeo),
     },
+    metrics: report?.metrics || {},
     categoryInsights: serializeCategoryInsightsForPrompt(
       report?.categoryInsights,
     ),
@@ -577,7 +601,8 @@ export function mapStrengthsFromSummary(websiteSummary: V2WebsiteSummary) {
 
   return uniqueStrengths.map((statement) => ({
     statement,
-    impact: "Promised outcome or solution direction derived from the summary layer.",
+    impact:
+      "Promised outcome or solution direction derived from the summary layer.",
   }));
 }
 

@@ -4,8 +4,8 @@ export { IssueCard } from "./IssueCard";
 export { IssuesPreview } from "./IssuesPreview";
 export { IssuesSection } from "./IssuesSection";
 export { IssuesStatusSummary } from "./IssuesStatusSummary";
+export * from "./MetricsSection";
 export { OverallScoreCardV2 } from "./OverallScoreCardV2";
 export { ScoringOverview } from "./ScoringOverview";
 export { StrengthsSection } from "./StrengthsSection";
 export { WebsiteSummarySectionV2 } from "./WebsiteSummarySectionV2";
-

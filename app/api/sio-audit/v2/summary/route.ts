@@ -1,5 +1,4 @@
 import { connectToDatabase } from "@/lib/db";
-import ApiError from "@/models/api-error";
 import SIOReport from "@/models/sio-report";
 import {
   buildCleanContent,
@@ -11,11 +10,11 @@ import {
   normalizeIssues,
   normalizeWebsiteSummary,
 } from "@/services/sio-audit-v2";
-import { runSummaryAndIssues } from "@/services/sio-audit-v2-ai";
+import { runSummaryFirstImpressions } from "@/services/sio-audit-v2-ai";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
-const summaryAndIssuesSchema = z.object({
+const summarySchema = z.object({
   reportId: z.string(),
 });
 
@@ -24,7 +23,7 @@ export async function POST(request: NextRequest) {
     await connectToDatabase();
 
     const body = await request.json();
-    const validation = summaryAndIssuesSchema.safeParse(body);
+    const validation = summarySchema.safeParse(body);
 
     if (!validation.success) {
       return NextResponse.json(
@@ -58,21 +57,22 @@ export async function POST(request: NextRequest) {
     }
 
     const cleanContent = buildCleanContent(report);
-    const aiData = await runSummaryAndIssues(cleanContent);
+    const aiData = await runSummaryFirstImpressions(cleanContent);
 
     const websiteSummary = normalizeWebsiteSummary(aiData.websiteSummary);
     const firstImpressions = normalizeFirstImpressions(aiData.firstImpressions);
     const issues = normalizeIssues(aiData.issues);
     const categoryInsights = normalizeCategoryInsights(aiData.categoryInsights);
     const strengths = mapStrengthsFromSummary(websiteSummary);
+    const metrics = aiData.metrics || {};
     const scoring = {
-      overall: normalizeScore(report.overallScore),
-      positioning: normalizeScore(report.scoring?.positioning),
-      clarity: normalizeScore(report.scoring?.clarity),
-      first_impression: normalizeScore(aiData.scoring?.first_impression),
-      aeo: normalizeScore(report.scoring?.aeo),
+      overall: aiData.scoring?.overall ?? 0,
+      positioning: aiData.scoring?.positioning ?? 0,
+      clarity: aiData.scoring?.clarity ?? 0,
+      first_impression: aiData.scoring?.first_impression ?? 0,
+      aeo: 0,
     };
-    const overallScore = scoring.overall;
+    const overallScore = aiData.overallScore ?? scoring.overall;
 
     await SIOReport.findByIdAndUpdate(reportId, {
       progress: "summary_complete",
@@ -83,6 +83,7 @@ export async function POST(request: NextRequest) {
       overallScore,
       reportBand: getV2Band(overallScore),
       scoring,
+      metrics,
       categoryInsights,
       strengths,
     });
@@ -97,41 +98,13 @@ export async function POST(request: NextRequest) {
       reportId,
       progress: savedReport.progress,
       data: buildV2ApiData(savedReport),
-      nextStep: "/api/sio-audit/v2/scoring-fixes",
+      nextStep: "/api/sio-audit/v2/positioning-clarity",
     });
-  } catch (error: any) {
-    console.error("SIO Audit V2 Summary & Issues Error:", error);
-
-    try {
-      const body = await request.json().catch(() => null);
-      if (body?.reportId) {
-        await SIOReport.findByIdAndUpdate(body.reportId, {
-          progress: "failed",
-          failedAt: "v2_summary_and_issues",
-          errorMessage:
-            error.message ||
-            "Unknown error during summary and issue generation",
-        });
-      }
-    } catch {}
-
-    const errordb = new ApiError({
-      path: "/api/sio-audit/v2/summary-and-issues",
-      content: JSON.stringify(error),
-      metadata: {
-        body: JSON.stringify(await request.json().catch(() => null)),
-      },
-    });
-    await errordb.save();
-
+  } catch (error) {
+    console.error("Summary API error:", error);
     return NextResponse.json(
-      { error: "Failed to generate summary and issues" },
+      { error: "Internal server error" },
       { status: 500 },
     );
   }
-}
-
-function normalizeScore(value: unknown): number {
-  if (typeof value !== "number" || Number.isNaN(value)) return 0;
-  return Math.max(0, Math.min(100, value));
 }

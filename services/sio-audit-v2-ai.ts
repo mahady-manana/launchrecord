@@ -3,9 +3,10 @@ import { getOpenRouterClient } from "@/lib/openrouter";
 import {
   aeoAnalysisInstruction,
   generalInstructions,
+  positioningClarityInstruction,
   scoringAndFixesInstruction,
-  summaryAndIssuesInstruction,
-  validationAndImprovementInstruction,
+  summaryFirstImpressionsInstruction,
+  validationInstruction,
 } from "@/services/sio-audit-instructions/v2";
 import {
   aeoAnalysisJsonSchema,
@@ -13,6 +14,7 @@ import {
   summaryAndIssuesJsonSchema,
   validationImprovementJsonSchema,
 } from "@/services/sio-audit-v2";
+import { rulesSystemPrompt } from "./sio-audit-instructions/v2/rules-system-prompt";
 import {
   AI_PROVIDER,
   aeoModels,
@@ -53,6 +55,10 @@ function buildSystemMessages(
   }
 
   messages.push({ role: "system", content: stepInstruction });
+
+  // ADD RULES ENFORCEMENT AS 3RD SYSTEM MESSAGE
+  messages.push({ role: "system", content: rulesSystemPrompt });
+
   return messages;
 }
 
@@ -269,7 +275,7 @@ export async function runSummaryAndIssues(cleanContent: any) {
     const response = await client.chat.completions.create({
       model: openAIModels.summary,
       messages: [
-        ...buildSystemMessages(summaryAndIssuesInstruction),
+        ...buildSystemMessages(summaryFirstImpressionsInstruction),
         {
           role: "user",
           content: `Website content to analyze:\n\n${JSON.stringify(cleanContent, null, 2)}`,
@@ -297,7 +303,7 @@ export async function runSummaryAndIssues(cleanContent: any) {
       chatGenerationParams: {
         models: summaryModels.models,
         messages: [
-          ...buildSystemMessages(summaryAndIssuesInstruction),
+          ...buildSystemMessages(summaryFirstImpressionsInstruction),
           {
             role: "user",
             content: `Website content to analyze:\n\n${JSON.stringify(cleanContent, null, 2)}`,
@@ -312,6 +318,71 @@ export async function runSummaryAndIssues(cleanContent: any) {
           type: "json_schema",
           jsonSchema: {
             name: "sio_v2_summary_and_issues",
+            strict: true,
+            schema: summaryAndIssuesJsonSchema,
+          },
+        },
+        provider: summaryModels.provider,
+        stream: false,
+      },
+    });
+    return parseAiJson(response.choices[0]?.message?.content);
+  }
+}
+
+/**
+ * STEP 1 (New): Summary & First Impressions
+ */
+export async function runSummaryFirstImpressions(cleanContent: any) {
+  if (AI_PROVIDER === "openai") {
+    const client = getOpenAIClient();
+    const response = await client.chat.completions.create({
+      model: openAIModels.summary,
+      messages: [
+        ...buildSystemMessages(summaryFirstImpressionsInstruction),
+        {
+          role: "user",
+          content: `Website content to analyze:\n\n${JSON.stringify(cleanContent, null, 2)}`,
+        },
+        {
+          role: "user",
+          content:
+            "Generate the step 1 summary-and-first-impressions payload only. Focus on website summary and first impression analysis.",
+        },
+      ],
+      response_format: {
+        type: "json_schema",
+        json_schema: {
+          name: "sio_v2_summary_first_impressions",
+          strict: true,
+          schema: summaryAndIssuesJsonSchema as any, // Reuse existing schema for now
+        },
+      },
+      reasoning_effort: "high",
+    });
+    return parseAiJson(response.choices[0]?.message?.content);
+  } else {
+    const client = getOpenRouterClient();
+    const response = await client.chat.send({
+      chatGenerationParams: {
+        // models: summaryModels.models,
+        models: ["deepseek/deepseek-v3.2"],
+        messages: [
+          ...buildSystemMessages(summaryFirstImpressionsInstruction),
+          {
+            role: "user",
+            content: `Website content to analyze:\n\n${JSON.stringify(cleanContent, null, 2)}`,
+          },
+          {
+            role: "user",
+            content:
+              "Generate the step 1 summary-and-first-impressions payload only. Focus on website summary and first impression analysis.",
+          },
+        ],
+        responseFormat: {
+          type: "json_schema",
+          jsonSchema: {
+            name: "sio_v2_summary_first_impressions",
             strict: true,
             schema: summaryAndIssuesJsonSchema,
           },
@@ -391,6 +462,86 @@ export async function runScoringAndFixes(
           type: "json_schema",
           jsonSchema: {
             name: "sio_v2_scoring_and_fixes",
+            strict: true,
+            schema: scoringFixesJsonSchema,
+          },
+        },
+        provider: positioningClarityModels.provider,
+        stream: false,
+      },
+    });
+    return parseAiJson(response.choices[0]?.message?.content);
+  }
+}
+
+/**
+ * STEP 2 (New): Positioning & Clarity
+ */
+export async function runPositioningClarity(
+  cleanContent: any,
+  previousReport?: any,
+) {
+  const filteredPreviousContext = buildFilteredPreviousContext(
+    "positioning",
+    previousReport,
+  );
+
+  if (AI_PROVIDER === "openai") {
+    const client = getOpenAIClient();
+    const response = await client.chat.completions.create({
+      model: openAIModels.analysis,
+
+      messages: [
+        ...buildSystemMessages(
+          positioningClarityInstruction,
+          filteredPreviousContext,
+        ),
+        {
+          role: "user",
+          content: `Website content to analyze:\n\n${JSON.stringify(cleanContent, null, 2)}`,
+        },
+        {
+          role: "user",
+          content:
+            "Generate the step 2 positioning-and-clarity payload only. Focus on positioning and clarity issues, and preserve the earlier first-impression findings.",
+        },
+      ],
+      response_format: {
+        type: "json_schema",
+        json_schema: {
+          name: "sio_v2_positioning_clarity",
+          strict: true,
+          schema: scoringFixesJsonSchema as any, // Reuse existing schema for now
+        },
+      },
+      reasoning_effort: "high",
+    });
+    return parseAiJson(response.choices[0]?.message?.content);
+  } else {
+    const client = getOpenRouterClient();
+    const response = await client.chat.send({
+      chatGenerationParams: {
+        // models: positioningClarityModels.models,
+        models: ["deepseek/deepseek-v3.2"],
+        messages: [
+          ...buildSystemMessages(
+            positioningClarityInstruction,
+            filteredPreviousContext,
+          ),
+          {
+            role: "user",
+            content: `Website content to analyze:\n\n${JSON.stringify(cleanContent, null, 2)}`,
+          },
+          {
+            role: "user",
+            content:
+              "Generate the step 2 positioning-and-clarity payload only. Focus on positioning and clarity issues, and preserve the earlier first-impression findings.",
+          },
+        ],
+        responseFormat: {
+          type: "json_schema",
+          jsonSchema: {
+            name: "sio_v2_positioning_clarity",
             strict: true,
             schema: scoringFixesJsonSchema,
           },
@@ -493,10 +644,7 @@ export async function runValidationImprovement(
     const response = await client.chat.completions.create({
       model: openAIModels.refinement,
       messages: [
-        ...buildSystemMessages(
-          validationAndImprovementInstruction,
-          filteredPreviousContext,
-        ),
+        ...buildSystemMessages(validationInstruction, filteredPreviousContext),
         {
           role: "user",
           content: `Persisted report state from DB:\n\n${JSON.stringify(slimPromptInput, null, 2)}`,
@@ -526,7 +674,7 @@ export async function runValidationImprovement(
         models: refinementModels.models,
         messages: [
           ...buildSystemMessages(
-            validationAndImprovementInstruction,
+            validationInstruction,
             filteredPreviousContext,
           ),
           {
@@ -543,6 +691,83 @@ export async function runValidationImprovement(
           type: "json_schema",
           jsonSchema: {
             name: "sio_v2_validation_improvement",
+            strict: true,
+            schema: validationImprovementJsonSchema,
+          },
+        },
+        provider: refinementModels.provider,
+        stream: false,
+      },
+    });
+    return parseAiJson(response.choices[0]?.message?.content);
+  }
+}
+
+/**
+ * STEP 4 (New): Final Validation
+ */
+export async function runValidation(cleanContent: any, previousReport?: any) {
+  const filteredPreviousContext = buildFilteredPreviousContext(
+    "validation",
+    previousReport,
+  );
+  const slimPromptInput = buildLayerPromptInput("validation", {
+    ...cleanContent,
+    ...previousReport,
+  });
+
+  if (AI_PROVIDER === "openai") {
+    const client = getOpenAIClient();
+    const response = await client.chat.completions.create({
+      model: openAIModels.refinement,
+      messages: [
+        ...buildSystemMessages(validationInstruction, filteredPreviousContext),
+        {
+          role: "user",
+          content: `Persisted report state from DB:\n\n${JSON.stringify(slimPromptInput, null, 2)}`,
+        },
+        {
+          role: "user",
+          content:
+            "Perform final validation and refinement. Ensure 12-15 total issues, diagnostic-only statements, and content grounding. Return the final validated payload.",
+        },
+      ],
+      response_format: {
+        type: "json_schema",
+        json_schema: {
+          name: "sio_v2_final_validation",
+          strict: true,
+          schema: validationImprovementJsonSchema as any, // Reuse existing schema for now
+        },
+      },
+      reasoning_effort: "high",
+    });
+
+    return parseAiJson(response.choices[0]?.message?.content);
+  } else {
+    const client = getOpenRouterClient();
+    const response = await client.chat.send({
+      chatGenerationParams: {
+        models: refinementModels.models,
+        messages: [
+          ...buildSystemMessages(
+            validationInstruction,
+            filteredPreviousContext,
+          ),
+          {
+            role: "user",
+            content: `Persisted report state from DB:\n\n${JSON.stringify(slimPromptInput, null, 2)}`,
+          },
+          {
+            role: "user",
+            content:
+              "Perform final validation and refinement. Ensure 12-15 total issues, diagnostic-only statements, and content grounding. Return the final validated payload.",
+          },
+        ],
+        responseFormat: {
+          type: "json_schema",
+          jsonSchema: {
+            name: "sio_v2_final_validation",
             strict: true,
             schema: validationImprovementJsonSchema,
           },

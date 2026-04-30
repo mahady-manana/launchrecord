@@ -308,10 +308,10 @@ export function useAudit2(options: UseAudit2Options = {}) {
         clearPolling();
         const errorMessage = error.message || "Audit failed";
         const failedAtMap: Record<string, string> = {
-          "summary-and-issues": "v2_summary_and_issues",
+          summary: "v2_summary",
+          "positioning-clarity": "v2_positioning_clarity",
           "aeo-analysis": "v2_aeo_analysis",
-          "scoring-fixes": "v2_scoring_and_fixes",
-          "validation-improvement": "v2_validation_improvement",
+          validation: "v2_validation",
         };
         setStatus((prev) => ({
           ...prev,
@@ -417,7 +417,7 @@ export function useAudit2(options: UseAudit2Options = {}) {
           contentSummary: initData.contentSummary,
         }));
 
-        await runStep("summary-and-issues", reportId, effectiveIsGuest);
+        await runStep("summary", reportId, effectiveIsGuest);
       } catch (error: any) {
         isRunningRef.current = false;
         const errorMessage = error.message || "Failed to start audit";

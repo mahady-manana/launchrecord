@@ -14,6 +14,7 @@ import {
   FirstImpressionTeaser,
   IssuesPreview,
   IssuesSection,
+  MetricsSection,
   OverallScoreCardV2,
   ScoringOverview,
   StrengthsSection,
@@ -79,6 +80,13 @@ export interface SIOV2ReportData {
     first_impression: { statement: string; summary: string };
     aeo: { statement: string; summary: string };
   };
+  metrics?: Record<
+    string,
+    {
+      check: boolean;
+      statement: string;
+    }
+  >;
   progress:
     | "idle"
     | "content_fetched"
@@ -123,6 +131,7 @@ export default function DashboardSIOReportV2({
   const navigation = [
     { id: "overview", label: "Overview", icon: "📊" },
     { id: "website-summary", label: "Website Summary", icon: "🌐" },
+    { id: "metrics", label: "Audit Metrics", icon: "✅" },
     { id: "issues", label: "Issues & Recommendations", icon: "⚠️" },
     { id: "scoring", label: "Scoring Breakdown", icon: "📈" },
     { id: "strengths", label: "Strengths", icon: "💪" },
@@ -261,6 +270,7 @@ export default function DashboardSIOReportV2({
     if (isLocked) {
       const sectionLabels: Record<string, string> = {
         "website-summary": "Website Summary",
+        metrics: "Audit Metrics",
         scoring: "Scoring Breakdown",
         issues: "Issues & Recommendations",
         strengths: "Strengths to keep",
@@ -269,6 +279,7 @@ export default function DashboardSIOReportV2({
 
       const sectionContext: Record<string, string> = {
         "website-summary": "Structure",
+        metrics: "Checklist",
         scoring: "Scores",
         issues: "Strategy",
         strengths: "Defensibility",
@@ -307,6 +318,9 @@ export default function DashboardSIOReportV2({
 
       case "website-summary":
         return <WebsiteSummarySectionV2 summary={report.websiteSummary} />;
+
+      case "metrics":
+        return <MetricsSection metrics={report.metrics} />;
 
       case "scoring":
         return <ScoringOverview scoring={report.scoring} detailed />;

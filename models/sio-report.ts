@@ -145,6 +145,15 @@ export interface ISIOReport extends Document {
     aeo: number;
   };
 
+  // Metrics
+  metrics?: Record<
+    string,
+    {
+      check: boolean;
+      statement: string;
+    }
+  >;
+
   // Category Insights
   categoryInsights: {
     positioning: CategoryInsight;
@@ -369,6 +378,19 @@ const SIOReportSchema = new Schema<ISIOReport>(
       clarity: { type: Number, default: 0, min: 0, max: 100 },
       first_impression: { type: Number, default: 0, min: 0, max: 100 },
       aeo: { type: Number, default: 0, min: 0, max: 100 },
+    },
+
+    // Metrics
+    metrics: {
+      type: Map,
+      of: new Schema(
+        {
+          check: { type: Boolean, required: true },
+          statement: { type: String, required: true },
+        },
+        { _id: false },
+      ),
+      default: {},
     },
 
     // Category Insights
