@@ -7,7 +7,9 @@ import { ArrowRight, FileText, Lightbulb, Lock } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 
+import { useSubscription } from "@/hooks/use-subscription";
 import { useProductStore } from "@/stores/product-store";
+import clsx from "clsx";
 import {
   CategoryInsightsSection,
   FirstImpressionTeaser,
@@ -113,14 +115,14 @@ export default function DashboardSIOReportV2({
 }: DashboardSIOReportV2Props) {
   const [view, setView] = useState<ReportView>("full");
   const [activeSection, setActiveSection] = useState("overview");
-  // const { isFree, isPaid } = useSubscription();
-  const isFree = false;
-  const isPaid = true;
+  const { isFree, isPaid } = useSubscription();
+  // const isFree = false;
+  // const isPaid = true;
   const isGuestFromStore = useUserStore((s: any) => s.isGuest);
   const selectedProduct = useProductStore((s) => s.selectedProduct);
   // Allow prop override or use store
-  // const isGuest = propsIsGuest !== undefined ? propsIsGuest : isGuestFromStore;
-  const isGuest = false;
+  const isGuest = propsIsGuest !== undefined ? propsIsGuest : isGuestFromStore;
+  // const isGuest = false;
   const reportUrl = report.url || "";
   const reportId = report.reportId || "unknown";
 
@@ -131,7 +133,7 @@ export default function DashboardSIOReportV2({
     { id: "overview", label: "Overview", icon: "📊" },
     { id: "website-summary", label: "Website Summary", icon: "🌐" },
     { id: "issues", label: "Issues & Recommendations", icon: "⚠️" },
-    { id: "metrics", label: "Metrics & Impact", icon: "✅" },
+    { id: "metrics", label: "Metrics & Impact (soon)", icon: "✅" },
     { id: "insights", label: "Category Insights", icon: "💡" },
     { id: "strengths", label: "Strengths", icon: "💪" },
     { id: "scoring", label: "Scoring Breakdown", icon: "📈" },
@@ -435,12 +437,22 @@ export default function DashboardSIOReportV2({
               {navigation.map((section) => (
                 <button
                   key={section.id}
-                  onClick={() => setActiveSection(section.id)}
-                  className={`w-full text-left px-3 py-2 rounded-md text-sm transition-colors ${
-                    activeSection === section.id
-                      ? "bg-blue-50 text-blue-700 border border-blue-200"
-                      : "hover:bg-gray-50 text-gray-700"
-                  }`}
+                  onClick={() => {
+                    if (section.id === "metrics") {
+                      return null;
+                    }
+                    setActiveSection(section.id);
+                  }}
+                  className={clsx(
+                    `w-full text-left px-3 py-2 rounded-md text-sm transition-colors ${
+                      activeSection === section.id
+                        ? "bg-blue-50 text-blue-700 border border-blue-200"
+                        : "hover:bg-gray-50 text-gray-700"
+                    }`,
+                    section.id === "metrics"
+                      ? "opacity-50 cursor-not-allowed"
+                      : "",
+                  )}
                 >
                   <span className="mr-2">{section.icon}</span>
                   {section.label}

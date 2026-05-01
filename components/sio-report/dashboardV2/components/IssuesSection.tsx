@@ -1,26 +1,37 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import {
-    Collapsible,
-    CollapsibleContent,
-    CollapsibleTrigger,
-} from "@/components/ui/collapsible";
-import {
-    ChevronDown,
-    ChevronRight,
-} from "lucide-react";
 import { useState } from "react";
 import { Issue, IssueCard } from "./IssueCard";
 import { IssuesStatusSummary } from "./IssuesStatusSummary";
+
+type IssueCategory = "positioning" | "clarity" | "first_impression" | "aeo";
 
 interface IssuesSectionProps {
   issues: Issue[];
   isFree?: boolean;
 }
 
+const CATEGORY_LABELS: Record<IssueCategory, string> = {
+  positioning: "Positioning",
+  clarity: "Clarity",
+  first_impression: "First Impression",
+  aeo: "AEO",
+};
+
+const CATEGORY_COLORS: Record<IssueCategory, string> = {
+  positioning: "bg-blue-100 text-blue-800 border-blue-200 hover:bg-blue-200",
+  clarity:
+    "bg-purple-100 text-purple-800 border-purple-200 hover:bg-purple-200",
+  first_impression:
+    "bg-amber-100 text-amber-800 border-amber-200 hover:bg-amber-200",
+  aeo: "bg-green-100 text-green-800 border-green-200 hover:bg-green-200",
+};
+
 export function IssuesSection({ issues, isFree = false }: IssuesSectionProps) {
   const [expandedIssues, setExpandedIssues] = useState<Set<string>>(new Set());
+  const [selectedCategories, setSelectedCategories] = useState<
+    Set<IssueCategory>
+  >(new Set(["positioning", "clarity", "first_impression", "aeo"]));
 
   const toggleIssue = (issueId: string) => {
     const newExpanded = new Set(expandedIssues);
@@ -32,8 +43,23 @@ export function IssuesSection({ issues, isFree = false }: IssuesSectionProps) {
     setExpandedIssues(newExpanded);
   };
 
+  const toggleCategory = (category: IssueCategory) => {
+    setSelectedCategories(new Set([category]));
+  };
+
+  const toggleAllCategories = () => {
+    setSelectedCategories(
+      new Set(["positioning", "clarity", "first_impression", "aeo"]),
+    );
+  };
+
+  // Filter issues by selected categories
+  const filteredIssues = issues.filter((issue) =>
+    selectedCategories.has(issue.category as IssueCategory),
+  );
+
   // Group issues by severity
-  const groupedIssues = issues.reduce(
+  const groupedIssues = filteredIssues.reduce(
     (acc, issue) => {
       if (!acc[issue.severity]) {
         acc[issue.severity] = [];
@@ -54,7 +80,45 @@ export function IssuesSection({ issues, isFree = false }: IssuesSectionProps) {
           are prioritized by severity and impact.
         </p>
 
-        <IssuesStatusSummary issues={issues} />
+        {/* Filter by Category */}
+        <div className="mb-6">
+          <h4 className="text-sm font-semibold text-gray-700 mb-3">
+            Filter by Metric
+          </h4>
+          <div className="flex flex-wrap gap-2">
+            <button
+              onClick={toggleAllCategories}
+              className={`px-3 py-1.5 rounded-full text-sm font-medium  transition-colors ${
+                selectedCategories.size === 4
+                  ? "bg-slate-200 text-slate-600 border-slate-200 hover:bg-slate-200"
+                  : "bg-gray-50 text-gray-600 border-gray-200 hover:bg-gray-150"
+              }`}
+            >
+              All Issues
+            </button>
+
+            {(Object.keys(CATEGORY_LABELS) as IssueCategory[]).map(
+              (category) => {
+                const isSelected = selectedCategories.has(category);
+                return (
+                  <button
+                    key={category}
+                    onClick={() => toggleCategory(category)}
+                    className={`px-3 py-1.5 rounded-full text-sm font-medium border transition-colors ${
+                      isSelected
+                        ? "bg-slate-200 text-slate-600 border-slate-200 hover:bg-slate-200"
+                        : "bg-gray-50 text-gray-600 border-gray-200 hover:bg-gray-150"
+                    }`}
+                  >
+                    {CATEGORY_LABELS[category]}
+                  </button>
+                );
+              },
+            )}
+          </div>
+        </div>
+
+        <IssuesStatusSummary issues={filteredIssues} />
 
         {severityOrder.map((severity) => {
           const severityIssues = groupedIssues[severity] || [];
@@ -63,12 +127,21 @@ export function IssuesSection({ issues, isFree = false }: IssuesSectionProps) {
           return (
             <div key={severity} className="mb-8">
               <h4 className="text-lg font-semibold capitalize mb-4 flex items-center gap-2">
-                 <span className={`w-2 h-2 rounded-full ${
-                  severity === 'critical' ? 'bg-red-500' : 
-                  severity === 'high' ? 'bg-orange-500' : 
-                  severity === 'medium' ? 'bg-yellow-400' : 'bg-blue-500'
-                }`} />
-                {severity === "low" ? "Improvement Suggestions" : `${severity} Issues`} ({severityIssues.length})
+                <span
+                  className={`w-2 h-2 rounded-full ${
+                    severity === "critical"
+                      ? "bg-red-500"
+                      : severity === "high"
+                        ? "bg-orange-500"
+                        : severity === "medium"
+                          ? "bg-yellow-400"
+                          : "bg-blue-500"
+                  }`}
+                />
+                {severity === "low"
+                  ? "Improvement Suggestions"
+                  : `${severity} Issues`}{" "}
+                ({severityIssues.length})
               </h4>
 
               <div className="space-y-4">
@@ -78,34 +151,11 @@ export function IssuesSection({ issues, isFree = false }: IssuesSectionProps) {
 
                   return (
                     <div key={issue.id} className="space-y-2">
-                       <IssueCard 
-                        issue={issue} 
-                        isLocked={isLocked} 
-                        showDetails={isExpanded || !isLocked} 
+                      <IssueCard
+                        issue={issue}
+                        isLocked={isLocked}
+                        showDetails={isExpanded || !isLocked}
                       />
-                      
-                      {!isLocked && (
-                         <Collapsible
-                           open={isExpanded}
-                           onOpenChange={() => toggleIssue(issue.id)}
-                         >
-                           <CollapsibleTrigger asChild>
-                             <Button
-                               variant="ghost"
-                               className="w-full justify-center p-0 h-8 text-[11px] text-blue-600 hover:text-blue-800 hover:bg-transparent"
-                             >
-                               {isExpanded ? "Hide Details" : "Show Deep Analysis"}
-                               {isExpanded ? (
-                                 <ChevronDown className="w-3 h-3 ml-1" />
-                               ) : (
-                                 <ChevronRight className="w-3 h-3 ml-1" />
-                               )}
-                             </Button>
-                           </CollapsibleTrigger>
-                           <CollapsibleContent>
-                           </CollapsibleContent>
-                         </Collapsible>
-                      )}
                     </div>
                   );
                 })}
@@ -122,6 +172,18 @@ export function IssuesSection({ issues, isFree = false }: IssuesSectionProps) {
             </h4>
             <p className="text-gray-600">
               Your website looks great. No critical issues were identified.
+            </p>
+          </div>
+        )}
+
+        {filteredIssues.length === 0 && issues.length > 0 && (
+          <div className="text-center py-12">
+            <div className="text-blue-500 text-6xl mb-4">🔍</div>
+            <h4 className="text-lg font-semibold text-gray-900 mb-2">
+              No Issues in Selected Metrics
+            </h4>
+            <p className="text-gray-600">
+              Try adjusting your filters to see more issues.
             </p>
           </div>
         )}
