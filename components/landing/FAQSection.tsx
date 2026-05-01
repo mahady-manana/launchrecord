@@ -7,47 +7,42 @@ const faqs: FAQ[] = [
   {
     question: "What problem does LaunchRecord solve?",
     answer:
-      "Most startups are invisible to AI and sound like everyone else. Your positioning converges toward commodity every week. LLMs don't cite you. Prospects can't understand you in 5 seconds. LaunchRecord detects these blind spots with cold, clinical data—then gives you a War Briefing with exact fixes before competitors or AI erase you from the market.",
+      "Most startups struggle to clearly explain what they do, which makes them hard to understand, hard to trust, and easy to ignore. LaunchRecord identifies where your messaging, positioning, and first impression are unclear, then shows you exactly what to improve so more visitors convert into users.",
   },
   {
     question: "What is LaunchRecord?",
     answer:
-      "LaunchRecord is the #1 platform for verified sovereignty and defensibility ledger for startups. Our SIO-V5 Engine analyzes your positioning, clarity, AEO presence, and strategic moat against 10,000+ records. You get a Global Score, Survival Probability, and weekly missions to make your product obvious and convert more users.",
+      "LaunchRecord is a product that analyzes your website to help you improve clarity, positioning, and conversion. It shows how well your message is understood by users and AI systems, and highlights what is preventing you from converting more visitors.",
   },
   {
     question: "How does the audit work?",
     answer:
-      "Submit your URL. Our SIO-V5 Engine scrapes your site and cross-references your positioning against 1,400+ competitors to detect Commodity Convergence. We simulate AEO visibility and run a clarity scan. Within 2-4 minutes, you receive your War Briefing with status: JUNK, VULNERABLE, or SOVEREIGN. Then complete weekly missions to fix your record and climb the Sovereign Leaderboard.",
+      "You submit your website URL, and LaunchRecord analyzes your homepage and messaging structure. It evaluates clarity, positioning, and visibility factors, then returns a report with key issues and practical improvements you can apply immediately.",
   },
   {
-    question: "What is SIO-V5?",
+    question: "What does the audit evaluate?",
     answer:
-      "SIO-V5 (Sovereign Intelligence Officer, Version 5) is our proprietary multi-agent auditing protocol. It analyzes your product across five clinical pillars—Positioning, Clarity, AEO Presence, Momentum, and Founder Proof—then compares against thousands of startups. Output: Global Score, brutal truth summary, Survival Probability. No fluff, no marketing speak, just cold data.",
-  },
-  {
-    question: "What is the SIDL framework?",
-    answer:
-      "SIDL (Sovereign Intelligence Defensibility Ledger) is our proprietary methodology for measuring startup defensibility in the age of AI. It evaluates five pillars: AEO Engine (will LLMs cite you?), Positioning Engine (how different are you?), Clarity Engine (can we understand you instantly?), Momentum Engine (social proof density), and Proof Engine (hard evidence vs. empty claims). Your SIDL score determines your Sovereign Leaderboard rank.",
+      "It evaluates how clearly your product is positioned, how easy it is to understand within seconds, how consistent your messaging is, and how visible your product is in modern AI-driven discovery systems.",
   },
   {
     question: "Who should use LaunchRecord?",
     answer:
-      "Startup founders, SaaS companies, product leaders, and strategic planners who refuse to be commoditized. If you're building a SaaS and you care about being irreplaceable in the age of AI, this is your weapon. The Core System is free. Upgrade to unlock competitive intelligence, strategic warfare capabilities, and white-glove support.",
+      "It is built for founders, SaaS teams, and product builders who want to improve their messaging, increase conversions, and make their product easier to understand and choose.",
   },
   {
     question: "What outcomes can I expect?",
     answer:
-      "Founders who fix their positioning and clarity see: +127% conversion rate (average after clarity fixes), +89% more citations in LLM responses, +2.3x improvement vs category competitors, and -43% CAC reduction from clearer messaging. Your War Briefing shows exactly where you're vulnerable and what to fix first.",
+      "You get a clearer understanding of why users don’t convert, specific issues affecting your messaging, and practical recommendations to improve clarity, positioning, and overall conversion performance.",
   },
   {
-    question: "Is there a free tier?",
+    question: "Is there a free plan?",
     answer:
-      "Yes. The Free plan includes the SIO-V5 audit, Global Score, 5-pillar scoring, positioning analysis, and score evolution tracking. Upgrade to Founder ($49/mo) for competitive intelligence, weekly auto audits, and deeper strategy insights.",
+      "Yes. The free plan includes a full website analysis with key clarity and positioning insights. Paid plans unlock deeper analysis, ongoing tracking, and more detailed recommendations.",
   },
   {
-    question: "What happens after I get my War Briefing?",
+    question: "What do I do after getting the results?",
     answer:
-      "You get access to your Sovereign Dashboard where you can track scores across all five SIDL pillars. Complete weekly Moat Missions to improve your record. Upload proof of shipping, revenue velocity, and social proof. Climb the Sovereign Leaderboard. This isn't a one-time audit—it's ongoing defensibility tracking.",
+      "You review the identified issues and apply the suggested improvements to your website. You can then re-run the analysis to measure improvement over time.",
   },
 ];
 

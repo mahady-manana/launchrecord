@@ -331,7 +331,7 @@ export default function LaunchRecordLandingPage() {
             name: "What problem does LaunchRecord solve?",
             acceptedAnswer: {
               "@type": "Answer",
-              text: "Confused visitors don't convert. LaunchRecord audits your SaaS messaging clarity, spots positioning gaps, tests AI visibility and gives you exact copy fixes to turn confusion into conversions.",
+              text: "Most startups lose customers because their messaging is unclear. LaunchRecord identifies what is confusing in your website positioning and copy, then shows exactly what to improve so more visitors understand your product and convert.",
             },
           },
           {
@@ -339,7 +339,7 @@ export default function LaunchRecordLandingPage() {
             name: "What is LaunchRecord?",
             acceptedAnswer: {
               "@type": "Answer",
-              text: "LaunchRecord is a SaaS positioning and messaging audit platform. It analyzes your website clarity, spots positioning gaps, tests AI visibility and provides exact copy fixes to turn confused visitors into customers.",
+              text: "LaunchRecord is a tool that analyzes your website messaging, positioning, and clarity. It helps you understand how clearly your product is communicated and what is preventing visitors from becoming customers.",
             },
           },
           {
@@ -347,7 +347,7 @@ export default function LaunchRecordLandingPage() {
             name: "How does the audit work?",
             acceptedAnswer: {
               "@type": "Answer",
-              text: "Submit your URL. Our engine analyzes your messaging clarity and positioning against competitors. Within 2-4 minutes, you receive a detailed audit with your clarity score, positioning gaps, and exact copy fixes to improve conversions.",
+              text: "You submit your website URL, and LaunchRecord analyzes your homepage messaging, positioning, and clarity. Within minutes, you receive a report showing key issues and practical improvements to increase understanding and conversions.",
             },
           },
           {
@@ -355,7 +355,7 @@ export default function LaunchRecordLandingPage() {
             name: "Is there a free tier?",
             acceptedAnswer: {
               "@type": "Answer",
-              text: "Yes. The Core System is free forever and includes a full messaging audit, clarity scoring, positioning analysis, and copy fixes. Upgrade to unlock weekly auto audits, competitive tracking, and advanced recommendations.",
+              text: "Yes. The free plan includes a full website audit with clarity insights, positioning feedback, and key recommendations to improve your messaging and conversions. Paid plans unlock deeper analysis and ongoing tracking.",
             },
           },
           {
@@ -363,7 +363,7 @@ export default function LaunchRecordLandingPage() {
             name: "Who should use LaunchRecord?",
             acceptedAnswer: {
               "@type": "Answer",
-              text: "SaaS founders, product leaders, and marketing teams who want to turn confused visitors into customers. If your website visitors aren't converting because your messaging is unclear, this is for you.",
+              text: "It is built for SaaS founders, product teams, and startups that want to improve messaging clarity, fix positioning issues, and turn more website visitors into customers.",
             },
           },
         ],

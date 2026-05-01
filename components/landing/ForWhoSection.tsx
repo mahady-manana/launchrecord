@@ -74,9 +74,9 @@ export function ForWhoSection() {
               </h3>
 
               {/* Pain Point Badge */}
-              <div className="inline-block px-3 py-1 rounded-full bg-secondary/10 text-secondary text-xs font-bold tracking-wider mb-4">
+              {/* <div className="inline-block px-3 py-1 rounded-full bg-secondary/10 text-secondary text-xs font-bold tracking-wider mb-4">
                 Pain: {audience.painPoint}
-              </div>
+              </div> */}
 
               {/* Description */}
               <p className="text-slate-700 leading-relaxed">

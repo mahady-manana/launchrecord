@@ -1,6 +1,5 @@
 "use client";
 
-import { Eye, Shield, Target, TrendingUp, Zap } from "lucide-react";
 import Link from "next/link";
 
 interface Pillar {
@@ -10,160 +9,144 @@ interface Pillar {
   icon: React.ReactNode;
   link: string;
 }
-
-const pillars: Pillar[] = [
+const features = [
   {
-    title: "Positioning Audit",
-    description: "Detect commodity convergence and own your category.",
-    features: [
-      "Category Ownership Analysis",
-      "Unique Value Proposition",
-      "Competitive Differentiation",
-      "Target Audience Clarity",
-      "Problem-Solution Fit",
-      "Messaging Consistency",
+    title: "Instantly fix your first impression",
+    description:
+      "Turn confused visitors into clear buyers in seconds by identifying whether your homepage communicates value fast enough to prevent users from leaving before understanding what you offer.",
+    outcomes: [
+      "Reduce bounce caused by unclear messaging",
+      "Improve understanding within the first 5 seconds",
+      "Align headline, value, and intent instantly",
+      "Strengthen first-scroll clarity and trust",
+      "Remove friction between visit and comprehension",
     ],
-    icon: <Target className="h-6 w-6" />,
-    link: "/positioning-audit",
+    link: "/learn/first-impression-fix",
   },
   {
-    title: "Clarity Audit",
-    description: "CFO-level clarity that converts visitors into users.",
-    features: [
-      "5-Second Test Analysis",
-      "Homepage Clarity Score",
-      "Value Prop Communication",
-      "Feature-Benefit Mapping",
-      "Copy Readability Assessment",
-      "Visual Hierarchy Review",
+    title: "Stop blending in with competitors positioning control",
+    description:
+      "Clarify whether your product is truly differentiated or blending into the market by exposing where your positioning sounds generic and weakens your ability to attract the right users.",
+    outcomes: [
+      "Detect when your product sounds like competitors",
+      "Clarify who your product is actually for",
+      "Strengthen your unique value direction",
+      "Remove category confusion in messaging",
+      "Improve “why you” decision clarity",
     ],
-    icon: <Eye className="h-6 w-6" />,
-    link: "/clarity-audit",
+    link: "/learn/positioning-control",
   },
   {
-    title: "AEO Audit",
-    description: "Be the answer AI systems recommend.",
-    features: [
-      "LLM Citation Analysis",
-      "AI Search Visibility",
-      "Brand Mention Tracking",
-      "Content Optimization Score",
-      "Authority Signal Detection",
-      "Competitive AI Share",
+    title: "Turn your messaging into conversions",
+    description:
+      "Improve how easily users understand and trust your message by detecting unclear, vague, or misaligned copy that reduces sign-ups and weakens purchase intent.",
+    outcomes: [
+      "Identify confusing or vague messaging",
+      "Improve headline → value → outcome flow",
+      "Strengthen trust signals in copy",
+      "Reduce cognitive friction in reading",
+      "Increase conversion intent clarity",
     ],
-    icon: <Zap className="h-6 w-6" />,
-    link: "/aeo-audit",
+    link: "/learn/conversion-clarity-fix",
   },
   {
-    title: "Momentum Audit",
-    description: "Track velocity and build unstoppable market force.",
-    features: [
-      "Social Proof Density",
-      "Review Velocity Tracking",
-      "Customer Sentiment Analysis",
-      "Brand Momentum Score",
-      "Growth Signal Detection",
-      "Market Traction Metrics",
+    title: "Become understandable to AI & Search",
+    description:
+      "Increase your chances of being recommended by AI systems and search engines by evaluating how clearly your product is understood and whether it contains the signals needed to be cited and surfaced.",
+    outcomes: [
+      "Improve AI understanding of your product",
+      "Detect missing authority signals",
+      "Optimize content for AI citation readiness",
+      "Benchmark against competitors in AI answers",
+      "Increase visibility in AI-driven discovery",
     ],
-    icon: <TrendingUp className="h-6 w-6" />,
-    link: "/momentum-audit",
-  },
-  {
-    title: "Founder Proof Audit",
-    description: "Validate why you and why now.",
-    features: [
-      "Founder-Market Fit Score",
-      "Unique Advantage Analysis",
-      "Timing Validation",
-      "Credibility Signals",
-      "Track Record Assessment",
-      "Investor Readiness Score",
-    ],
-    icon: <Shield className="h-6 w-6" />,
-    link: "/founder-proof-audit",
+    link: "/learn/aeo-visibility",
   },
 ];
 
 export function WhatIsItSection() {
   return (
-    <section className="py-20 bg-white" id="features">
-      <div className="max-w-7xl mx-auto px-4">
+    <section className="bg-[#0d1738]" id="features">
+      <div className="max-w-7xl py-20 mx-auto border-t border-slate-700">
         {/* Section Header */}
         <div className="text-center space-y-4 mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold text-slate-900 tracking-tighter">
-            Features
+          <h2 className="text-4xl md:text-4xl font-bold text-slate-200 tracking-tighter">
+            Start fixing your product foundation.
           </h2>
-          <p className="text-xl text-slate-600 max-w-3xl mx-auto">
-            Five comprehensive audits that measure your startup's defensibility
-            across every critical dimension.
+          <p className="text-xl text-slate-300 max-w-3xl mx-auto">
+            We help you understand why your website isn’t converting by
+            analyzing how clearly your positioning, messaging, and first
+            impression communicate value to real visitors. Then we show you
+            exactly what to fix so your product becomes easier to understand,
+            trust, and choose.
           </p>
         </div>
 
         {/* Features Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
-          {pillars.map((pillar, index) => (
+        <div className="gap-8 space-y-12">
+          {features.map((pillar, index) => (
             <div
               key={index}
-              className="flex flex-col bg-white border border-slate-200 hover:border-primary/50 rounded-xl p-8 transition-all duration-300 shadow-sm hover:shadow-md"
+              className="flex flex-col rounded-md border border-slate-100 bg-gradient-to-b from-primary/10 to-white/10 border-b border-slate-700 p-0 transition-all duration-300 shadow-sm hover:shadow-md"
             >
-              {/* Icon */}
-              <div className="w-12 h-12 rounded-lg bg-primary/10 text-primary flex items-center justify-center mb-6">
-                {pillar.icon}
+              <div className="md:flex items-center p-8 rounded-xl">
+                <div className="md:w-1/2 ">
+                  {/* Title */}
+                  <div className="space-y-4 mb-16 max-w-4xl">
+                    <h2 className="text-xl md:text-2xl text-white tracking-tighter inline font-medium">
+                      {pillar.title}.
+                    </h2>
+                    <p className="inline text-xl md:text-2xl tracking-tighter pl-2 font-medium text-blue-300">
+                      {pillar.description}
+                    </p>
+                  </div>
+
+                  {/* <Link
+                    href={pillar.link}
+                    className="inline-flex items-center gap-2 text-primary hover:text-primary/80 font-semibold text-sm transition-colors"
+                  >
+                    Learn More
+                    <svg
+                      className="w-4 h-4"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M9 5l7 7-7 7"
+                      />
+                    </svg>
+                  </Link> */}
+                </div>
+                <div className="p-8">
+                  {/* Features List */}
+                  <ul className="space-y-2 mb-8 flex-1">
+                    {pillar.outcomes.map((feature, idx) => (
+                      <li
+                        key={idx}
+                        className="flex items-start font-medium gap-2 text-slate-300 border-b border-slate-700 pb-4"
+                      >
+                        {feature}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
               </div>
 
-              {/* Title */}
-              <h3 className="text-xl font-bold text-slate-900 uppercase tracking-tight mb-3">
-                {pillar.title}
-              </h3>
-
-              {/* Description */}
-              <p className="text-slate-700 leading-relaxed mb-6">
-                {pillar.description}
-              </p>
-
-              {/* Features List */}
-              <ul className="space-y-2 mb-8 flex-1">
-                {pillar.features.map((feature, idx) => (
-                  <li
-                    key={idx}
-                    className="flex items-start gap-2 text-sm text-slate-600"
-                  >
-                    <span className="w-1.5 h-1.5 rounded-full bg-primary mt-1.5 flex-shrink-0" />
-                    {feature}
-                  </li>
-                ))}
-              </ul>
-
               {/* Link */}
-              <Link
-                href={pillar.link}
-                className="inline-flex items-center gap-2 text-primary hover:text-primary/80 font-semibold text-sm transition-colors"
-              >
-                Learn More
-                <svg
-                  className="w-4 h-4"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M9 5l7 7-7 7"
-                  />
-                </svg>
-              </Link>
             </div>
           ))}
         </div>
 
         {/* Core System Callout */}
-        <div className="bg-gradient-to-br from-primary/5 to-secondary/5 border border-slate-200 rounded-xl p-8 md:p-12 text-center shadow-sm">
-          <h3 className="text-2xl font-bold text-slate-900 uppercase tracking-tight mb-4">
+        <div className="my-12 bg-gradient-to-br from-primary/5 to-secondary/5 border border-slate-700 rounded-md p-8 md:p-12 text-center shadow-sm">
+          <h3 className="text-2xl font-bold text-slate-100 uppercase tracking-tight mb-4">
             The Core System Is Free
           </h3>
-          <p className="text-slate-700 max-w-2xl mx-auto mb-8">
+          <p className="text-slate-200 max-w-2xl mx-auto mb-8">
             Every plan includes the SIO-V5 audit, Global Score, and basic
             defensibility tracking. Upgrade to unlock competitive intelligence,
             strategic warfare capabilities, and white-glove support.
