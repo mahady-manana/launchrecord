@@ -22,6 +22,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { ReportAdmin } from "./ReportAdmin";
 
 interface Product {
   _id: string;
@@ -55,6 +56,7 @@ const PROGRESS_STATES = ["pending", "running", "completed", "failed"];
 
 export default function SIOReportsPage() {
   const [reports, setReports] = useState<SIOReport[]>([]);
+  const [seletected, setseletected] = useState<SIOReport | null>(null);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [bandFilter, setBandFilter] = useState("");
@@ -66,7 +68,7 @@ export default function SIOReportsPage() {
     total: 0,
     pages: 0,
   });
-
+  const [show, setshow] = useState(false);
   useEffect(() => {
     fetchReports();
   }, [pagination.page, search, bandFilter, progressFilter, withoutProduct]);
@@ -344,6 +346,14 @@ export default function SIOReportsPage() {
                     </TableCell>
                     <TableCell className="text-right">
                       <div className="flex gap-2 justify-end">
+                        <button
+                          onClick={() => {
+                            setseletected(report);
+                            setshow(true);
+                          }}
+                        >
+                          Show
+                        </button>
                         {report.product && (
                           <Button variant="ghost" size="sm" asChild>
                             <Link href={`/products/${report.product.slug}`}>
@@ -396,6 +406,15 @@ export default function SIOReportsPage() {
           </div>
         </div>
       )}
+      {seletected && show ? (
+        <ReportAdmin
+          report={seletected}
+          onClose={() => {
+            setseletected(null);
+            setshow(false);
+          }}
+        />
+      ) : null}
     </div>
   );
 }

@@ -159,9 +159,6 @@ What it does? Who is for - ICP? What they get in return? It most pass the PROBLE
 
 ### Clarity Metrics
 
-**\headline_clarity\**
-- ✅ PASS: The H1 is understandable on its own in under 5 seconds — no decoding required.
-- ❌ FAIL: H1 uses jargon, unclear metaphors, or is grammatically ambiguous.
 
 **\value_proposition\**
 - ✅ PASS: A visitor can state the product's core value in one sentence after a 5-second scan.
@@ -175,9 +172,6 @@ What it does? Who is for - ICP? What they get in return? It most pass the PROBLE
 - ✅ PASS: Information flows logically from broad to specific — hero answers WHAT, then WHO, then HOW/WHY.
 - ❌ FAIL: Page starts with secondary details, testimonials, or features before establishing the core message.
 
-**\cta_clarity\**
-- ✅ PASS: CTAs communicate what happens next (not just "click here"). The user knows the commitment level.
-- ❌ FAIL: CTAs are ambiguous, use vague verbs, or mismatch the signup/conversion process.
 
 **\proof_placement\**
 - ✅ PASS: Social proof (logos, testimonials, results) appears near points of doubt or decision.
